@@ -1,112 +1,134 @@
 'use strict';
 define(["d3"],
   function(d3) {
-    var Graph = function(n, y_start, y_end) {
-      this.prevTime = 0;
-      this.n = n;
-      this.graphData = [{
-        dataPoint: 0,
-        time: 0
+    var Graph = function(width, height) {
+
+      this.data = [{
+        x: 0,
+        y: 0
       }, {
-        dataPoint: 2,
-        time: 2.5
+        x: 10,
+        y: 100
       }, {
-        dataPoint: 0,
-        time: 3
+        x: 50,
+        y: 200
       }];
-      var self = this;
-      this.margin = {
+
+      var margin = {
         top: 20,
         right: 20,
         bottom: 20,
-        left: 40
+        left: 50
       };
-      this.width = 960 - this.margin.left - this.margin.right;
-      this.height = 100 - this.margin.top - this.margin.bottom;
-      this.x = d3.scale.linear().domain([0, n - 1]).range([0, this.width]);
-      this.y = d3.scale.linear().domain([y_start, y_end]).range([this.height, 0]);
-      this.line = d3.svg.line()
-        .x(function(d, i) {
-          return self.x(d.time);
+
+      // draw and append the container
+      this.svg = d3.select("body").append("svg")
+        .attr("height", height)
+        .attr("width", width)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.right + ")");
+
+      var xScale = d3.scale.linear()
+        .range([0, width - margin.left - margin.right]);
+
+      var yScale = d3.scale.linear()
+        .range([height - margin.top - margin.bottom, 0]);
+
+      this.line = d3.svg.line().interpolate("monotone")
+        .x(function(d) {
+          return xScale(d.x);
         })
-        .y(function(d, i) {
-          return self.y(d.dataPoint);
+        .y(function(d) {
+          return yScale(d.y);
         });
 
-      console.log('width height', this.width, this.height);
-      /// Add an SVG element with the desired dimensions and margin.
-      var graph = d3.select("body").append("svg:svg")
-        .attr("width", this.width + this.margin.right + this.margin.left)
-        .attr("height", this.height + this.margin.bottom + this.margin.left)
-        .append("svg:g")
-        .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
-      
+        this.height = height;
+        this.width = width;
+        this.margin = margin;
 
-      // create yAxis
-      var xAxis = d3.svg.axis().scale(this.x).tickSize(-this.height).tickSubdivide(true);
-      // Add the x-axis.
-      graph.append("svg:g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + this.height + ")")
-        .call(xAxis);
-      // create left yAxis
-      var yAxisLeft = d3.svg.axis().scale(this.y).ticks(4).orient("left");
-      // Add the y-axis to the left
-       graph.append("svg:g")
-        .attr("class", "y axis")
-        .attr("transform", "translate(-25,0)")
-        .call(yAxisLeft);
 
-      // Add the line by appending an svg:path element with the data line we created above
-      // do this AFTER the axes above so that the line is above the tick-lines
-     graph.append("svg:path").attr("d", this.line(this.graphData));
-        this.graphData.push({
-        dataPoint: 1,
-        time: 4
-      });
-      
-      this.render({
-        dataPoint: 1,
-        time: 4
-      });
+      // initial page render
+      this.render();
 
-    
+      // continuous page render
+      //setInterval(this.render, 1500);
 
 
     };
 
-    Graph.prototype.render = function(data){
-  // generate new dataset
-  this.graphData.push(data);
-   /*var yMin = this.graphData.reduce(function(pv,cv){
-    var currentMin = cv.reduce(function(pv,cv){
-      return Math.min(pv,cv.y);
-    },100);
-    return Math.min(pv,currentMin);
-  },100);
-  var yMax = this.graphData.reduce(function(pv,cv){
-    var currentMax = cv.reduce(function(pv,cv){
-      return Math.max(pv,cv.y);
-    },0);
-    return Math.max(pv,currentMax);
-  },0);
- 
-  this.x.domain([yMin,yMax]);*/
- 
-  var yAxis = d3.svg.axis().scale(this.y).orient("left");
- 
-  this.svg.selectAll(".y.axis").remove();
- 
-  this.svg.append("g").attr("class","y axis").call(yAxis);
- 
-  this.svg.selectAll(".line").remove();
- 
-  var lines = this.svg.selectAll(".line").data(this.graphData).attr("class","line");
- 
-  lines.enter().append("path")
-    .attr("class","line");
-    console.log(this.svg)
-};
+    // create random data
+    Graph.prototype.newData = function(lineNumber, points) {
+      return d3.range(lineNumber).map(function() {
+        return d3.range(points).map(function(item, idx) {
+          return {
+            x: idx / (points - 1),
+            y: Math.random() * 100
+          };
+        });
+      });
+    };
+
+
+    Graph.prototype.render = function() {
+      // generate new data
+      var data = this.newData(+document.getElementById("linecount").value, +document.getElementById("pointcount").value);
+
+      console.log("data", data);
+      // obtain absolute min and max
+      var yMin = data.reduce(function(pv, cv) {
+        var currentMin = cv.reduce(function(pv, cv) {
+          return Math.min(pv, cv.y);
+        }, 100);
+        return Math.min(pv, currentMin);
+      }, 100);
+      var yMax = data.reduce(function(pv, cv) {
+        var currentMax = cv.reduce(function(pv, cv) {
+          return Math.max(pv, cv.y);
+        }, 0);
+        return Math.max(pv, currentMax);
+      }, 0);
+
+      // set domain for axis
+      var yScale = d3.scale.linear()
+        .range([this.height - this.margin.top - this.margin.bottom, 0]).domain([yMin, yMax]);
+
+      // create axis scale
+      var yAxis = d3.svg.axis()
+        .scale(yScale).orient("left");
+
+      // if no axis exists, create one, otherwise update it
+      if (this.svg.selectAll(".y.axis")[0].length < 1) {
+        this.svg.append("g")
+          .attr("class", "y axis")
+          .call(yAxis);
+      } else {
+        this.svg.selectAll(".y.axis").transition().duration(1500).call(yAxis);
+      }
+
+      // generate line paths
+      var lines = this.svg.selectAll(".line").data(data).attr("class", "line");
+
+      // transition from previous paths to new paths
+      lines.transition().duration(1500)
+        .attr("d", this.line)
+        .style("stroke", function() {
+          return '#' + Math.floor(Math.random() * 16777215).toString(16);
+        });
+
+      // enter any new data
+      lines.enter()
+        .append("path")
+        .attr("class", "line")
+        .attr("d", this.line)
+        .style("stroke", function() {
+          return '#' + Math.floor(Math.random() * 16777215).toString(16);
+        });
+
+      // exit
+      lines.exit()
+        .remove();
+
+    };
 
 
 

@@ -1,7 +1,7 @@
 'use strict';
 define(["jquery","app/graph"],
     function($, Graph) {
-        let pressureGraph = new Graph(5,0,2);
+        let pressureGraph = new Graph(400,400);
     // if user is running mozilla then use it's built-in WebSocket
     window.WebSocket = window.WebSocket || window.MozWebSocket;
 
