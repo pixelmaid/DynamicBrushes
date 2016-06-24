@@ -1,18 +1,12 @@
 'use strict';
 define(["d3"],
   function(d3) {
+
+    var svg, xScale, yScale, line;
+
     var Graph = function(width, height) {
 
-      this.data = [{
-        x: 0,
-        y: 0
-      }, {
-        x: 10,
-        y: 100
-      }, {
-        x: 50,
-        y: 200
-      }];
+      this.data = [[]];
 
       var margin = {
         top: 20,
@@ -28,17 +22,20 @@ define(["d3"],
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.right + ")");
 
-      var xScale = d3.scale.linear()
-        .range([0, width - margin.left - margin.right]);
+      xScale = d3.scale.linear()
+        .range([0, width - margin.left - margin.right])
+        .domain([0,20]);
 
-      var yScale = d3.scale.linear()
-        .range([height - margin.top - margin.bottom, 0]);
+      yScale = d3.scale.linear()
+        .range([height - margin.top - margin.bottom, 0])
 
-      this.line = d3.svg.line().interpolate("monotone")
+      line = d3.svg.line()
         .x(function(d) {
+          console.log("x =",d.x,yScale(d.x));
           return xScale(d.x);
         })
         .y(function(d) {
+          console.log("y =",d.y,yScale(d.y));
           return yScale(d.y);
         });
 
@@ -48,30 +45,23 @@ define(["d3"],
 
 
       // initial page render
-      this.render();
-
+     this.render();
+      this.data[0].push({
+       y: 0,
+       x: 1});
+     this.render();
       // continuous page render
-      //setInterval(this.render, 1500);
+      var self = this;
+      self.set = setInterval(function(){self.render()}, 1);
 
 
-    };
-
-    // create random data
-    Graph.prototype.newData = function(lineNumber, points) {
-      return d3.range(lineNumber).map(function() {
-        return d3.range(points).map(function(item, idx) {
-          return {
-            x: idx / (points - 1),
-            y: Math.random() * 100
-          };
-        });
-      });
     };
 
 
     Graph.prototype.render = function() {
+      console.log(this)
       // generate new data
-      var data = this.newData(+document.getElementById("linecount").value, +document.getElementById("pointcount").value);
+      var data = this.data;
 
       console.log("data", data);
       // obtain absolute min and max
@@ -89,8 +79,7 @@ define(["d3"],
       }, 0);
 
       // set domain for axis
-      var yScale = d3.scale.linear()
-        .range([this.height - this.margin.top - this.margin.bottom, 0]).domain([yMin, yMax]);
+      yScale.domain([yMin,yMax]);
 
       // create axis scale
       var yAxis = d3.svg.axis()
@@ -102,26 +91,29 @@ define(["d3"],
           .attr("class", "y axis")
           .call(yAxis);
       } else {
-        this.svg.selectAll(".y.axis").transition().duration(1500).call(yAxis);
+        this.svg.selectAll(".y.axis").call(yAxis);
       }
 
+      /*var line = d3.svg.line().interpolate("monotone")
+        .x(function(d){ return xScale(d.x); })
+        .y(function(d){ return yScale(d.y); });
+
+*/
       // generate line paths
-      var lines = this.svg.selectAll(".line").data(data).attr("class", "line");
+      var lines = this.svg.selectAll(".line").data(this.data).attr("class", "line");
+      console.log('selected line',lines)
 
       // transition from previous paths to new paths
-      lines.transition().duration(1500)
-        .attr("d", this.line)
-        .style("stroke", function() {
-          return '#' + Math.floor(Math.random() * 16777215).toString(16);
-        });
-
+  lines.transition().duration(1)
+    .attr("d",line);
+    
       // enter any new data
       lines.enter()
         .append("path")
         .attr("class", "line")
-        .attr("d", this.line)
+        .attr("d",line)
         .style("stroke", function() {
-          return '#' + Math.floor(Math.random() * 16777215).toString(16);
+          return 'red';
         });
 
       // exit
@@ -135,32 +127,13 @@ define(["d3"],
     Graph.prototype.tick = function(dataPoint, time) {
       //console.log('tick', dataPoint);
       // push a new data point onto the back
-      this.graphData.push({
-        dataPoint: dataPoint,
-        time: time
-      });
+      this.data[0].push({
+       y: dataPoint,
+       x: time});
+
 
       //this.path.attr("d", this.line);
 
-      this.zoom.translate([time, 0]);
-      this.zoom.event(this.svg);
-
-      /*if (time > this.n) {
-               console.log("time", time, "n",this.n, time-this.prevTime)
-
-        this.line
-        .attr("transform", null)
-        .transition()
-        .attr("transform", "translate(" + this.x(this.prevTime-time) + ",0)")
-        .duration(1)
-        }
-       
-          
-       
-      //this.path.each("end", this.tick);
-      // pop the old data point off the front
-      //this.graphData.shift();*/
-      this.prevTime = time;
     };
     return Graph;
 
