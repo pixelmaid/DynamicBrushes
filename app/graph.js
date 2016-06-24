@@ -6,8 +6,11 @@ define(["d3"],
 
     var Graph = function(width, height) {
 
-      this.data = [[]];
-
+      this.data = [
+        []
+      ];
+      this.prevTime = 0;
+      this.xDomainLimit = 30;
       var margin = {
         top: 20,
         right: 20,
@@ -22,82 +25,102 @@ define(["d3"],
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.right + ")");
 
-        this.svg
-        .append("clipPath")       // define a clip path
-    .attr("id", "clip") // give the clipPath an ID
-  .append("rect")          // shape it as an ellipse
-    .attr("x", 0)         
-    .attr("y", 0)        
-   .attr("height", height)    // set the height
-    .attr("width", width);    // set the width
+      this.svg
+        .append("clipPath") // define a clip path
+        .attr("id", "clip") // give the clipPath an ID
+        .append("rect") // shape it as an ellipse
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("height", height) // set the height
+        .attr("width", width); // set the width
 
 
       xScale = d3.scale.linear()
         .range([0, width - margin.left - margin.right])
-        .domain([2,30]);
+        .domain([0, this.xDomainLimit]);
 
       yScale = d3.scale.linear()
-        .range([height - margin.top - margin.bottom, 0])
+        .range([height - margin.top - margin.bottom, 0]);
 
       line = d3.svg.line()
         .x(function(d) {
-          console.log("x =",d.x,yScale(d.x));
+          //console.log("x =",d.x,xScale(d.x));
           return xScale(d.x);
         })
         .y(function(d) {
-          console.log("y =",d.y,yScale(d.y));
+          //console.log("y =",d.y,yScale(d.y));
           return yScale(d.y);
         });
 
-        this.height = height;
-        this.width = width;
-        this.margin = margin;
+      this.height = height;
+      this.width = width;
+      this.margin = margin;
 
 
       // initial page render
-     this.render();
+      this.render();
       this.data[0].push({
-       y: 0,
-       x: 1});
-     this.render();
+        y: 0,
+        x: 1
+      });
+      this.render();
       // continuous page render
       var self = this;
-      self.set = setInterval(function(){self.render()}, 1);
+      self.set = setInterval(function() {
+        self.render();
+      }, 1);
 
 
     };
 
 
+    Graph.prototype.calculateMin = function(data, prop) {
+      var min = data.reduce(function(pv, cv) {
+        var currentMin = cv.reduce(function(pv, cv) {
+          return Math.min(pv, cv[prop]);
+        }, 100);
+        return Math.min(pv, currentMin);
+      }, 100);
+      return min;
+    };
+
+    Graph.prototype.calculateMax = function(data, prop) {
+      var max = data.reduce(function(pv, cv) {
+        var currentMax = cv.reduce(function(pv, cv) {
+          return Math.max(pv, cv[prop]);
+        }, 0);
+        return Math.max(pv, currentMax);
+      }, 0);
+      return max;
+    };
+
     Graph.prototype.render = function() {
-      console.log(this)
       // generate new data
       var data = this.data;
 
       console.log("data", data);
       // obtain absolute min and max
-      var yMin = data.reduce(function(pv, cv) {
-        var currentMin = cv.reduce(function(pv, cv) {
-          return Math.min(pv, cv.y);
-        }, 100);
-        return Math.min(pv, currentMin);
-      }, 100);
-      var yMax = data.reduce(function(pv, cv) {
-        var currentMax = cv.reduce(function(pv, cv) {
-          return Math.max(pv, cv.y);
-        }, 0);
-        return Math.max(pv, currentMax);
-      }, 0);
 
+      var yMin = this.calculateMin(data, "y");
+      var yMax = this.calculateMax(data, "y");
+
+      var xMin = this.calculateMin(data, "x");
+      var xMax = this.calculateMax(data, "x");
       // set domain for axis
-      yScale.domain([yMin,yMax]);
-
-      // create axis scale
+      yScale.domain([yMin, yMax]);
+      console.log("min max", yMin, yMax);
+      if(xMax>this.xDomainLimit){
+        var start = xMax-this.xDomainLimit;
+       xScale.domain([start,xMax]);
+     }
+        // create axis scale
       var yAxis = d3.svg.axis()
         .scale(yScale).orient("left");
 
-         // create axis scale
+      // create axis scale
       var xAxis = d3.svg.axis()
         .scale(xScale).orient("bottom");
+       
 
       // if no axis exists, create one, otherwise update it
       if (this.svg.selectAll(".y.axis")[0].length < 1) {
@@ -113,6 +136,7 @@ define(["d3"],
       if (this.svg.selectAll(".x.axis")[0].length < 1) {
         this.svg.append("g")
           .attr("class", "x axis")
+          .attr("transform", "translate(0," + (this.height-40) + ")")
           .call(xAxis);
       } else {
         this.svg.selectAll(".x.axis").call(xAxis);
@@ -125,18 +149,17 @@ define(["d3"],
 */
       // generate line paths
       var lines = this.svg.selectAll(".line").data(this.data).attr("class", "line");
-      console.log('selected line',lines)
 
       // transition from previous paths to new paths
-  lines.transition().duration(1)
-    .attr("d",line);
-    
+      lines.transition().duration(1)
+        .attr("d", line);
+
       // enter any new data
       lines.enter()
         .append("path")
         .attr("clip-path", "url(#clip)") // clip the rectangle
         .attr("class", "line")
-        .attr("d",line)
+        .attr("d", line)
         .style("stroke", function() {
           return 'red';
         });
@@ -153,9 +176,9 @@ define(["d3"],
       //console.log('tick', dataPoint);
       // push a new data point onto the back
       this.data[0].push({
-       y: dataPoint,
-       x: time});
-
+        y: dataPoint,
+        x: time
+      });
 
       //this.path.attr("d", this.line);
 
