@@ -2,10 +2,9 @@
 define(["d3"],
   function(d3) {
 
-    var svg, xScale, yScale, line;
 
     var Graph = function(width, height) {
-
+      var self = this;
       this.data = [
         []
       ];
@@ -35,21 +34,21 @@ define(["d3"],
         .attr("width", width); // set the width
 
 
-      xScale = d3.scale.linear()
+     this.xScale = d3.scale.linear()
         .range([0, width - margin.left - margin.right])
         .domain([0, this.xDomainLimit]);
-
-      yScale = d3.scale.linear()
+     this.yScale = d3.scale.linear()
         .range([height - margin.top - margin.bottom, 0]);
 
-      line = d3.svg.line()
+
+      this.line = d3.svg.line()
         .x(function(d) {
           //console.log("x =",d.x,xScale(d.x));
-          return xScale(d.x);
+          return self.xScale(d.x);
         })
         .y(function(d) {
           //console.log("y =",d.y,yScale(d.y));
-          return yScale(d.y);
+          return self.yScale(d.y);
         });
 
       this.height = height;
@@ -65,7 +64,6 @@ define(["d3"],
       });
       this.render();
       // continuous page render
-      var self = this;
       self.set = setInterval(function() {
         self.render();
       }, 1);
@@ -98,7 +96,6 @@ define(["d3"],
       // generate new data
       var data = this.data;
 
-      console.log("data", data);
       // obtain absolute min and max
 
       var yMin = this.calculateMin(data, "y");
@@ -106,20 +103,21 @@ define(["d3"],
 
       var xMin = this.calculateMin(data, "x");
       var xMax = this.calculateMax(data, "x");
+
+
       // set domain for axis
-      yScale.domain([yMin, yMax]);
-      console.log("min max", yMin, yMax);
+      this.yScale.domain([yMin, yMax]);
       if(xMax>this.xDomainLimit){
         var start = xMax-this.xDomainLimit;
-       xScale.domain([start,xMax]);
+       this.xScale.domain([start,xMax]);
      }
         // create axis scale
       var yAxis = d3.svg.axis()
-        .scale(yScale).orient("left");
+        .scale(this.yScale).orient("left");
 
       // create axis scale
       var xAxis = d3.svg.axis()
-        .scale(xScale).orient("bottom");
+        .scale(this.xScale).orient("bottom");
        
 
       // if no axis exists, create one, otherwise update it
@@ -152,14 +150,14 @@ define(["d3"],
 
       // transition from previous paths to new paths
       lines.transition().duration(1)
-        .attr("d", line);
+        .attr("d", this.line);
 
       // enter any new data
       lines.enter()
         .append("path")
         .attr("clip-path", "url(#clip)") // clip the rectangle
         .attr("class", "line")
-        .attr("d", line)
+        .attr("d", this.line)
         .style("stroke", function() {
           return 'red';
         });
