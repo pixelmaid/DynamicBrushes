@@ -1,0 +1,9 @@
+{
+  "name": "AppCoda - SocketChat",
+  "version": "1.0",
+  "description": "Socket.IO Client for iOS Tutorial, Server-side implementation",
+  "dependencies": {
+    "express": "^4.10.2",
+    "socket.io": "^1.4.4"
+  }
+}
