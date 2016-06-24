@@ -22,9 +22,19 @@ define(["d3"],
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.right + ")");
 
+        this.svg
+        .append("clipPath")       // define a clip path
+    .attr("id", "clip") // give the clipPath an ID
+  .append("rect")          // shape it as an ellipse
+    .attr("x", 0)         
+    .attr("y", 0)        
+   .attr("height", height)    // set the height
+    .attr("width", width);    // set the width
+
+
       xScale = d3.scale.linear()
         .range([0, width - margin.left - margin.right])
-        .domain([0,20]);
+        .domain([2,30]);
 
       yScale = d3.scale.linear()
         .range([height - margin.top - margin.bottom, 0])
@@ -85,6 +95,10 @@ define(["d3"],
       var yAxis = d3.svg.axis()
         .scale(yScale).orient("left");
 
+         // create axis scale
+      var xAxis = d3.svg.axis()
+        .scale(xScale).orient("bottom");
+
       // if no axis exists, create one, otherwise update it
       if (this.svg.selectAll(".y.axis")[0].length < 1) {
         this.svg.append("g")
@@ -92,6 +106,16 @@ define(["d3"],
           .call(yAxis);
       } else {
         this.svg.selectAll(".y.axis").call(yAxis);
+      }
+
+
+      // if no axis exists, create one, otherwise update it
+      if (this.svg.selectAll(".x.axis")[0].length < 1) {
+        this.svg.append("g")
+          .attr("class", "x axis")
+          .call(xAxis);
+      } else {
+        this.svg.selectAll(".x.axis").call(xAxis);
       }
 
       /*var line = d3.svg.line().interpolate("monotone")
@@ -110,6 +134,7 @@ define(["d3"],
       // enter any new data
       lines.enter()
         .append("path")
+        .attr("clip-path", "url(#clip)") // clip the rectangle
         .attr("class", "line")
         .attr("d",line)
         .style("stroke", function() {
