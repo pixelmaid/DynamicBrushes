@@ -7,6 +7,14 @@ var ipad_connection, javascript_connection;
 var ipad_client;
 var desktop_client;
 var clients = [];
+
+var fs = require('fs');
+fs.writeFile('helloworld.txt', 'Hello World!', function (err) {
+  if (err) return console.log(err);
+  console.log('Hello World > helloworld.txt');
+});
+
+
 var server = http.createServer(function(request, response) {
     // process HTTP request. Since we're writing just WebSockets server
     // we don't have to implement anything.

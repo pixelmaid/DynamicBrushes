@@ -1,0 +1,15 @@
+//canvas JSON template
+{
+	"id": "c1",
+	"drawings": [{
+		"id": "d1",
+		"strokes": [{
+			"id": "s1",
+			"points": [],
+			"pressure": [],
+			"intersections": [],
+		}],
+		"intersections":[]
+	}]
+
+}

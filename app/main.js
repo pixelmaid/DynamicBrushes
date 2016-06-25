@@ -13,7 +13,11 @@ define(["jquery","paper", "app/graph"],
         paper.install(window);
         paper.setup(canvas);*/
 
-        let pressureGraph = new Graph(700,200);
+        let pressureGraph = new Graph(700,200, "red");
+        let deltaGraph = new Graph(700,200, "blue");
+
+        let angleGraph = new Graph(700,200, "green");
+
     // if user is running mozilla then use it's built-in WebSocket
     
 
@@ -25,7 +29,7 @@ define(["jquery","paper", "app/graph"],
 
     connection.onopen = function () {
         console.log('connection opened');
-        connection.send('desktop')
+        connection.send('desktop');
     };
 
     connection.onerror = function (error) {
@@ -41,6 +45,10 @@ define(["jquery","paper", "app/graph"],
                 //console.log("message recieved",message, json);
 
                 pressureGraph.tick(json.pressure,json.time);
+                angleGraph.tick(json.angle,json.time);
+                var penState = json.penDown == true? 1:0;
+                deltaGraph.tick(penState,json.time);
+
 
             //} catch (e) {
                // console.log('This doesn\'t look like a valid JSON: ', message);

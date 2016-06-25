@@ -2,14 +2,15 @@
 define(["d3"],
   function(d3) {
 
+   // var utils = new Utils();
 
-    var Graph = function(width, height) {
+    var Graph = function(width, height, color) {
       var self = this;
       this.data = [
         []
       ];
       this.prevTime = 0;
-      this.xDomainLimit = 30;
+      this.xDomainLimit = 15;
       var margin = {
         top: 20,
         right: 20,
@@ -18,7 +19,7 @@ define(["d3"],
       };
 
       // draw and append the container
-      this.svg = d3.select("body").append("svg")
+      this.svg = d3.select("#graphs").append("svg")
         .attr("height", height)
         .attr("width", width)
         .append("g")
@@ -54,7 +55,7 @@ define(["d3"],
       this.height = height;
       this.width = width;
       this.margin = margin;
-
+      this.color = color
 
       // initial page render
       this.render();
@@ -95,7 +96,8 @@ define(["d3"],
     Graph.prototype.render = function() {
       // generate new data
       var data = this.data;
-
+      var color = this.color
+      console.log('color',color)
       // obtain absolute min and max
 
       var yMin = this.calculateMin(data, "y");
@@ -159,7 +161,7 @@ define(["d3"],
         .attr("class", "line")
         .attr("d", this.line)
         .style("stroke", function() {
-          return 'red';
+          return color;
         });
 
       // exit
@@ -177,6 +179,8 @@ define(["d3"],
         y: dataPoint,
         x: time
       });
+
+
 
       //this.path.attr("d", this.line);
 
