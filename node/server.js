@@ -58,7 +58,6 @@ wsServer.on('request', function(request) {
                     var file = 'drawing_data/' + json_data.canvas_id + '.json';
 
                     if (json_data.type == "new_canvas") {
-
                         var obj = {
                             id: json_data.canvas_id,
                             name: json_data.canvas_name,
@@ -68,23 +67,23 @@ wsServer.on('request', function(request) {
                         jsonfile.writeFile(file, obj, function(err) {
                             if (err) {
                                 console.error("write file error=", err);
-                            }
-                            else{
+                            } else {
                                 connection.sendUTF("message recieved");
 
                             }
                         });
                     } else {
+                            console.log('type',json_data.type)
 
                         jsonfile.readFile(file, function(err, obj) {
-                            if(err){
-                                console.error('file read error',err,file);
+                            if (err) {
+                                console.error('file read error', err, file);
                                 return;
                             }
                             var drawing_obj;
                             switch (json_data.type) {
 
-                                case "new_drawing":
+                                /*case "new_drawing":
                                     drawing_obj = {
                                         id: json_data.drawing_id,
                                         strokes: [],
@@ -105,11 +104,11 @@ wsServer.on('request', function(request) {
                                         if (json_data.type == "new_stroke") {
                                             stroke_obj = {
                                                 id: json_data.stroke_id,
-                                                time:json_data.time
+                                                time: json_data.time
                                             };
                                             drawing_obj.strokes.push(stroke_obj);
                                         } else if (json_data.type == "stroke_data") {
-                                            
+
 
                                             stroke_obj = drawing_obj.strokes.find(function(o) {
                                                 return o.id == json_data.stroke_id;
@@ -131,31 +130,53 @@ wsServer.on('request', function(request) {
                                                         );
                                                     }
                                                 }
-                                            } 
+                                            }
+                                        }
+                                    }
+
+                                    break;*/
+                                case "stylus_data":
+                                    drawing_obj = obj.drawings;
+                                    var stylus_data = json_data.stylusData;
+
+                                    for (var s in stylus_data) {
+                                        if (stylus_data.hasOwnProperty(s)) {
+
+                                            if (!drawing_obj[s]) {
+                                                drawing_obj[s] = [];
+                                            }
+                                            drawing_obj[s].push(
+                                                stylus_data[s]
+                                            );
+
+
                                         }
                                     }
                                     break;
 
+
                             }
-                            jsonfile.writeFile(file, obj, function(err) {
-                                if (err) {
-                                    console.error("write file error=", err);
-                                }else{
-                                    connection.sendUTF("message recieved");
-                                    if(desktop_client){
-                                    obj.type = json_data.type;
-                                    var graph_data = JSON.stringify(obj);
-                                    desktop_client.sendUTF(graph_data);
-                                }
+                            //if (json_data.type == "stylus_data") {
+                                jsonfile.writeFile(file, obj, function(err) {
+                                    if (err) {
+                                        console.error("write file error=", err);
+                                    } else {
+                                        console.log('wrote file to', obj.name, obj, file);
+                                        connection.sendUTF("message recieved");
+                                        if (desktop_client) {
+                                            obj.type = json_data.type;
+                                            var graph_data = JSON.stringify(obj);
+                                            desktop_client.sendUTF(graph_data);
+                                        }
 
 
-                                }
-                            });
+                                    }
+                                });
+                            //}
                         });
 
-                            
 
-                        //desktop_client.sendUTF(String(data));
+
                     }
                 }
             }

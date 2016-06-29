@@ -20,6 +20,10 @@ define(["jquery", "paper", "app/graph"],
         let yGraph = new Graph(450, 200, 2, 900, "orange","stroke_graphs","y position");
 
         let pressure = new Graph(450, 200, 2, 900, "orange","stylus_graphs","pressure");
+        let stylusXGraph =  new Graph(450, 200, 2, 1000, "green","stylus_graphs","x position");
+        let stylusYGraph =  new Graph(450, 200, 2, 1000, "orange","stylus_graphs","y position");
+        let penEventsGraph =  new Graph(450, 200, 15, 1, "orange","stylus_graphs","pen events");
+
 
         // if user is running mozilla then use it's built-in WebSocket
 

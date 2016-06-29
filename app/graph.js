@@ -42,7 +42,7 @@ define(["d3"],
         .text(y_units);
 
 
-      /*this.svg
+      this.svg
         .append("clipPath") // define a clip path
         .attr("id", "clip") // give the clipPath an ID
         .append("rect") // shape it as an ellipse
