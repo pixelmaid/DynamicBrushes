@@ -7,19 +7,13 @@ var ipad_connection, javascript_connection;
 var ipad_client;
 var desktop_client;
 var clients = [];
-
-var fs = require('fs');
-fs.writeFile('helloworld.txt', 'Hello World!', function (err) {
-  if (err) return console.log(err);
-  console.log('Hello World > helloworld.txt');
-});
-
+var jsonfile = require('jsonfile');
 
 var server = http.createServer(function(request, response) {
     // process HTTP request. Since we're writing just WebSockets server
     // we don't have to implement anything.
 });
-server.listen(8080, function() { });
+server.listen(8080, function() {});
 
 // create the server
 var wsServer = new WebSocketServer({
@@ -29,7 +23,7 @@ var wsServer = new WebSocketServer({
 // WebSocket server
 
 wsServer.on('request', function(request) {
-    console.log("request made",request.requestedProtocols);
+    console.log("request made", request.requestedProtocols);
     var protocol = request.requestedProtocols[0];
     var connection = request.accept(protocol, request.origin);
     var index = clients.push(connection) - 1;
@@ -43,40 +37,134 @@ wsServer.on('request', function(request) {
             if (clientName === false) { // first message sent by user is their name
                 // remember user name
                 clientName = (message.utf8Data);
-                if(clientName == 'ipad'){
+                if (clientName == 'ipad') {
                     ipad_client = connection;
-                }
-                else if(clientName == 'desktop'){
+                } else if (clientName == 'desktop') {
                     desktop_client = connection;
                 }
                 // get random color and send it back to the user
-               
-                console.log((new Date()) + 'client '+clientName + ' is connected');
+
+                console.log((new Date()) + 'client ' + clientName + ' is connected');
 
             } else { // log and broadcast the message
-              var data = message.utf8Data;
-              console.log('message',data);
-            if(clientName == 'ipad'){
-                if(desktop_client){
-                    desktop_client.sendUTF(String(data));
+                var data = message.utf8Data;
+                //console.log('message', data);
+
+
+                if (clientName == 'ipad') {
+                    let json_data = JSON.parse(data);
+                    console.log("message type", json_data.type);
+
+                    var file = 'drawing_data/' + json_data.canvas_id + '.json';
+
+                    if (json_data.type == "new_canvas") {
+
+                        var obj = {
+                            id: json_data.canvas_id,
+                            name: json_data.canvas_name,
+                            drawings: []
+                        };
+
+                        jsonfile.writeFile(file, obj, function(err) {
+                            if (err) {
+                                console.error("write file error=", err);
+                            }
+                            else{
+                                connection.sendUTF("message recieved");
+
+                            }
+                        });
+                    } else {
+
+                        jsonfile.readFile(file, function(err, obj) {
+                            if(err){
+                                console.error('file read error',err,file);
+                                return;
+                            }
+                            var drawing_obj;
+                            switch (json_data.type) {
+
+                                case "new_drawing":
+                                    drawing_obj = {
+                                        id: json_data.drawing_id,
+                                        strokes: [],
+                                        intersections: []
+                                    };
+                                    obj.drawings.push(drawing_obj);
+                                    //console.log("drawing obj",drawing_obj);
+                                    break;
+                                case "new_stroke":
+                                case "stroke_data":
+                                    //console.log("drawing obj",obj.drawings,json_data.drawing_id);
+
+                                    drawing_obj = obj.drawings.find(function(o) {
+                                        return o.id == json_data.drawing_id;
+                                    });
+                                    if (drawing_obj) {
+                                        var stroke_obj;
+                                        if (json_data.type == "new_stroke") {
+                                            stroke_obj = {
+                                                id: json_data.stroke_id,
+                                                time:json_data.time
+                                            };
+                                            drawing_obj.strokes.push(stroke_obj);
+                                        } else if (json_data.type == "stroke_data") {
+                                            
+
+                                            stroke_obj = drawing_obj.strokes.find(function(o) {
+                                                return o.id == json_data.stroke_id;
+                                            });
+                                            //console.log("stroke object",stroke_obj, json_data.stroke_id);
+
+                                            if (stroke_obj) {
+                                                var stroke_data = json_data.strokeData;
+                                                console.log(stroke_data.length);
+                                                for (var p in stroke_data) {
+                                                    if (stroke_data.hasOwnProperty(p)) {
+                                                        //console.log('stroke data property', p);
+
+                                                        if (!stroke_obj[p]) {
+                                                            stroke_obj[p] = [];
+                                                        }
+                                                        stroke_obj[p].push({
+                                                            data: stroke_data[p]
+                                                        });
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    break;
+
+                            }
+                            jsonfile.writeFile(file, obj, function(err) {
+                                if (err) {
+                                    console.error("write file error=", err);
+                                }else{
+                                    connection.sendUTF("message recieved");
+
+                                }
+                            });
+                        });
+
+                            
+
+                        //desktop_client.sendUTF(String(data));
+                    }
                 }
             }
         }
-    }
     });
 
     connection.on('close', function(connection) {
-         if(clientName == "ipad"){
+        if (clientName == "ipad") {
             ipad_client = null;
-        }
-        else if(clientName == "desktop"){
+        } else if (clientName == "desktop") {
             desktop_client = null;
         }
         clients.splice(index, 1);
         console.log((new Date()) + protocol + " disconnected.");
 
-         
+
     });
 });
- 
-  

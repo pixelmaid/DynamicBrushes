@@ -13,10 +13,12 @@ define(["jquery","paper", "app/graph"],
         paper.install(window);
         paper.setup(canvas);*/
 
-        let pressureGraph = new Graph(700,200, "red");
-        let deltaGraph = new Graph(700,200, "blue");
+        let distanceGraph = new Graph(700,200, "red");
+        let strokeGraph = new Graph(700,200, "blue");
 
-        let angleGraph = new Graph(700,200, "green");
+        let xGraph = new Graph(700,200, "green");
+        let yGraph = new Graph(700,200, "orange");
+
 
     // if user is running mozilla then use it's built-in WebSocket
     
@@ -41,13 +43,27 @@ define(["jquery","paper", "app/graph"],
     connection.onmessage = function (message) {
         // try to decode json (I assume that each message from server is json)
           //try {
-                var json = JSON.parse(message.data);
-                //console.log("message recieved",message, json);
+                var data = JSON.parse(message.data);
+                console.log("message recieved",message, data);
+                var drawings = data.drawings;
+                var strokes = drawings.strokes;
+                var strokeData = strokes.map(function(stroke,rank){
+                    return {x:stroke.time,y:rank};
+                });
+                var distanceData = strokes.map(function(stroke,rank){
+                   return stroke.lengths.map(function(length,rank){
+                        return {x:length.time,y:length.data};
+                   });
+                });
+                var xPositionData = strokes.map(function(stroke,rank){
+                   return stroke.map(function(length,rank){
+                        return {x:length.time,y:length.data};
+                   });
+                });
 
-                pressureGraph.tick(json.pressure,json.time);
-                angleGraph.tick(json.angle,json.time);
-                var penState = json.penDown == true? 1:0;
-                deltaGraph.tick(penState,json.time);
+                //lengthGraph.setData(lengthData);
+                //var penState = json.penDown == true? 1:0;
+                //deltaGraph.tick(penState,json.time);
 
 
             //} catch (e) {

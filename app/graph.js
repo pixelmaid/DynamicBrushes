@@ -172,13 +172,10 @@ define(["d3"],
 
 
 
-    Graph.prototype.tick = function(dataPoint, time) {
+    Graph.prototype.setData = function(data) {
       //console.log('tick', dataPoint);
       // push a new data point onto the back
-      this.data[0].push({
-        y: dataPoint,
-        x: time
-      });
+      this.data = data
 
 
 
