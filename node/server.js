@@ -23,7 +23,7 @@ var wsServer = new WebSocketServer({
 // WebSocket server
 
 wsServer.on('request', function(request) {
-    console.log("request made", request.requestedProtocols);
+    //console.log("request made", request.requestedProtocols);
     var protocol = request.requestedProtocols[0];
     var connection = request.accept(protocol, request.origin);
     var index = clients.push(connection) - 1;
@@ -53,7 +53,7 @@ wsServer.on('request', function(request) {
 
                 if (clientName == 'ipad') {
                     let json_data = JSON.parse(data);
-                    console.log("message type", json_data.type);
+                    //console.log("message type", json_data.type);
 
                     var file = 'drawing_data/' + json_data.canvas_id + '.json';
 
@@ -118,7 +118,7 @@ wsServer.on('request', function(request) {
 
                                             if (stroke_obj) {
                                                 var stroke_data = json_data.strokeData;
-                                                console.log(stroke_data.length);
+                                                //console.log(stroke_data.lengths);
                                                 for (var p in stroke_data) {
                                                     if (stroke_data.hasOwnProperty(p)) {
                                                         //console.log('stroke data property', p);
@@ -126,12 +126,12 @@ wsServer.on('request', function(request) {
                                                         if (!stroke_obj[p]) {
                                                             stroke_obj[p] = [];
                                                         }
-                                                        stroke_obj[p].push({
-                                                            data: stroke_data[p]
-                                                        });
+                                                        stroke_obj[p].push(
+                                                            stroke_data[p]
+                                                        );
                                                     }
                                                 }
-                                            }
+                                            } 
                                         }
                                     }
                                     break;
@@ -142,6 +142,12 @@ wsServer.on('request', function(request) {
                                     console.error("write file error=", err);
                                 }else{
                                     connection.sendUTF("message recieved");
+                                    if(desktop_client){
+                                    obj.type = json_data.type;
+                                    var graph_data = JSON.stringify(obj);
+                                    desktop_client.sendUTF(graph_data);
+                                }
+
 
                                 }
                             });

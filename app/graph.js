@@ -4,13 +4,15 @@ define(["d3"],
 
    // var utils = new Utils();
 
-    var Graph = function(width, height, color) {
+    var Graph = function(width, height, xdomain_limit, ydomain_limit, color,target_div,y_units) {
       var self = this;
       this.data = [
         []
       ];
       this.prevTime = 0;
-      this.xDomainLimit = 15;
+      this.xDomainLimit = xdomain_limit;
+      this.yDomainLimit = ydomain_limit;
+
       var margin = {
         top: 20,
         right: 20,
@@ -19,20 +21,35 @@ define(["d3"],
       };
 
       // draw and append the container
-      this.svg = d3.select("#graphs").append("svg")
-        .attr("height", height)
-        .attr("width", width)
+      this.svg = d3.select("#"+target_div).append("svg")
+        .attr("height", height+20)
+        .attr("width", width+20)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.right + ")");
 
-      this.svg
+     this.svg.append("text")      // text label for the x axis
+        .attr("x", width/3)
+        .attr("y", height-15 )
+        .style("text-anchor", "middle")
+        .text("Seconds");    
+
+    this.svg.append("text")      // text label for the x axis
+          .attr("transform", "rotate(-90)")
+        .attr("y", 0-margin.left)
+        .attr("x",0 - (height / 2))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text(y_units);
+
+
+      /*this.svg
         .append("clipPath") // define a clip path
         .attr("id", "clip") // give the clipPath an ID
         .append("rect") // shape it as an ellipse
         .attr("x", 0)
         .attr("y", 0)
         .attr("height", height) // set the height
-        .attr("width", width); // set the width
+        .attr("width", width); // set the width*/
 
 
      this.xScale = d3.scale.linear()
@@ -97,7 +114,6 @@ define(["d3"],
       // generate new data
       var data = this.data;
       var color = this.color
-      console.log('color',color)
       // obtain absolute min and max
 
       var yMin = this.calculateMin(data, "y");
@@ -111,8 +127,24 @@ define(["d3"],
       this.yScale.domain([yMin, yMax]);
       if(xMax>this.xDomainLimit){
         var start = xMax-this.xDomainLimit;
-       this.xScale.domain([start,xMax]);
+            this.xScale.domain([start,xMax]);
+
      }
+
+     else{
+          var start = 0;
+          this.xScale.domain([start,this.xDomainLimit]);
+
+     }
+
+      if(yMax>this.yDomainLimit){
+
+          this.yScale.domain([0,yMax]);
+        }
+        else{
+            this.yScale.domain([0,this.yDomainLimit]);
+        }
+
         // create axis scale
       var yAxis = d3.svg.axis()
         .scale(this.yScale).orient("left");
@@ -175,7 +207,7 @@ define(["d3"],
     Graph.prototype.setData = function(data) {
       //console.log('tick', dataPoint);
       // push a new data point onto the back
-      this.data = data
+      this.data[0] = data[data.length-1]
 
 
 

@@ -21,13 +21,25 @@ svg {
   shape-rendering: crispEdges;
 }
 #graphs{
-  width: 700px;
+  width: 1000px;
+}
+.graph_column{
+  width: 450px;
+  float: left;
+}
+h1{
+  font-size: 12px;
+  font-family: sans-serif;
 }
 </style>
        <script data-main="app" src="lib/require.js"></script>
     </head>
     <body>  
-      <div id="graphs"></div>
+      <div id="graphs">
+      <div id="stroke_graphs" class="graph_column"><h1>Drawing</h1></div>
+      <div id="stylus_graphs"class="graph_column"><h1>Stylus</h1></div>
+    </div>
+
 <script src="lib/require.js"></script>
 <script src="app.js"></script>
     </body>
