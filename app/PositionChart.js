@@ -62,6 +62,7 @@ define(["d3", "app/BaseChart"],
 				.outerTickSize(0)
 				.ticks(14)
 				.tickFormat("");
+				
 			if (this.container.selectAll("rect")[0].length < 1) {
 				this.container.append("rect")
 					.attr("width", this.width)
@@ -131,7 +132,13 @@ define(["d3", "app/BaseChart"],
 				.transition().duration(1000).ease("sin-in-out")
 				.attr("cx", self.xMap(self))
 				.attr("cy", self.yMap(self))
-				.attr("r", self.xScale()(25));
+				.attr("r", function(d,i) {
+						if(i== self.data.length-1){
+							return self.xScale()(45);
+						}
+						return self.xScale()(25);
+
+					});
 
 			}
 

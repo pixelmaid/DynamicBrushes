@@ -56,6 +56,7 @@ define(["d3"],
 		BaseChart.prototype.addChild = function(data) {
 			console.log('data for children', data);
 			if (Array.isArray(data)) {
+				this.data = data;
 				for (var i = 0; i < data.length; i++) {
 					if (data[i]) {
 						this.addSingleChild(data[i]);
@@ -115,6 +116,7 @@ define(["d3"],
 		};
 
 	BaseChart.prototype.render = function(){
+		var self = this;
 	this.container
 				.transition().duration(1000).ease("sin-in-out")
 				.attr("width", this.width)
@@ -130,23 +132,25 @@ define(["d3"],
 				.orient("left");
 
       // if no axis exists, create one, otherwise update it
-      if (this.container.selectAll(".y.axis")[0].length < 1) {
+     var yAxes = this.container.selectAll(".y.axis").filter(function() { return this.parentNode === self.container.node(); });
+     	console.log("yaxes =",yAxes);
+      if (yAxes[0].length < 1) {
         this.container.append("g")
           .attr("class", "y axis")
           .call(yAxis);
       } else {
-        this.container.selectAll(".y.axis").call(yAxis);
+        yAxes.call(yAxis);
       }
 
-
+var xAxes = this.container.selectAll(".x.axis").filter(function() { return this.parentNode === self.container.node(); });
       // if no axis exists, create one, otherwise update it
-      if (this.container.selectAll(".x.axis")[0].length < 1) {
+      if (xAxes[0].length < 1) {
         this.container.append("g")
           .attr("class", "x axis")
-          .attr("transform", "translate(0," + (this.height-40) + ")")
+          .attr("transform", "translate(0," + (this.height/2-40) + ")")
           .call(xAxis);
       } else {
-        this.container.selectAll(".x.axis").call(xAxis);
+        xAxes.call(xAxis);
       }
 
       this.renderChildren();
