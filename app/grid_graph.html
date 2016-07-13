@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Line Chart</title>
+<style>
+
+  .axis path,
+  .axis line{
+    fill: none;
+    stroke: black;
+  }
+
+  .line{
+    fill: none;
+    stroke: blue;
+    stroke-width: 2px;
+  }
+
+  .tick text{
+    font-size: 12px;
+  }
+
+  .tick line{
+    opacity: 0.2;
+  }
+
+</style>
+</head>
+<body>
+<script src="http://d3js.org/d3.v3.js"></script>
+<script>
+
+
+   var mwidth = 600,
+    mheight = 100;
+
+var data = [
+  {x:100,y:400}
+];
+
+
+
+
+
+var container = d3.select("body").append("svg")
+.attr("width", mwidth)
+.attr("height", mheight)
+
+var graphGroup = container.append("g");
+
+
+
+function chart() {
+  console.log("chart")
+
+ var width = 100, // default width
+      height = 80, // default height
+      xPos = 0,
+      yPos = 0
+
+var xScale = d3.scale.linear()
+    .domain([0, 1500])
+    .range([0, width]);
+var xValue = function(d) { return d.x;} // data -> value
+var yScale = d3.scale.linear()
+    .domain([0,1125])
+    .range([height, 0]);
+var yValue = function(d) { return d.y;} // data -> value
+
+var xMap = function(d) { return xScale(xValue(d));} // data -> display
+var yMap = function(d) { return yScale(yValue(d));} // data -> display
+
+var xAxis = d3.svg.axis()
+    .scale(xScale)
+    .orient("bottom")
+    .innerTickSize(-height)
+    .outerTickSize(0)
+    .tickPadding(10)
+    .tickFormat("");
+
+var yAxis = d3.svg.axis()
+    .scale(yScale)
+    .orient("left")
+    .innerTickSize(-width)
+    .outerTickSize(0)
+    .tickPadding(10)
+    .tickFormat("");
+
+ 
+  function my() {
+    console.log("width, height",width,height)
+    var t = graphGroup.append("g")
+    .attr("width", width)
+    .attr("height",height)
+    .attr("transform", "translate("+xPos+"," +yPos + ")")
+
+
+    t.append("g")
+     .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+
+      t.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+
+      t.selectAll(".dot")
+      .data(data)
+    .enter().append("circle")
+      .attr("class", "dot")
+      .attr("r", 2)
+      .attr("cx", xMap)
+      .attr("cy", yMap)
+      .style("fill", "red");
+
+  }
+
+  my.width = function(value) {
+    console.log("width")
+
+    if (!arguments.length) return width;
+    width = value;
+    return my;
+  };
+
+  my.height = function(value) {
+    if (!arguments.length) return height;
+    height = value;
+    return my;
+  };
+
+  my.xPos = function(value) {
+    if (!arguments.length) return xPos;
+    xPos = value;
+    return my;
+  };
+
+   my.yPos = function(value) {
+    if (!arguments.length) return yPos;
+    yPos = value;
+    return my;
+  };
+
+  return my;
+}
+
+var myChart = chart().width(100).height(80).xPos(0).yPos(0);
+myChart()
+
+var myChart2 = chart().width(100).height(80).xPos(110).yPos(0);
+myChart2()
+
+
+</script>
+</body>
+</html>

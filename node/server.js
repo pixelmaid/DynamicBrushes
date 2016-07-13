@@ -73,7 +73,7 @@ wsServer.on('request', function(request) {
                             }
                         });
                     } else {
-                            console.log('type',json_data.type)
+                        console.log('type', json_data.type)
 
                         jsonfile.readFile(file, function(err, obj) {
                             if (err) {
@@ -83,7 +83,7 @@ wsServer.on('request', function(request) {
                             var drawing_obj;
                             switch (json_data.type) {
 
-                                /*case "new_drawing":
+                                case "new_drawing":
                                     drawing_obj = {
                                         id: json_data.drawing_id,
                                         strokes: [],
@@ -134,45 +134,31 @@ wsServer.on('request', function(request) {
                                         }
                                     }
 
-                                    break;*/
+                                    break;
                                 case "stylus_data":
                                     drawing_obj = obj.drawings;
                                     var stylus_data = json_data.stylusData;
-
-                                    for (var s in stylus_data) {
-                                        if (stylus_data.hasOwnProperty(s)) {
-
-                                            if (!drawing_obj[s]) {
-                                                drawing_obj[s] = [];
-                                            }
-                                            drawing_obj[s].push(
-                                                stylus_data[s]
-                                            );
-
-
-                                        }
-                                    }
+                                    drawing_obj.push(stylus_data);
                                     break;
 
 
                             }
-                            //if (json_data.type == "stylus_data") {
-                                jsonfile.writeFile(file, obj, function(err) {
-                                    if (err) {
-                                        console.error("write file error=", err);
-                                    } else {
-                                        console.log('wrote file to', obj.name, obj, file);
-                                        connection.sendUTF("message recieved");
-                                        if (desktop_client) {
-                                            obj.type = json_data.type;
-                                            var graph_data = JSON.stringify(obj);
-                                            desktop_client.sendUTF(graph_data);
-                                        }
-
-
+                            jsonfile.writeFile(file, obj, function(err) {
+                                if (err) {
+                                    console.error("write file error=", err);
+                                } else {
+                                    console.log('wrote file to', obj.name, obj, file);
+                                    connection.sendUTF("message recieved");
+                                    if (desktop_client) {
+                                        obj.type = json_data.type;
+                                        var graph_data = JSON.stringify(obj);
+                                        desktop_client.sendUTF(graph_data);
                                     }
-                                });
-                            //}
+
+
+                                }
+                            });
+
                         });
 
 

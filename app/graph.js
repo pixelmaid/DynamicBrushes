@@ -72,7 +72,7 @@ define(["d3"],
       this.height = height;
       this.width = width;
       this.margin = margin;
-      this.color = color
+      this.color = color;
 
       // initial page render
       this.render();
@@ -113,7 +113,7 @@ define(["d3"],
     Graph.prototype.render = function() {
       // generate new data
       var data = this.data;
-      var color = this.color
+      var color = this.color;
       // obtain absolute min and max
 
       var yMin = this.calculateMin(data, "y");
@@ -125,14 +125,15 @@ define(["d3"],
 
       // set domain for axis
       this.yScale.domain([yMin, yMax]);
+      var start;
       if(xMax>this.xDomainLimit){
-        var start = xMax-this.xDomainLimit;
+         start = xMax-this.xDomainLimit;
             this.xScale.domain([start,xMax]);
 
      }
 
      else{
-          var start = 0;
+          start = 0;
           this.xScale.domain([start,this.xDomainLimit]);
 
      }
@@ -207,7 +208,7 @@ define(["d3"],
     Graph.prototype.setData = function(data) {
       //console.log('tick', dataPoint);
       // push a new data point onto the back
-      this.data[0] = data[data.length-1]
+      this.data[0] = data[data.length-1];
 
 
 
