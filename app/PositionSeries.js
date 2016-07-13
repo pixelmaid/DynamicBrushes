@@ -7,12 +7,7 @@ define(["d3", "app/BaseChart", "app/PositionChart"],
       this.xDomain = [0, 10];
       this.yDomain = [0, 1];
       this.height = 56.5;
-      this.xAxis = d3.svg.axis()
-        .scale(this.xScale())
-        .orient("bottom")
-        .innerTickSize(-this.height)
-        .outerTickSize(0)
-        .tickPadding(10);
+     
       document.onkeydown = checkKey;
       var self = this;
 
@@ -47,12 +42,6 @@ define(["d3", "app/BaseChart", "app/PositionChart"],
       this.children.push(child);
       return this;
     };
-
-
-    PositionSeries.prototype.generate = function() {
-      BaseChart.prototype.generate.call(this);
-    };
-
 
 
     PositionSeries.prototype.generateChildren = function() {

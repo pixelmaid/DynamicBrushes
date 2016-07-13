@@ -17,6 +17,14 @@ define(["d3"],
 			
 
 
+
+		};
+
+		BaseChart.prototype.xAxisTranslation = function(){
+			return [0, (this.height / 2 - 40)];
+		};
+		BaseChart.prototype.yAxisTranslation = function(){
+			return [0, 0];
 		};
 
 		BaseChart.prototype.xValue = function(d) {
@@ -33,6 +41,23 @@ define(["d3"],
 			};
 
 		};
+
+		BaseChart.prototype.xAxis = function() {
+			var xAxis = d3.svg.axis()
+				.scale(this.xScale())
+				.orient("bottom");
+			return xAxis;
+		};
+
+		BaseChart.prototype.yAxis = function() {
+
+			var yAxis = d3.svg.axis()
+				.scale(this.yScale())
+				.orient("left");
+
+			return yAxis;
+		};
+
 
 		BaseChart.prototype.yMap = function(target) {
 			return function(d) {
@@ -115,48 +140,62 @@ define(["d3"],
 			}
 		};
 
-	BaseChart.prototype.render = function(){
-		var self = this;
-	this.container
+		BaseChart.prototype.render = function() {
+			this.container
 				.transition().duration(1000).ease("sin-in-out")
 				.attr("width", this.width)
 				.attr("height", this.height)
 				.attr("transform", "translate(" + this.x + "," + this.y + ")");
+			this.renderAxes();
 
-    var xAxis = d3.svg.axis()
-				.scale(this.xScale())
-				.orient("bottom");
-				
-	var yAxis = d3.svg.axis()
-				.scale(this.yScale())
-				.orient("left");
+			this.renderChildren();
 
-      // if no axis exists, create one, otherwise update it
-     var yAxes = this.container.selectAll(".y.axis").filter(function() { return this.parentNode === self.container.node(); });
-     	console.log("yaxes =",yAxes);
-      if (yAxes[0].length < 1) {
-        this.container.append("g")
-          .attr("class", "y axis")
-          .call(yAxis);
-      } else {
-        yAxes.call(yAxis);
-      }
 
-var xAxes = this.container.selectAll(".x.axis").filter(function() { return this.parentNode === self.container.node(); });
-      // if no axis exists, create one, otherwise update it
-      if (xAxes[0].length < 1) {
-        this.container.append("g")
-          .attr("class", "x axis")
-          .attr("transform", "translate(0," + (this.height/2-40) + ")")
-          .call(xAxis);
-      } else {
-        xAxes.call(xAxis);
-      }
+		};
 
-      this.renderChildren();
+		BaseChart.prototype.renderAxes = function() {
+			var self = this;
+			// if no axis exists, create one, otherwise update it
+			var yAxes = this.container.selectAll(".y.axis").filter(function() {
+				return this.parentNode === self.container.node();
+			});
+			if (yAxes[0].length < 1) {
+				this.container.append("g")
+					.attr("class", "y axis")
+					.attr("transform", "translate(" + this.yAxisTranslation()[0] + "," + this.yAxisTranslation()[1] + ")")
 
-	};
-		
+				.call(this.yAxis());
+			} else {
+				yAxes
+					.transition().duration(1000).ease("sin-in-out")
+										.attr("transform", "translate(" + this.yAxisTranslation()[0] + "," + this.yAxisTranslation()[1] + ")")
+
+					.call(this.yAxis());
+			}
+
+			var xAxes = this.container.selectAll(".x.axis").filter(function() {
+				return this.parentNode === self.container.node();
+			});
+			// if no axis exists, create one, otherwise update it
+			var xTrans = this.xAxisTranslation();
+			console.log("rendering axes",xTrans, "translate(" + xTrans[0] + "," + xTrans[1] + ")")
+
+			if (xAxes[0].length < 1) {
+				this.container.append("g")
+					.attr("class", "x axis")
+					.attr("transform", "translate(" + xTrans[0] + "," + xTrans[1] + ")")
+					.call(this.xAxis());
+			} else {
+
+				xAxes.transition().duration(1000).ease("sin-in-out")
+					.attr("transform", "translate(" + xTrans[0] + "," + xTrans[1] + ")")
+
+					.call(this.xAxis());
+			}
+
+
+		};
+
 
 		BaseChart.prototype.renderChildren = function() {
 			for (var i = 0; i < this.children.length; i++) {
