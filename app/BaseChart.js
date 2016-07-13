@@ -189,7 +189,6 @@ define(["d3"],
 
 				xAxes.transition().duration(1000).ease("sin-in-out")
 					.attr("transform", "translate(" + xTrans[0] + "," + xTrans[1] + ")")
-
 					.call(this.xAxis());
 			}
 

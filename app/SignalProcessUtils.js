@@ -1,6 +1,7 @@
 /*SignalUtils.js
  *basic signal processing functions
  */
+'use strict';
 define([], function() {
 	function SignalUtils() {
 

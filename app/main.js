@@ -1,6 +1,6 @@
 'use strict';
-define(["jquery", "paper", "app/graph", "app/PositionSeries", "app/BaseChart"],
-    function($, paper, Graph, PositionSeries, BaseChart) {
+define(["jquery", "paper", "app/graph", "app/PositionSeries","app/AngleSeries"],
+    function($, paper, Graph, PositionSeries, AngleSeries) {
 
         /*var canvas = document.getElementById('canvas');
 
@@ -55,14 +55,16 @@ define(["jquery", "paper", "app/graph", "app/PositionSeries", "app/BaseChart"],
         let stylusXGraph = new Graph(450, 200, 2, 1000, "green", "stylus_graphs", "x position");
         let stylusYGraph = new Graph(450, 200, 2, 1000, "orange", "stylus_graphs", "y position");
         let speedGraph = new Graph(450, 200, 15, 25, "orange", "stylus_graphs", "speed");
-        var baseChart1 = new PositionSeries();
-        
+        var positionSeries = new PositionSeries();
+        var angleSeries = new AngleSeries();
+
 
         var json = $.getJSON("app/sample_stylus_data.json", stylusDataLoaded);
 
 
-        baseChart1.setWidth(1500).setHeight(200);
-        
+        positionSeries.setWidth(1500).setHeight(200);
+        angleSeries.setWidth(1500).setHeight(200);
+
         // if user is running mozilla then use it's built-in WebSocket
 
 
@@ -103,7 +105,7 @@ define(["jquery", "paper", "app/graph", "app/PositionSeries", "app/BaseChart"],
 
         function stylusDataLoaded(json){
             console.log("total datapoints",json.drawings.length);
-        var data = json.drawings.map(function(d,rank){
+        var positionData = json.drawings.map(function(d,rank){
             var position = [d.position];
             var stop = rank-1-200>0?rank-1-200:0;
             for(var i=rank-1;i>stop;i-=4){
@@ -115,9 +117,16 @@ define(["jquery", "paper", "app/graph", "app/PositionSeries", "app/BaseChart"],
             return {time:{x:d.time,y:0},position:position};
             
         });
-        console.log('data',data);
-        baseChart1.addChild(data).generate();
-        baseChart1.render();
+
+        var angleData = json.drawings.map(function(d,rank){
+            var angle = d.angle*180/Math.PI;
+            return {time:{x:d.time,y:0},angle:[{x:angle,y:0}]};
+            
+        });
+        positionSeries.addChild(positionData).generate();
+        positionSeries.render();
+        angleSeries.addChild(angleData).generate();
+        angleSeries.render();
         }
 
         function graphStylus(json){

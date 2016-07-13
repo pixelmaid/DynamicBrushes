@@ -44,7 +44,7 @@ define(["d3", "app/BaseChart"],
 				.transition().duration(1000).ease("sin-in-out")
 				.attr("width", this.width)
 				.attr("height", this.height)
-				.attr("transform", "translate(" + this.x + "," + this.y + ")");
+				.attr("transform", "translate(" + (this.x-this.width/2) + "," + this.y + ")");
 
 			if (this.container.selectAll("rect")[0].length < 1) {
 				this.container.append("rect")
