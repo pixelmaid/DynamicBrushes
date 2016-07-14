@@ -68,7 +68,7 @@ define(["jquery", "paper", "app/graph", "app/PositionSeries", "app/AngleSeries",
         positionSeries.setWidth(1000).setHeight(170);
         angleSeries.setWidth(1000).setHeight(70);
         pressureChart.setWidth(1000).setHeight(70);
-        speedChart.setWidth(1000).setHeight(70).setYDomain([1500,0]);
+        speedChart.setWidth(1000).setHeight(70).setYDomain([0,1500]);
 
 
         var toScroll = [positionSeries, angleSeries,pressureChart,speedChart];

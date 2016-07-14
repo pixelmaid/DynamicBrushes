@@ -24,10 +24,16 @@ define(["d3", "app/BaseChart", "app/PositionChart"],
       return this;
     };
 
+    PositionSeries.prototype.generate = function(){
+      BaseChart.prototype.generate.call(this);
+      this.generateChildren();
+    }
+
 
     PositionSeries.prototype.generateChildren = function() {
       var graphGroup = this.container.append("g");
-
+        graphGroup.attr("clip-path", "url(#clip"+this.id+")"); // clip the rectangle
+      
       var split = 76;
       var currentPos = 0;
       for (var i = 0; i < this.children.length; i += 25) {

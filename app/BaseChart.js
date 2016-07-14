@@ -15,18 +15,32 @@ define(["d3"],
 			this.yDomain = [0, 100];
 			this.container = null;
 			this.yMargin = 20;
-			this.xMargin= 20;
+			this.xMargin = 20;
 			this.parent = null;
+			this.clipPath = null;
+			this.id = this.guid();
 
 
 
 		};
 
-		BaseChart.prototype.xAxisTranslation = function(){
-      return [this.xMargin, this.height];
-    };
-		BaseChart.prototype.yAxisTranslation = function(){
-			return [this.xMargin, this.yMargin];
+		BaseChart.prototype.guid = function() {
+			function s4() {
+				return Math.floor((1 + Math.random()) * 0x10000)
+					.toString(16)
+					.substring(1);
+			}
+			return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+				s4() + '-' + s4() + s4() + s4();
+		};
+
+
+
+		BaseChart.prototype.xAxisTranslation = function() {
+			return [this.xMargin, this.height];
+		};
+		BaseChart.prototype.yAxisTranslation = function() {
+			return [this.xMargin, 0];
 		};
 
 		BaseChart.prototype.xValue = function(d) {
@@ -72,13 +86,13 @@ define(["d3"],
 		BaseChart.prototype.xScale = function() {
 			return d3.scale.linear()
 				.domain(this.xDomain)
-				.range([0, this.width-this.yMargin]);
+				.range([0, this.width - this.xMargin]);
 		};
 
 		BaseChart.prototype.yScale = function() {
 			return d3.scale.linear()
 				.domain(this.yDomain)
-				.range([0, this.height-this.xMargin]);
+				.range([this.height,this.yMargin]);
 		};
 
 		BaseChart.prototype.addChild = function(data) {
@@ -132,12 +146,20 @@ define(["d3"],
 				.attr("width", this.width + this.xMargin)
 				.attr("height", this.height + this.yMargin)
 				.attr("transform", "translate(" + this.x + "," + this.y + ")");
-			this.generateChildren();
+			
+			this.clipPath = this.container.append("clipPath") // define a clip path
+				.attr("id", "clip"+this.id); // give the clipPath an ID
+			this.clipPath.append("rect") // shape it as an ellipse
+				.attr("x", this.xMargin)
+				.attr("y", this.yMargin)
+				.attr("width", this.width - this.xMargin)
+				.attr("height", this.height - this.yMargin);
 
 		};
 
 		BaseChart.prototype.generateChildren = function() {
 			var graphGroup = this.container.append("g");
+        graphGroup.attr("clip-path", "url(#clip"+this.id+")"); // clip the rectangle
 
 			for (var i = 0; i < this.children.length; i++) {
 				this.children[i].setTarget(graphGroup).generate();
@@ -148,11 +170,18 @@ define(["d3"],
 			this.container
 				.transition().duration(500).ease("sin-in-out")
 				.attr("width", this.width + this.xMargin)
-				.attr("height", this.height +  this.xMargin)
+				.attr("height", this.height + this.xMargin)
 				.attr("transform", "translate(" + this.x + "," + this.y + ")");
 			this.renderAxes();
 
 			this.renderChildren();
+
+
+			this.container.selectAll("#clip")
+				.transition().duration(500).ease("sin-in-out")
+				.attr("width", this.width - this.xMargin)
+				.attr("height", this.height - this.yMargin);
+
 
 
 		};
@@ -172,9 +201,9 @@ define(["d3"],
 			} else {
 				yAxes
 					.transition().duration(500).ease("sin-in-out")
-										.attr("transform", "translate(" + this.yAxisTranslation()[0] + "," + this.yAxisTranslation()[1] + ")")
+					.attr("transform", "translate(" + this.yAxisTranslation()[0] + "," + this.yAxisTranslation()[1] + ")")
 
-					.call(this.yAxis());
+				.call(this.yAxis());
 			}
 
 			var xAxes = this.container.selectAll(".x.axis").filter(function() {

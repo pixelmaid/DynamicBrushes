@@ -5,7 +5,7 @@ define(["d3", "app/BaseChart"],
     var AreaChart = function() {
       BaseChart.call(this);
       this.xDomain = [0, 10];
-      this.yDomain = [6, 0];
+      this.yDomain = [0, 6];
       this.height = 56.5;
       this.yMargin = 20;
       this.xMargin = 20;
@@ -27,20 +27,24 @@ define(["d3", "app/BaseChart"],
       this.renderAxes();
       var area = d3.svg.area()
         .x(self.xMap(self))
-        .y0(self.height-self.yMargin)
+        .y0(this.height)
         .y1(self.yMap(self))
         .interpolate("linear");
     if (this.container.selectAll(".area")[0].length < 1) {
-      this.container.append("path")
+      var path = this.container.append("path")
+      
         .attr("class", "area")
         .attr("d", area(this.data))
         .attr("fill", "blue")
-         .attr("transform", "translate(" + this.xMargin + "," + this.yMargin + ")");
+        path.attr("clip-path", "url(#clip"+this.id+")");
+
       }
       else{
         var a =  this.container.selectAll(".area")
         .transition().duration(500).ease("sin-in-out")
-        .attr("d", area(this.data));
+        .attr("d", area(this.data))
+        .attr("clip-path", "url(#clip"+this.id+")");
+
       }
     };
 

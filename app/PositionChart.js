@@ -50,14 +50,17 @@ define(["d3", "app/BaseChart"],
 				.attr("height", this.height)
 				.attr("transform", "translate(" + (this.x-this.width/2) + "," + this.y + ")");
 
-			if (this.container.selectAll("rect")[0].length < 1) {
+
+
+			if (this.container.selectAll("#background")[0].length < 1) {
 				this.container.append("rect")
+				.attr("id","background")
 					.attr("width", this.width)
 					.attr("height", this.height)
 					.attr("fill", "white")
 					.attr("stroke", "black");
 			} else {
-				this.container.selectAll("rect")
+				this.container.selectAll("#background")
 					.transition().duration(500).ease("sin-in-out")
 					.attr("width", this.width)
 					.attr("height", this.height);
@@ -115,6 +118,12 @@ define(["d3", "app/BaseChart"],
 				return target.xScale()(s);
 			};
 
+		};
+
+		PositionChart.prototype.yScale = function() {
+			return d3.scale.linear()
+				.domain(this.yDomain)
+				.range([this.yMargin,this.height]);
 		};
 
 
