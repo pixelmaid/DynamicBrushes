@@ -1,4 +1,4 @@
-//PositionSeries.js
+//PositionChart.js
 'use strict';
 define(["d3", "app/BaseChart"],
 	function(d3, BaseChart) {

@@ -1,6 +1,6 @@
 'use strict';
-define(["jquery", "paper", "app/graph", "app/PositionSeries","app/AngleSeries"],
-    function($, paper, Graph, PositionSeries, AngleSeries) {
+define(["jquery", "paper", "app/graph", "app/PositionSeries", "app/AngleSeries","app/AreaChart"],
+    function($, paper, Graph, PositionSeries, AngleSeries, AreaChart) {
 
         /*var canvas = document.getElementById('canvas');
 
@@ -12,38 +12,38 @@ define(["jquery", "paper", "app/graph", "app/PositionSeries","app/AngleSeries"],
         resizeCanvas();
         paper.install(window);
         paper.setup(canvas);*/
-       
+
         var testData = [{
-        time: 3.43573,
-        pressure: 0,
-        angle: 0,
-        penDown: true,
-        speed: 0,
-        position: {
-            x: 635,
-            y: 779.5
-        }
-    }, {
-        time: 3.4621,
-        pressure: 0.694499,
-        angle: 0.394383,
-        penDown: true,
-        speed: 958.418,
-        position: {
-            x: 612,
-            y: 776.5
-        }
-    }, {
-        time: 3.46552,
-        pressure: 0.714583,
-        angle: 0.393666,
-        penDown: true,
-        speed: 498.768,
-        position: {
-            x: 609,
-            y: 776
-        }
-    }];
+            time: 3.43573,
+            pressure: 0,
+            angle: 0,
+            penDown: true,
+            speed: 0,
+            position: {
+                x: 635,
+                y: 779.5
+            }
+        }, {
+            time: 3.4621,
+            pressure: 0.694499,
+            angle: 0.394383,
+            penDown: true,
+            speed: 958.418,
+            position: {
+                x: 612,
+                y: 776.5
+            }
+        }, {
+            time: 3.46552,
+            pressure: 0.714583,
+            angle: 0.393666,
+            penDown: true,
+            speed: 498.768,
+            position: {
+                x: 609,
+                y: 776
+            }
+        }];
 
         let distanceGraph = new Graph(450, 200, 10, 1000, "red", "stroke_graphs", "distance");
         let strokeGraph = new Graph(450, 200, 10, 15, "blue", "stroke_graphs", "stroke count");
@@ -57,13 +57,44 @@ define(["jquery", "paper", "app/graph", "app/PositionSeries","app/AngleSeries"],
         let speedGraph = new Graph(450, 200, 15, 25, "orange", "stylus_graphs", "speed");
         var positionSeries = new PositionSeries();
         var angleSeries = new AngleSeries();
+        var pressureChart = new AreaChart();
 
 
         var json = $.getJSON("app/sample_stylus_data.json", stylusDataLoaded);
 
 
         positionSeries.setWidth(1500).setHeight(200);
-        angleSeries.setWidth(1500).setHeight(200);
+        angleSeries.setWidth(1500).setHeight(70);
+        pressureChart.setWidth(1500).setHeight(70);
+
+        var toScroll = [positionSeries, angleSeries,pressureChart];
+        document.onkeydown = checkKey;
+
+
+        function checkKey(e) {
+            var start, end;
+            e = e || window.event;
+
+            for (var i = 0; i < toScroll.length; i++) {
+                var self = toScroll[i];
+                if (e.keyCode == '38') {
+                    // up arrow
+                } else if (e.keyCode == '40') {
+                    // down arrow
+                } else if (e.keyCode == '37') {
+                    start = self.xDomain[0] - 1; //; < 0 ? 0 : self.xDomain[0] - 10;
+                    end = self.xDomain[1] - 1;
+                    self.setXDomain([start, end]);
+                } else if (e.keyCode == '39') {
+                    start = self.xDomain[0] + 1;
+                    end = self.xDomain[1] + 1; //<0?0:self.xDomain[0]-10;
+                    self.setXDomain([start, end]);
+                }
+            }
+            for (i = 0; i < toScroll.length; i++) {
+                toScroll[i].render();
+            }
+        }
 
         // if user is running mozilla then use it's built-in WebSocket
 
@@ -89,58 +120,79 @@ define(["jquery", "paper", "app/graph", "app/PositionSeries","app/AngleSeries"],
             // try to decode json (I assume that each message from server is json)
             //try {
             var data = JSON.parse(message.data);
-                                    console.log("data.type",data.type);
+            console.log("data.type", data.type);
 
             if (data.type == "stroke_data") {
                 graphStroke(data);
-            }
-            else if(data.type =="stylus_data"){
+            } else if (data.type == "stylus_data") {
                 graphStylus(data);
             }
         };
 
-        function loadData(file){
+        function loadData(file) {
 
         }
 
-        function stylusDataLoaded(json){
-            console.log("total datapoints",json.drawings.length);
-        var positionData = json.drawings.map(function(d,rank){
-            var position = [d.position];
-            var stop = rank-1-200>0?rank-1-200:0;
-            for(var i=rank-1;i>stop;i-=4){
-                if(i>=0){
-                    position.unshift(json.drawings[i].position);
+        function stylusDataLoaded(json) {
+            console.log("total datapoints", json.drawings.length);
+            var positionData = json.drawings.map(function(d, rank) {
+                var position = [d.position];
+                var stop = rank - 1 - 200 > 0 ? rank - 1 - 200 : 0;
+                for (var i = rank - 1; i > stop; i -= 4) {
+                    if (i >= 0) {
+                        position.unshift(json.drawings[i].position);
+                    }
                 }
-            }
-            //console.log(position)
-            return {time:{x:d.time,y:0},position:position};
-            
-        });
+                //console.log(position)
+                return {
+                    time: {
+                        x: d.time,
+                        y: 0
+                    },
+                    position: position
+                };
 
-        var angleData = json.drawings.map(function(d,rank){
-            var angle = d.angle*180/Math.PI;
-            return {time:{x:d.time,y:0},angle:[{x:angle,y:0}]};
-            
-        });
-        positionSeries.addChild(positionData).generate();
-        positionSeries.render();
-        angleSeries.addChild(angleData).generate();
-        angleSeries.render();
+            });
+
+            var angleData = json.drawings.map(function(d, rank) {
+                var angle = d.angle * 180 / Math.PI;
+                return {
+                    time: {
+                        x: d.time,
+                        y: 0
+                    },
+                    angle: [{
+                        x: angle,
+                        y: 0
+                    }]
+                };
+
+            });
+
+            var pressureData = json.drawings.map(function(d, rank) {
+                return {x:d.time,y:d.pressure};
+            });
+
+            positionSeries.addChild(positionData).generate();
+            positionSeries.render();
+            angleSeries.addChild(angleData).generate();
+            angleSeries.render();
+            pressureChart.setData(pressureData).generate();
+            pressureChart.render();
         }
 
-        function graphStylus(json){
+        function graphStylus(json) {
             var data = json.drawings;
-            var pressureData = data.map(function(d,rank){
+            var pressureData = data.map(function(d, rank) {
                 return {
-                    x:d.time,
-                    y:d.pressure
+                    x: d.time,
+                    y: d.pressure
                 };
             });
-            var speedData = data.map(function(d,rank){
+            var speedData = data.map(function(d, rank) {
                 return {
-                    x:d.time,
-                    y:d.speed
+                    x: d.time,
+                    y: d.speed
                 };
             });
             pressure.setData([pressureData]);

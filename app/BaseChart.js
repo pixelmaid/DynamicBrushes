@@ -21,7 +21,7 @@ define(["d3"],
 		};
 
 		BaseChart.prototype.xAxisTranslation = function(){
-			return [0, (this.height / 2 - 40)];
+			return [0, 0];
 		};
 		BaseChart.prototype.yAxisTranslation = function(){
 			return [0, 0];

@@ -1,4 +1,4 @@
-//PositionSeries.js
+//AngleChart.js
 'use strict';
 define(["d3", "app/BaseChart", "app/SignalProcessUtils"],
 	function(d3, BaseChart, SignalUtils) {
@@ -59,7 +59,13 @@ define(["d3", "app/BaseChart", "app/SignalProcessUtils"],
 					.attr("stroke", "black");
 
 			}
-			//this.renderAxes();
+			else{
+				this.container.selectAll("line")
+				.transition().duration(1000).ease("sin-in-out")
+				.attr("x2", p2.x)
+				.attr("y2", p2.y);
+
+			}
 
 		};
 

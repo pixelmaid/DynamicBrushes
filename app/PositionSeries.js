@@ -8,28 +8,7 @@ define(["d3", "app/BaseChart", "app/PositionChart"],
       this.yDomain = [0, 1];
       this.height = 56.5;
      
-      document.onkeydown = checkKey;
-      var self = this;
-
-      function checkKey(e) {
-        var start, end;
-        e = e || window.event;
-
-        if (e.keyCode == '38') {
-          // up arrow
-        } else if (e.keyCode == '40') {
-          // down arrow
-        } else if (e.keyCode == '37') {
-          start = self.xDomain[0] - 1;//; < 0 ? 0 : self.xDomain[0] - 10;
-          end = self.xDomain[1]-1;
-          self.setXDomain([start, end]).render();
-        } else if (e.keyCode == '39') {
-          start = self.xDomain[0]+1;
-          end = self.xDomain[1]+ 1; //<0?0:self.xDomain[0]-10;
-          self.setXDomain([start, end]).render();
-        }
-
-      }
+      
     };
 
     PositionSeries.prototype = new BaseChart();
@@ -70,7 +49,6 @@ define(["d3", "app/BaseChart", "app/PositionChart"],
           var x = this.xMap(this)(this.data[i].time);
         if ((i === 0) || (x >= currentPos)) {
         
-          console.log(x,this.data[i].time,i);
           this.children[i].setX(x).render();
          
             currentPos = x + split;
@@ -81,6 +59,9 @@ define(["d3", "app/BaseChart", "app/PositionChart"],
 
 
 
+    PositionSeries.prototype.xAxisTranslation = function(){
+      return [0, (this.height / 2 - 40)];
+    };
     return PositionSeries;
 
   });

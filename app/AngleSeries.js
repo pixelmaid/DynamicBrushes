@@ -16,6 +16,9 @@ define(["d3", "app/PositionSeries", "app/AngleChart"],
       this.children.push(child);
       return this;
     };
+    AngleSeries.prototype.xAxisTranslation = function(){
+      return [0, this.height-20];
+    };
 
 
     return AngleSeries;
