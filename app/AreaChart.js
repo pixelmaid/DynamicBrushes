@@ -5,9 +5,10 @@ define(["d3", "app/BaseChart"],
     var AreaChart = function() {
       BaseChart.call(this);
       this.xDomain = [0, 10];
-      this.yDomain = [0, 6];
+      this.yDomain = [6, 0];
       this.height = 56.5;
-
+      this.yMargin = 20;
+      this.xMargin = 20;
 
     };
 
@@ -19,30 +20,45 @@ define(["d3", "app/BaseChart"],
     AreaChart.prototype.render = function() {
       var self = this;
       this.container
-        .transition().duration(1000).ease("sin-in-out")
-        .attr("width", this.width)
-        .attr("height", this.height)
+        .transition().duration(500).ease("sin-in-out")
+        .attr("width", this.width+this.xMargin)
+        .attr("height", this.height+this.yMargin)
         .attr("transform", "translate(" + this.x + "," + this.y + ")");
       this.renderAxes();
       var area = d3.svg.area()
         .x(self.xMap(self))
-        .y0(self.height)
+        .y0(self.height-self.yMargin)
         .y1(self.yMap(self))
         .interpolate("linear");
-
+    if (this.container.selectAll(".area")[0].length < 1) {
       this.container.append("path")
         .attr("class", "area")
         .attr("d", area(this.data))
-        .attr("fill", "blue");
+        .attr("fill", "blue")
+         .attr("transform", "translate(" + this.xMargin + "," + this.yMargin + ")");
+      }
+      else{
+        var a =  this.container.selectAll(".area")
+        .transition().duration(500).ease("sin-in-out")
+        .attr("d", area(this.data));
+      }
     };
 
-    AreaChart.prototype.xAxisTranslation = function() {
-      return [0, (this.height / 2 - 40)];
+    AreaChart.prototype.xAxisTranslation = function(){
+      return [this.xMargin, this.height];
     };
 
+AreaChart.prototype.yAxis = function() {
+
+      var yAxis = d3.svg.axis()
+        .scale(this.yScale())
+        .orient("left")
+        .ticks(4);
+      return yAxis;
+    };
     AreaChart.prototype.yMap = function(target) {
       return function(d) {
-        return target.height-target.yScale()(target.yValue(d));
+        return target.yScale()(target.yValue(d));
       };
     };
 

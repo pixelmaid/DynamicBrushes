@@ -9,6 +9,9 @@ define(["d3", "app/BaseChart"],
 			this.yDomain = [0, 1024];
 			this.width = 75;
 			this.height = 56.5;
+			this.yMargin = 0;
+			this.xMargin= 0;
+			this.formerHeight = 0;
 
 
 		};
@@ -24,13 +27,14 @@ define(["d3", "app/BaseChart"],
 			var self = this;
 
 			this.container.on('mouseenter', function() {
-				self.setWidth(200).setHeight(150).render();
+				self.formerHeight = self.height;
+				self.setWidth(200).setHeight(150).setY(self.parent.yMargin).render();
 				self.target.node().appendChild(self.container.node());
 
 
 			});
 			this.container.on('mouseleave', function() {
-				self.setWidth(75).setHeight(56.5).render();
+				self.setWidth(75).setHeight(56.5).setY(self.parent.yMargin+self.parent.height/2-self.formerHeight/2).render();
 			});
 
 		};
@@ -41,7 +45,7 @@ define(["d3", "app/BaseChart"],
 		PositionChart.prototype.render = function() {
 			var self = this;
 			this.container
-				.transition().duration(1000).ease("sin-in-out")
+				.transition().duration(500).ease("sin-in-out")
 				.attr("width", this.width)
 				.attr("height", this.height)
 				.attr("transform", "translate(" + (this.x-this.width/2) + "," + this.y + ")");
@@ -54,7 +58,7 @@ define(["d3", "app/BaseChart"],
 					.attr("stroke", "black");
 			} else {
 				this.container.selectAll("rect")
-					.transition().duration(1000).ease("sin-in-out")
+					.transition().duration(500).ease("sin-in-out")
 					.attr("width", this.width)
 					.attr("height", this.height);
 
@@ -89,7 +93,7 @@ define(["d3", "app/BaseChart"],
 				});
 			} else {
 				var dots = this.container.selectAll(".dot")
-					.transition().duration(1000).ease("sin-in-out")
+					.transition().duration(500).ease("sin-in-out")
 					.attr("cx", self.xMap(self))
 					.attr("cy", self.yMap(self))
 					.attr("r", function(d, i) {
@@ -132,14 +136,14 @@ define(["d3", "app/BaseChart"],
 				.orient("left")
 				.innerTickSize(-this.width)
 				.outerTickSize(0)
-				.ticks(14)
+				.ticks(4)
 				.tickFormat("");
 			return yAxis;
 		};
 
 PositionChart.prototype.xAxisTranslation = function(){
 			return [0, this.height];
-		}
+		};
 		
 
 		return PositionChart;

@@ -5,7 +5,7 @@ define(["d3", "app/BaseChart", "app/PositionChart"],
     var PositionSeries = function() {
       BaseChart.call(this);
       this.xDomain = [0, 10];
-      this.yDomain = [0, 1];
+      this.yDomain = [1, 0];
       this.height = 56.5;
      
       
@@ -18,6 +18,8 @@ define(["d3", "app/BaseChart", "app/PositionChart"],
     PositionSeries.prototype.addSingleChild = function(data) {
       var child = new PositionChart();
       child.setData(data.position);
+      child.parent = this;
+
       this.children.push(child);
       return this;
     };
@@ -46,10 +48,11 @@ define(["d3", "app/BaseChart", "app/PositionChart"],
       var split = 76;
       var currentPos = 0;
       for (var i = 0; i < this.children.length; i += 25) {
-          var x = this.xMap(this)(this.data[i].time);
+          var x = this.xMap(this)(this.data[i].time)+this.xMargin;
+          var y = this.yMargin+this.height/2-this.children[i].height/2;
         if ((i === 0) || (x >= currentPos)) {
         
-          this.children[i].setX(x).render();
+          this.children[i].setX(x).setY(y).render();
          
             currentPos = x + split;
           
@@ -59,9 +62,6 @@ define(["d3", "app/BaseChart", "app/PositionChart"],
 
 
 
-    PositionSeries.prototype.xAxisTranslation = function(){
-      return [0, (this.height / 2 - 40)];
-    };
     return PositionSeries;
 
   });

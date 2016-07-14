@@ -14,17 +14,19 @@ define(["d3"],
 			this.xDomain = [0, 100];
 			this.yDomain = [0, 100];
 			this.container = null;
-			
+			this.yMargin = 20;
+			this.xMargin= 20;
+			this.parent = null;
 
 
 
 		};
 
 		BaseChart.prototype.xAxisTranslation = function(){
-			return [0, 0];
-		};
+      return [this.xMargin, this.height];
+    };
 		BaseChart.prototype.yAxisTranslation = function(){
-			return [0, 0];
+			return [this.xMargin, this.yMargin];
 		};
 
 		BaseChart.prototype.xValue = function(d) {
@@ -53,6 +55,7 @@ define(["d3"],
 
 			var yAxis = d3.svg.axis()
 				.scale(this.yScale())
+				.ticks(0)
 				.orient("left");
 
 			return yAxis;
@@ -69,13 +72,13 @@ define(["d3"],
 		BaseChart.prototype.xScale = function() {
 			return d3.scale.linear()
 				.domain(this.xDomain)
-				.range([0, this.width]);
+				.range([0, this.width-this.yMargin]);
 		};
 
 		BaseChart.prototype.yScale = function() {
 			return d3.scale.linear()
 				.domain(this.yDomain)
-				.range([0, this.height]);
+				.range([0, this.height-this.xMargin]);
 		};
 
 		BaseChart.prototype.addChild = function(data) {
@@ -118,6 +121,7 @@ define(["d3"],
 
 		BaseChart.prototype.addSingleChild = function(data) {
 			var child = BaseChart().data(data);
+			child.parent = this;
 			this.children.push(child);
 			return this;
 
@@ -125,8 +129,8 @@ define(["d3"],
 
 		BaseChart.prototype.generate = function() {
 			this.container = this.target.append(this.type)
-				.attr("width", this.width + 30)
-				.attr("height", this.height)
+				.attr("width", this.width + this.xMargin)
+				.attr("height", this.height + this.yMargin)
 				.attr("transform", "translate(" + this.x + "," + this.y + ")");
 			this.generateChildren();
 
@@ -142,9 +146,9 @@ define(["d3"],
 
 		BaseChart.prototype.render = function() {
 			this.container
-				.transition().duration(1000).ease("sin-in-out")
-				.attr("width", this.width)
-				.attr("height", this.height)
+				.transition().duration(500).ease("sin-in-out")
+				.attr("width", this.width + this.xMargin)
+				.attr("height", this.height +  this.xMargin)
 				.attr("transform", "translate(" + this.x + "," + this.y + ")");
 			this.renderAxes();
 
@@ -167,7 +171,7 @@ define(["d3"],
 				.call(this.yAxis());
 			} else {
 				yAxes
-					.transition().duration(1000).ease("sin-in-out")
+					.transition().duration(500).ease("sin-in-out")
 										.attr("transform", "translate(" + this.yAxisTranslation()[0] + "," + this.yAxisTranslation()[1] + ")")
 
 					.call(this.yAxis());
@@ -178,7 +182,6 @@ define(["d3"],
 			});
 			// if no axis exists, create one, otherwise update it
 			var xTrans = this.xAxisTranslation();
-			console.log("rendering axes",xTrans, "translate(" + xTrans[0] + "," + xTrans[1] + ")")
 
 			if (xAxes[0].length < 1) {
 				this.container.append("g")
@@ -187,7 +190,7 @@ define(["d3"],
 					.call(this.xAxis());
 			} else {
 
-				xAxes.transition().duration(1000).ease("sin-in-out")
+				xAxes.transition().duration(500).ease("sin-in-out")
 					.attr("transform", "translate(" + xTrans[0] + "," + xTrans[1] + ")")
 					.call(this.xAxis());
 			}

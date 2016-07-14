@@ -45,7 +45,7 @@ define(["jquery", "paper", "app/graph", "app/PositionSeries", "app/AngleSeries",
             }
         }];
 
-        let distanceGraph = new Graph(450, 200, 10, 1000, "red", "stroke_graphs", "distance");
+       /* let distanceGraph = new Graph(450, 200, 10, 1000, "red", "stroke_graphs", "distance");
         let strokeGraph = new Graph(450, 200, 10, 15, "blue", "stroke_graphs", "stroke count");
 
         let xGraph = new Graph(450, 200, 2, 1000, "green", "stroke_graphs", "x position");
@@ -54,20 +54,24 @@ define(["jquery", "paper", "app/graph", "app/PositionSeries", "app/AngleSeries",
         let pressure = new Graph(450, 200, 2, 6, "orange", "stylus_graphs", "pressure");
         let stylusXGraph = new Graph(450, 200, 2, 1000, "green", "stylus_graphs", "x position");
         let stylusYGraph = new Graph(450, 200, 2, 1000, "orange", "stylus_graphs", "y position");
-        let speedGraph = new Graph(450, 200, 15, 25, "orange", "stylus_graphs", "speed");
+        let speedGraph = new Graph(450, 200, 15, 25, "orange", "stylus_graphs", "speed");*/
+
         var positionSeries = new PositionSeries();
         var angleSeries = new AngleSeries();
         var pressureChart = new AreaChart();
+        var speedChart = new AreaChart();
 
 
         var json = $.getJSON("app/sample_stylus_data.json", stylusDataLoaded);
 
 
-        positionSeries.setWidth(1500).setHeight(200);
-        angleSeries.setWidth(1500).setHeight(70);
-        pressureChart.setWidth(1500).setHeight(70);
+        positionSeries.setWidth(1000).setHeight(170);
+        angleSeries.setWidth(1000).setHeight(70);
+        pressureChart.setWidth(1000).setHeight(70);
+        speedChart.setWidth(1000).setHeight(70).setYDomain([1500,0]);
 
-        var toScroll = [positionSeries, angleSeries,pressureChart];
+
+        var toScroll = [positionSeries, angleSeries,pressureChart,speedChart];
         document.onkeydown = checkKey;
 
 
@@ -172,6 +176,9 @@ define(["jquery", "paper", "app/graph", "app/PositionSeries", "app/AngleSeries",
             var pressureData = json.drawings.map(function(d, rank) {
                 return {x:d.time,y:d.pressure};
             });
+              var speedData = json.drawings.map(function(d, rank) {
+                return {x:d.time,y:d.speed};
+            });
 
             positionSeries.addChild(positionData).generate();
             positionSeries.render();
@@ -179,6 +186,8 @@ define(["jquery", "paper", "app/graph", "app/PositionSeries", "app/AngleSeries",
             angleSeries.render();
             pressureChart.setData(pressureData).generate();
             pressureChart.render();
+            speedChart.setData(speedData).generate();
+            speedChart.render();
         }
 
         function graphStylus(json) {
@@ -195,8 +204,8 @@ define(["jquery", "paper", "app/graph", "app/PositionSeries", "app/AngleSeries",
                     y: d.speed
                 };
             });
-            pressure.setData([pressureData]);
-            speedGraph.setData([speedData]);
+            //pressure.setData([pressureData]);
+            //speedGraph.setData([speedData]);
 
 
         }
@@ -249,10 +258,10 @@ define(["jquery", "paper", "app/graph", "app/PositionSeries", "app/AngleSeries",
             //console.log("strokeData", strokeData);
             //console.log("distanceData", distanceData);
 
-            distanceGraph.setData([distanceData]);
-            xGraph.setData(xPositionData);
-            yGraph.setData(yPositionData);
-            strokeGraph.setData([strokeData]);
+            //distanceGraph.setData([distanceData]);
+            //xGraph.setData(xPositionData);
+            //yGraph.setData(yPositionData);
+            //strokeGraph.setData([strokeData]);
 
 
 
