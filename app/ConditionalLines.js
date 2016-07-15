@@ -51,29 +51,21 @@ define(["svg", "jquery", "app/BaseChart"],
 					var y = self.parent.inverseYScale()(data.offsetY);
 
 					if (c0.attr("class") == "selected"){
-											console.log("mouse dimensions: x=",x,"y=",y);
-
 						self.rectX1 = x;
 						self.rectY1 = y;
 						self.render();
 					}
 					else if (c1.attr("class") == "selected"){
-											console.log("mouse dimensions: x=",x,"y=",y);
-
 						self.rectX1=x;
 						self.rectY2=y;
 						self.render();
 					}
 					else if (c2.attr("class") == "selected"){
-											console.log("mouse dimensions: x=",x,"y=",y);
-
 						self.rectX2=x;
 						self.rectY2=y;
 						self.render();
 					}
 					else if (c3.attr("class") == "selected"){
-											console.log("mouse dimensions: x=",x,"y=",y);
-
 						self.rectX2=x;
 						self.rectY1=y;
 						self.render();

@@ -10,8 +10,14 @@ define(["d3", "app/BaseChart", "app/ConditionalLines"],
       this.height = 56.5;
       this.yMargin = 20;
       this.xMargin = 20;
-      this.condition = new ConditionalLines();
-      this.condition.parent = this; //TODO: change so parent is passed via constructor
+      this.conditions =  [];
+      this.conditionNum = 2;
+      for(var i=0;i<this.conditionNum;i++){
+        var cond = new ConditionalLines();
+        this.conditions.push(cond);
+        cond.parent = this; //TODO: change so parent is passed via constructor
+
+      }
 
     };
 
@@ -55,18 +61,20 @@ define(["d3", "app/BaseChart", "app/ConditionalLines"],
       
       var bbox = path.node().getBBox();
       console.log("bbox dimensions =",bbox);
+      for(var i=0;i<this.conditions.length;i++){
       var condGroup = this.container.append("g")
       .attr("class", "condGroup")
       .attr("id", "cond_"+this.id)
       .attr("clip-path", "url(#clip"+this.id+")");
-      this.condition.setTarget(condGroup)
+     this.conditions[i].setTarget(condGroup)
       .setWidth(this.width+this.xMargin)
       .setHeight(this.height+this.yMargin)
-      .setRectDimensions(bbox)
-      .render();     
+      .setRectDimensions(bbox);
+      }   
     }
-     
-      this.condition.render();
+     for(var j=0;j<this.conditions.length;j++){
+      this.conditions[j].render();
+    }
     
 
     };
