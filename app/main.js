@@ -184,10 +184,11 @@ define(["jquery", "paper", "app/graph", "app/PositionSeries", "app/AngleSeries",
             positionSeries.render();
             angleSeries.addChild(angleData).generate();
             angleSeries.render();
-            pressureChart.setData(pressureData).generate();
-            pressureChart.render();
             speedChart.setData(speedData).generate();
             speedChart.render();
+            pressureChart.setData(pressureData).generate();
+            pressureChart.render();
+            
         }
 
         function graphStylus(json) {

@@ -30,7 +30,7 @@ define(["d3", "app/BaseChart", "app/SignalProcessUtils"],
 		AngleChart.prototype.render = function() {
 			var self = this;
 			this.container
-				.transition().duration(500).ease("sin-in-out")
+				.transition().duration(500)
 				.attr("width", this.width)
 				.attr("height", this.height)
 				.attr("transform", "translate(" + this.x + "," + (this.y + this.height / 2) + ")");
@@ -42,7 +42,7 @@ define(["d3", "app/BaseChart", "app/SignalProcessUtils"],
 					.attr("stroke", "black");
 			} else {
 				this.container.selectAll("circle")
-					.transition().duration(500).ease("sin-in-out")
+					.transition().duration(500)
 					.attr("r", this.width / 2);
 
 			}
@@ -61,7 +61,7 @@ define(["d3", "app/BaseChart", "app/SignalProcessUtils"],
 			}
 			else{
 				this.container.selectAll("line")
-				.transition().duration(500).ease("sin-in-out")
+				.transition().duration(500)
 				.attr("x2", p2.x)
 				.attr("y2", p2.y);
 

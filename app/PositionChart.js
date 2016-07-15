@@ -45,7 +45,7 @@ define(["d3", "app/BaseChart"],
 		PositionChart.prototype.render = function() {
 			var self = this;
 			this.container
-				.transition().duration(500).ease("sin-in-out")
+				.transition().duration(500)
 				.attr("width", this.width)
 				.attr("height", this.height)
 				.attr("transform", "translate(" + (this.x-this.width/2) + "," + this.y + ")");
@@ -61,7 +61,7 @@ define(["d3", "app/BaseChart"],
 					.attr("stroke", "black");
 			} else {
 				this.container.selectAll("#background")
-					.transition().duration(500).ease("sin-in-out")
+					.transition().duration(500)
 					.attr("width", this.width)
 					.attr("height", this.height);
 
@@ -96,7 +96,7 @@ define(["d3", "app/BaseChart"],
 				});
 			} else {
 				var dots = this.container.selectAll(".dot")
-					.transition().duration(500).ease("sin-in-out")
+					.transition().duration(500)
 					.attr("cx", self.xMap(self))
 					.attr("cy", self.yMap(self))
 					.attr("r", function(d, i) {

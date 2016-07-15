@@ -11,6 +11,7 @@ requirejs.config({
 		'emitter': 'EventEmitter',
 		'heir': 'heir',
 		'd3' : 'd3.min',
+		'svg':'svg',
 		app: '../app'
 	}
 });

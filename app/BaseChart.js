@@ -7,7 +7,7 @@ define(["d3"],
 			this.height = 100;
 			this.children = [];
 			this.data = [];
-			this.target = d3.select("body");
+			this.target = d3.select("#graphs");
 			this.x = 0;
 			this.y = 0;
 			this.type = "svg";
@@ -19,6 +19,7 @@ define(["d3"],
 			this.parent = null;
 			this.clipPath = null;
 			this.id = this.guid();
+			this.selected = false;
 
 
 
@@ -89,10 +90,22 @@ define(["d3"],
 				.range([0, this.width - this.xMargin]);
 		};
 
+
+		BaseChart.prototype.inverseXScale = function() {
+			return d3.scale.linear()
+				.range(this.xDomain)
+				.domain([0, this.width - this.xMargin]);
+		};
 		BaseChart.prototype.yScale = function() {
 			return d3.scale.linear()
 				.domain(this.yDomain)
 				.range([this.height,this.yMargin]);
+		};
+
+		BaseChart.prototype.inverseYScale = function() {
+			return d3.scale.linear()
+				.range(this.yDomain)
+				.domain([this.height,this.yMargin]);
 		};
 
 		BaseChart.prototype.addChild = function(data) {
@@ -168,7 +181,7 @@ define(["d3"],
 
 		BaseChart.prototype.render = function() {
 			this.container
-				.transition().duration(500).ease("sin-in-out")
+				.transition().duration(500)
 				.attr("width", this.width + this.xMargin)
 				.attr("height", this.height + this.xMargin)
 				.attr("transform", "translate(" + this.x + "," + this.y + ")");
@@ -178,7 +191,7 @@ define(["d3"],
 
 
 			this.container.selectAll("#clip")
-				.transition().duration(500).ease("sin-in-out")
+				.transition().duration(500)
 				.attr("width", this.width - this.xMargin)
 				.attr("height", this.height - this.yMargin);
 
@@ -200,7 +213,7 @@ define(["d3"],
 				.call(this.yAxis());
 			} else {
 				yAxes
-					.transition().duration(500).ease("sin-in-out")
+					.transition().duration(500)
 					.attr("transform", "translate(" + this.yAxisTranslation()[0] + "," + this.yAxisTranslation()[1] + ")")
 
 				.call(this.yAxis());
@@ -219,7 +232,7 @@ define(["d3"],
 					.call(this.xAxis());
 			} else {
 
-				xAxes.transition().duration(500).ease("sin-in-out")
+				xAxes.transition().duration(500)
 					.attr("transform", "translate(" + xTrans[0] + "," + xTrans[1] + ")")
 					.call(this.xAxis());
 			}
