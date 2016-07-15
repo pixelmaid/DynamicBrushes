@@ -49,39 +49,33 @@ define(["svg", "jquery", "app/BaseChart"],
 				$(document).mousemove(function(data) {
 					var x = self.parent.inverseXScale()(data.offsetX);
 					var y = self.parent.inverseYScale()(data.offsetY);
+
 					if (c0.attr("class") == "selected"){
+											console.log("mouse dimensions: x=",x,"y=",y);
+
 						self.rectX1 = x;
 						self.rectY1 = y;
 						self.render();
 					}
 					else if (c1.attr("class") == "selected"){
-						console.log(data);
-						self.setRectDimensions({
-							x: data.offsetX,
-							y: self.rectY1,
-							width: self.rectWidth+(self.rectX1-data.offsetX),
-							height: data.offsetY-self.rectY1
-						});
+											console.log("mouse dimensions: x=",x,"y=",y);
+
+						self.rectX1=x;
+						self.rectY2=y;
 						self.render();
 					}
 					else if (c2.attr("class") == "selected"){
-						console.log(data);
-						self.setRectDimensions({
-							x: self.rectX1,
-							y: self.rectY1,
-							width: data.offsetX-self.rectX1,
-							height: data.offsetY-self.rectY1
-						});
+											console.log("mouse dimensions: x=",x,"y=",y);
+
+						self.rectX2=x;
+						self.rectY2=y;
 						self.render();
 					}
 					else if (c3.attr("class") == "selected"){
-						console.log(data);
-						self.setRectDimensions({
-							x: self.rectX1,
-							y: data.offsetY1,
-							width: data.offsetX-self.rectX1,
-							height:self.rectHeight+(self.rectY1-data.offsetY)
-						});
+											console.log("mouse dimensions: x=",x,"y=",y);
+
+						self.rectX2=x;
+						self.rectY1=y;
 						self.render();
 					}
 				});
