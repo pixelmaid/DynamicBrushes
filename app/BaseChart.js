@@ -1,7 +1,7 @@
 //BaseChart.js
 'use strict';
-define(["d3"],
-	function(d3) {
+define(["d3", "app/ConditionalLines"],
+	function(d3, ConditionalLines) {
 		var BaseChart = function() {
 			this.width = 100;
 			this.height = 100;
@@ -20,10 +20,12 @@ define(["d3"],
 			this.clipPath = null;
 			this.id = this.guid();
 			this.selected = false;
+			this.conditionNum = 1;
 
-
+			this.conditionType = ConditionalLines;
 
 		};
+
 
 		BaseChart.prototype.guid = function() {
 			function s4() {
@@ -99,13 +101,13 @@ define(["d3"],
 		BaseChart.prototype.yScale = function() {
 			return d3.scale.linear()
 				.domain(this.yDomain)
-				.range([this.height,this.yMargin]);
+				.range([this.height, this.yMargin]);
 		};
 
 		BaseChart.prototype.inverseYScale = function() {
 			return d3.scale.linear()
 				.range(this.yDomain)
-				.domain([this.height,this.yMargin]);
+				.domain([this.height, this.yMargin]);
 		};
 
 		BaseChart.prototype.addChild = function(data) {
@@ -155,13 +157,22 @@ define(["d3"],
 		};
 
 		BaseChart.prototype.generate = function() {
+this.conditions = [];
+			for (var i = 0; i < this.conditionNum; i++) {
+				var cond = new this.conditionType();
+				console.log("condition type",cond.name);
+				this.conditions.push(cond);
+				cond.parent = this; //TODO: change so parent is passed via constructor
+
+			}
+
 			this.container = this.target.append(this.type)
 				.attr("width", this.width + this.xMargin)
 				.attr("height", this.height + this.yMargin)
 				.attr("transform", "translate(" + this.x + "," + this.y + ")");
-			
+
 			this.clipPath = this.container.append("clipPath") // define a clip path
-				.attr("id", "clip"+this.id); // give the clipPath an ID
+				.attr("id", "clip" + this.id); // give the clipPath an ID
 			this.clipPath.append("rect") // shape it as an ellipse
 				.attr("x", this.xMargin)
 				.attr("y", this.yMargin)
@@ -172,7 +183,7 @@ define(["d3"],
 
 		BaseChart.prototype.generateChildren = function() {
 			var graphGroup = this.container.append("g");
-        graphGroup.attr("clip-path", "url(#clip"+this.id+")"); // clip the rectangle
+			graphGroup.attr("clip-path", "url(#clip" + this.id + ")"); // clip the rectangle
 
 			for (var i = 0; i < this.children.length; i++) {
 				this.children[i].setTarget(graphGroup).generate();
@@ -319,6 +330,16 @@ define(["d3"],
 			}
 			this.xDomain = value;
 			return this;
+		};
+
+
+		BaseChart.prototype.setConditionType = function(value) {
+			if (!arguments.length) {
+				return this;
+			}
+			this.conditionType = value;
+			return this;
+
 		};
 
 

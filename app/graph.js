@@ -59,15 +59,15 @@ define(["d3"],
         .range([height - margin.top - margin.bottom, 0]);
 
 
-      this.line = d3.svg.line()
-        .x(function(d) {
-          //console.log("x =",d.x,xScale(d.x));
-          return self.xScale(d.x);
-        })
-        .y(function(d) {
-          //console.log("y =",d.y,yScale(d.y));
-          return self.yScale(d.y);
-        });
+        this.line = d3.svg.line()
+          .x(function(d) {
+            //console.log("x =",d.x,xScale(d.x));
+            return self.xScale(d.x);
+          })
+          .y(function(d) {
+            //console.log("y =",d.y,yScale(d.y));
+            return self.yScale(d.y);
+          });
 
       this.height = height;
       this.width = width;

@@ -1,9 +1,8 @@
 //ConditionalLines.js
 'use strict';
-define(["svg", "jquery", "app/BaseChart"],
+define(["svg", "jquery"],
 	function(svg, $, BaseChart) {
 		var ConditionalLines = function() {
-			BaseChart.call(this);
 			this.rect = null; //svg rectangle
 			this.selectionUIs = null;
 			this.draw = null; //svg.js drawing object
@@ -11,19 +10,17 @@ define(["svg", "jquery", "app/BaseChart"],
 			this.rectY1 = 0;
 			this.rectX2 = 100;
 			this.rectY2 = 100;
+			this.target = null;
+			this.name = "line";
+
 
 
 		};
 
-		ConditionalLines.prototype = new BaseChart();
-
-		ConditionalLines.prototype.constructor = ConditionalLines;
 
 		ConditionalLines.prototype.render = function() {
-			console.log("target id", this.target.attr("id"));
 			var self = this;
 			if (!this.rect) {
-				console.log("no rect on render");
 				this.draw = svg(this.target.attr("id")).size(this.width, this.height);
 				this.rect = this.draw.rect(1, 1).attr({
 					fill: '#f06',
@@ -113,6 +110,47 @@ define(["svg", "jquery", "app/BaseChart"],
 
 			this.rectY2 = this.parent.inverseYScale()(value.y+value.height);
 
+			return this;
+		};
+
+		ConditionalLines.prototype.setTarget = function(value) {
+			if (!arguments.length) {
+				return this;
+			}
+			this.target = value;
+			return this;
+		};
+
+		ConditionalLines.prototype.setWidth = function(value) {
+			if (!arguments.length) {
+				return this;
+			}
+			this.width = value;
+			return this;
+		};
+
+		ConditionalLines.prototype.setHeight = function(value) {
+			if (!arguments.length) {
+				return this;
+			}
+			this.height = value;
+			return this;
+		};
+
+
+		ConditionalLines.prototype.setX = function(value) {
+			if (!arguments.length) {
+				return this;
+			}
+			this.x = value;
+			return this;
+		};
+
+		ConditionalLines.prototype.setY = function(value) {
+			if (!arguments.length) {
+				return this;
+			}
+			this.y = value;
 			return this;
 		};
 

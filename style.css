@@ -36,5 +36,33 @@ body {
     letter-spacing: 2px;
     text-rendering: geometricPrecision;
     overflow: hidden;
-    background-color: #232323;
+    /*background-color: #232323;*/
+}
+
+svg {
+  font: 10px sans-serif;
+  float:left;
+}
+.line {
+  fill: none;
+  stroke: #cccccc;
+  stroke-width:0.5px;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #cccccc;
+  shape-rendering: crispEdges;
+}
+#graphs{
+  width: 1000px;
+}
+.graph_column{
+  width: 450px;
+  float: left;
+}
+
+h1{
+  font-size: 12px;
+  font-family: sans-serif;
 }
