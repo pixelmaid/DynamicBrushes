@@ -1,19 +1,128 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>Palette Knife</title>
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="utf-8">
+    <title>Palette Knife</title>
 
-   <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="jsPlumbToolkit-defaults.css">
+    <link rel="stylesheet" href="jsPlumbToolkit-demo.css"> 
+    <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" href="jquery-ui.css">
 
-       <script data-main="app" src="lib/require.js"></script>
-    </head>
-    <body>  
-      <div id="graphs">
-     
+    <script data-main="app" src="lib/require.js"></script>
+  </head>
+  <body> 
+    <div class="menu_bar">
+
+    </div> 
+       <!--<div id="graphs">
+       
+     </div>-->
+
+     <div class = "jtk-demo-canvas canvas-wide statemachine-demo jtk-surface jtk-surface-nopan" id = "canvas">
+
+      <!--state 1-->
+      <!--<div id = "state_1" class = "statemachine-demo w">
+        <div class="ep front" action="state_1"></div>
+        <div class = "state">
+          <h2 class = "title">State 1</h2>
+          <div class = "mapping">
+            <div class = "expression">
+              <div class="block property">stylus.x</div>
+              <div class="text_entry">
+                <input type="text" value="*10" size= "1"/>    
+              </div>
+            </div>
+            <div class = "arrow">
+              <div class="arrow-left green"></div>
+              <div class="arrow-tail green"></div>
+            </div> 
+            <div class = "expression">       
+              <div class="block property">x</div>
+            </div>
+          </div>
+          <div class = "mapping">
+            <div class = "expression">
+
+              <div class="block property">stylus.y</div>
+              <div class="text_entry">
+                <input type="text" value="*5" size= "1"/>
+            </div>
+          </div>
+        <div class = "arrow">
+          <div class="arrow-left green"></div>
+          <div class="arrow-tail green"></div>
+        </div>
+        <div class = "expression">       
+          <div class="block property">y</div>
+        </div>
+  </div>
+
+      </div>
+      <div class="ep back" action="state_1"></div>
+    </div>-->
+
+    <!--Transition-->
+   <!--<div class = "arrow long transition-arrow">
+      <div class = "arrow-tail orange"></div>
+  </div>
+    <div class = "transition">
+      <div class = "conditionals">
+        <div class = "block condition">stylus.penDown</div>
+      </div>
+      <div class = "methods">
+      <div class = "block method">newStroke</div>
+        <div class = "block method">setOrigin</div>
+      </div>
     </div>
+        <div class = "arrow long transition-arrow">
+          <div class="arrow-right orange"></div>
+          <div class="arrow-tail orange"></div>
+        </div>-->
 
-<script src="lib/require.js"></script>
-<script src="app.js"></script>
-    </body>
-</html>
+        <!--state 2-->
+
+       <!--  <div id = "state_2" class = "statemachine-demo w">
+        <div class = "state">
+          <h2 class = "title">State 2</h2>
+          <div class = "mapping">
+            <div class = "expression">
+              <div class="block property">stylus.x</div>
+              <div class="text_entry">
+                <input type="text" value="*10" size= "1"/>    
+              </div>
+            </div>
+            <div class = "arrow">
+              <div class="arrow-left green"></div>
+              <div class="arrow-tail green"></div>
+            </div> 
+            <div class = "expression">       
+              <div class="block property">x</div>
+            </div>
+          </div>
+          <div class = "mapping">
+            <div class = "expression">
+
+              <div class="block property">stylus.y</div>
+              <div class="text_entry">
+                <input type="text" value="*5" size= "1"/>
+            </div>
+          </div>
+        <div class = "arrow">
+          <div class="arrow-left green"></div>
+          <div class="arrow-tail green"></div>
+        </div>
+        <div class = "expression">       
+          <div class="block property">y</div>
+        </div>
+  </div>
+
+      </div>
+      <div class="ep" action="state_2"></div>
+    </div>
+    </div>-->
+
+    <script src="lib/require.js"></script>
+    <script src="app.js"></script>
+  </body>
+  </html>

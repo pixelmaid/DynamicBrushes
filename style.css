@@ -30,13 +30,25 @@ body {
     height: 100%;
     min-height: 100%;
 
-    font-family: "Source Sans Pro";
-    font-weight: 100;
+    
     font-size: 12px;
     letter-spacing: 2px;
     text-rendering: geometricPrecision;
     overflow: hidden;
-    /*background-color: #232323;*/
+    background-color: #000;
+    padding:20px;
+}
+
+body, h2.title{
+  font-family: "Source Sans Pro";
+  font-weight: 100;
+  color: white;
+}
+
+h2.title {
+    text-align: center;
+    font-size: 14px;
+    margin: 5px 2px;
 }
 
 svg {
@@ -66,3 +78,266 @@ h1{
   font-size: 12px;
   font-family: sans-serif;
 }
+
+
+/*flowchart styling*/
+.transition{
+  float:left;
+  min-width:150px;
+  min-height:50px;
+  border:solid 1px #efac1f;
+
+}
+
+.state, .expression{
+  border:solid 1px #cccccc;
+}
+
+.state{
+  width: 240px;
+  min-height: 100px;
+  padding:10px;
+ float:left;
+
+}
+
+.conditionals{
+  height: 35px;
+  width: 100%;
+  background-color: #efac1f;
+  padding:10px;
+
+}
+
+.methods{
+  margin-top:10px;
+}
+
+.expression{
+  height: 25px;
+  float: left;
+  padding-top:3px;
+
+}
+
+div.text_entry, div.property{
+float:left;
+height:16px;
+margin: 0 auto; 
+margin-left: 4px;
+margin-right: 4px;
+
+}
+
+.text_entry input{
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  width:20px;
+resize:horizontal;
+}
+
+.text_entry input:active{
+  width: auto;
+}
+
+.text_entry input:focus{
+  min-width: 20px;
+}
+
+.mapping{
+margin-top: 10px;
+margin-bottom: 10px;
+height: 22px;
+}
+
+.block{
+width:70px;
+border-radius: 6px;
+text-align: center;
+color: #fff;
+padding-left: 5px;
+padding-right: 5px;
+font-weight: 400;
+}
+
+.property{
+  background-color:#47c1c3;
+}
+
+.method{
+  background-color:#eb4a63;
+  width:100px;
+  margin:5px auto;
+}
+
+.condition{
+     /* min-height: 40px; */
+    background-color: transparent;
+    /* margin: 5px auto; */
+    width: 100%;
+    text-align: center;
+}
+
+.arrow{
+width:26px;
+height:6px;
+float: left;
+margin-top: 6px;
+margin-bottom: 6px;
+}
+
+.long{
+  width: 40px;
+}
+
+.transition-arrow{
+  height: 100px;
+  padding-top: 7px
+}
+
+.arrow-left {
+  float:left;
+  width: 0; 
+  height: 0; 
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent; 
+  border-right:6px solid #47c1c3; 
+  background-color: #000;
+}
+
+.arrow-right {
+  float:right;
+  width: 0; 
+  height: 0; 
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent; 
+  border-left:6px solid #47c1c3; 
+  background-color: #000;
+}
+
+
+.arrow-tail {
+    width: 100%;
+    height: 6px;
+    margin-top: 3px; 
+}
+
+.arrow-tail.green{
+      background-color: #47c1c3;
+
+}
+
+.arrow-tail.orange{
+      background-color: #efac1f;
+
+}
+
+.arrow-left.orange{
+  border-right:6px solid #efac1f; 
+
+}
+
+.arrow-right.orange{
+  border-left:6px solid #efac1f; 
+
+}
+
+.arrow-left.blue{
+  border-right:6px solid #47c1c3; 
+
+}
+
+.transendpoint{
+  opacity: 0;
+}
+
+/*jsplumb demo- remove */
+
+.demo {
+    /* for IE10+ touch devices */
+    touch-action:none;
+}
+
+.w {
+    position: absolute;
+    z-index: 4;
+    -moz-border-radius: 8px;
+    cursor: move;
+    background-color: #000;
+    -webkit-transition: background-color 0.25s ease-in;
+    -moz-transition: background-color 0.25s ease-in;
+    transition: background-color 0.25s ease-in;
+    display: table;
+}
+
+.w:hover {
+    background-color: #4a4c4d;
+}
+
+.aLabel {
+    -webkit-transition: background-color 0.25s ease-in;
+    -moz-transition: background-color 0.25s ease-in;
+    transition: background-color 0.25s ease-in;
+}
+
+.aLabel.jsplumb-hover, .jsplumb-source-hover, .jsplumb-target-hover {
+    background-color: #1e8151;
+    color: white;
+}
+
+.aLabel {
+    background-color: white;
+    opacity: 0.8;
+    padding: 0.3em;
+    border-radius: 0.5em;
+    border: 1px solid #346789;
+    cursor: pointer;
+}
+
+.ep.front {
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 0px;
+}
+
+.ep {
+    width: 10px;
+    height: 40px;
+    background-color: #efac1f;
+    cursor: pointer;
+    -webkit-transition: -webkit-box-shadow 0.25s ease-in;
+    -moz-transition: -moz-box-shadow 0.25s ease-in;
+    transition: box-shadow 0.25s ease-in;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    position: relative;
+    top: 50%;
+    display: table-cell;
+    vertical-align: middle;
+
+  }
+
+.ep:hover {
+
+}
+
+.statemachine .jsplumb-endpoint {
+    z-index: 3;
+}
+
+#opened {
+    left: 10em;
+    top: 5em;
+}
+
+
+.dragHover {
+    border: 2px solid orange;
+}
+
+path, .jsplumb-endpoint { cursor:pointer; }
+
+
+

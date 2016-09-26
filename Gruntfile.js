@@ -25,6 +25,13 @@ module.exports = function(grunt) {
     dest: '/Applications/XAMPP/xamppfiles/htdocs/PaletteKnife_desktop',    // destination folder
     expand: true           // required when using cwd
   }
+},
+handlebars: {
+    all: {
+        files: {
+            "app/templates.js": ["templates/**/*.hbs"]
+        }
+    }
 }
 
   });
@@ -33,10 +40,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks("grunt-contrib-clean");
- 
+ // grunt.loadNpmTasks('grunt-contrib-handlebars');
+
 
     grunt.registerTask("build", [
-        "clean", "copy"
+        "clean", "copy", 
     ]);
 
   grunt.registerTask('default', ['jshint']);

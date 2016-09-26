@@ -24,7 +24,7 @@ define(["svg", "jquery", "app/SignalProcessUtils", "app/ConditionalLines"],
 				this.draw = svg(this.target.attr("id"))
 					.size(this.width+10, this.height+10)
 					.x(-r)
-					.y(-r);
+					.y(-RegExp());
 
 				var p1 = signalUtils.polarToCart(r, this.a1);
 				var p2 = signalUtils.polarToCart(r, this.a2);
