@@ -2,8 +2,89 @@
 define(["jquery", "paper", "app/ChartView", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart"],
     function($, paper, ChartView, Graph, PositionSeries, AngleSeries, AreaChart) {
 
-        var chartView = new ChartView();
+        var testData ={
+    "type": "behavior_data",
+    "data": {
+        "states": [{
+            "id": "244DBDBB-55D3-49BF-A54F-B223E2818884",
+            "name": "spawn",
+            "mappings": []
+        }, {
+            "id": "388A5C7C-20C0-44C8-9CB3-BB1B5CE3C45E",
+            "name": "die",
+            "mappings": []
+        }, {
+            "id": "796A74F1-9940-4F92-B751-605E12A40265",
+            "name": "delay",
+            "mappings": []
+        }, {
+            "id": "1DA1F98C-0A1D-4EAC-A5F7-F678F09CE92F",
+            "name": "grow",
+            "mappings": [{
+                "id": "EEEC3BCA-90B7-4448-8EAA-A9EE17CFB8CC",
+                "reference": "parent.yBuffer",
+                "relative": "dy",
+                "state": "grow"
+            }, {
+                "id": "96388600-6CC9-429B-99C6-3CC1699C5AEF",
+                "reference": "angleIncrememt",
+                "relative": "angle",
+                "state": "grow"
+            }, {
+                "id": "70A32FA0-C502-4C58-AEC0-2CB78B84A5C1",
+                "reference": "parent.xBuffer",
+                "relative": "dx",
+                "state": "grow"
+            }]
+        }, {
+            "id": "B2A806B3-00B3-44AD-9C85-201F0A168019",
+            "name": "reflect",
+            "mappings": []
+        } ],
+        "transitions": []
+    }
+};
 
+
+
+        var chartView = new ChartView();
+    chartView.initializeBehavior(testData.data);
+
+
+
+        // if user is running mozilla then use it's built-in WebSocket
+
+
+        window.WebSocket = window.WebSocket || window.MozWebSocket;
+
+        var connection = new WebSocket('ws://10.8.0.205:8080/', "desktop_client");
+
+
+
+        connection.onopen = function() {
+            console.log('connection opened');
+            connection.send('desktop');
+        };
+
+        connection.onerror = function(error) {
+            console.log('connection error', error);
+
+            // an error occurred when sending/receiving data
+        };
+
+        connection.onmessage = function(message) {
+            // try to decode json (I assume that each message from server is json)
+            //try {
+            var data = JSON.parse(message.data);
+            console.log("data.type", data.type, data);
+
+            if (data.type == "behavior_data") {
+                chartView.initializeBehavior(data);
+
+            } else if (data.type == "behavior_progression") {
+
+            }
+        };
 
     });
 

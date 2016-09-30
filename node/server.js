@@ -48,12 +48,22 @@ wsServer.on('request', function(request) {
 
             } else { // log and broadcast the message
                 var data = message.utf8Data;
-                //console.log('message', data);
+                console.log('message', data);
 
 
-                if (clientName == 'ipad') {
+               if (clientName == 'ipad') {
                     let json_data = JSON.parse(data);
-                    //console.log("message type", json_data.type);
+                    console.log("message type", json_data.type);
+
+                    if(json_data.type == "behavior_data"){
+                         if (desktop_client) {
+                            var behavior_data = JSON.stringify(json_data);
+                            desktop_client.sendUTF(behavior_data);
+                        }
+
+                        
+                    }
+                    else{
 
                     var file = 'drawing_data/' + json_data.canvas_id + '.json';
 
@@ -73,7 +83,7 @@ wsServer.on('request', function(request) {
                             }
                         });
                     } else {
-                        console.log('type', json_data.type)
+                        console.log('type', json_data.type);
 
                         jsonfile.readFile(file, function(err, obj) {
                             if (err) {
@@ -160,7 +170,7 @@ wsServer.on('request', function(request) {
                             });
 
                         });
-
+                        }
 
 
                     }
