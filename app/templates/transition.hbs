@@ -1,10 +1,11 @@
 <div>
 <div class = "transition" id="{{id}}">
+<h2 class = "title">on:{{name}}</h2>
       <div class = "conditionals">
         <div id={{condition_id}} class = "block condition">{{condition_name}}</div>
       </div>
       <div class = "methods">
-        {{#each method}}
+        {{#each methods}}
       <div id="{{id}}" class = "block method">{{name}}</div>
       {{/each}}
       </div>

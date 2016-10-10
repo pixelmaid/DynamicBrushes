@@ -303,6 +303,21 @@ margin-bottom: 6px;
     cursor: pointer;
 }
 
+.active, .active .arrow-left {
+  animation: color_change 0.05s 1 alternate;
+  background-color: #666666;
+}
+
+@keyframes color_change{
+0% {
+    background-color: #000;
+}
+
+100% {
+    background-color: #666666;
+}
+}
+
 .ep.front {
     border-bottom-right-radius: 0px;
     border-bottom-left-radius: 10px;

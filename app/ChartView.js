@@ -1,37 +1,25 @@
-//flowchartview
+//flowchartview     
 "use strict";
 define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state", "hbs!app/templates/transition", "hbs!app/templates/mapping"],
 
 
 
     function($, ui, jsPlumb, Handlebars, stateTemplate, transitionTemplate, mappingTemplate) {
-        var default_state = {
-            id: "state_3",
-            name: "State 3",
-            mappings: [{
-                    id: "m1",
-                    reference: "stylus.x",
-                    reference_text: "*10",
-                    relative: "x"
-                }
-
-            ]
-        };
-
-        var default_transition = {
-            id: "t_1",
-            name: "Transition 1",
-            condition_name: "onComplete",
-            condition_id: "condition_1",
-            method: []
-        };
 
         var block_was_dragged = null;
 
-
+        var state_counter = 0;
         var ChartView = function() {
+            //queue for storing behavior changes
+            this.behavior_queue = [];
+            //timer for running behavior changes
+            this.behaviorTimer = false;
+            this.currrentState = null;
+            this.prevState = null;
+
             var self = this;
             jsPlumb.ready(function() {
+
 
                 // setup some defaults for jsPlumb.
                 self.instance = jsPlumb.getInstance({
@@ -41,14 +29,14 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
                         cssClass: "transendpoint"
                     }],
                     Connector: ["Flowchart", {
-                        stub: [40, 60],
+                        stub: [40, 100],
                         gap: 0,
                         cornerRadius: 5,
                         alwaysRespectStubs: true
                     }],
                     HoverPaintStyle: {
                         strokeStyle: "#eacc96",
-                        lineWidth: 10
+                        lineWidth: 10 
                     },
                     ConnectionOverlays: [
                         ["Arrow", {
@@ -57,20 +45,17 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
                             length: 14,
                             foldback: 1,
                         }]
-                        
+
                     ],
                     Container: "canvas"
                 });
 
                 self.instance.registerConnectionType("basic", {
                     anchor: "Continuous",
-                    connector: ["Flowchart", {
-                        stub: [40, 60],
-                        gap: 10,
-                        cornerRadius: 5,
-                        alwaysRespectStubs: true
-                    }],
+                    connector: "Flowchart"
                 });
+
+
 
                 window.jsp = self.instance;
                 var canvas = document.getElementById("canvas");
@@ -92,18 +77,18 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
                 self.instance.bind("connection", function(info) {
                     info.connection.getOverlay("label").setLabel(info.connection.id);
                     info.connection.connection.addOverlay(["Custom", {
-                            create: function(component) {
-                                var html = transitionTemplate(default_transition);
-                                return $(html);
-                            },
-                            location: 0.5,
-                            id: "customOverlay"
-                        }]);
+                        create: function(component) {
+                            var html = transitionTemplate(default_transition);
+                            return $(html);
+                        },
+                        location: 0.5,
+                        id: "customOverlay"
+                    }]);
                 });
 
                 // bind a double click listener to "canvas"; add new node when this occurs.
                 jsPlumb.on(canvas, "dblclick", function(e) {
-                    self.newNode(e.offsetX, e.offsetY, default_state);
+                    self.newNode(e.offsetX, e.offsetY);
                 });
 
 
@@ -149,7 +134,9 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
 
             this.instance.makeSource(el, {
                 filter: ".ep",
-                anchor: "Continuous",
+                anchor: ["Continuous", {
+                    faces: ["left", "right"]
+                }],
                 connectorStyle: {
                     strokeStyle: "#efac1f",
                     lineWidth: 6,
@@ -170,7 +157,9 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
                 dropOptions: {
                     hoverClass: "dragHover"
                 },
-                anchor: "Continuous",
+                anchor: ["Continuous", {
+                    faces: ["top", "bottom"]
+                }],
                 allowLoopback: true
             });
 
@@ -178,9 +167,17 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
         };
 
         ChartView.prototype.newNode = function(x, y, state_data) {
+            if (!state_data) {
+                state_data = {
+                    name: "state " + state_counter,
+                    id: guid(),
+                    mappings: []
+                };
+                state_counter++;
+            }
             var html = stateTemplate(state_data);
             var d = document.createElement("div");
-            var id = state_data.id; 
+            var id = state_data.id;
             d.className = "w";
             d.id = id;
             d.innerHTML = html;
@@ -198,7 +195,7 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
 
         ChartView.prototype.addMapping = function(target_state, mapping_data) {
             var html = mappingTemplate(mapping_data);
-            console.log("target_state = ",target_state);
+            console.log("target_state = ", target_state);
             $("#" + target_state + " .state .mappings").append(html);
             var self = this;
             $(".block").each(function(index) {
@@ -219,41 +216,27 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
 
         };
 
-        ChartView.prototype.initializeBehavior = function(data){
+        ChartView.prototype.initializeBehavior = function(data) {
             var self = this;
-            for(var i=0; i<data.states.length; i++){
-                this.newNode(400*i+60,100,data.states[i]);
+            for (var i = 0; i < data.states.length; i++) {
+                this.newNode(400 * i + 60, 100, data.states[i]);
             }
-             for(var j=0; j<data.transitions.length; j++){
-               console.log("connecting ",data.transitions[j].toState, "to", data.transitions[j].fromState);
-               var connection = this.instance.connect({
-                          source: data.transitions[j].fromState,
-                          target: data.transitions[j].toState,
-                          type: "basic"
-                      });
-               connection.addOverlay(["Custom", {
-                            create: function(component) {
-                                var html = transitionTemplate(data.transitions[j]);
-                                return $(html);
-                            },
-                            location: 0.5,
-                            id: "customOverlay"
-                        }]);
-                //$("#"+data.transitions[j]+" .block").each(function(index) {
-                //self.instance.draggable($(this));
-
-               // $(this).on("mousedown", function(e) {
-                   /// var styles = {
-                      //  left: e.offsetX + "px",
-                        //top: e.offsetX + "px"
-                   // };
-                   // $(this).css(styles);
-                   // $(this).addClass("block-draggable");
-                    //block_was_dragged = $(this);
-
-              //  });
-
-            //});
+            for (var j = 0; j < data.transitions.length; j++) {
+                console.log("connecting ", data.transitions[j].toState, "to", data.transitions[j].fromState);
+                var connection = this.instance.connect({
+                    source: data.transitions[j].fromState,
+                    target: data.transitions[j].toState,
+                    type: "basic"
+                });
+                connection.addOverlay(["Custom", {
+                    create: function(component) {
+                        console.log("transition html = ", data.transitions[j]);
+                        var html = transitionTemplate(data.transitions[j]);
+                        return $(html);
+                    },
+                    location: 0.5,
+                    id: "customOverlay"
+                }]);
 
             }
 
@@ -261,6 +244,55 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
 
         };
 
+        ChartView.prototype.behaviorChange = function(behaviorEvent, data) {
+            var self = this;
+            this.behavior_queue.push({
+                event: behaviorEvent,
+                data: data
+            });
+            if (!this.behaviorTimer) {
+                this.behaviorTimer = setInterval(function() {
+                    self.animateBehaviorChange(self);
+                }, 500);
+            }
+
+        };
+
+        ChartView.prototype.animateBehaviorChange = function(self) {
+            if(self.prevState){
+                    $("#" + self.prevState).removeClass("active");
+            }
+            var change = self.behavior_queue.shift();
+            // if(change.event == "state"){
+            var classes = $("#" + change.data.id).attr('class');
+            classes = "active" + ' ' + classes;
+            $("#" + change.data.id).attr('class', classes);
+            self.currrentState = change.data.id;
+
+            // }
+
+          
+            
+            self.prevState = self.currrentState;
+            
+            //}
+            console.log("change = ", change);
+            if (self.behavior_queue.length < 1) {
+                clearInterval(self.behaviorTimer);
+                self.behaviorTimer = false;
+            }
+        };
+
+
+        function guid() {
+            function s4() {
+                return Math.floor((1 + Math.random()) * 0x10000)
+                    .toString(16)
+                    .substring(1);
+            }
+            return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+                s4() + '-' + s4() + s4() + s4();
+        }
 
 
         return ChartView;

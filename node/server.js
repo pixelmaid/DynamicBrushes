@@ -1,7 +1,6 @@
 'use strict';
 var WebSocketServer = require('websocket').server;
 var http = require('http');
-var ipad_connection, javascript_connection;
 
 // list of currently connected clients
 var ipad_client;
@@ -13,7 +12,12 @@ var server = http.createServer(function(request, response) {
     // process HTTP request. Since we're writing just WebSockets server
     // we don't have to implement anything.
 });
-server.listen(8080, function() {});
+server.listen(8080, function() {
+    var host = server.address().address;
+    var port = server.address.port;
+    console.log("running at ", host, ":", port);
+
+});
 
 // create the server
 var wsServer = new WebSocketServer({
