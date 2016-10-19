@@ -101,6 +101,27 @@ h1{
 
 }
 
+.start .state, .die .state {
+    width: 40px;
+    min-height: 40px;
+    height: 40px;
+    border: solid 4px #efac1f;
+  border-radius: 12px;
+}
+.start .state{
+  background-color:#50a275;
+}
+
+.die .state{
+  background-color:#eb4a63;
+}
+
+.start .ep , .die .ep {
+  width:0;
+  visibility: none  
+}
+
+
 .conditionals{
   height: 35px;
   width: 100%;

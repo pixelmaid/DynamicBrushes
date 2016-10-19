@@ -88,8 +88,8 @@ define(["jquery", "paper", "app/ChartView", "app/graph", "app/PositionSeries", "
 
 
         window.WebSocket = window.WebSocket || window.MozWebSocket;
-        var HOST = 'ws://localhost:5000';
-        //var HOST = 'ws://pure-beach-75578.herokuapp.com/';
+       // var HOST = 'ws://localhost:5000';
+        var HOST = 'ws://pure-beach-75578.herokuapp.com/';
         var connection = new WebSocket(HOST, "authoring");
 
 

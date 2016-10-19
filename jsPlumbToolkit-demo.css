@@ -38,8 +38,8 @@ body {
 .jtk-demo-canvas {
     margin-left: 160px;
     height:550px;
-    max-height:700px;
-    border:1px solid #CCC;
+    max-height:1000px;
+    //border:1px solid #CCC;
 }
 
 .canvas-wide {

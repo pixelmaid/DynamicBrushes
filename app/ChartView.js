@@ -1,12 +1,15 @@
 //flowchartview     
 "use strict";
-define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state", "hbs!app/templates/transition", "hbs!app/templates/mapping"],
+define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state", "hbs!app/templates/start", "hbs!app/templates/transition", "hbs!app/templates/mapping"],
 
 
 
-    function($, ui, jsPlumb, Handlebars, stateTemplate, transitionTemplate, mappingTemplate) {
+    function($, ui, jsPlumb, Handlebars, stateTemplate, startTemplate, transitionTemplate, mappingTemplate) {
 
         var block_was_dragged = null;
+
+        console.log("start template", startTemplate);
+        console.log("state template", stateTemplate);
 
         var state_counter = 0;
         var ChartView = function() {
@@ -175,10 +178,22 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
                 };
                 state_counter++;
             }
-            var html = stateTemplate(state_data);
+            var html;
             var d = document.createElement("div");
             var id = state_data.id;
             d.className = "w";
+
+            if(state_data.name == "start"){
+                d.className = "start w";
+                html = startTemplate(state_data);
+            }
+            else if(state_data.name == "die"){
+                d.className = "die w";
+                html = startTemplate(state_data);
+            }
+            else{
+                html = stateTemplate(state_data);
+            }
             d.id = id;
             d.innerHTML = html;
 
@@ -253,7 +268,7 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
             if (!this.behaviorTimer) {
                 this.behaviorTimer = setInterval(function() {
                     self.animateBehaviorChange(self);
-                }, 500);
+                }, 800);
             }
 
         };
