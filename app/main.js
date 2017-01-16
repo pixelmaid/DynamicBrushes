@@ -1,119 +1,17 @@
 'use strict';
-define(["jquery", "paper", "app/ChartView", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart"],
-    function($, paper, ChartView, Graph, PositionSeries, AngleSeries, AreaChart) {
+define(["jquery", "paper", "app/SocketController","app/SocketView","app/ChartView", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart"],
+    function($, paper, SocketController, SocketView, ChartView, Graph, PositionSeries, AngleSeries, AreaChart) {
 
-        var testData = {
-            "type": "behavior_data",
-            "data": {
-                "states": [{
-                    "id": "B2DD7015-CC0B-4D10-BC88-5EBB8ED83A9E",
-                    "name": "delay",
-                    "mappings": []
-                }, {
-                    "id": "AA48D8F4-C051-42DC-AEFB-D80DE70589DF",
-                    "name": "grow",
-                    "mappings": [{
-                        "id": "ABF5AB6B-9BAC-4F36-AEDD-209C0C1C1C42",
-                        "reference": "parent.yBuffer",
-                        "relative": "dy",
-                        "state": "grow"
-                    }, {
-                        "id": "67063053-E911-4AF4-9287-CD876B4735F5",
-                        "reference": "angleIncrememt",
-                        "relative": "angle",
-                        "state": "grow"
-                    }, {
-                        "id": "542C3724-52D0-471B-B16C-D50D8D1DEB01",
-                        "reference": "parent.xBuffer",
-                        "relative": "dx",
-                        "state": "grow"
-                    }]
-                }, {
-                    "id": "55BCF18C-056D-48EB-8C53-AE2E94B32A00",
-                    "name": "reflect",
-                    "mappings": []
-                }, {
-                    "id": "B7E8331F-8652-4BAF-B0D9-CA74A10889B7",
-                    "name": "spawn",
-                    "mappings": []
-                }, {
-                    "id": "AC78ECF9-A70A-4BA8-A63B-EBC92BCD3694",
-                    "name": "die",
-                    "mappings": []
-                }],
-                "transitions": [{
-                    "id": "38752B01-0FAF-4819-8FD4-76F49B0C8153",
-                    "name": "growSpawnTransition",
-                    "fromState": "B7E8331F-8652-4BAF-B0D9-CA74A10889B7",
-                    "toState": "AC78ECF9-A70A-4BA8-A63B-EBC92BCD3694"
-                }, {
-                    "id": "62959EEB-F601-4310-83D6-C92676DB639E",
-                    "name": "reflectTransition",
-                    "fromState": "default",
-                    "toState": "reflect"
-                }, {
-                    "id": "877268D8-94B4-4241-A981-C652EAE97968",
-                    "name": "defaultDelayTransition",
-                    "fromState": "default",
-                    "toState": "B2DD7015-CC0B-4D10-BC88-5EBB8ED83A9E"
-                }, {
-                    "id": "A8AA4592-9FDA-46D1-9BD1-2AFD5CE64741",
-                    "name": "reflectEndTransition",
-                    "fromState": "reflect",
-                    "toState": "default"
-                }, {
-                    "id": "EAEAD888-9BD3-44B3-B942-D4B3EC2EFFD9",
-                    "name": "growEndTransition",
-                    "fromState": "grow",
-                    "toState": "delay"
-                }, {
-                    "id": "7EA1E1DF-D2E0-48B0-B0FB-70E901C10D45",
-                    "name": "intervalTransition",
-                    "fromState": "delay",
-                    "toState": "grow"
-                }, {
-                    "id": "E76DBA6B-66E1-4E7D-9B40-9A0F82FDD094",
-                    "name": "startSpawnTransition",
-                    "fromState": "grow",
-                    "toState": "spawn"
-                }]
-            }
-        };
         var chartViews = {};
         //chartView.initializeBehavior(testData.data);
+        var socketController = new SocketController();
+        var socketView = new SocketView(socketController,"#socket");
+       
 
 
-
-        // if user is running mozilla then use it's built-in WebSocket
-
-
-        window.WebSocket = window.WebSocket || window.MozWebSocket;
-       // var HOST = 'ws://localhost:5000';
-        var HOST = 'ws://pure-beach-75578.herokuapp.com/';
-        var connection = new WebSocket(HOST, "authoring");
-
-
-
-        connection.onopen = function() {
-            console.log('connection opened');
-            connection.send(JSON.stringify({
-                name: 'authoring'
-            }));
-        };
-
-        connection.onerror = function(error) {
-            console.log('connection error', error);
-
-            // an error occurred when sending/receiving data
-        };
-
-        connection.onmessage = function(message) {
-            // try to decode json (I assume that each message from server is json)
-            try {
-                var data = JSON.parse(message.data);
-                console.log("data.type", data.type);
-
-                if (data.type == "behavior_data") {
+        var onMessage = function(data){
+            console.log(data)
+             if (data.type == "behavior_data") {
                     var chartView = new ChartView(data.data.id);
                     chartViews[data.data.id] = chartView;
                     chartView.initializeBehavior(data.data);
@@ -124,14 +22,13 @@ define(["jquery", "paper", "app/ChartView", "app/graph", "app/PositionSeries", "
                         chartViews[data.behavior_id].behaviorChange(data.event,data.data);
                     }
                 }
-            } catch (error) {
-                console.log("error:", error,message.data);
-            }
         };
+
+    socketController.addListener("on_message",onMessage);
 
     });
 
-
+ 
 
 /*var canvas = document.getElementById('canvas');
 

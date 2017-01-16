@@ -21,7 +21,6 @@ define(["d3", "app/ConditionalLines"],
 			this.id = this.guid();
 			this.selected = false;
 			this.conditionNum = 1;
-
 			this.conditionType = ConditionalLines;
 
 		};
