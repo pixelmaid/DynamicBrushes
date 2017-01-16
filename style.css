@@ -89,6 +89,21 @@ h1{
 
 }
 
+
+.transition_toggle {
+    width: 30px;
+    height: 30px;
+    border: solid 4px #efac1f;
+    border-radius: 8px;
+    text-align: center;
+    color: white;
+    font-size: 20px;
+    line-height: 1.2;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+
 .state, .expression{
   border:solid 1px #cccccc;
 }

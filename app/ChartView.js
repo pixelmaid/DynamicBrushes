@@ -31,7 +31,7 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
                         height: 10,
                         cssClass: "transendpoint"
                     }],
-                    Connector: ["Flowchart", {
+                    Connector: ["StateMachine", {
                         stub: [40, 100],
                         gap: 0,
                         cornerRadius: 5,
@@ -39,7 +39,7 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
                     }],
                     HoverPaintStyle: {
                         strokeStyle: "#eacc96",
-                        lineWidth: 10 
+                        lineWidth: 10
                     },
                     ConnectionOverlays: [
                         ["Arrow", {
@@ -55,7 +55,12 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
 
                 self.instance.registerConnectionType("basic", {
                     anchor: "Continuous",
-                    connector: "Flowchart"
+                    connector: "StateMachine"
+                });
+
+                self.instance.registerConnectionType("state", {
+                    anchor: "Continuous",
+                    connector: "StateMachine"
                 });
 
 
@@ -63,31 +68,7 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
                 window.jsp = self.instance;
                 var canvas = document.getElementById("canvas");
                 var windows = jsPlumb.getSelector(".statemachine .w");
-
-
-
-                // bind a click listener to each connection; the connection is deleted. you could of course
-                // just do this: jsPlumb.bind("click", jsPlumb.detach), but I wanted to make it clear what was
-                // happening.
-                self.instance.bind("click", function(c) {
-                    self.instance.detach(c);
-                });
-
-                // bind a connection listener. note that the parameter passed to this function contains more than
-                // just the new connection - see the documentation for a full list of what is included in 'info'.
-                // this listener sets the connection's internal
-                // id as the label overlay's text.
-                self.instance.bind("connection", function(info) {
-                    info.connection.getOverlay("label").setLabel(info.connection.id);
-                    info.connection.connection.addOverlay(["Custom", {
-                        create: function(component) {
-                            var html = transitionTemplate(default_transition);
-                            return $(html);
-                        },
-                        location: 0.5,
-                        id: "customOverlay"
-                    }]);
-                });
+    
 
                 // bind a double click listener to "canvas"; add new node when this occurs.
                 jsPlumb.on(canvas, "dblclick", function(e) {
@@ -116,11 +97,6 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
                     for (var i = 0; i < windows.length; i++) {
                         self.initNode(windows[i], true);
                     }
-                    /* var c1 = instance.connect({
-                          source: "state_1",
-                          target: "state_2",
-                          type: "basic"
-                      });*/
                 });
 
             });
@@ -183,15 +159,13 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
             var id = state_data.id;
             d.className = "w";
 
-            if(state_data.name == "start"){
+            if (state_data.name == "start") {
                 d.className = "start w";
                 html = startTemplate(state_data);
-            }
-            else if(state_data.name == "die"){
+            } else if (state_data.name == "die") {
                 d.className = "die w";
                 html = startTemplate(state_data);
-            }
-            else{
+            } else {
                 html = stateTemplate(state_data);
             }
             d.id = id;
@@ -243,6 +217,8 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
                     target: data.transitions[j].toState,
                     type: "basic"
                 });
+                var connection_id = data.transitions[j].id;
+                console.log("connection id",connection_id,name)
                 connection.addOverlay(["Custom", {
                     create: function(component) {
                         console.log("transition html = ", data.transitions[j]);
@@ -250,8 +226,26 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
                         return $(html);
                     },
                     location: 0.5,
-                    id: "customOverlay"
+                    id: "transition_"+connection_id
                 }]);
+
+                connection.addOverlay(["Custom", {
+                    create: function(component) {
+
+                        var html = "<div><div class = 'transition_toggle'>+</div></div>"
+                        return $(html);
+                    },
+                    location: 0.5,
+                    id: "toggle_"+connection_id,
+                    events:{
+          click:function(customOverlay, originalEvent) { 
+            console.log("connection",connection_id,customOverlay);
+            connection.getOverlay("transition_"+connection_id).show(); 
+          }
+        }
+                }]);
+
+                connection.getOverlay("transition_"+connection_id).hide();
 
             }
 
@@ -274,8 +268,8 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
         };
 
         ChartView.prototype.animateBehaviorChange = function(self) {
-            if(self.prevState){
-                    $("#" + self.prevState).removeClass("active");
+            if (self.prevState) {
+                $("#" + self.prevState).removeClass("active");
             }
             var change = self.behavior_queue.shift();
             // if(change.event == "state"){
@@ -286,10 +280,10 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
 
             // }
 
-          
-            
+
+
             self.prevState = self.currrentState;
-            
+
             //}
             console.log("change = ", change);
             if (self.behavior_queue.length < 1) {
