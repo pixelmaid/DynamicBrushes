@@ -73,9 +73,9 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
     
 
                 // bind a double click listener to "canvas"; add new node when this occurs.
-                jsPlumb.on(canvas, "dblclick", function(e) {
-                    self.newNode(e.offsetX, e.offsetY);
-                });
+                //jsPlumb.on(canvas, "dblclick", function(e) {
+                //    self.newNode(e.offsetX, e.offsetY);
+               // });
 
 
                 $(document).on("mouseup", function(e) {

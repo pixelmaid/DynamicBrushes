@@ -1,12 +1,12 @@
 'use strict';
-define(["jquery", "paper", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart"],
-    function($, paper, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart) {
+define(["jquery", "paper", "app/PaletteModel", "app/PaletteView","app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart"],
+    function($, paper, PaletteModel, PaletteView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart) {
 
         var chartViewManager = new ChartViewManager(null, "#canvas");
         var socketController = new SocketController();
         var socketView = new SocketView(socketController, "#socket");
-
-
+        var paletteModel = new PaletteModel();
+        var paletteView = new PaletteView(paletteModel,"#palette");
 
         var onMessage = function(data) {
             console.log("ON MESSGE CALLED", data);

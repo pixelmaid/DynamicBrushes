@@ -423,6 +423,7 @@ button:active {
 }
 
 #canvas{
+  height: 800px;
   float:left;
   display: -ms-flex; 
   display: -webkit-flex; 
@@ -450,6 +451,7 @@ button:active {
   display: -ms-flex; 
   display: -webkit-flex; 
   display: flex;
+
   }
 
 ul#palette_menu {
@@ -475,4 +477,34 @@ ul#palette_menu {
   margin: 5px 0 5px 0;
    margin: 5px auto 5px auto;
 
+}
+
+.state_palette {
+    border: solid white 1px;
+    height: 40px;
+    width: 120px;
+    border-left: solid 10px #efac1f;
+    border-right: solid 10px #efac1f;
+    padding-top: 10px
+}
+
+.palette{
+   min-height: 40px;
+    min-width: 120px;
+    padding-top: 10px;
+    float: none;
+    background-color: black;
+
+}
+.start_palette, .die_palette {
+    border: solid #efac1f 1px;
+    
+     background-color:#50a275;
+}
+.die_palette{
+  background-color: #eb4a63;
+}
+
+.generator{
+  background-color: #4a89eb;
 }
