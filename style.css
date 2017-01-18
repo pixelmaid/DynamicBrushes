@@ -414,3 +414,65 @@ button:active {
   background-color: #3e8e41
 }
 
+.behavior_container {
+    height: 350px;
+    border: 1px solid gray;
+    margin: 5px 5px 5px 5px;
+    position: relative;
+    overflow: hidden;
+}
+
+#canvas{
+  float:left;
+  display: -ms-flex; 
+  display: -webkit-flex; 
+  display: flex;
+  flex-direction: column;
+  flex:1; 
+}
+
+#palette{
+  width: 160px;
+  margin: 5px 5px 5px 5px;
+  border: 1px solid gray;
+  position: relative;
+  float:left;
+
+}
+
+.clear-both {
+   clear: both;
+}
+
+
+ #main_container{
+  margin-bottom:0;
+  display: -ms-flex; 
+  display: -webkit-flex; 
+  display: flex;
+  }
+
+ul#palette_menu {
+    border-bottom: 1px solid grey;
+    padding-bottom: 10px;
+    padding:0;
+    margin:0;
+}
+#palette_menu li{
+  list-style: none;
+  padding: 2px 5px 2px 10px;
+}
+#palette_menu li.selected {
+    list-style: none;
+    background-color: grey;
+}
+
+#selected_palette{
+  padding:0;
+}
+
+#selected_palette li{
+  margin: 5px 0 5px 0;
+   margin: 5px auto 5px auto;
+
+}

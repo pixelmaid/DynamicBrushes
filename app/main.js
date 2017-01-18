@@ -1,34 +1,42 @@
 'use strict';
-define(["jquery", "paper", "app/SocketController","app/SocketView","app/ChartView", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart"],
-    function($, paper, SocketController, SocketView, ChartView, Graph, PositionSeries, AngleSeries, AreaChart) {
+define(["jquery", "paper", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart"],
+    function($, paper, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart) {
 
-        var chartViews = {};
-        //chartView.initializeBehavior(testData.data);
+        var chartViewManager = new ChartViewManager(null, "#canvas");
         var socketController = new SocketController();
-        var socketView = new SocketView(socketController,"#socket");
-       
+        var socketView = new SocketView(socketController, "#socket");
 
 
-        var onMessage = function(data){
-            console.log(data)
-             if (data.type == "behavior_data") {
-                    var chartView = new ChartView(data.data.id);
-                    chartViews[data.data.id] = chartView;
-                    chartView.initializeBehavior(data.data);
 
-                } else if (data.type == "behavior_change") {
-                    if(chartViews[data.behavior_id]){
-                        console.log("behavior found for ",data.brush_name);
-                        chartViews[data.behavior_id].behaviorChange(data.event,data.data);
+        var onMessage = function(data) {
+            console.log("ON MESSGE CALLED", data);
+            if (data.type == "behavior_data") {
+                chartViewManager.destroyAllCharts();
+                if (data.data instanceof Array) {
+                    for (var i = 0; i < data.data.length; i++) {
+                        console.log("data at", i, data.data[i]);
+                        chartViewManager.addChart(data.data[i]);
                     }
+                } else {
+                    chartViewManager.addChart(data.data);
                 }
+
+
+            } else if (data.type == "behavior_change") {
+
+            }
         };
 
-    socketController.addListener("on_message",onMessage);
+        var initializeBehavior = function(data) {
+
+        };
+
+
+        socketController.addListener("ON_MESSAGE", onMessage);
 
     });
 
- 
+
 
 /*var canvas = document.getElementById('canvas');
 

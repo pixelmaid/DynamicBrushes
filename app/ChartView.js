@@ -12,7 +12,9 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
         console.log("state template", stateTemplate);
 
         var state_counter = 0;
-        var ChartView = function() {
+        var ChartView = function(id) {
+            $( "#canvas" ).append( $("<div class= 'behavior_container' id='"+id+"'></div>"));
+
             //queue for storing behavior changes
             this.behavior_queue = [];
             //timer for running behavior changes
@@ -50,7 +52,7 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
                         }]
 
                     ],
-                    Container: "canvas"
+                    Container: id
                 });
 
                 self.instance.registerConnectionType("basic", {
@@ -102,6 +104,7 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
             });
 
         };
+
 
         //
         // initialise element as connection targets and source.
@@ -218,7 +221,7 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
                     type: "basic"
                 });
                 var connection_id = data.transitions[j].id;
-                console.log("connection id",connection_id,name)
+                console.log("connection id",connection_id,name);
                 connection.addOverlay(["Custom", {
                     create: function(component) {
                         console.log("transition html = ", data.transitions[j]);
@@ -232,7 +235,7 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
                 connection.addOverlay(["Custom", {
                     create: function(component) {
 
-                        var html = "<div><div class = 'transition_toggle'>+</div></div>"
+                        var html = "<div><div class = 'transition_toggle'>+</div></div>";
                         return $(html);
                     },
                     location: 0.5,

@@ -28,6 +28,7 @@ function(EventEmitter){
             if(keepAlive){
             	self.pingInterval = setInterval(function() {self.pingServer(self);}, 5000);
             }
+
         };
 
         this.connection.onerror = function(error) {
@@ -42,7 +43,7 @@ function(EventEmitter){
             	
             	  console.log(message);
 
-            	  if(message.data == "message recieved"){
+            	  if(message.data == "message received"){
             	  	 self.emitter.trigger("ON_MESSAGE_RECEIVED");
 
             	  	return;
@@ -77,6 +78,7 @@ function(EventEmitter){
 			this.connection.send(JSON.stringify(message));
 		}
 	}
+
 
   	pingServer(self){
 		var data = {type:"ping"};

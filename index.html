@@ -14,115 +14,35 @@
   <body> 
     <div id="socket" class="menu_bar">
       <button type="button" id="connect_btn">connect</button>
+      <label for="socket_status">status:</label>
       <input type="text" id="socket_status" value="disconnected"></input>
+     <button type="button" id="request_btn">update behavior</button>
+
     </div> 
        <!--<div id="graphs">
        
      </div>-->
-
+<div id ="main_container">
      <div class = "jtk-demo-canvas canvas-wide statemachine-demo jtk-surface jtk-surface-nopan" id = "canvas">
-
-      <!--state 1-->
-      <!--<div id = "state_1" class = "statemachine-demo w">
-        <div class="ep front" action="state_1"></div>
-        <div class = "state">
-          <h2 class = "title">State 1</h2>
-          <div class = "mapping">
-            <div class = "expression">
-              <div class="block property">stylus.x</div>
-              <div class="text_entry">
-                <input type="text" value="*10" size= "1"/>    
-              </div>
-            </div>
-            <div class = "arrow">
-              <div class="arrow-left green"></div>
-              <div class="arrow-tail green"></div>
-            </div> 
-            <div class = "expression">       
-              <div class="block property">x</div>
-            </div>
-          </div>
-          <div class = "mapping">
-            <div class = "expression">
-
-              <div class="block property">stylus.y</div>
-              <div class="text_entry">
-                <input type="text" value="*5" size= "1"/>
-            </div>
-          </div>
-        <div class = "arrow">
-          <div class="arrow-left green"></div>
-          <div class="arrow-tail green"></div>
-        </div>
-        <div class = "expression">       
-          <div class="block property">y</div>
-        </div>
-  </div>
-
-      </div>
-      <div class="ep back" action="state_1"></div>
-    </div>-->
-
-    <!--Transition-->
-   <!--<div class = "arrow long transition-arrow">
-      <div class = "arrow-tail orange"></div>
-  </div>
-    <div class = "transition">
-      <div class = "conditionals">
-        <div class = "block condition">stylus.penDown</div>
-      </div>
-      <div class = "methods">
-      <div class = "block method">newStroke</div>
-        <div class = "block method">setOrigin</div>
-      </div>
-    </div>
-        <div class = "arrow long transition-arrow">
-          <div class="arrow-right orange"></div>
-          <div class="arrow-tail orange"></div>
-        </div>-->
-
-        <!--state 2-->
-
-       <!--  <div id = "state_2" class = "statemachine-demo w">
-        <div class = "state">
-          <h2 class = "title">State 2</h2>
-          <div class = "mapping">
-            <div class = "expression">
-              <div class="block property">stylus.x</div>
-              <div class="text_entry">
-                <input type="text" value="*10" size= "1"/>    
-              </div>
-            </div>
-            <div class = "arrow">
-              <div class="arrow-left green"></div>
-              <div class="arrow-tail green"></div>
-            </div> 
-            <div class = "expression">       
-              <div class="block property">x</div>
-            </div>
-          </div>
-          <div class = "mapping">
-            <div class = "expression">
-
-              <div class="block property">stylus.y</div>
-              <div class="text_entry">
-                <input type="text" value="*5" size= "1"/>
-            </div>
-          </div>
-        <div class = "arrow">
-          <div class="arrow-left green"></div>
-          <div class="arrow-tail green"></div>
-        </div>
-        <div class = "expression">       
-          <div class="block property">y</div>
-        </div>
-  </div>
-
-      </div>
-      <div class="ep" action="state_2"></div>
-    </div>
-    </div>-->
-
+     
+</div>
+ <div id = "palette">
+<ul id="palette_menu">
+  <li class = "selected ">brush properties</li>
+  <li>sensor properties</li>
+  <li>brush methods</li>
+  <li>events</li>
+</ul>
+<ul id = "selected_palette">
+ <li class = "block property">x delta</li>
+  <li class = "block property">y delta</li>
+  <li class = "block property">weight</li>
+   <li class = "block property">rotation</li>
+    <li class = "block property">scale</li>
+</ul>
+ </div>
+ </div>
+<div class = "clear-both">
     <script src="lib/require.js"></script>
     <script src="app.js"></script>
   </body>
