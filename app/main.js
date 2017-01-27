@@ -1,12 +1,13 @@
 'use strict';
-define(["jquery", "paper", "app/PaletteModel", "app/PaletteView","app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart"],
-    function($, paper, PaletteModel, PaletteView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart) {
+define(["jquery", "paper", "app/id", "app/PaletteModel", "app/PaletteView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart"],
+    function($, paper, ID, PaletteModel, PaletteView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart) {
 
-        var chartViewManager = new ChartViewManager(null, "#canvas");
         var socketController = new SocketController();
         var socketView = new SocketView(socketController, "#socket");
         var paletteModel = new PaletteModel();
-        var paletteView = new PaletteView(paletteModel,"#palette");
+        var paletteView = new PaletteView(paletteModel, "#palette");
+        var chartViewManager = new ChartViewManager(paletteModel, "#canvas");
+
 
         var onMessage = function(data) {
             console.log("ON MESSGE CALLED", data);
@@ -15,16 +16,43 @@ define(["jquery", "paper", "app/PaletteModel", "app/PaletteView","app/SocketCont
                 if (data.data instanceof Array) {
                     for (var i = 0; i < data.data.length; i++) {
                         console.log("data at", i, data.data[i]);
-                        chartViewManager.addChart(data.data[i]);
+                        chartViewManager.addBehavior(data.data[i]);
                     }
                 } else {
-                    chartViewManager.addChart(data.data);
+                    chartViewManager.addBehavior(data.data);
                 }
 
 
             } else if (data.type == "behavior_change") {
 
+            } else if (data.type == "authoring_response") {
+                paletteModel.processAuthoringResponse(data);
             }
+        };
+
+        var onConnection = function() {
+           paletteModel.addBehavior();
+        };
+
+        var onBehaviorAdded = function(data){
+             var transmit_data = {
+                type: "authoring_request",
+                requester: "authoring",
+                data: data
+
+            };
+            socketController.sendMessage(transmit_data);
+        };
+
+        var onStateAdded = function(data) {
+            console.log("transmit_data", data);
+            var transmit_data = {
+                type: "authoring_request",
+                requester: "authoring",
+                data: data
+            };
+
+            socketController.sendMessage(transmit_data);
         };
 
         var initializeBehavior = function(data) {
@@ -33,6 +61,11 @@ define(["jquery", "paper", "app/PaletteModel", "app/PaletteView","app/SocketCont
 
 
         socketController.addListener("ON_MESSAGE", onMessage);
+        socketController.addListener("ON_CONNECTION", onConnection);
+
+        paletteModel.addListener("ON_STATE_ADDED", onStateAdded);
+        paletteModel.addListener("ON_BEHAVIOR_ADDED", onBehaviorAdded);
+
 
     });
 

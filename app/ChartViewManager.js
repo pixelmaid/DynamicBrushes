@@ -10,11 +10,13 @@ define(["jquery","app/ChartView"],
                 this.el = $(element);
                 this.model = model;
                this.views = [];
-
+               this.currentView = null;
                 var self = this;
 
               
-                //this.model.addListener("ON_DESTROY_ALL_CHARTS", this.destroyCharts);
+                this.model.addListener("ON_INITIALIZE_STATE", function(x,y,data) {this.addState(x,y,data);}.bind(this));
+                this.model.addListener("ON_INITIALIZE_BEHAVIOR", function(data) {this.addBehavior(data);}.bind(this));
+
                 //this.model.addListener("ON_ADD_CHART", this.addChart);
 
             }
@@ -23,17 +25,26 @@ define(["jquery","app/ChartView"],
              /* for(var i=0;i<this.views.length;i++){
                 this.views[i].destroy();
                }*/
-               $('#canvas').empty()
+               $('#canvas').empty();
                this.views.length = 0;
             }
 
-
-            addChart(data) {
+            addBehavior(data){
+                console.log("add behavior",data,this);
                 var chartView = new ChartView(data.id);
-            chartView[data.id] = chartView;
-            chartView.initializeBehavior(data); 
-            this.views.push(chartView);
+                chartView[data.id] = chartView;
+                chartView.initializeBehavior(data); 
+                this.views.push(chartView);
+               this.currentView = chartView;
+                console.log("add behavior",data,this.currentView);
+
             }
+
+            addState(x,y,data){
+                console.log("add state",x,y,data);
+                this.currentView.newNode(x,y,data);
+            }
+
 
             behaviorChange(data){
                  if(this.views[data.behavior_id]){

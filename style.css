@@ -47,6 +47,14 @@ h2.title {
     font-size: 14px;
     margin: 5px 2px;
 }
+.palette{
+   min-height: 40px;
+    min-width: 120px;
+    padding-top: 10px;
+    float: none;
+    background-color: black;
+
+}
 
 svg {
   font: 10px sans-serif;
@@ -193,6 +201,8 @@ padding-left: 5px;
 padding-right: 5px;
 font-weight: 400;
 position: relative;
+min-height: 20px;
+padding-top: 2px;
 }
 
 .block-draggable{
@@ -488,14 +498,7 @@ ul#palette_menu {
     padding-top: 10px
 }
 
-.palette{
-   min-height: 40px;
-    min-width: 120px;
-    padding-top: 10px;
-    float: none;
-    background-color: black;
 
-}
 .start_palette, .die_palette {
     border: solid #efac1f 1px;
     
@@ -507,4 +510,8 @@ ul#palette_menu {
 
 .generator{
   background-color: #4a89eb;
+}
+.drag-n-drop{
+  position: absolute;
+  z-index: 101;
 }

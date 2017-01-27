@@ -1,16 +1,16 @@
 //SocketController.js
 'use strict';
-define (['emitter'],
+define (['emitter', 'app/Model'],
 
-function(EventEmitter){
+function(EventEmitter, Model){
 	var keepAlive = true;
-	var SocketController = class{
+	var SocketController = class extends Model{
 
 		constructor(){
+		super();
 	    window.WebSocket = window.WebSocket || window.MozWebSocket;
   		this.HOST = 'ws://pure-beach-75578.herokuapp.com/';
   		this.connection = null;
-  		this.emitter = new EventEmitter();
   		}
 		
 
@@ -69,9 +69,7 @@ function(EventEmitter){
 
 	}
 
-	addListener(name,listener){
-		this.emitter.addListener(name,listener);
-	}
+	
 
 	sendMessage(message){
 		if(this.connection !== null){

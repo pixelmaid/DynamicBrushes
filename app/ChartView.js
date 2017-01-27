@@ -12,16 +12,17 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
         console.log("state template", stateTemplate);
 
         var state_counter = 0;
-        var ChartView = function(id) {
-            $( "#canvas" ).append( $("<div class= 'behavior_container' id='"+id+"'></div>"));
+        var ChartView = function(id,manager) {
+            $("#canvas").append($("<div class= 'behavior_container' id='" + id + "'></div>"));
 
             //queue for storing behavior changes
             this.behavior_queue = [];
+            this.manager = manager
             //timer for running behavior changes
             this.behaviorTimer = false;
             this.currrentState = null;
-            this.prevState = null;
-
+            this.prevState = null; 
+            this.id = id;
             var self = this;
             jsPlumb.ready(function() {
 
@@ -65,17 +66,19 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
                     connector: "StateMachine"
                 });
 
-
+                 self.instance.bind("connection", function(info) {
+                    console.log("connection made",info);
+                });
 
                 window.jsp = self.instance;
                 var canvas = document.getElementById("canvas");
                 var windows = jsPlumb.getSelector(".statemachine .w");
-    
+
 
                 // bind a double click listener to "canvas"; add new node when this occurs.
                 //jsPlumb.on(canvas, "dblclick", function(e) {
                 //    self.newNode(e.offsetX, e.offsetY);
-               // });
+                // });
 
 
                 $(document).on("mouseup", function(e) {
@@ -148,7 +151,10 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
 
         };
 
-        ChartView.prototype.newNode = function(x, y, state_data) {
+        ChartView.prototype.newNode = function(_x, _y, state_data) {
+            var x = _x - $("#"+this.id).offset().left;
+            var y = _y - $("#"+this.id).offset().top;
+            console.log(_x,_y,x,y, $("#"+this.id).offset(), this.id);
             if (!state_data) {
                 state_data = {
                     name: "state " + state_counter,
@@ -178,9 +184,11 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
             d.style.top = y + "px";
             this.instance.getContainer().appendChild(d);
             this.initNode(d);
-            for (var i = 0; i < state_data.mappings.length; i++) {
-                console.log("mapping to add", state_data.mappings[i]);
-                this.addMapping(d.id, state_data.mappings[i]);
+            if (state_data.mappings) {
+                for (var i = 0; i < state_data.mappings.length; i++) {
+                    console.log("mapping to add", state_data.mappings[i]);
+                    this.addMapping(d.id, state_data.mappings[i]);
+                }
             }
             return d;
         };
@@ -221,7 +229,7 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
                     type: "basic"
                 });
                 var connection_id = data.transitions[j].id;
-                console.log("connection id",connection_id,name);
+                console.log("connection id", connection_id, name);
                 connection.addOverlay(["Custom", {
                     create: function(component) {
                         console.log("transition html = ", data.transitions[j]);
@@ -229,7 +237,7 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
                         return $(html);
                     },
                     location: 0.5,
-                    id: "transition_"+connection_id
+                    id: "transition_" + connection_id
                 }]);
 
                 connection.addOverlay(["Custom", {
@@ -239,16 +247,16 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "hbs!app/templates/state
                         return $(html);
                     },
                     location: 0.5,
-                    id: "toggle_"+connection_id,
-                    events:{
-          click:function(customOverlay, originalEvent) { 
-            console.log("connection",connection_id,customOverlay);
-            connection.getOverlay("transition_"+connection_id).show(); 
-          }
-        }
+                    id: "toggle_" + connection_id,
+                    events: {
+                        click: function(customOverlay, originalEvent) {
+                            console.log("connection", connection_id, customOverlay);
+                            connection.getOverlay("transition_" + connection_id).show();
+                        }
+                    }
                 }]);
 
-                connection.getOverlay("transition_"+connection_id).hide();
+                connection.getOverlay("transition_" + connection_id).hide();
 
             }
 
