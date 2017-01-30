@@ -177,29 +177,7 @@ define(['emitter', 'app/id', 'app/Emitter'],
         };
       }
 
-      elementDropped(x, y, data) {
-        switch (data.type) {
-          case "state":
-            var name = data.name;
-            var id = data.id;
-            var type = "state_added";
-            var transmit_data = {
-              name: name,
-              id: id,
-              type: type
-            };
-            console.log("state created", transmit_data);
-            this.lastAuthoringRequest = {
-              x: x,
-              y: y,
-              data: transmit_data
-            };
-            this.emitter.emit("ON_STATE_ADDED", transmit_data);
-
-            break;
-
-        }
-      }
+     
 
 
       addBehavior() {
@@ -222,13 +200,6 @@ define(['emitter', 'app/id', 'app/Emitter'],
         console.log("process authoring_response called", data.result == "success", this.lastAuthoringRequest.data.type);
         if (data.result == "success") {
           switch (this.lastAuthoringRequest.data.type) {
-
-            case "state_added":
-              console.log("initialize state called");
-              console.log("adding state", this.lastAuthoringRequest.x, this.lastAuthoringRequest.y, this.lastAuthoringRequest.data);
-              this.emitter.trigger("ON_INITIALIZE_STATE", [this.lastAuthoringRequest.x, this.lastAuthoringRequest.y, this.lastAuthoringRequest.data]);
-
-              break;
 
             case "behavior_added":
               console.log("initialize behavior called");

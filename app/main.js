@@ -26,27 +26,28 @@ define(["jquery", "paper", "app/id", "app/PaletteModel", "app/PaletteView", "app
             } else if (data.type == "behavior_change") {
 
             } else if (data.type == "authoring_response") {
-                switch(data.authoring_type){
-                    case "state_added":
+                switch (data.authoring_type) {
                     case "behavior_added":
+                    //TODO: move this over to handling by chartViewManager
                         paletteModel.processAuthoringResponse(data);
-                    break;
+                        break;
 
                     case "transition_added":
                     case "mapping_added":
-                    //foobar
+                    case "state_added":
+
                         chartViewManager.processAuthoringResponse(data);
-                    break;
+                        break;
                 }
             }
         };
 
         var onConnection = function() {
-           paletteModel.addBehavior();
+            console.log("connection made");
         };
 
-        var onBehaviorAdded = function(data){
-             var transmit_data = {
+        var onBehaviorAdded = function(data) {
+            var transmit_data = {
                 type: "authoring_request",
                 requester: "authoring",
                 data: data
@@ -66,7 +67,7 @@ define(["jquery", "paper", "app/id", "app/PaletteModel", "app/PaletteView", "app
             socketController.sendMessage(transmit_data);
         };
 
-         var onStateConnectionAdded = function(data) {
+        var onStateConnectionAdded = function(data) {
             console.log("transmit_data transition", data);
             var transmit_data = {
                 type: "authoring_request",
@@ -96,10 +97,12 @@ define(["jquery", "paper", "app/id", "app/PaletteModel", "app/PaletteView", "app
         socketController.addListener("ON_MESSAGE", onMessage);
         socketController.addListener("ON_CONNECTION", onConnection);
 
-        paletteModel.addListener("ON_STATE_ADDED", onStateAdded);
         paletteModel.addListener("ON_BEHAVIOR_ADDED", onBehaviorAdded);
+
         chartViewManager.addListener("ON_STATE_CONNECTION", onStateConnectionAdded);
         chartViewManager.addListener("ON_MAPPING_ADDED", onMappingAdded);
+        chartViewManager.addListener("ON_STATE_ADDED", onStateAdded);
+
 
     });
 

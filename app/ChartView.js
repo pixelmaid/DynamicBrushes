@@ -1,22 +1,54 @@
 //flowchartview     
 "use strict";
-define(["jquery", "jquery-ui", "jsplumb", "handlebars", "app/Emitter", "app/id", "hbs!app/templates/state", "hbs!app/templates/start", "hbs!app/templates/transition", "hbs!app/templates/mapping"],
+define(["jquery", "jquery-ui", "jsplumb", "handlebars", "app/Emitter", "app/id","hbs!app/templates/behavior", "hbs!app/templates/state", "hbs!app/templates/start", "hbs!app/templates/transition", "hbs!app/templates/mapping"],
 
 
 
-    function($, ui, jsPlumb, Handlebars, Emitter, ID, stateTemplate, startTemplate, transitionTemplate, mappingTemplate) {
+    function($, ui, jsPlumb, Handlebars, Emitter, ID, behaviorTemplate, stateTemplate, startTemplate, transitionTemplate, mappingTemplate) {
 
         var block_was_dragged = null;
 
         console.log("start template", startTemplate);
         console.log("state template", stateTemplate);
-
+        var behavior_counter = 1;
         var state_counter = 0;
         var ChartView = class extends Emitter {
 
             constructor(id) {
                 super();
-                $("#canvas").append($("<div class= 'behavior_container' id='" + id + "'></div>"));
+                var behavior_data = {id:id,screen_name:"behavior "+behavior_counter};
+                behavior_counter ++;
+                var html = behaviorTemplate(behavior_data);
+                $("#canvas").append(html);
+
+                $('#'+id).droppable({
+                    drop: function(event, ui) {
+                        var type = $(ui.draggable).attr('name');
+                        var drop_id = ID();
+                        var data = {
+                            type: type,
+                            id: drop_id,
+                            behavior_id:id
+
+                        };
+                        var x = $(ui.draggable).position().left;
+                        var y = $(ui.draggable).position().top;
+                        if (type == 'state') {
+                            var name = prompt("Please give your state a name", "myState");
+                            if (name !== null) {
+                                data.name = name;
+                                self.trigger("ON_STATE_ADDED", [x,y,data]);
+                                 $(ui.helper).remove(); //destroy clone
+                                $(ui.draggable).remove(); //remove from list
+                            }
+                        } else {
+                           // self.model.elementDropped(data);
+
+                        }
+                      
+
+                    }
+                });
 
                 //queue for storing behavior changes
                 this.behavior_queue = [];
@@ -70,7 +102,7 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "app/Emitter", "app/id",
 
                     self.instance.bind("connection", function(info) {
                         console.log("state transition made", info);
-                        self.trigger("ON_STATE_CONNECTION", [info.connection.getId(), info.sourceId, info.targetId]);
+                        self.trigger("ON_STATE_CONNECTION", [info.connection.getId(), info.sourceId, info.targetId, self.id]);
                     });
 
                     window.jsp = self.instance;
@@ -214,7 +246,7 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "app/Emitter", "app/id",
                         console.log("dropped on state", x, y, type);
                         if (type == "brush_prop") {
                             console.log("brush prop dropped on state");
-                            self.trigger("ON_MAPPING_ADDED", [mapping_id, name, id]);
+                            self.trigger("ON_MAPPING_ADDED", [mapping_id, name, id, self.id]);
                             $(ui.helper).remove(); //destroy clone
                             $(ui.draggable).remove(); //remove from list
                         }
