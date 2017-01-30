@@ -4,7 +4,7 @@ define(['emitter'],
 	function(EventEmitter) {
 
 
-		var Model = class {
+		var Emitter = class {
 
 			constructor() {
 				this.emitter = new EventEmitter();
@@ -16,7 +16,13 @@ define(['emitter'],
 				this.emitter.addListener(name, listener);
 			}
 
+			trigger(eventName, args){
+
+				console.log('trigger called',eventName,args, this.emitter.parent,this.emitter.getListeners());
+				this.emitter.trigger(eventName, args);
+			}
+
 		};
-		return Model;
+		return Emitter;
 
 	});

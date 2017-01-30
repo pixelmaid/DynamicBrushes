@@ -1,10 +1,10 @@
 //SocketController.js
 'use strict';
-define (['emitter', 'app/Model'],
+define (['emitter', 'app/Emitter'],
 
-function(EventEmitter, Model){
+function(EventEmitter, Emitter){
 	var keepAlive = true;
-	var SocketController = class extends Model{
+	var SocketController = class extends Emitter{
 
 		constructor(){
 		super();
@@ -68,8 +68,7 @@ function(EventEmitter, Model){
         };
 
 	}
-
-	
+ 
 
 	sendMessage(message){
 		if(this.connection !== null){

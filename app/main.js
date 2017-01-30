@@ -26,7 +26,18 @@ define(["jquery", "paper", "app/id", "app/PaletteModel", "app/PaletteView", "app
             } else if (data.type == "behavior_change") {
 
             } else if (data.type == "authoring_response") {
-                paletteModel.processAuthoringResponse(data);
+                switch(data.authoring_type){
+                    case "state_added":
+                    case "behavior_added":
+                        paletteModel.processAuthoringResponse(data);
+                    break;
+
+                    case "transition_added":
+                    case "mapping_added":
+                    //foobar
+                        chartViewManager.processAuthoringResponse(data);
+                    break;
+                }
             }
         };
 
@@ -55,6 +66,28 @@ define(["jquery", "paper", "app/id", "app/PaletteModel", "app/PaletteView", "app
             socketController.sendMessage(transmit_data);
         };
 
+         var onStateConnectionAdded = function(data) {
+            console.log("transmit_data transition", data);
+            var transmit_data = {
+                type: "authoring_request",
+                requester: "authoring",
+                data: data
+            };
+
+            socketController.sendMessage(transmit_data);
+        };
+
+        var onMappingAdded = function(data) {
+            console.log("transmit_data mapping", data);
+            var transmit_data = {
+                type: "authoring_request",
+                requester: "authoring",
+                data: data
+            };
+
+            socketController.sendMessage(transmit_data);
+        };
+
         var initializeBehavior = function(data) {
 
         };
@@ -65,7 +98,8 @@ define(["jquery", "paper", "app/id", "app/PaletteModel", "app/PaletteView", "app
 
         paletteModel.addListener("ON_STATE_ADDED", onStateAdded);
         paletteModel.addListener("ON_BEHAVIOR_ADDED", onBehaviorAdded);
-
+        chartViewManager.addListener("ON_STATE_CONNECTION", onStateConnectionAdded);
+        chartViewManager.addListener("ON_MAPPING_ADDED", onMappingAdded);
 
     });
 

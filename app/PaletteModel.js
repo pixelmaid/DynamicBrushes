@@ -1,10 +1,10 @@
 //SocketController.js
 'use strict';
-define(['emitter', 'app/id', 'app/Model'],
+define(['emitter', 'app/id', 'app/Emitter'],
 
-  function(EventEmitter, ID, Model) {
+  function(EventEmitter, ID, Emitter) {
 
-    var PaletteModel = class extends Model {
+    var PaletteModel = class extends Emitter {
 
       constructor() {
         super();
@@ -15,15 +15,18 @@ define(['emitter', 'app/id', 'app/Model'],
             items: [{
               item_class: "block palette state_palette",
               item_name: "state",
-              name: "state"
+              name: "state",
+              type:"state"
             }, {
               item_class: "block palette die_palette",
               item_name: "die",
-              name: "die"
+              name: "die",
+              type:"state"
             }, {
               item_class: "block palette start_palette",
               item_name: "setup",
-              name: "setup"
+              name: "setup",
+              type:"state"
             }]
           },
 
@@ -31,15 +34,18 @@ define(['emitter', 'app/id', 'app/Model'],
             items: [{
               item_class: "palette block property",
               item_name: "stylus_x",
-              name: "x"
+              name: "x",
+              type:"sensor_prop"
             }, {
               item_class: "block property palette",
               item_name: "stylus_y",
-              name: "y"
+              name: "y",
+              type:"sensor_prop"
             }, {
               item_class: "block property palette",
               item_name: "stylus_force",
-              name: "force"
+              name: "force",
+              type:"sensor_prop"
             }]
           },
 
@@ -47,31 +53,37 @@ define(['emitter', 'app/id', 'app/Model'],
             items: [{
               item_class: "block property palette",
               name: "delta x",
-              item_name: "delta_x"
+              item_name: "delta_x",
+              type:"brush_prop"
             }, {
               item_class: " block property palette",
               name: "delta y",
-              item_name: "delta_y"
+              item_name: "delta_y",
+              type:"brush_prop"
 
             }, {
               item_class: " block property palette",
               name: "rotation",
-              item_name: "rotation"
+              item_name: "rotation",
+              type:"brush_prop"
 
             }, {
               item_class: " block property palette",
               name: "scale",
-              item_name: "scale"
+              item_name: "scale",
+              type:"brush_prop"
 
             }, {
               item_class: " block property palette",
               name: "weight",
-              item_name: "weight"
+              item_name: "weight",
+              type:"brush_prop"
 
             }, {
               item_class: " block property palette",
               name: "color",
-              item_name: "color"
+              item_name: "color",
+              type:"brush_prop"
 
             }]
           },
@@ -80,47 +92,57 @@ define(['emitter', 'app/id', 'app/Model'],
             items: [{
               item_class: "block property generator palette",
               name: "sine wave",
-              item_name: "sine"
+              item_name: "sine",
+              type:"generator"
             }, {
               item_class: " block property generator palette",
               name: "uniform random",
-              item_name: "uniform_random"
+              item_name: "uniform_random",
+              type:"generator"
 
             }, {
               item_class: " block property generator palette",
               name: "range",
-              item_name: "range"
+              item_name: "range",
+              type:"generator"
             }, {
               item_class: " block property generator palette",
               name: "alternate",
-              item_name: "alternate"
+              item_name: "alternate",
+              type:"generator"
             }, {
               item_class: " block property generator palette",
               name: "random walk",
-              item_name: "random_walk"
+              item_name: "random_walk",
+              type:"generator"
             }]
           },
           "brush_actions": {
             items: [{
               item_class: "block method palette",
               name: "spawn",
-              item_name: "spawn"
+              item_name: "spawn",
+              type:"action"
             }, {
               item_class: " block method palette",
               name: "setOrigin",
-              item_name: "setOrigin"
+              item_name: "setOrigin",
+              type:"action"
             }, {
               item_class: " block method palette",
               name: "newStroke",
-              item_name: "newStroke"
+              item_name: "newStroke",
+              type:"action"
             }, {
               item_class: " block method palette",
               name: "startTimer",
-              item_name: "startTimer"
+              item_name: "startTimer",
+              type:"action"
             }, {
               item_class: " block method palette",
               name: "stopTimer",
-              item_name: "stopTimer"
+              item_name: "stopTimer",
+              type:"action"
             }, ]
           },
 
@@ -128,23 +150,28 @@ define(['emitter', 'app/id', 'app/Model'],
             items: [{
               item_class: "block transition palette",
               name: "tick",
-              item_name: "tick"
+              item_name: "tick",
+              type:"transition"
             }, {
               item_class: "block transition palette",
               name: "stateComplete",
-              item_name: "stateComplete"
+              item_name: "stateComplete",
+              type:"transition"
             }, {
               item_class: "block transition palette",
               name: "onStylusDown",
-              item_name: "onStylusDown"
+              item_name: "onStylusDown",
+              type:"transition"
             }, {
               item_class: "block transition palette",
               name: "onStylusUp",
-              item_name: "onStylusUp"
+              item_name: "onStylusUp",
+              type:"transition"
             }, {
               item_class: "block transition palette",
               name: "onStylusMove",
-              item_name: "onStylusMove"
+              item_name: "onStylusMove",
+              type:"transition"
             }]
           }
         };
@@ -211,6 +238,7 @@ define(['emitter', 'app/id', 'app/Model'],
               break;
 
 
+
           }
 
           this.lastAuthoringRequest = null;
@@ -218,6 +246,7 @@ define(['emitter', 'app/id', 'app/Model'],
 
           //TODO: error handling code for authoring fail here
         }
+
       }
     };
 
