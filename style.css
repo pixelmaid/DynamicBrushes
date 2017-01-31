@@ -156,6 +156,7 @@ h1{
 
 .expression{
   height: 25px;
+  min-width:75px;
   float: left;
   padding-top:3px;
 

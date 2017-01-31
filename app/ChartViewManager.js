@@ -50,6 +50,10 @@ define(["jquery", "app/Emitter", "app/ChartView"],
                             console.log("transition added  called");
                            this.views[behavior_id].addMapping(this.lastAuthoringRequest.data.targetState, this.lastAuthoringRequest.data);
                             break;
+                        case "mapping_updated":
+                            console.log("mapping updated called");
+                           //this.views[behavior_id].addMapping(this.lastAuthoringRequest.data.targetState, this.lastAuthoringRequest.data);
+                            break;
 
                         case "state_added":
                             this.views[behavior_id].newNode(this.lastAuthoringRequest.x, this.lastAuthoringRequest.y, this.lastAuthoringRequest.data);
@@ -76,6 +80,9 @@ define(["jquery", "app/Emitter", "app/ChartView"],
                 }.bind(this));
                 chartView.addListener("ON_STATE_ADDED", function(x, y, data) {
                     this.onStateAdded(x, y, data);
+                }.bind(this));
+                 chartView.addListener("ON_MAPPING_REFERENCE_UPDATE", function(id,behaviorId,targetState,relativePropertyName,referenceProperty,referenceNames) {
+                    this.onMappingReferenceUpdate(id,behaviorId,targetState,relativePropertyName,referenceProperty,referenceNames);
                 }.bind(this));
                 chartView[data.id] = chartView;
                 chartView.initializeBehavior(data);
@@ -117,6 +124,25 @@ define(["jquery", "app/Emitter", "app/ChartView"],
                     relativePropertyName: name,
                     targetState: targetStateId,
                     type: "mapping_added"
+                };
+                this.lastAuthoringRequest = {
+                    data: transmit_data
+                };
+
+                this.trigger("ON_MAPPING_ADDED", [transmit_data]);
+            }
+
+            onMappingReferenceUpdate(id,behaviorId,targetState,relativePropertyName,referenceProperty,referenceNames){
+                console.log("mapping reference update", id, name, targetState);
+
+                var transmit_data = {
+                    id: id,
+                    behavior_id: behaviorId,
+                    relativePropertyName: relativePropertyName,
+                    targetState: targetState,
+                    referenceProperty:referenceProperty,
+                    referenceNames:referenceNames,
+                    type: "mapping_updated"
                 };
                 this.lastAuthoringRequest = {
                     data: transmit_data

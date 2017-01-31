@@ -1,12 +1,13 @@
 //flowchartview     
 "use strict";
-define(["jquery", "jquery-ui", "jsplumb", "handlebars", "app/Emitter", "app/id","hbs!app/templates/behavior", "hbs!app/templates/state", "hbs!app/templates/start", "hbs!app/templates/transition", "hbs!app/templates/mapping"],
+define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/templates/behavior", "hbs!app/templates/state", "hbs!app/templates/start", "hbs!app/templates/transition", "hbs!app/templates/mapping"],
 
 
 
-    function($, ui, jsPlumb, Handlebars, Emitter, ID, behaviorTemplate, stateTemplate, startTemplate, transitionTemplate, mappingTemplate) {
+    function($, ui, jsPlumb, Emitter, ID, behaviorTemplate, stateTemplate, startTemplate, transitionTemplate, mappingTemplate) {
 
         var block_was_dragged = null;
+
 
         console.log("start template", startTemplate);
         console.log("state template", stateTemplate);
@@ -16,19 +17,22 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "app/Emitter", "app/id",
 
             constructor(id) {
                 super();
-                var behavior_data = {id:id,screen_name:"behavior "+behavior_counter};
-                behavior_counter ++;
+                var behavior_data = {
+                    id: id,
+                    screen_name: "behavior " + behavior_counter
+                };
+                behavior_counter++;
                 var html = behaviorTemplate(behavior_data);
                 $("#canvas").append(html);
 
-                $('#'+id).droppable({
+                $('#' + id).droppable({
                     drop: function(event, ui) {
                         var type = $(ui.draggable).attr('name');
                         var drop_id = ID();
                         var data = {
                             type: type,
                             id: drop_id,
-                            behavior_id:id
+                            behavior_id: id
 
                         };
                         var x = $(ui.draggable).position().left;
@@ -37,15 +41,15 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "app/Emitter", "app/id",
                             var name = prompt("Please give your state a name", "myState");
                             if (name !== null) {
                                 data.name = name;
-                                self.trigger("ON_STATE_ADDED", [x,y,data]);
-                                 $(ui.helper).remove(); //destroy clone
+                                self.trigger("ON_STATE_ADDED", [x, y, data]);
+                                $(ui.helper).remove(); //destroy clone
                                 $(ui.draggable).remove(); //remove from list
                             }
                         } else {
-                           // self.model.elementDropped(data);
+                            // self.model.elementDropped(data);
 
                         }
-                      
+
 
                     }
                 });
@@ -293,7 +297,44 @@ define(["jquery", "jquery-ui", "jsplumb", "handlebars", "app/Emitter", "app/id",
 
                 });
 
+                console.log("target droppable",$('#' + mapping_data.id).find("#reference_expression")); 
+                $($('#' + mapping_data.id).find("#reference_expression")[0]).droppable({
+                    drop: function(event, ui) {
+                        var type = $(ui.draggable).attr('type');
+                        var name = $(ui.draggable).attr('name');
+                        var relativePropertyName = mapping_data.relativePropertyName;
+                        var referenceProperty = name.split("_")[0];
+                        var referenceNames = name.split("_");
+                        referenceNames.shift();
+
+                        console.log("drop on expression",type);
+
+                        var drop_id = ID();
+                        var data = {
+                            type: type,
+                            id: drop_id,
+                            behavior_id: self.id
+
+                        };
+
+                        if (type == 'sensor_prop') {
+
+                            console.log("sensor prop dropped on mapping");
+                            $(ui.helper).remove(); //destroy clone
+                            //$(ui.draggable).remove(); //remove from list
+                             self.trigger("ON_MAPPING_REFERENCE_UPDATE", [ mapping_data.id, self.id, target_state, relativePropertyName, referenceProperty, referenceNames]);
+
+                        }
+
+
+                    }
+                });
+
             }
+
+            //updateMapping(){
+
+            //}
 
             initializeBehavior(data) {
                 var self = this;

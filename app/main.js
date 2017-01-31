@@ -1,6 +1,12 @@
 'use strict';
-define(["jquery", "paper", "app/id", "app/PaletteModel", "app/PaletteView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart"],
-    function($, paper, ID, PaletteModel, PaletteView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart) {
+define(["jquery", "paper", "handlebars", "app/id", "app/PaletteModel", "app/PaletteView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart"],
+
+
+    function($, paper, Handlebars, ID, PaletteModel, PaletteView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart) {
+
+     
+
+
 
         var socketController = new SocketController();
         var socketView = new SocketView(socketController, "#socket");
@@ -28,7 +34,7 @@ define(["jquery", "paper", "app/id", "app/PaletteModel", "app/PaletteView", "app
             } else if (data.type == "authoring_response") {
                 switch (data.authoring_type) {
                     case "behavior_added":
-                    //TODO: move this over to handling by chartViewManager
+                        //TODO: move this over to handling by chartViewManager
                         paletteModel.processAuthoringResponse(data);
                         break;
 
