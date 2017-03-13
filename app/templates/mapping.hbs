@@ -1,16 +1,22 @@
-<div id="{{id}}" class = "mapping">
-  <div id ="relative_expression" class = "expression">
-      <div class="block property palette">{{relativePropertyName}}</div>
-         </div>
-        <div class = "arrow">
-              <div class="arrow-left green"></div>
-              <div class="arrow-tail green"></div>
-            </div> 
-            <div id="reference_expression" class = "expression">       
-        {{#if reference}}<div class="block property">{{reference}}</div>{{/if}}<div class="text_entry">
-              <input type="text" value="{{reference_text}}" size= "1"/>    
-              </div>
-              </div>
-          </div>
+<div stateId = {{stateId}} id={{mappingId}} class = "mapping">
+ 
+ 
+   <div id="reference_expression" class = "expression">       
+    {{#if reference}}<div stateId = {{stateId}}, mappingId = {{mappingId}} name={{referencePropertyName}} type= {{referencePropertyType}} class="block property">{{reference}}</div>{{/if}}
+    <div class="text_entry">
+      <input type="text" value="{{reference_text}}" size= "1"/>    
     </div>
+  </div>
+
+  <div class = "arrow">
+    <div class="arrow-right green"></div>
+    <div class="arrow-tail green"></div>
+  </div> 
+
+ <div id ="relative_expression" class = "expression">
+    <div stateId = {{stateId}}, mappingId = {{mappingId}} type= {{relativePropertyType}}  name={{relativePropertyName}}  class="block property palette">{{relativePropertyItemName}}</div>
+  </div>
+
+  </div>
+  </div>
 </div>

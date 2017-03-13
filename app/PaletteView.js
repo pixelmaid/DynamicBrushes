@@ -4,7 +4,7 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", 'app/i
 
     function($, jqueryui, Handlebars, paletteTemplate, ID) {
 
-        var add_behavior_btn, states_btn, generator_btn, brush_properties_btn, sensor_properties_btn, brush_actions_btn, transitions_btn;
+        var  states_btn, generator_btn, brush_properties_btn, sensor_properties_btn, brush_actions_btn, transitions_btn;
         var btn_list;
 
         var PaletteView = class {
@@ -16,7 +16,6 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", 'app/i
                 self.updateSelectedPalette(model.data[model.selected]);
 
                 states_btn = this.el.find('#states');
-                add_behavior_btn = this.el.find('#add_behavior_btn');
                 generator_btn = this.el.find('#generators');
                 brush_properties_btn = this.el.find('#brush_properties');
                 sensor_properties_btn = this.el.find('#sensor_properties');
@@ -27,16 +26,13 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", 'app/i
                 
                 this.el.droppable({
                     drop: function(event, ui) {
+                        console.log("dropped on canvas",ui);
                         $(ui.helper).remove(); //destroy clone
                         $(ui.draggable).remove(); //remove from list
                     }
                 });
 
-                add_behavior_btn.click(function(event){
-
-                    
-                    self.model.addBehavior();
-                });
+               
 
                 for (var i = 0; i < btn_list.length; i++) {
 

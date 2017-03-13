@@ -77,7 +77,7 @@ function(EventEmitter, Emitter){
 	}
 
 
-  	pingServer(self){
+  pingServer(self){
 		var data = {type:"ping"};
          self.sendMessage(data);
 	}

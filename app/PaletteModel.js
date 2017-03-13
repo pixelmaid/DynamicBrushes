@@ -23,7 +23,7 @@ define(['emitter', 'app/id', 'app/Emitter'],
               name: "die",
               type:"state"
             }, {
-              item_class: "block palette start_palette",
+              item_class: "block palette setup_palette",
               item_name: "setup",
               name: "setup",
               type:"state"
@@ -33,13 +33,13 @@ define(['emitter', 'app/id', 'app/Emitter'],
           "sensor_properties": {
             items: [{
               item_class: "palette block property",
-              item_name: "stylus_x",
-              name: "x",
+              item_name: "stylus_dx",
+              name: "dx",
               type:"sensor_prop"
             }, {
               item_class: "block property palette",
-              item_name: "stylus_y",
-              name: "y",
+              item_name: "stylus_dy",
+              name: "dy",
               type:"sensor_prop"
             }, {
               item_class: "block property palette",
@@ -53,12 +53,12 @@ define(['emitter', 'app/id', 'app/Emitter'],
             items: [{
               item_class: "block property palette",
               name: "delta x",
-              item_name: "delta_x",
+              item_name: "dx",
               type:"brush_prop"
             }, {
               item_class: " block property palette",
               name: "delta y",
-              item_name: "delta_y",
+              item_name: "dy",
               type:"brush_prop"
 
             }, {
@@ -180,45 +180,7 @@ define(['emitter', 'app/id', 'app/Emitter'],
      
 
 
-      addBehavior() {
-        var id = ID();
-        var data = {
-          type: "behavior_added",
-          name: "behavior_" + id,
-          id: id,
-          states: [],
-          transitions: []
-
-        };
-        this.lastAuthoringRequest = {
-          data: data
-        };
-        this.emitter.emit("ON_BEHAVIOR_ADDED", data);
-      }
-
-      processAuthoringResponse(data) {
-        console.log("process authoring_response called", data.result == "success", this.lastAuthoringRequest.data.type);
-        if (data.result == "success") {
-          switch (this.lastAuthoringRequest.data.type) {
-
-            case "behavior_added":
-              console.log("initialize behavior called");
-
-              this.emitter.emit("ON_INITIALIZE_BEHAVIOR", this.lastAuthoringRequest.data);
-
-              break;
-
-
-
-          }
-
-          this.lastAuthoringRequest = null;
-        } else if (data.result == "fail") {
-
-          //TODO: error handling code for authoring fail here
-        }
-
-      }
+    
     };
 
 

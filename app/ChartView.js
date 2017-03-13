@@ -21,13 +21,16 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
                     id: id,
                     screen_name: "behavior " + behavior_counter
                 };
+                this.setupId = null;
+                this.dieId = null;
                 behavior_counter++;
                 var html = behaviorTemplate(behavior_data);
                 $("#canvas").append(html);
 
                 $('#' + id).droppable({
                     drop: function(event, ui) {
-                        var type = $(ui.draggable).attr('name');
+                        var type = $(ui.draggable).attr('type');
+                        console.log("type=",type);
                         var drop_id = ID();
                         var data = {
                             type: type,
@@ -45,7 +48,15 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
                                 $(ui.helper).remove(); //destroy clone
                                 $(ui.draggable).remove(); //remove from list
                             }
-                        } else {
+                        } else if(type == "brush_prop") {
+                            var mappingId = $(ui.draggable).attr('mappingId');
+                            var stateId = $(ui.draggable).attr('stateId'); 
+
+                            if(mappingId){
+                                console.log("state found",stateId);
+                                $(ui.helper).remove(); //destroy clone
+                                $(ui.draggable).remove(); //remove from list
+                            }
                             // self.model.elementDropped(data);
 
                         }
@@ -106,7 +117,7 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
 
                     self.instance.bind("connection", function(info) {
                         console.log("state transition made", info);
-                        self.trigger("ON_STATE_CONNECTION", [info.connection.getId(), info.sourceId, info.targetId, self.id]);
+                        self.trigger("ON_STATE_CONNECTION", [info.connection.getId(), info.sourceId, $(info.source).attr("name"), info.targetId, $(info.target).attr("name"),self.id]);
                     });
 
                     window.jsp = self.instance;
@@ -151,7 +162,7 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
             //
             // initialise element as connection targets and source.
             //
-            initNode(el) {
+            initNode(el,name) {
 
                 // initialise draggable elements.
                 this.instance.draggable(el);
@@ -182,7 +193,7 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
                         hoverClass: "dragHover"
                     },
                     anchor: ["Continuous", {
-                        faces: ["top", "bottom"]
+                        faces: ["left", "right"]
                     }],
                     allowLoopback: true
                 });
@@ -190,11 +201,10 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
 
             }
 
-            newNode(_x, _y, state_data) {
+            newNode(x, y, state_data) {
                 var self = this;
-                var x = _x - $("#" + this.id).offset().left;
-                var y = _y - $("#" + this.id).offset().top;
-                console.log(_x, _y, x, y, $("#" + this.id).offset(), this.id);
+               
+                console.log( x, y, $("#" + this.id).offset(), this.id,state_data.name);
                 if (!state_data) {
                     state_data = {
                         name: "state " + state_counter,
@@ -208,8 +218,9 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
                 var id = state_data.id;
                 d.className = "w";
 
-                if (state_data.name == "start") {
-                    d.className = "start w";
+                if (state_data.name == "setup") {
+                    console.log("state data  is setup");
+                    d.className = "setup w";
                     html = startTemplate(state_data);
                 } else if (state_data.name == "die") {
                     d.className = "die w";
@@ -218,6 +229,7 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
                     html = stateTemplate(state_data);
                 }
                 d.id = id;
+
                 d.innerHTML = html;
 
 
@@ -225,7 +237,7 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
                 d.style.left = x + "px";
                 d.style.top = y + "px";
                 this.instance.getContainer().appendChild(d);
-                this.initNode(d);
+                this.initNode(d,state_data.name);
                 if (state_data.mappings) {
                     for (var i = 0; i < state_data.mappings.length; i++) {
                         console.log("mapping to add", state_data.mappings[i]);
@@ -234,12 +246,12 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
                 }
 
                 console.log("state", $('#' + id));
-
+                $("#"+id).attr("name",state_data.name);
                 $('#' + id).droppable({
                     drop: function(event, ui) {
                         var type = $(ui.draggable).attr('type');
                         var name = $(ui.draggable).attr('name');
-
+                        var item_name = $(ui.draggable).html();
                         var mapping_id = ID();
                         var data = {
                             type: type,
@@ -250,7 +262,7 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
                         console.log("dropped on state", x, y, type);
                         if (type == "brush_prop") {
                             console.log("brush prop dropped on state");
-                            self.trigger("ON_MAPPING_ADDED", [mapping_id, name, id, self.id]);
+                            self.trigger("ON_MAPPING_ADDED", [mapping_id, name, item_name, type, id, self.id]);
                             $(ui.helper).remove(); //destroy clone
                             $(ui.draggable).remove(); //remove from list
                         }
@@ -278,30 +290,21 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
 
             addMapping(target_state, mapping_data) {
                 var html = mappingTemplate(mapping_data);
-                console.log("target_state = ", target_state);
+                console.log("target_state = ", target_state, mapping_data);
                 $("#" + target_state + " .state .mappings").append(html);
+
+                var target = $("#"+mapping_data.mappingId+" #relative_expression .block");
+                console.log("target = ",target,"#"+mapping_data.mappingId+" #relative_expression .block");
+
+                this.makeDraggable(target);
                 var self = this;
-                $(".block").each(function(index) {
-                    self.instance.draggable($(this));
 
-                    $(this).on("mousedown", function(e) {
-                        var styles = {
-                            left: e.offsetX + "px",
-                            top: e.offsetX + "px"
-                        };
-                        $(this).css(styles);
-                        $(this).addClass("block-draggable");
-                        block_was_dragged = $(this);
-
-                    });
-
-                });
-
-                console.log("target droppable",$('#' + mapping_data.id).find("#reference_expression")); 
-                $($('#' + mapping_data.id).find("#reference_expression")[0]).droppable({
+                console.log("target droppable",$('#' + mapping_data.mappingId).find("#reference_expression")); 
+                $($('#' + mapping_data.mappingId).find("#reference_expression")[0]).droppable({
                     drop: function(event, ui) {
                         var type = $(ui.draggable).attr('type');
                         var name = $(ui.draggable).attr('name');
+                        var itemName = $(ui.draggable).html();
                         var relativePropertyName = mapping_data.relativePropertyName;
                         var referenceProperty = name.split("_")[0];
                         var referenceNames = name.split("_");
@@ -322,7 +325,17 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
                             console.log("sensor prop dropped on mapping");
                             $(ui.helper).remove(); //destroy clone
                             //$(ui.draggable).remove(); //remove from list
-                             self.trigger("ON_MAPPING_REFERENCE_UPDATE", [ mapping_data.id, self.id, target_state, relativePropertyName, referenceProperty, referenceNames]);
+                             self.trigger("ON_MAPPING_REFERENCE_UPDATE", [ mapping_data.mappingId, type,self.id, target_state,itemName,relativePropertyName, referenceProperty, referenceNames]);
+
+                        }
+
+                        if (type == 'generator') {
+
+                            console.log("generator dropped on mapping");
+                            $(ui.helper).remove(); //destroy clone
+                            //$(ui.draggable).remove(); //remove from list
+                            self.trigger("ON_GENERATOR_ADDED", [self.id,name]);
+                             self.trigger("ON_MAPPING_REFERENCE_UPDATE", [ mapping_data.mappingId, type, self.id, target_state,itemName,relativePropertyName, referenceProperty, referenceNames]);
 
                         }
 
@@ -332,14 +345,42 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
 
             }
 
-            //updateMapping(){
+            updateMapping(data){
+                var html = "<div class='block property "+data.reference_type+"'>"+data.itemName+"</div>";
+                $($('#' +data.id).find("#reference_expression")[0]).prepend(html);
 
-            //}
+                this.instance.draggable($("#" +data.id+" #reference_expression .block"));
+
+    
+                console.log("update mapping",html,data);
+
+            }
+
+            makeDraggable(target){
+                    target.mousedown(function(event){
+                     var styles = {
+                            position:"absolute"
+                        };
+                     target.css(styles);
+                 });
+                     target.mouseup(function(event){
+                     var styles = {
+                            position:"relative"
+                        };
+                     target.css(styles);
+                 });
+
+                    target.draggable();
+                    this.instance.draggable(target);
+ 
+            }
 
             initializeBehavior(data) {
                 var self = this;
+
+                
                 for (var i = 0; i < data.states.length; i++) {
-                    this.newNode(400 * i + 60, 100, data.states[i]);
+                    this.newNode(data.states[i].x,data.states[i].y, data.states[i]);
                 }
                 for (var j = 0; j < data.transitions.length; j++) {
                     console.log("connecting ", data.transitions[j].toState, "to", data.transitions[j].fromState);

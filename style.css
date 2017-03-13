@@ -121,14 +121,14 @@ h1{
 
 }
 
-.start .state, .die .state {
+.setup .state, .die .state {
     width: 40px;
     min-height: 40px;
     height: 40px;
     border: solid 4px #efac1f;
   border-radius: 12px;
 }
-.start .state{
+.setup .state{
   background-color:#50a275;
 }
 
@@ -136,9 +136,9 @@ h1{
   background-color:#eb4a63;
 }
 
-.start .ep , .die .ep {
-  width:0;
-  visibility: none  
+.setup .ep , .die .ep {
+  width:10;
+  opacity: 0;  
 }
 
 
@@ -154,12 +154,12 @@ h1{
   margin-top:10px;
 }
 
-.expression{
-  height: 25px;
-  min-width:75px;
-  float: left;
-  padding-top:3px;
-
+.expression {
+    height: 30px;
+    min-width: 75px;
+    float: left;
+    padding-top: 4px;
+    padding-bottom: 4px;
 }
 
 div.text_entry, div.property{
@@ -235,8 +235,8 @@ position: absolute;
 width:26px;
 height:6px;
 float: left;
-margin-top: 6px;
-margin-bottom: 6px;
+margin-top: 10px;
+margin-bottom: 10px;
 }
 
 .long{
@@ -500,7 +500,7 @@ ul#palette_menu {
 }
 
 
-.start_palette, .die_palette {
+.setup_palette, .die_palette {
     border: solid #efac1f 1px;
     
      background-color:#50a275;

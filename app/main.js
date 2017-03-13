@@ -32,19 +32,11 @@ define(["jquery", "paper", "handlebars", "app/id", "app/PaletteModel", "app/Pale
             } else if (data.type == "behavior_change") {
 
             } else if (data.type == "authoring_response") {
-                switch (data.authoring_type) {
-                    case "behavior_added":
-                        //TODO: move this over to handling by chartViewManager
-                        paletteModel.processAuthoringResponse(data);
-                        break;
-
-                    case "transition_added":
-                    case "mapping_added":
-                    case "state_added":
-
+                   
+                   
                         chartViewManager.processAuthoringResponse(data);
-                        break;
-                }
+                        
+                
             }
         };
 
@@ -60,6 +52,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/PaletteModel", "app/Pale
 
             };
             socketController.sendMessage(transmit_data);
+             chartViewManager.processAuthoringResponse(transmit_data);
         };
 
         var onStateAdded = function(data) {
@@ -92,19 +85,14 @@ define(["jquery", "paper", "handlebars", "app/id", "app/PaletteModel", "app/Pale
                 data: data
             };
 
-            socketController.sendMessage(transmit_data);
+           socketController.sendMessage(transmit_data);
         };
 
-        var initializeBehavior = function(data) {
-
-        };
 
 
         socketController.addListener("ON_MESSAGE", onMessage);
         socketController.addListener("ON_CONNECTION", onConnection);
-
-        paletteModel.addListener("ON_BEHAVIOR_ADDED", onBehaviorAdded);
-
+        chartViewManager.addListener("ON_BEHAVIOR_ADDED", onBehaviorAdded);
         chartViewManager.addListener("ON_STATE_CONNECTION", onStateConnectionAdded);
         chartViewManager.addListener("ON_MAPPING_ADDED", onMappingAdded);
         chartViewManager.addListener("ON_STATE_ADDED", onStateAdded);
