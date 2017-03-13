@@ -62,6 +62,10 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView"],
                             console.log("mapping updated called");
                             this.views[behavior_id].updateMapping(this.lastAuthoringRequest.data);
                             break;
+                        case "mapping_relative_removed":
+                            console.log("mapping relative removed called");
+                            this.views[behavior_id].removeMapping(this.lastAuthoringRequest.data);
+                            break;
                         case "state_added":
                             this.lastAuthoringRequest.x = this.lastAuthoringRequest.x - $("#" + behavior_id).offset().left;
                             this.lastAuthoringRequest.y = this.lastAuthoringRequest.y - $("#" + behavior_id).offset().top;
@@ -132,6 +136,9 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView"],
                 }.bind(this));
                 chartView.addListener("ON_MAPPING_REFERENCE_UPDATE", function(id, reference_type, behaviorId, stateId, itemName, relativePropertyName, referenceProperty, referenceNames) {
                     this.onMappingReferenceUpdate(id, reference_type, behaviorId, stateId, itemName, relativePropertyName, referenceProperty, referenceNames);
+                }.bind(this));
+                chartView.addListener("ON_MAPPING_RELATIVE_REMOVED", function(id, stateId, behaviorId) {
+                    this.onMappingRelativeRemoved(id, stateId, behaviorId);
                 }.bind(this));
                 chartView[data.id] = chartView;
                 chartView.initializeBehavior(data);
@@ -204,6 +211,24 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView"],
                 };
 
                 this.trigger("ON_MAPPING_ADDED", [transmit_data]);
+            }
+
+            onMappingRelativeRemoved(id, stateId, behaviorId){
+                console.log("mapping relative removed", id, stateId, behaviorId);
+
+                var transmit_data = {
+                    mappingId: id,
+                    behavior_id: behaviorId,
+                    stateId: stateId,
+                    type: "mapping_relative_removed"
+                };
+
+                this.lastAuthoringRequest = {
+                    data: transmit_data
+                };
+ 
+                 this.trigger("ON_MAPPING_RELATIVE_REMOVED", [transmit_data]);
+
             }
 
             onStateAdded(x, y, data) {

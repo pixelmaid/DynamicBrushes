@@ -88,6 +88,17 @@ define(["jquery", "paper", "handlebars", "app/id", "app/PaletteModel", "app/Pale
            socketController.sendMessage(transmit_data);
         };
 
+         var onMappingRelativeRemoved = function(data) {
+            console.log("transmit_data mapping", data);
+            var transmit_data = {
+                type: "authoring_request",
+                requester: "authoring",
+                data: data
+            };
+
+           socketController.sendMessage(transmit_data);
+        };
+
 
 
         socketController.addListener("ON_MESSAGE", onMessage);
@@ -95,6 +106,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/PaletteModel", "app/Pale
         chartViewManager.addListener("ON_BEHAVIOR_ADDED", onBehaviorAdded);
         chartViewManager.addListener("ON_STATE_CONNECTION", onStateConnectionAdded);
         chartViewManager.addListener("ON_MAPPING_ADDED", onMappingAdded);
+        chartViewManager.addListener("ON_MAPPING_RELATIVE_REMOVED", onMappingRelativeRemoved);
+
         chartViewManager.addListener("ON_STATE_ADDED", onStateAdded);
 
 

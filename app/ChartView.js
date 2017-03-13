@@ -56,6 +56,8 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
                                 console.log("state found",stateId);
                                 $(ui.helper).remove(); //destroy clone
                                 $(ui.draggable).remove(); //remove from list
+                                 self.trigger("ON_MAPPING_RELATIVE_REMOVED", [mappingId, stateId, id]);
+
                             }
                             // self.model.elementDropped(data);
 
@@ -354,6 +356,11 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
     
                 console.log("update mapping",html,data);
 
+            }
+
+            removeMapping(data){
+                console.log("mapping to remove",$("#" + data.mappingId),data.mappingId);
+                 $("#" + data.mappingId).remove();
             }
 
             makeDraggable(target){
