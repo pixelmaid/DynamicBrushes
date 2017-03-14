@@ -336,8 +336,7 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
                             console.log("generator dropped on mapping");
                             $(ui.helper).remove(); //destroy clone
                             //$(ui.draggable).remove(); //remove from list
-                            self.trigger("ON_GENERATOR_ADDED", [self.id,name]);
-                             self.trigger("ON_MAPPING_REFERENCE_UPDATE", [ mapping_data.mappingId, type, self.id, target_state,itemName,relativePropertyName, referenceProperty, referenceNames]);
+                            self.trigger("ON_GENERATOR_ADDED", [ mapping_data.mappingId, drop_id, name, target_state, self.id,itemName,relativePropertyName]);
 
                         }
 
@@ -358,9 +357,11 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
 
             }
 
+            //TODO: I think remove unbinds events of child elements but need to confirm here
             removeMapping(data){
                 console.log("mapping to remove",$("#" + data.mappingId),data.mappingId);
-                 $("#" + data.mappingId).remove();
+                var mapping =  $("#" + data.mappingId);
+                mapping.remove();
             }
 
             makeDraggable(target){
