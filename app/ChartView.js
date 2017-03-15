@@ -348,9 +348,9 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
 
             updateMapping(data){
                 var html = "<div class='block property "+data.reference_type+"'>"+data.itemName+"</div>";
-                $($('#' +data.id).find("#reference_expression")[0]).prepend(html);
+                $($('#' +data.mappingId).find("#reference_expression")[0]).prepend(html);
 
-                this.instance.draggable($("#" +data.id+" #reference_expression .block"));
+                this.instance.draggable($("#" +data.mappingId+" #reference_expression .block"));
 
     
                 console.log("update mapping",html,data);

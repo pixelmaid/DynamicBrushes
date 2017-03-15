@@ -240,7 +240,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                 console.log("mapping reference update", id, itemName, stateId);
 
                 var transmit_data = {
-                    id: id,
+                    mappingId: id,
                     behavior_id: behaviorId,
                     relativePropertyName: relativePropertyName,
                     stateId: stateId,
