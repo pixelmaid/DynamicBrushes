@@ -327,7 +327,7 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
                             console.log("sensor prop dropped on mapping");
                             $(ui.helper).remove(); //destroy clone
                             //$(ui.draggable).remove(); //remove from list
-                             self.trigger("ON_MAPPING_REFERENCE_UPDATE", [ mapping_data.mappingId, type,self.id, target_state,itemName,relativePropertyName, referenceProperty, referenceNames]);
+                             self.trigger("ON_MAPPING_REFERENCE_UPDATE", [ mapping_data.mappingId, type,self.id, target_state,itemName,relativePropertyName, referenceProperty, referenceNames, "active"]);
 
                         }
 
