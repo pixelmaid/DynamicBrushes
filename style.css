@@ -87,13 +87,18 @@ h1{
 
 /*flowchart styling*/
 .transition{
-  float:left;
-  min-width:150px;
+  
   min-height:50px;
-  border:solid 1px #efac1f;
+ background-color: #efac1f;
+  min-width: 120px
 
 }
 
+.transition_statement {
+    min-width: 160px;
+    min-height: 50px;
+    border: solid 1px #efac1f;
+}
 
 .transition_toggle {
     width: 30px;
@@ -106,6 +111,30 @@ h1{
     line-height: 1.2;
     font-weight: bold;
     cursor: pointer;
+}
+
+.events {
+    background-color: #efac1f;
+    min-height: 30px;
+    text-align: center;
+    padding: 2px;
+}
+
+.event_label {
+    float: left;
+    width: 40px;
+    height: 24px;
+    padding: 4px;
+    font-weight: bold;
+    color: white;
+}
+
+.event_block {
+    float: left;
+    min-width: 124px;
+    min-height: 24px;
+    background-color: black;
+    padding: 2px;
 }
 
 
@@ -152,6 +181,7 @@ h1{
 
 .methods{
   margin-top:10px;
+  min-height: 20px;
 }
 
 .expression {

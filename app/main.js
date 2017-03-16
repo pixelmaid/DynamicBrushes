@@ -77,8 +77,31 @@ define(["jquery", "paper", "handlebars", "app/id", "app/PaletteModel", "app/Pale
             socketController.sendMessage(transmit_data);
         };
 
+         var onTransitionEventAdded = function(data) {
+            console.log("transmit_data transition event", data);
+            var transmit_data = {
+                type: "authoring_request",
+                requester: "authoring",
+                data: data
+            };
+
+            socketController.sendMessage(transmit_data);
+        };
+
+
         var onMappingAdded = function(data) {
             console.log("transmit_data mapping", data);
+            var transmit_data = {
+                type: "authoring_request",
+                requester: "authoring",
+                data: data
+            };
+
+           socketController.sendMessage(transmit_data);
+        };
+
+         var onMethodAdded = function(data) {
+            console.log("transmit_data method", data);
             var transmit_data = {
                 type: "authoring_request",
                 requester: "authoring",
@@ -105,6 +128,10 @@ define(["jquery", "paper", "handlebars", "app/id", "app/PaletteModel", "app/Pale
         socketController.addListener("ON_CONNECTION", onConnection);
         chartViewManager.addListener("ON_BEHAVIOR_ADDED", onBehaviorAdded);
         chartViewManager.addListener("ON_STATE_CONNECTION", onStateConnectionAdded);
+        chartViewManager.addListener("ON_METHOD_ADDED", onMethodAdded);
+
+        chartViewManager.addListener("ON_TRANSITION_EVENT_ADDED", onTransitionEventAdded);
+
         chartViewManager.addListener("ON_MAPPING_ADDED", onMappingAdded);
         chartViewManager.addListener("ON_MAPPING_RELATIVE_REMOVED", onMappingRelativeRemoved);
 

@@ -57,11 +57,23 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                             this.lastAuthoringRequest = null;
 
                             break;
+
+                        case  "transition_event_added":
+                         console.log("transition event added called");
+                            this.views[behavior_id].addTransitionEvent(this.lastAuthoringRequest.data);
+                            this.lastAuthoringRequest = null;
+                        break;
                         case "mapping_added":
-                            console.log("transition added  called");
+                            console.log("mapping added  called");
                             this.views[behavior_id].addMapping(this.lastAuthoringRequest.data.stateId, this.lastAuthoringRequest.data);
                             this.lastAuthoringRequest = null;
 
+                            break;
+
+                         case "method_added":
+                            console.log("method added  called");
+                            this.views[behavior_id].addMethod(this.lastAuthoringRequest.data);
+                            this.lastAuthoringRequest = null;
                             break;
                         case "mapping_updated":
                             console.log("mapping updated called");
@@ -145,24 +157,38 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
             onBehaviorAdded(data) {
                 console.log("add behavior", data, this);
                 var chartView = new ChartView(data.id);
-                chartView.addListener("ON_STATE_CONNECTION", function(connectionId, sourceId, sourceName, targetId, targetName, behaviorId) {
-                    this.onConnection(connectionId, sourceId, sourceName, targetId, targetName, behaviorId);
+                chartView.addListener("ON_STATE_CONNECTION", function(connectionId, sourceId, sourceName, targetId, behaviorId) {
+                    this.onConnection(connectionId, sourceId, sourceName, targetId, behaviorId);
                 }.bind(this));
+
+                chartView.addListener("ON_TRANSITION_EVENT_ADDED", function(connectionId, eventName, sourceId, sourceName, targetId, behaviorId) {
+                    this.onTransitionEventAdded(connectionId, eventName, sourceId, sourceName, targetId, behaviorId);
+                }.bind(this));
+
                 chartView.addListener("ON_MAPPING_ADDED", function(id, name, item_name, type, stateId, behaviorId) {
                     this.onMappingAdded(id, name, item_name, type, stateId, behaviorId);
                 }.bind(this));
+
+                chartView.addListener("ON_METHOD_ADDED",function(behaviorId,transitionId,methodId,targetMethod){
+                     this.onMethodAdded(behaviorId,transitionId,methodId,targetMethod);
+                }.bind(this));
+
                 chartView.addListener("ON_GENERATOR_ADDED", function(mappingId, name, generator_type, stateId, behaviorId, itemName, relativePropertyName) {
                     this.onGeneratorAdded(mappingId, name, generator_type, stateId, behaviorId, itemName, relativePropertyName);
                 }.bind(this));
+
                 chartView.addListener("ON_STATE_ADDED", function(x, y, data) {
                     this.onStateAdded(x, y, data);
                 }.bind(this));
-                chartView.addListener("ON_MAPPING_REFERENCE_UPDATE", function(id, reference_type, behaviorId, stateId, itemName, relativePropertyName, referenceProperty, referenceNames,constraint_type) {
-                    this.onMappingReferenceUpdate(id, reference_type, behaviorId, stateId, itemName, relativePropertyName, referenceProperty, referenceNames,constraint_type);
+
+                chartView.addListener("ON_MAPPING_REFERENCE_UPDATE", function(id, reference_type, behaviorId, stateId, itemName, relativePropertyName, referenceProperty, referenceNames, constraint_type) {
+                    this.onMappingReferenceUpdate(id, reference_type, behaviorId, stateId, itemName, relativePropertyName, referenceProperty, referenceNames, constraint_type);
                 }.bind(this));
+
                 chartView.addListener("ON_MAPPING_RELATIVE_REMOVED", function(id, stateId, behaviorId) {
                     this.onMappingRelativeRemoved(id, stateId, behaviorId);
                 }.bind(this));
+
                 chartView[data.id] = chartView;
                 chartView.initializeBehavior(data);
                 this.views[data.id] = chartView;
@@ -172,15 +198,12 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
             }
 
 
-            onConnection(connectionId, sourceId, sourceName, targetId, targetName, behaviorId) {
-                console.log("source name,target name", sourceName, targetName);
-                var name = sourceName;
-
+            onConnection(connectionId, sourceId, sourceName, targetId, behaviorId) {
+             
                 var transmit_data = {
                     fromStateId: sourceId,
                     toStateId: targetId,
-                    name: name,
-                    event: "STATE_COMPLETE",
+                    name: sourceName,
                     id: connectionId,
                     behavior_id: behaviorId,
                     parentFlag: "false",
@@ -194,6 +217,28 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                 this.trigger("ON_STATE_CONNECTION", [transmit_data]);
 
 
+            }
+
+            onTransitionEventAdded(connectionId, eventName, sourceId, sourceName, targetId, behaviorId) {
+                console.log("transition event added", connectionId, eventName);
+
+
+                var transmit_data = {
+                    fromStateId: sourceId,
+                    toStateId: targetId,
+                    event: eventName,
+                    name: sourceName,
+                    id: connectionId,
+                    behavior_id: behaviorId,
+                    parentFlag: "false",
+                    type: "transition_event_added"
+                };
+
+                this.lastAuthoringRequest = {
+                    data: transmit_data
+                };
+                console.log("state transition made chart view", this);
+                this.trigger("ON_TRANSITION_EVENT_ADDED", [transmit_data]);
             }
 
             onMappingAdded(id, name, item_name, type, stateId, behaviorId) {
@@ -237,7 +282,9 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
 
                 this.trigger("ON_MAPPING_ADDED", [transmit_data]);
             }
-            onMappingReferenceUpdate(id, reference_type, behaviorId, stateId, itemName, relativePropertyName, referenceProperty, referenceNames,constraint_type) {
+
+
+            onMappingReferenceUpdate(id, reference_type, behaviorId, stateId, itemName, relativePropertyName, referenceProperty, referenceNames, constraint_type) {
                 console.log("mapping reference update", id, itemName, stateId);
 
                 var transmit_data = {
@@ -258,6 +305,25 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                 };
 
                 this.trigger("ON_MAPPING_ADDED", [transmit_data]);
+            }
+
+
+            onMethodAdded(behaviorId,transitionId,methodId,targetMethod) {
+                console.log("method added", methodId, targetMethod);
+
+                var transmit_data = {
+                    behavior_id:behaviorId,
+                    targetTransition:transitionId,
+                    methodId:methodId,
+                    targetMethod:targetMethod, 
+                    type: "method_added"
+                };
+
+                this.lastAuthoringRequest = {
+                    data: transmit_data
+                };
+
+                this.trigger("ON_METHOD_ADDED", [transmit_data]);
             }
 
             onMappingRelativeRemoved(id, stateId, behaviorId) {

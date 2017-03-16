@@ -31,8 +31,8 @@ define(["jquery", "app/id", "app/Emitter"],
 					data.max = 100;
 					break;
 					case "sine":
-					data.freq = 2;
-					data.amp = 10;
+					data.freq = 0.05;
+					data.amp = 5;
 					data.phase = 0
 					break;
 
