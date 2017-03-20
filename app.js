@@ -16,7 +16,8 @@ requirejs.config({
 		'handlebars':'handlebars',
 		'jsplumb' : 'jsPlumb',
 		'text': 'text',
-		'jquery-ui': 'jquery-ui',	
+		'jquery-ui': 'jquery-ui',
+		'codemirror': 'codemirror',	
 		app: '../app'
 	},
 	hbs: { // optional

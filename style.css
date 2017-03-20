@@ -38,7 +38,7 @@ body {
 
 body, h2.title{
   font-family: "Source Sans Pro";
-  font-weight: 100;
+  font-weight: 400;
   color: white;
 }
 
@@ -47,14 +47,7 @@ h2.title {
     font-size: 14px;
     margin: 5px 2px;
 }
-.palette{
-   min-height: 40px;
-    min-width: 120px;
-    padding-top: 10px;
-    float: none;
-    background-color: black;
 
-}
 
 svg {
   font: 10px sans-serif;
@@ -194,7 +187,6 @@ h1{
 
 div.text_entry, div.property{
 float:left;
-height:16px;
 margin: 0 auto; 
 margin-left: 4px;
 margin-right: 4px;
@@ -224,7 +216,6 @@ height: 22px;
 }
 
 .block{
-width:70px;
 border-radius: 6px;
 text-align: center;
 color: #fff;
@@ -232,8 +223,18 @@ padding-left: 5px;
 padding-right: 5px;
 font-weight: 400;
 position: relative;
-min-height: 20px;
+height: 20px;
 padding-top: 2px;
+display: inline-block;
+}
+
+.palette{
+   width: 120px;
+  min-width: 120px;
+    float: none;
+    background-color: black;
+    display: block;
+
 }
 
 .block-draggable{
@@ -244,7 +245,6 @@ position: absolute;
 
 .property{
   background-color:#47c1c3;
-  width: 120px;
 }
 
 .method{
@@ -545,4 +545,20 @@ ul#palette_menu {
 .drag-n-drop{
   position: absolute;
   z-index: 101;
+}
+
+
+.CodeMirror{
+  background-color: transparent;
+  font-family: "Source Sans Pro";
+  color:white;
+  font-weight: 400;
+}
+
+.CodeMirror-lines{
+  padding: 0
+}
+
+.CodeMirror-hscrollbar{
+  display: none !important;
 }

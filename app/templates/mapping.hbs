@@ -2,10 +2,10 @@
  
  
    <div id="reference_expression" class = "expression">       
-    {{#if reference}}<div stateId = {{stateId}}, mappingId = {{mappingId}} name={{referencePropertyName}} type= {{referencePropertyType}} class="block property">{{reference}}</div>{{/if}}
-    <div class="text_entry">
-      <input type="text" value="{{reference_text}}" size= "1"/>    
-    </div>
+    <!--{{#if reference}}<div stateId = {{stateId}}, mappingId = {{mappingId}} name={{referencePropertyName}} type= {{referencePropertyType}} class="block property">{{reference}}</div>{{/if}}-->
+      <textarea  class="text_entry">
+        {{reference_text}}
+      </textarea>  
   </div>
 
   <div class = "arrow">

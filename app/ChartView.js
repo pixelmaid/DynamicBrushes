@@ -1,10 +1,10 @@
 //flowchartview     
 "use strict";
-define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/templates/behavior", "hbs!app/templates/state", "hbs!app/templates/start", "hbs!app/templates/transition", "hbs!app/templates/mapping"],
+define(["jquery", "jquery-ui", "jsplumb", "app/Expression", "app/Emitter", "app/id", "hbs!app/templates/behavior", "hbs!app/templates/state", "hbs!app/templates/start", "hbs!app/templates/transition", "hbs!app/templates/mapping"],
 
 
 
-    function($, ui, jsPlumb, Emitter, ID, behaviorTemplate, stateTemplate, startTemplate, transitionTemplate, mappingTemplate) {
+    function($, ui, jsPlumb, Expression,Emitter, ID, behaviorTemplate, stateTemplate, startTemplate, transitionTemplate, mappingTemplate) {
 
         var block_was_dragged = null;
 
@@ -23,6 +23,7 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
                 };
                 this.setupId = null;
                 this.dieId = null;
+                this.expressions = {};
                 behavior_counter++;
                 var html = behaviorTemplate(behavior_data);
                 $("#canvas").append(html);
@@ -61,19 +62,19 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
                             }
 
 
-                             //TODO: create mapping reference removed call
-                           /* else if (type == "brush_prop") {
-                            var mappingId = $(ui.draggable).attr('mappingId');
-                            var stateId = $(ui.draggable).attr('stateId');
+                            //TODO: create mapping reference removed call
+                            /* else if (type == "brush_prop") {
+                             var mappingId = $(ui.draggable).attr('mappingId');
+                             var stateId = $(ui.draggable).attr('stateId');
 
-                            if (mappingId) {
-                                console.log("state found", stateId);
-                                $(ui.helper).remove(); //destroy clone
-                                $(ui.draggable).remove(); //remove from list
-                                self.trigger("ON_MAPPING_REFERENCE_REMOVED", [mappingId, stateId, id]);
+                             if (mappingId) {
+                                 console.log("state found", stateId);
+                                 $(ui.helper).remove(); //destroy clone
+                                 $(ui.draggable).remove(); //remove from list
+                                 self.trigger("ON_MAPPING_REFERENCE_REMOVED", [mappingId, stateId, id]);
 
-                            }
-                            */
+                             }
+                             */
 
                         }
 
@@ -310,7 +311,11 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
                 $("#" + target_state + " .state .mappings").append(html);
 
                 var target = $("#" + mapping_data.mappingId + " #relative_expression .block");
-                console.log("target = ", target, "#" + mapping_data.mappingId + " #relative_expression .block");
+                var ex_el = $("#" + mapping_data.mappingId + " #reference_expression .text_entry")[0];
+
+                var expression = new Expression(ex_el,mapping_data.mappingId);
+
+                this.expressions[mapping_data.mappingId] = expression;
 
                 this.makeDraggable(target);
                 var self = this;
@@ -371,23 +376,18 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
 
             }
 
-             addMethod(data) {
-                var html = "<div id='"+data.methodId+"'class='block method'>" + data.targetMethod + "</div>";
-                  $($('#' + data.targetTransition).find(".methods")[0]).prepend(html);
+            addMethod(data) {
+                var html = "<div id='" + data.methodId + "'class='block method'>" + data.targetMethod + "</div>";
+                $($('#' + data.targetTransition).find(".methods")[0]).prepend(html);
 
                 this.instance.draggable($("#" + data.targetTransition + " .methods .block"));
                 console.log("method added event", $("#" + data.targetTransition + " .methods .block"), data);
 
             }
 
-             updateMapping(data) {
-                var html = "<div class='block property " + data.reference_type + "'>" + data.itemName + "</div>";
-                $($('#' + data.mappingId).find("#reference_expression")[0]).prepend(html);
-
-                this.instance.draggable($("#" + data.mappingId + " #reference_expression .block"));
-
-
-                console.log("update mapping", html, data);
+            updateMapping(data) {
+                var draggable_el = this.expressions[data.mappingId].addReference(data);
+                this.instance.draggable(draggable_el);
 
             }
 
@@ -456,7 +456,7 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
                         return $(html);
                     },
                     location: 0.5,
-                     cssClass: "transition_overlay",
+                    cssClass: "transition_overlay",
 
                     id: "transition_" + id
                 }]);
@@ -483,7 +483,7 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
                                             if (o.split("_")[0] == "transition") {
                                                 overlays[o].hide();
                                             }
-                                           if (o.split("_")[0] == "toggle") {
+                                            if (o.split("_")[0] == "toggle") {
                                                 overlays[o].show();
                                             }
                                         }
@@ -497,13 +497,13 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
                         }
                     }
                 }]);
-                
-                console.log("droppable target:",$('#' + id).find(".events .event_block"));
-                console.log("transition_data",transition_data);
-                
+
+                console.log("droppable target:", $('#' + id).find(".events .event_block"));
+                console.log("transition_data", transition_data);
+
                 $($('#' + id).find(".events .event_block")[0]).droppable({
                     drop: function(event, ui) {
-                                        console.log("drop_event_data",transition_data);
+                        console.log("drop_event_data", transition_data);
 
                         var eventName = $(ui.draggable).attr('name');
                         var type = $(ui.draggable).attr('type');
@@ -512,17 +512,17 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
                         var sourceName = transition_data.name;
 
                         console.log("type=", type);
-                       
+
                         if (type == 'transition') {
-                        
-                                //data.name = name;
-                                self.trigger("ON_TRANSITION_EVENT_ADDED", [id,eventName,sourceId,sourceName,targetId,self.id]);
-                                $(ui.helper).remove(); //destroy clone
-                                $(ui.draggable).remove(); //remove from list
-                            
+
+                            //data.name = name;
+                            self.trigger("ON_TRANSITION_EVENT_ADDED", [id, eventName, sourceId, sourceName, targetId, self.id]);
+                            $(ui.helper).remove(); //destroy clone
+                            $(ui.draggable).remove(); //remove from list
+
                         }
                     }
-                   });
+                });
 
                 $($('#' + id).find(".methods")[0]).droppable({
                     drop: function(event, ui) {
@@ -534,17 +534,17 @@ define(["jquery", "jquery-ui", "jsplumb", "app/Emitter", "app/id", "hbs!app/temp
                         var targetMethod = $(ui.draggable).attr('name');
 
                         console.log("type=", type);
-                       
+
                         if (type == 'action') {
-                        
-                                //data.name = name;
-                                self.trigger("ON_METHOD_ADDED", [behaviorId,transitionId,methodId,targetMethod]);
-                                $(ui.helper).remove(); //destroy clone
-                                $(ui.draggable).remove(); //remove from list
-                            
+
+                            //data.name = name;
+                            self.trigger("ON_METHOD_ADDED", [behaviorId, transitionId, methodId, targetMethod]);
+                            $(ui.helper).remove(); //destroy clone
+                            $(ui.draggable).remove(); //remove from list
+
                         }
                     }
-                   });
+                });
 
                 connection.getOverlay("transition_" + id).hide();
 
