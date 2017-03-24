@@ -80,9 +80,7 @@ h1{
 
 /*flowchart styling*/
 .transition{
-  
-  min-height:50px;
- background-color: #efac1f;
+   background-color: #efac1f;
   min-width: 120px
 
 }
@@ -232,7 +230,6 @@ display: inline-block;
    width: 120px;
   min-width: 120px;
     float: none;
-    background-color: black;
     display: block;
 
 }
@@ -561,4 +558,16 @@ ul#palette_menu {
 
 .CodeMirror-hscrollbar{
   display: none !important;
+}
+
+.resizeDiv{
+  display:inline-block;
+    width: auto;
+    float:left;
+    margin-right: 2px;
+    margin-left: 2px;
+}
+
+.statement{
+  width:auto;
 }

@@ -122,26 +122,31 @@ define(['emitter', 'app/id', 'app/Emitter'],
               item_class: "block method palette",
               name: "spawn",
               item_name: "spawn",
+              argument: true,
               type:"action"
             }, {
               item_class: " block method palette",
               name: "setOrigin",
               item_name: "setOrigin",
+              argument: true,
               type:"action"
             }, {
               item_class: " block method palette",
               name: "newStroke",
               item_name: "newStroke",
+              argument: true,
               type:"action"
             }, {
               item_class: " block method palette",
               name: "startTimer",
               item_name: "startTimer",
+              argument: false,
               type:"action"
             }, {
               item_class: " block method palette",
               name: "stopTimer",
               item_name: "stopTimer",
+              argument: false,
               type:"action"
             }, ]
           },
@@ -149,28 +154,28 @@ define(['emitter', 'app/id', 'app/Emitter'],
           "transitions": {
             items: [{
               item_class: "block transition palette",
+              item_name: "TICK",
               name: "tick",
-              item_name: "tick",
               type:"transition"
             }, {
               item_class: "block transition palette",
+              item_name: "STATE_COMPLETE",
               name: "stateComplete",
-              item_name: "stateComplete",
               type:"transition"
             }, {
               item_class: "block transition palette",
-              name: "onStylusDown",
-              item_name: "onStylusDown",
+              item_name: "STYLUS_DOWN",
+              name: "stylusDown",
               type:"transition"
             }, {
               item_class: "block transition palette",
-              name: "onStylusUp",
-              item_name: "onStylusUp",
+              item_name: "STYLUS_UP",
+              name: "stylusUp",
               type:"transition"
             }, {
               item_class: "block transition palette",
-              name: "onStylusMove",
-              item_name: "onStylusMove",
+              item_name: "STYLUS_MOVE",
+              name: "stylusMove",
               type:"transition"
             }]
           }

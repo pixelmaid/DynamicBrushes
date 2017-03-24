@@ -5,18 +5,21 @@ Some code here references expressions in Apparatus: https://github.com/cdglabs/a
 */
 
 "use strict";
-define(["jquery","codemirror","app/Emitter"],
+define(["jquery","codemirror","app/Emitter","app/id"],
 	
 
-	function($,CodeMirror,Emitter){
+	function($,CodeMirror,Emitter,ID){
 
 		var Expression = class extends Emitter{
 
 
-			constructor(el,id){
+			constructor(el,mappingId,expressionId){
 				 super();
 				this.el = el;
-				this.mappingId = id;
+                this.addReferenceCheck = false;
+				this.mappingId = mappingId;
+                this.id = expressionId;
+                this.references = [];
 				this.mirror = CodeMirror.fromTextArea(el, {
                     mode: "javascript",
 
@@ -41,31 +44,46 @@ define(["jquery","codemirror","app/Emitter"],
                 this.mirror.setSize(100, 24);
   				this.mirror.on("change", function(){this.onChange();}.bind(this));
 			  	this.mirror.on("mousedown", function(){this.onMirrorMouseDown();}.bind(this));
-                
+                this.mirror.setValue("");
 
 
 		}
 
 		onChange(){
+            //does not trigger if change is the result of adding a reference
+            if(!this.addReferenceCheck){
 			console.log("code mirror",this.mappingId,"changed",this.mirror.getValue());
+            this.trigger("ON_TEXT_CHANGED",[this]);
+            }
 		}
 
 		onMirrorMouseDown(){
 			console.log("mirror mouse down");
 		}
 
-		addReference(data){
-			this.mirror.setValue("%"+data.itemName+"%"+this.mirror.getValue());
+        getText(){
+            return this.mirror.getValue();
+        }
+
+        getPropertyList(){
+            return this.references;
+        }
+
+		addReference(type,referenceName,referenceProperties,referencePropId,displayName){
+            this.references.push([referenceName,referenceProperties]);
+            this.addReferenceCheck = true;
+			this.mirror.setValue("%"+referencePropId+"%"+this.mirror.getValue());
+            this.addReferenceCheck = false;
 			  var el = document.createElement("span");
-                el.innerHTML = data.itemName;
-                el.setAttribute("class", "block property " + data.reference_type);
+                el.innerHTML = displayName;
+                el.setAttribute("class", "block property " + type);
               
                 this.mirror.markText({
                     line: 0,
                     ch: 0
                 }, {
                     line: 0,
-                    ch: data.itemName.length
+                    ch: referencePropId.length+2
                 }, {
                     replacedWith: el,
                     handleMouseEvents: true
@@ -76,6 +94,8 @@ define(["jquery","codemirror","app/Emitter"],
 
 
 		};
+
+
 
 		return Expression;
 

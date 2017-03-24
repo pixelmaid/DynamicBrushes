@@ -1,0 +1,62 @@
+
+  .selectBoxArrow{
+    margin-top:7px;
+    float:left;
+    position:absolute;
+    right:1px;
+    
+
+  } 
+  .selectBoxInput{
+    border:0px;
+    border-radius: 15px;
+    padding-left:1px;
+    height:16px;
+    width:90px;
+    position:absolute;
+    top:0px;
+    left:0px;
+    text-align: center;
+  }
+
+  .selectBoxNumber{
+    width:30px;
+  }
+  
+  .selectBox{
+    
+    height:20px;  
+    position: relative;
+    z-index: 10000;
+    display: inline-block;
+  
+  }
+  .selectBoxOptionContainer{
+    position:absolute;
+    background-color: #fff;
+    left:-1px;
+    top:20px;
+    visibility:hidden;
+    overflow:auto;
+  }
+
+  .methodArguments .selectBoxOptionContainer{
+
+    background-color: #eb4a63;
+
+  }
+
+
+  .selectBoxAnOption{
+    cursor:default;
+    margin:1px;
+    overflow:hidden;
+    white-space:nowrap;
+    padding: 0 2px;
+  }
+  .selectBoxIframe{
+    position:absolute;
+    background-color:#FFF;
+    border:0px;
+    z-index:999;
+  } 

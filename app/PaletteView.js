@@ -56,7 +56,6 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", 'app/i
 
                     var attributes = $(event.target).prop("attributes");
 
-                    // loop through <select> attributes and apply them on <div>
                     $.each(attributes, function() {
                         clone.attr(this.name, this.value);
                     });

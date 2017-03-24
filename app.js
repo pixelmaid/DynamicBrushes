@@ -17,7 +17,8 @@ requirejs.config({
 		'jsplumb' : 'jsPlumb',
 		'text': 'text',
 		'jquery-ui': 'jquery-ui',
-		'codemirror': 'codemirror',	
+		'codemirror': 'codemirror',
+		'editableselect': 'editableselect',	
 		app: '../app'
 	},
 	hbs: { // optional
