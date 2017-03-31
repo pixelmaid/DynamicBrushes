@@ -53,11 +53,27 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
 
                             break;
 
+                        case "transition_removed":
+                            console.log("transition removed  called");
+                            this.views[behaviorId].removeTransition(this.lastAuthoringRequest.data);
+                            this.lastAuthoringRequest = null;
+
+                            break;
+
                         case "transition_event_added":
                             console.log("transition event added called");
                             this.views[behaviorId].addTransitionEvent(this.lastAuthoringRequest.data);
                             this.lastAuthoringRequest = null;
                             break;
+
+                        case "transition_event_removed":
+                            console.log("transition event removed called");
+                            this.lastAuthoringRequest.data.eventName = "STATE_COMPLETE";
+                             this.lastAuthoringRequest.data.displayName = "stateComplete";
+                            this.views[behaviorId].addTransitionEvent(this.lastAuthoringRequest.data);
+
+                            break;
+
                         case "mapping_added":
                             console.log("mapping added  called");
                             this.views[behaviorId].addMapping(this.lastAuthoringRequest.data.stateId, this.lastAuthoringRequest.data);
@@ -66,9 +82,9 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                             break;
 
                         case "method_added":
-                            console.log("method added  called",data.data.argumentList,data.data);
+                            console.log("method added  called", data.data.argumentList, data.data);
                             this.lastAuthoringRequest.data.methodArguments = data.data.argumentList;
-                             this.lastAuthoringRequest.data.defaultArgument = data.data.defaultArgument;
+                            this.lastAuthoringRequest.data.defaultArgument = data.data.defaultArgument;
                             this.views[behaviorId].addMethod(this.lastAuthoringRequest.data);
                             this.lastAuthoringRequest = null;
                             break;
@@ -83,8 +99,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                             console.log("generator added succesfully");
 
                             var generator_data = this.lastAuthoringRequest.data;
-                            //mappingId, behaviorId, stateId, relativePropertyName, expressionId, expressionText, expressionPropertyList, constraint_type
-                            this.views[behaviorId].trigger("ON_MAPPING_REFERENCE_UPDATE", [generator_data.mappingId, generator_data.behaviorId, generator_data.stateId, generator_data.relativePropertyName, generator_data.expressionId,generator_data.expressionText,generator_data.expressionPropertyList, "passive"]);
+                            this.views[behaviorId].trigger("ON_MAPPING_REFERENCE_UPDATE", [generator_data.mappingId, generator_data.behaviorId, generator_data.stateId, generator_data.relativePropertyName, generator_data.expressionId, generator_data.expressionText, generator_data.expressionPropertyList, "passive"]);
                             break;
                         case "mapping_relative_removed":
                             console.log("mapping relative removed called");
@@ -96,6 +111,12 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                             this.lastAuthoringRequest.x = this.lastAuthoringRequest.x - $("#" + behaviorId).offset().left;
                             this.lastAuthoringRequest.y = this.lastAuthoringRequest.y - $("#" + behaviorId).offset().top;
                             this.views[behaviorId].newNode(this.lastAuthoringRequest.x, this.lastAuthoringRequest.y, this.lastAuthoringRequest.data);
+                            this.lastAuthoringRequest = null;
+
+                            break;
+                        case "state_removed":
+                            console.log("state removed  called");
+                            this.views[behaviorId].removeState(this.lastAuthoringRequest.data);
                             this.lastAuthoringRequest = null;
 
                             break;
@@ -165,10 +186,21 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
 
             onBehaviorAdded(data) {
                 console.log("add behavior", data, this);
-                var chartView = new ChartView(data.id,data.name);
+                var chartView = new ChartView(data.id, data.name);
                 chartView.addListener("ON_STATE_CONNECTION", function(connectionId, sourceId, sourceName, targetId, behaviorId) {
                     this.onConnection(connectionId, sourceId, sourceName, targetId, behaviorId);
                 }.bind(this));
+
+
+                chartView.addListener("ON_TRANSITION_REMOVED", function(behaviorId, transitionId) {
+                    this.onTransitionRemoved(behaviorId, transitionId);
+                }.bind(this));
+
+
+                chartView.addListener("ON_TRANSITION_EVENT_REMOVED", function(behaviorId, transitionId) {
+                    this.onTransitionEventRemoved(behaviorId, transitionId);
+                }.bind(this));
+
 
                 chartView.addListener("ON_TRANSITION_EVENT_ADDED", function(connectionId, eventName, displayName, sourceId, sourceName, targetId, behaviorId) {
                     this.onTransitionEventAdded(connectionId, eventName, displayName, sourceId, sourceName, targetId, behaviorId);
@@ -183,7 +215,11 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                 }.bind(this));
 
                 chartView.addListener("ON_METHOD_ARGUMENT_CHANGE", function(behaviorId, transitionId, methodId, targetMethod, args) {
-                    this.onMethodArgumentChanged(behaviorId, transitionId, methodId, targetMethod,args);
+                    this.onMethodArgumentChanged(behaviorId, transitionId, methodId, targetMethod, args);
+                }.bind(this));
+
+                chartView.addListener("ON_METHOD_REMOVED",function(behaviorId, methodId){
+                    this.onMethodRemoved(behaviorId,methodId);
                 }.bind(this));
 
                 chartView.addListener("ON_GENERATOR_ADDED", function(mappingId, generatorId, generator_type, behaviorId, stateId, itemName, relativePropertyName, expressionId, expressionText, expressionPropertyList) {
@@ -194,6 +230,11 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                     this.onStateAdded(x, y, data);
                 }.bind(this));
 
+                chartView.addListener("ON_STATE_REMOVED", function(behaviorId, stateId) {
+                    this.onStateRemoved(behaviorId, stateId);
+                }.bind(this));
+
+
                 chartView.addListener("ON_EXPRESSION_TEXT_UPDATE", function(behaviorId, expressionId, expressionText, propertyList) {
                     this.onExpressionTextModified(behaviorId, expressionId, expressionText, propertyList);
                 }.bind(this));
@@ -202,8 +243,13 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                     this.onMappingReferenceUpdate(mappingId, behaviorId, stateId, relativePropertyName, expressionId, expressionText, expressionPropertyList, constraint_type);
                 }.bind(this));
 
-                chartView.addListener("ON_MAPPING_RELATIVE_REMOVED", function(id, stateId, behaviorId) {
-                    this.onMappingRelativeRemoved(id, stateId, behaviorId);
+                  chartView.addListener("ON_MAPPING_REFERENCE_REMOVED", function(behaviorId,expressionId, expressionPropertyList,expressionText) {
+                    this.onMappingReferenceRemoved(behaviorId,expressionId, expressionPropertyList,expressionText);
+                }.bind(this));
+
+
+                chartView.addListener("ON_MAPPING_RELATIVE_REMOVED", function(behaviorId,mappingId, stateId) {
+                    this.onMappingRelativeRemoved(behaviorId,mappingId, stateId);
                 }.bind(this));
 
                 chartView[data.id] = chartView;
@@ -221,7 +267,9 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                     fromStateId: sourceId,
                     toStateId: targetId,
                     name: sourceName,
-                    id: connectionId,
+                    eventName: "STATE_COMPLETE",
+                    displayName: "stateComplete",
+                    transitionId: connectionId,
                     behaviorId: behaviorId,
                     parentFlag: "false",
                     type: "transition_added"
@@ -237,7 +285,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
             }
 
             onTransitionEventAdded(connectionId, eventName, displayName, sourceId, sourceName, targetId, behaviorId) {
-                console.log("transition event added", connectionId, eventName,displayName);
+                console.log("transition event added", connectionId, eventName, displayName);
 
 
                 var transmit_data = {
@@ -246,7 +294,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                     eventName: eventName,
                     displayName: displayName,
                     name: sourceName,
-                    id: connectionId,
+                    transitionId: connectionId,
                     behaviorId: behaviorId,
                     parentFlag: "false",
                     type: "transition_event_added"
@@ -260,6 +308,38 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                 this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
             }
 
+            onTransitionRemoved(behaviorId, transitionId) {
+
+                var transmit_data = {
+                    transitionId: transitionId,
+                    behaviorId: behaviorId,
+                    type: "transition_removed"
+                };
+                this.lastAuthoringRequest = {
+                    data: transmit_data
+                };
+
+                this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
+
+
+            }
+
+             onTransitionEventRemoved(behaviorId, transitionId) {
+
+                var transmit_data = {
+                    transitionId: transitionId,
+                    behaviorId: behaviorId,
+                    type: "transition_event_removed"
+                };
+                this.lastAuthoringRequest = {
+                    data: transmit_data
+                };
+
+                this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
+
+
+            }
+
             onMappingAdded(mappingId, name, item_name, type, expressionId, stateId, behaviorId) {
                 console.log("mapping added", mappingId, name, stateId);
 
@@ -270,7 +350,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                     relativePropertyName: name,
                     stateId: stateId,
                     expressionId: expressionId,
-                    constraintType: "active",
+                    constraintType: "passive",
                     type: "mapping_added"
                 };
                 this.lastAuthoringRequest = {
@@ -302,6 +382,26 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                 };
 
                 this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
+            }
+
+            //TODO: will need to re-enabled passive constraint here?
+            onMappingReferenceRemoved(behaviorId,expressionId, expressionPropertyList,expressionText){
+                console.log("mapping reference removed", expressionId, expressionPropertyList);
+
+                var transmit_data = {
+                    behaviorId: behaviorId,
+                    expressionId: expressionId,
+                    expressionText: expressionText,
+                    expressionPropertyList: expressionPropertyList,
+                    type: "mapping_reference_removed"
+                };
+
+                this.lastAuthoringRequest = {
+                    data: transmit_data
+                };
+
+                this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
+
             }
 
             onExpressionTextModified(behaviorId, expressionId, expressionText, propertyList) {
@@ -348,7 +448,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
 
 
 
-            onMethodAdded(behaviorId, transitionId, methodId, targetMethod,args) {
+            onMethodAdded(behaviorId, transitionId, methodId, targetMethod, args) {
                 console.log("method added", methodId, targetMethod);
 
                 var transmit_data = {
@@ -367,7 +467,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                 this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
             }
 
-            onMethodArgumentChanged(behaviorId, transitionId, methodId, targetMethod,args) {
+            onMethodArgumentChanged(behaviorId, transitionId, methodId, targetMethod, args) {
                 console.log("method argument changed", methodId, targetMethod);
 
                 var transmit_data = {
@@ -386,11 +486,27 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                 this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
             }
 
-            onMappingRelativeRemoved(id, stateId, behaviorId) {
-                console.log("mapping relative removed", id, stateId, behaviorId);
+            onMethodRemoved(behaviorId,methodId){
+                 console.log("method removed ", methodId, behaviorId);
 
                 var transmit_data = {
-                    mappingId: id,
+                    behaviorId: behaviorId,
+                    methodId: methodId,
+                    type: "method_removed"
+                };
+
+                this.lastAuthoringRequest = {
+                    data: transmit_data
+                };
+
+                this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
+            }
+
+            onMappingRelativeRemoved(behaviorId,mappingId, stateId) {
+                console.log("mapping relative removed", mappingId, stateId, behaviorId);
+
+                var transmit_data = {
+                    mappingId: mappingId,
                     behaviorId: behaviorId,
                     stateId: stateId,
                     type: "mapping_relative_removed"
@@ -416,6 +532,21 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                     data: transmit_data
                 };
                 this.emitter.emit("ON_AUTHORING_EVENT", transmit_data);
+            }
+
+            onStateRemoved(behaviorId, stateId) {
+                var transmit_data = {
+                    behaviorId: behaviorId,
+                    stateId: stateId,
+                    type: "state_removed"
+                };
+
+                this.lastAuthoringRequest = {
+                    data: transmit_data
+                };
+
+                this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
+
             }
 
             behaviorChange(data) {

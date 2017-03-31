@@ -19,6 +19,7 @@ requirejs.config({
 		'jquery-ui': 'jquery-ui',
 		'codemirror': 'codemirror',
 		'editableselect': 'editableselect',	
+		'contextmenu': 'jquery.contextMenu',
 		app: '../app'
 	},
 	hbs: { // optional

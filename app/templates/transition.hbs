@@ -1,11 +1,13 @@
 <div>
-	<div class="transition_statement" id="{{id}}">
+	<div class="transition_statement" id="{{transitionId}}">
 	  <div class="events">
 	  	<div class="event_label">on</div>  
 	 	 <div class="event_block">
-	        {{#each event}}
-	      	<div id="{{id}}" class = "block transition">{{name}}</div>
-	      	{{/each}}
+	       	 	 {{#if eventName}}
+
+	      	<div id="{{eventName}}" class = "block transition">{{displayName}}</div>
+	      		 	  {{/if}}
+
 	 	 </div>
 	  </div>
 	  <div class="methods">

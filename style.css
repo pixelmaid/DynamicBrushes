@@ -126,6 +126,7 @@ h1{
     min-height: 24px;
     background-color: black;
     padding: 2px;
+    border-radius: 8px;
 }
 
 
@@ -134,7 +135,8 @@ h1{
 }
 
 .state{
-  width: 340px;
+  width: auto;
+  min-width:200px;
   min-height: 100px;
   padding:10px;
  float:left;
@@ -143,6 +145,7 @@ h1{
 
 .setup .state, .die .state {
     width: 40px;
+    min-width: 40px;
     min-height: 40px;
     height: 40px;
     border: solid 4px #efac1f;
@@ -178,9 +181,14 @@ h1{
 .expression {
     height: 30px;
     min-width: 75px;
+    width: auto;
     float: left;
     padding-top: 4px;
     padding-bottom: 4px;
+}
+
+.relative_expression{
+  border: none;
 }
 
 div.text_entry, div.property{
@@ -224,6 +232,16 @@ position: relative;
 height: 20px;
 padding-top: 2px;
 display: inline-block;
+}
+
+div#STATE_COMPLETE.transition {
+    background-color: transparent;
+    color: rgba(255, 255, 255, 0.46);
+}
+
+span.block {
+    margin-left: 8px;
+    margin-right: 8px;
 }
 
 .palette{

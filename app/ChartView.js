@@ -1,10 +1,10 @@
 //ChartView     
 "use strict";
-define(["jquery", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "app/Emitter", "app/id", "hbs!app/templates/method", "hbs!app/templates/behavior", "hbs!app/templates/state", "hbs!app/templates/start", "hbs!app/templates/transition", "hbs!app/templates/mapping"],
+define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "app/Emitter", "app/id", "hbs!app/templates/method", "hbs!app/templates/behavior", "hbs!app/templates/state", "hbs!app/templates/start", "hbs!app/templates/transition", "hbs!app/templates/mapping"],
 
 
 
-    function($, ui, jsPlumb, EditableSelect, Expression, Emitter, ID, methodTemplate, behaviorTemplate, stateTemplate, startTemplate, transitionTemplate, mappingTemplate) {
+    function($, contextmenu, ui, jsPlumb, EditableSelect, Expression, Emitter, ID, methodTemplate, behaviorTemplate, stateTemplate, startTemplate, transitionTemplate, mappingTemplate) {
 
         var block_was_dragged = null;
 
@@ -24,11 +24,15 @@ define(["jquery", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "a
                 this.dieId = null;
                 this.expressions = {};
                 var html = behaviorTemplate(behavior_data);
+                var self = this;
+                var last_dragged = null;
+
                 $("#canvas").append(html);
 
                 $('#' + id).droppable({
-                    greedy:true,
+                    greedy: true,
                     drop: function(event, ui) {
+                        self.resolveDrop($(ui.draggable));
                         var type = $(ui.draggable).attr('type');
                         console.log("type=", type);
                         var drop_id = ID();
@@ -98,7 +102,6 @@ define(["jquery", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "a
                 this.currrentState = null;
                 this.prevState = null;
                 this.id = id;
-                var self = this;
                 jsPlumb.ready(function() {
 
 
@@ -179,6 +182,59 @@ define(["jquery", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "a
                             self.initNode(windows[i], true);
                         }
                     });
+
+                });
+
+                $.contextMenu({
+                    selector: '#' + self.id + ' .jsplumb-connector',
+                    callback: function(key, options) {
+                        if (key == "delete") {
+                            var c_id = options.$trigger[0]._jsPlumb.getId();
+
+                            self.trigger("ON_TRANSITION_REMOVED", [self.id, c_id]);
+                        }
+                    },
+                    items: {
+                        "delete": {
+                            name: "Delete Transition",
+                        }
+                    }
+
+                });
+
+                $.contextMenu({
+                    selector: '#' + self.id + ' .state',
+                    callback: function(key, options) {
+                        if (key == "delete") {
+                            var parent = $(options.$trigger[0]).parent();
+                            console.log("state", parent[0].id);
+                            self.trigger("ON_STATE_REMOVED", [self.id, parent[0].id]);
+                        }
+                    },
+                    items: {
+                        "delete": {
+                            name: "Delete State",
+                        }
+                    }
+
+                });
+
+                $.contextMenu({
+                    selector: '#' + self.id + ' .mapping',
+                    callback: function(key, options) {
+                        if (key == "delete") {
+                            var mappingId = $(options.$trigger[0]).attr("id");
+                            var stateId = $(options.$trigger[0]).attr("stateid");
+
+                            console.log("mappping", mappingId);
+                            self.trigger("ON_MAPPING_RELATIVE_REMOVED", [self.id, mappingId, stateId]);
+                        }
+                    },
+                    items: {
+                        "delete": {
+                            name: "Delete Mapping",
+                        }
+                    }
 
                 });
 
@@ -274,7 +330,7 @@ define(["jquery", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "a
                 console.log("state", $('#' + id));
                 $("#" + id).attr("name", state_data.name);
                 $('#' + id).droppable({
-                    greedy:true,
+                    greedy: true,
                     drop: function(event, ui) {
                         var type = $(ui.draggable).attr('type');
                         var name = $(ui.draggable).attr('name');
@@ -302,9 +358,12 @@ define(["jquery", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "a
                 return d;
             }
 
-            initializeExpression(expressionId, mappingId) {
-                var ex_el = $("#" + mappingId + " #reference_expression .text_entry")[0];
+            removeState(data) {
+                this.instance.remove(data.stateId);
+            }
 
+            initializeExpression(expressionId, mappingId) {
+                var ex_el = $("#" + mappingId + " .reference_expression .text_entry")[0];
                 var expression = new Expression(ex_el, mappingId, expressionId);
 
                 this.expressions[mappingId] = expression;
@@ -318,13 +377,16 @@ define(["jquery", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "a
 
             expressionModified(expression) {
                 this.trigger("ON_EXPRESSION_TEXT_UPDATE", [this.id, expression.id, expression.getText(), expression.getPropertyList()]);
+                this.instance.repaintEverything();
+
 
             }
 
-            addReferenceToExpression(mappingId, referenceType, referenceName, referenceProperties, name, itemName) {
+            addReferenceToExpression(mappingId, referenceType, referenceName, referenceProperties, referenceId, referenceDisplayName) {
                 var expression = this.expressions[mappingId];
-                var el = expression.addReference(referenceType, referenceName, referenceProperties, name, itemName);
-                this.instance.draggable(el);
+                var el = expression.addReference(referenceType, referenceName, referenceProperties, referenceId, referenceDisplayName);
+
+                this.makeDraggable(el);
 
                 return expression;
             }
@@ -334,22 +396,22 @@ define(["jquery", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "a
                 console.log("target_state = ", target_state, mapping_data);
                 $("#" + target_state + " .state .mappings").append(html);
 
-                var target = $("#" + mapping_data.mappingId + " #relative_expression .block");
+                var target = $("#" + mapping_data.mappingId + " .relative_expression .block");
 
                 console.log("expressionId =", mapping_data.expressionId);
 
                 var expression = this.initializeExpression(mapping_data.expressionId, mapping_data.mappingId);
 
-                this.makeDraggable(target);
+                //this.makeDraggable(target);
                 var self = this;
 
-                console.log("target droppable", $('#' + mapping_data.mappingId).find("#reference_expression"));
-                $($('#' + mapping_data.mappingId).find("#reference_expression")[0]).droppable({
-                    greedy:true,
+                console.log("target droppable", $('#' + mapping_data.mappingId).find(".reference_expression"));
+                $($('#' + mapping_data.mappingId).find(".reference_expression")[0]).droppable({
+                    greedy: true,
                     drop: function(event, ui) {
                         var type = $(ui.draggable).attr('type');
                         var name = $(ui.draggable).attr('name');
-                        var itemName = $(ui.draggable).html();
+                        var displayName = $(ui.draggable).html();
                         var relativePropertyName = mapping_data.relativePropertyName;
                         var referenceProperty = name.split("_")[0];
                         var referenceNames = name.split("_");
@@ -366,14 +428,14 @@ define(["jquery", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "a
                         };
                         var referenceName, referenceProperties;
                         if (type == 'sensor_prop') {
-
-                            console.log("sensor prop dropped on mapping", itemName);
-                            $(ui.helper).remove(); //destroy clone
-                            //$(ui.draggable).remove(); //remove from list
-                           referenceName = "stylus";
+                            referenceName = 'stylus';
+                            console.log("sensor prop dropped on mapping", displayName);
+                            $(ui.helper).remove(); //destroy cloneit'
                             referenceProperties = [name.split("_")[1]];
                             console.log("reference properties =", referenceProperties, name.split("_"));
-                            expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, itemName,name);
+                            expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, drop_id, displayName);
+
+                            console.log('reference properties set', expression.getPropertyList());
 
                             self.trigger("ON_MAPPING_REFERENCE_UPDATE", [mapping_data.mappingId, self.id, target_state, relativePropertyName, expression.id, expression.getText(), expression.getPropertyList(), "active"]);
 
@@ -385,12 +447,13 @@ define(["jquery", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "a
                             $(ui.helper).remove(); //destroy clone
                             //$(ui.draggable).remove(); //remove from list
                             referenceName = null;
-                            var  generatorId = drop_id;
+                            var generatorId = drop_id;
                             var generatorType = name;
                             referenceProperties = [generatorId];
-                            expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, generatorId, itemName);
+                            //addReferenceToExpression(mappingId, referenceType, referenceName, referenceProperties, referenceId, referenceDisplayName
+                            expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, generatorId, displayName);
 
-                            self.trigger("ON_GENERATOR_ADDED", [mapping_data.mappingId, generatorId, generatorType, self.id, target_state, itemName ,relativePropertyName, expression.id, expression.getText(),expression.getPropertyList()]);
+                            self.trigger("ON_GENERATOR_ADDED", [mapping_data.mappingId, generatorId, generatorType, self.id, target_state, displayName, relativePropertyName, expression.id, expression.getText(), expression.getPropertyList()]);
 
                         }
 
@@ -398,18 +461,38 @@ define(["jquery", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "a
                     }
                 });
 
-
+                this.instance.repaintEverything();
 
             }
 
             addTransitionEvent(data) {
-                var html = "<div name='"+data.eventName+"'type='transition' class='block transition'>" + data.displayName + "</div>";
-                $($('#' + data.id).find(".events .event_block")[0]).prepend(html);
+                var html = "<div parent_id='" + data.transitionId + "'name='" + data.eventName + "'type='transition' class='block transition'>" + data.displayName + "</div>";
+                $($('#' + data.transitionId).find(".events .event_block")[0]).empty();
+                $($('#' + data.transitionId).find(".events .event_block")[0]).prepend(html);
+                var target = $("#" + data.transitionId + " .events .event_block .block");
 
-                this.instance.draggable($("#" + data.id + " .events .event_block .block"));
 
 
-                console.log("update event", $("#" + data.id + " .events .event_block .block"), data);
+                if (data.eventName == "STATE_COMPLETE") {
+                    target.attr("id", data.eventName);
+                } else {
+                    this.makeDraggable(target);
+
+                }
+                console.log("update event", $("#" + data.transitionId + " .events .event_block .block"), data);
+
+            }
+
+            removeTransition(data) {
+                var connections = this.instance.getConnections();
+                var connection = connections.find(function(c) {
+                    return c.getId() == data.transitionId;
+                });
+                this.instance.detach(connection);
+
+            }
+
+            removeTransitionEvent(data) {
 
             }
 
@@ -431,21 +514,20 @@ define(["jquery", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "a
                 data.defaultArgumentName = data.methodArguments[data.defaultArgument];
                 data.defaultArgumentId = data.defaultArgument;
                 data.methodTextId = data.methodId + "_text";
-                if(data.targetMethod == "spawn"){
+                if (data.targetMethod == "spawn") {
                     data.methodNumberId = data.methodId + "_num";
                 }
 
                 var html = methodTemplate(data);
-                if(data.targetTransition){
-                $($('#' + data.targetTransition).find(".methods")[0]).prepend(html);
+                if (data.targetTransition) {
+                    $($('#' + data.targetTransition).find(".methods")[0]).prepend(html);
+
+                } else {
+
+                    $('#' + self.id).prepend(html);
 
                 }
-                else{
-                  
-                    $('#' + self.id).prepend(html);
-             
-                }
-                this.instance.draggable($("#"+data.methodId));
+                this.makeDraggable($("#" + data.methodId));
 
                 console.log("get text box by id", document.getElementById(data.methodTextId), data.methodTextId);
                 EditableSelect.createEditableSelect(document.getElementById(data.methodTextId));
@@ -455,20 +537,20 @@ define(["jquery", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "a
                     console.log("change!");
                     self.methodArgumentChanged(self.id, data.transitionId, data.methodId, data.targetMethod);
                 });
-                 $('#' + data.methodId+"_num").change(function() {
+                $('#' + data.methodId + "_num").change(function() {
                     console.log("change!");
                     self.methodArgumentChanged(self.id, data.transitionId, data.methodId, data.targetMethod);
                 });
             }
 
             methodArgumentChanged(behaviorId, transitionId, methodId, targetMethod) {
-                var methodHTML = $('#'+methodId);
-              
-                var currentArgument = $('#'+methodId+"_text").val();
-                console.log("method argument changed for ", methodId,currentArgument);
+                var methodHTML = $('#' + methodId);
+
+                var currentArgument = $('#' + methodId + "_text").val();
+                console.log("method argument changed for ", methodId, currentArgument);
                 var args = [currentArgument];
-                if(targetMethod == "spawn"){
-                    args.push($('#'+methodId+"_num").val());
+                if (targetMethod == "spawn") {
+                    args.push($('#' + methodId + "_num").val());
                 }
 
                 this.trigger("ON_METHOD_ARGUMENT_CHANGE", [behaviorId, transitionId, methodId, targetMethod, args]);
@@ -483,25 +565,85 @@ define(["jquery", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "a
                 console.log("mapping to remove", $("#" + data.mappingId), data.mappingId);
                 var mapping = $("#" + data.mappingId);
                 mapping.remove();
+                this.instance.repaintEverything();
+
             }
 
             makeDraggable(target) {
+                var self = this;
                 target.mousedown(function(event) {
+                    var parent = target.parent();
+                    var parentOffset = $(this).parent().offset();
+
                     var styles = {
-                        position: "absolute"
+                        position: "absolute",
+                        left: event.clientX,
+                        top: event.clientY,
+                        'z-index': 1000
                     };
                     target.css(styles);
-                });
-                target.mouseup(function(event) {
-                    var styles = {
-                        position: "relative"
+                    target.addClass("last_dragged");
+                    target.detach().appendTo('body');
+                    self.last_dragged = {
+                        parent: parent
                     };
-                    target.css(styles);
                 });
+
 
                 target.draggable();
                 this.instance.draggable(target);
 
+            }
+
+
+            returnToParent(target) {
+                console.log("return to parent", this.last_dragged, target);
+                if (this.last_dragged) {
+                    target.detach().appendTo(this.last_dragged.parent);
+                    target.removeClass("last_dragged");
+                    var styles = {
+                        position: "relative",
+                        left: 0,
+                        top: 0,
+                        'z-index': 1
+                    };
+                    target.css(styles);
+                    this.last_dragged = null;
+                    return true;
+
+                }
+                return false;
+            }
+
+            resolveDrop(target, newParent) {
+                console.log("resolve drop", target.attr('type'));
+                if (this.last_dragged) {
+                    target.removeClass("last_dragged");
+
+                    switch (target.attr('type')) {
+                        case "sensor_prop":
+                        case "generator":
+                            console.log("sensor prop or generator dropped");
+                            var referenceId = target.attr("id");
+                            var expressionId = target.attr("parent_id");
+                            var mappingId = $("#" + expressionId).attr("parent_id");
+                            var expression = this.expressions[mappingId];
+                            expression.removeReference(referenceId);
+                            var expressionPropertyList = expression.getPropertyList();
+                            var expressionText = expression.getText();
+
+                            this.trigger("ON_MAPPING_REFERENCE_REMOVED", [this.id, expressionId, expressionPropertyList, expressionText]);
+                            break;
+
+                        case "method":
+                            this.trigger("ON_METHOD_REMOVED", [this.id, target.attr("id")]);
+                            break;
+                        case "transition":
+                            this.trigger("ON_TRANSITION_EVENT_REMOVED", [this.id, target.attr("parent_id")]);
+                            break;
+
+                    }
+                }
             }
 
             initializeBehavior(data) {
@@ -524,15 +666,13 @@ define(["jquery", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "a
                     self.addOverlayToConnection(data.transitions[j]);
 
                 }
-
-
-
             }
 
             addOverlayToConnection(transition_data) {
                 var self = this;
 
-                var id = transition_data.id;
+                var id = transition_data.transitionId;
+                console.log("transition id=",id)
                 var connections = this.instance.getConnections();
                 var connection = connections.find(function(c) {
                     return c.getId() == id;
@@ -589,7 +729,7 @@ define(["jquery", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "a
                 console.log("transition_data", transition_data);
 
                 $($('#' + id).find(".events .event_block")[0]).droppable({
-                    greedy:true,
+                    greedy: true,
                     drop: function(event, ui) {
                         console.log("drop_event_data", transition_data);
 
@@ -614,7 +754,7 @@ define(["jquery", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "a
                 });
 
                 $($('#' + id).find(".methods")[0]).droppable({
-                   greedy: true,
+                    greedy: true,
                     drop: function(event, ui) {
                         console.log("drop method");
                         var type = $(ui.draggable).attr('type');
