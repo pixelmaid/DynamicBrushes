@@ -1,15 +1,15 @@
 'use strict';
-define(["jquery", "paper", "handlebars", "app/id", "app/PaletteModel", "app/PaletteView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart"],
+define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager","app/PaletteModel", "app/PaletteView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart"],
 
 
-    function($, paper, Handlebars, ID, PaletteModel, PaletteView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart) {
+    function($, paper, Handlebars, ID, SaveManager, PaletteModel, PaletteView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart) {
 
         var socketController = new SocketController();
         var socketView = new SocketView(socketController, "#socket");
         var paletteModel = new PaletteModel();
-        var paletteView = new PaletteView(paletteModel, "#palette");
+        var paletteView = new PaletteView(paletteModel, "#scripts");
         var chartViewManager = new ChartViewManager(paletteModel, "#canvas");
-
+        var saveManager = new SaveManager();
 
         var onMessage = function(data) {
             console.log("ON MESSGE CALLED", data);

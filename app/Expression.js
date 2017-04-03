@@ -133,7 +133,7 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
 
             }
 
-            addReference(type, referenceName, referenceProperties, referenceId, referenceDisplayName) {
+            addReference(type, referenceName, referenceProperties, referenceId, referenceDisplayName, name) {
                 this.references[referenceId] = [referenceName, referenceProperties];
                 console.log("added reference", this.references, referenceName);
                 this.addReferenceCheck = true;
@@ -145,6 +145,7 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
                 el.setAttribute("type", type);
                 el.setAttribute("parent_id", this.id);
                 el.setAttribute("id", referenceId);
+                el.setAttribute("name",name);
                 this.marks[referenceId] = el;
 
                 this.renderMarks();

@@ -20,7 +20,14 @@ requirejs.config({
 		'codemirror': 'codemirror',
 		'editableselect': 'editableselect',	
 		'contextmenu': 'jquery.contextMenu',
+		'aws-sdk-js':'aws-sdk-js/dist/aws-sdk.min',
 		app: '../app'
+	},
+
+	shim:{
+		 "aws-sdk-js": {
+            exports: "AWS"
+        }
 	},
 	hbs: { // optional
     		helpers: true,            // default: true

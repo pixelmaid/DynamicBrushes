@@ -17,7 +17,7 @@ define(['emitter', 'app/id', 'app/Emitter'],
               item_name: "state",
               name: "state",
               type:"state"
-            }, {
+            }/*, {
               item_class: "block palette die_palette",
               item_name: "die",
               name: "die",
@@ -27,7 +27,7 @@ define(['emitter', 'app/id', 'app/Emitter'],
               item_name: "setup",
               name: "setup",
               type:"state"
-            }]
+            }*/]
           },
 
           "sensor_properties": {
@@ -157,12 +157,12 @@ define(['emitter', 'app/id', 'app/Emitter'],
               item_name: "TICK",
               name: "tick",
               type:"transition"
-            }, {
+            }, /*{
               item_class: "block transition palette",
               item_name: "STATE_COMPLETE",
               name: "stateComplete",
               type:"transition"
-            }, {
+            },*/ {
               item_class: "block transition palette",
               item_name: "STYLUS_DOWN",
               name: "stylusDown",

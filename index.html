@@ -6,47 +6,101 @@
 
     <link rel="stylesheet" href="jsPlumbToolkit-defaults.css">
     <link rel="stylesheet" href="jsPlumbToolkit-demo.css"> 
-        <link rel="stylesheet" type="text/css" href="codemirror.css">
+    <link rel="stylesheet" type="text/css" href="codemirror.css">
     <link rel="stylesheet" type="text/css" href="style.css">
     <link rel="stylesheet" type="text/css" href="EditableSelectStyle.css">
-        <link rel="stylesheet" type="text/css" href="jquery.contextMenu.css">
+    <link rel="stylesheet" type="text/css" href="jquery.contextMenu.css">
 
 
-  <link rel="stylesheet" href="jquery-ui.css">
+    <link rel="stylesheet" href="jquery-ui.css">
 
     <script data-main="app" src="lib/require.js"></script>
   </head>
   <body> 
-    <div id="socket" class="menu_bar">
+
+    <div class ="canvas-wrapper">
+      <div id = "main_container">
+       <div class = "jtk-demo-canvas canvas-wide statemachine-demo jtk-surface jtk-surface-nopan" id = "canvas">
+</div>
+</div>
+       </div>
+
+    <div class = "menubar-wrapper">
+      <div class = "menubar-container">
+    <div id="socket" class="horz-toolbar toolbar-container">
       <button type="button" id="connect_btn">connect</button>
       <label for="socket_status">status:</label>
       <input type="text" id="socket_status" value="disconnected"></input>
-     <button type="button" id="request_btn">update behavior</button>
+      <button type="button" id="request_btn">update behavior</button>
 
-    </div> 
-       <!--<div id="graphs">
-       
-     </div>-->
-<div id ="main_container">
-     <div class = "jtk-demo-canvas canvas-wide statemachine-demo jtk-surface jtk-surface-nopan" id = "canvas">
-     
+    </div>
+  </div>
+  </div>
+
+ 
+      <!--======================= PROPERTIES PANEL =======================-->
+<div class="properties-wrapper">
+  <div class="properties-container">
+    <div id = 'prop-menu' class="properties">
+      <section id = "behaviors">
+         
+          <header>
+
+         <h2>
+            Behaviors
+          </h2>
+                <div class="clearfix"></div>
+
+        </header>
+        <div class = "section-background">
+          <div class="form-group selectel">
+      <select id ="behaviorselect" class="form-control"></select>
+    </div>
+                <button type="button" id="add_behavior_btn">add behavior</button>
 </div>
- <div id = "palette">
-  <button type="button" id="add_behavior_btn">add behavior</button>
-<ul id="palette_menu">
-  <li id="states" class = "selected">states</li>
-  <li id="brush_properties" >brush properties</li>
-  <li id="sensor_properties">sensor properties</li>
-  <li id="generators">generators</li>
-  <li id="brush_actions">brush actions</li>
-  <li id="transitions">transitions</li>
-</ul>
-<ul id = "selected_palette">
-</ul>
- </div>
- </div>
-<div class = "clear-both">
-    <script src="lib/require.js"></script>
-    <script src="app.js"></script>
-  </body>
-  </html>
+      </section>
+       <section id = "scripts">
+          <header>
+
+         <h2>
+            Palette
+          </h2>
+                <div class="clearfix"></div>
+
+        </header>
+        <ul id="palette_menu">
+          <li id="states" class = "selected">states</li>
+          <li id="brush_properties" >brush properties</li>
+          <li id="sensor_properties">sensor properties</li>
+          <li id="generators">generators</li>
+          <li id="brush_actions">brush actions</li>
+          <li id="transitions">transitions</li>
+        </ul>
+        <ul id = "selected_palette">
+        </ul>
+      </section>
+<section id = "save-menu">
+    <header >
+      <h2>Save or Load a file</h2>
+      <div class="clearfix"></div>
+    </header>
+    <div  class="section-background">
+
+     <div class="form-group selectel">
+      <select id ="fileselect" class="form-control"></select>
+    </div>
+    <div class="form-group">
+      <input type="button" id="save" value="save" disabled="true"/>
+      <input type="button" id="saveas" value="save as" disabled="true"/>
+    </div>
+</div>
+  </section> <!--/save-menu-->
+</div>
+</div>
+
+    </div>
+    <div class = "clear-both">
+      <script src="lib/require.js"></script>
+      <script src="app.js"></script>
+    </body>
+    </html>

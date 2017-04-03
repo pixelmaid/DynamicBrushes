@@ -382,9 +382,9 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
 
             }
 
-            addReferenceToExpression(mappingId, referenceType, referenceName, referenceProperties, referenceId, referenceDisplayName) {
+            addReferenceToExpression(mappingId, referenceType, referenceName, referenceProperties, referenceId, referenceDisplayName, name) {
                 var expression = this.expressions[mappingId];
-                var el = expression.addReference(referenceType, referenceName, referenceProperties, referenceId, referenceDisplayName);
+                var el = expression.addReference(referenceType, referenceName, referenceProperties, referenceId, referenceDisplayName,name);
 
                 this.makeDraggable(el);
 
@@ -433,7 +433,7 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                             $(ui.helper).remove(); //destroy cloneit'
                             referenceProperties = [name.split("_")[1]];
                             console.log("reference properties =", referenceProperties, name.split("_"));
-                            expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, drop_id, displayName);
+                            expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, drop_id, displayName, name);
 
                             console.log('reference properties set', expression.getPropertyList());
 
@@ -450,8 +450,8 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                             var generatorId = drop_id;
                             var generatorType = name;
                             referenceProperties = [generatorId];
-                            //addReferenceToExpression(mappingId, referenceType, referenceName, referenceProperties, referenceId, referenceDisplayName
-                            expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, generatorId, displayName);
+                            
+                            expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, generatorId, displayName,name);
 
                             self.trigger("ON_GENERATOR_ADDED", [mapping_data.mappingId, generatorId, generatorType, self.id, target_state, displayName, relativePropertyName, expression.id, expression.getText(), expression.getPropertyList()]);
 
@@ -626,13 +626,15 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                             console.log("sensor prop or generator dropped");
                             var referenceId = target.attr("id");
                             var expressionId = target.attr("parent_id");
+                            if(expressionId){
                             var mappingId = $("#" + expressionId).attr("parent_id");
                             var expression = this.expressions[mappingId];
-                            expression.removeReference(referenceId);
+                              expression.removeReference(referenceId);
                             var expressionPropertyList = expression.getPropertyList();
                             var expressionText = expression.getText();
 
                             this.trigger("ON_MAPPING_REFERENCE_REMOVED", [this.id, expressionId, expressionPropertyList, expressionText]);
+                            }
                             break;
 
                         case "method":
@@ -672,7 +674,7 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                 var self = this;
 
                 var id = transition_data.transitionId;
-                console.log("transition id=",id)
+                console.log("transition id=",id);
                 var connections = this.instance.getConnections();
                 var connection = connections.find(function(c) {
                     return c.getId() == id;
