@@ -14,7 +14,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager","app/Palett
         var onMessage = function(data) {
             console.log("ON MESSGE CALLED", data);
             if (data.type == "behavior_data") {
-                chartViewManager.destroyAllCharts();
+                chartViewManager.destroyAllViews();
                 if (data.data instanceof Array) {
                     for (var i = 0; i < data.data.length; i++) {
                         console.log("data at", i, data.data[i]);

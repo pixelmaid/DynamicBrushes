@@ -18,82 +18,14 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                 super();
                 var behavior_data = {
                     id: id,
-                    screen_name: name
+                    name: name
                 };
                 this.setupId = null;
                 this.dieId = null;
+                this.name = name;
                 this.expressions = {};
-                var html = behaviorTemplate(behavior_data);
                 var self = this;
                 var last_dragged = null;
-
-                $("#canvas").append(html);
-
-                $('#' + id).droppable({
-                    greedy: true,
-                    drop: function(event, ui) {
-                        self.resolveDrop($(ui.draggable));
-                        var type = $(ui.draggable).attr('type');
-                        console.log("type=", type);
-                        var drop_id = ID();
-                        var data = {
-                            type: type,
-                            id: drop_id,
-                            behaviorId: id
-
-                        };
-                        var x = $(ui.draggable).position().left;
-                        var y = $(ui.draggable).position().top;
-                        if (type == 'state') {
-                            var name = prompt("Please give your state a name", "myState");
-                            if (name !== null) {
-                                data.name = name;
-                                self.trigger("ON_STATE_ADDED", [x, y, data]);
-                                $(ui.helper).remove(); //destroy clone
-                                $(ui.draggable).remove(); //remove from list
-                            }
-                        } else if (type == "brush_prop") {
-                            var mappingId = $(ui.draggable).attr('mappingId');
-                            var stateId = $(ui.draggable).attr('stateId');
-
-                            if (mappingId) {
-                                console.log("state found", stateId);
-                                $(ui.helper).remove(); //destroy clone
-                                $(ui.draggable).remove(); //remove from list
-                                self.trigger("ON_MAPPING_RELATIVE_REMOVED", [mappingId, stateId, id]);
-
-                            }
-
-
-                            //TODO: create mapping reference removed call
-                            /* else if (type == "brush_prop") {
-                             var mappingId = $(ui.draggable).attr('mappingId');
-                             var stateId = $(ui.draggable).attr('stateId');
-
-                             if (mappingId) {
-                                 console.log("state found", stateId);
-                                 $(ui.helper).remove(); //destroy clone
-                                 $(ui.draggable).remove(); //remove from list
-                                 self.trigger("ON_MAPPING_REFERENCE_REMOVED", [mappingId, stateId, id]);
-
-                             }
-                             */
-
-                        } else if (type == "action") {
-                            var methodId = ID();
-                            var targetMethod = $(ui.draggable).attr('name');
-                            var defaultArgument = $(ui.draggable).attr('defaultArgument');
-                            //data.name = name;
-                            self.trigger("ON_METHOD_ADDED", [self.id, null, methodId, targetMethod, defaultArgument]);
-                            $(ui.helper).remove(); //destroy clone
-                            $(ui.draggable).remove(); //remove from list
-
-
-                        }
-
-
-                    }
-                });
 
                 //queue for storing behavior changes
                 this.behavior_queue = [];
@@ -102,6 +34,8 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                 this.currrentState = null;
                 this.prevState = null;
                 this.id = id;
+
+
                 jsPlumb.ready(function() {
 
 
@@ -130,8 +64,7 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                                 foldback: 1,
                             }]
 
-                        ],
-                        Container: id
+                        ]
                     });
 
                     self.instance.registerConnectionType("basic", {
@@ -146,6 +79,7 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
 
                     self.instance.bind("connection", function(info) {
                         console.log("state transition made", info);
+                        info.connection.setParameter("id",info.connection.getId());
                         self.trigger("ON_STATE_CONNECTION", [info.connection.getId(), info.sourceId, $(info.source).attr("name"), info.targetId, self.id]);
                     });
 
@@ -153,11 +87,6 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                     var canvas = document.getElementById("canvas");
                     var windows = jsPlumb.getSelector(".statemachine .w");
 
-
-                    // bind a double click listener to "canvas"; add new node when this occurs.
-                    //jsPlumb.on(canvas, "dblclick", function(e) {
-                    //    self.newNode(e.offsetX, e.offsetY);
-                    // });
 
 
                     $(document).on("mouseup", function(e) {
@@ -171,15 +100,6 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                             block_was_dragged.removeClass("block-draggable");
 
                             block_was_dragged = null;
-                        }
-                    });
-
-
-
-                    // suspend drawing and initialise.
-                    self.instance.batch(function() {
-                        for (var i = 0; i < windows.length; i++) {
-                            self.initNode(windows[i], true);
                         }
                     });
 
@@ -238,6 +158,81 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
 
                 });
 
+                this.createHTML(behavior_data);
+
+            }
+
+            createHTML(behaviorData) {
+                var self = this;
+                var html = behaviorTemplate(behaviorData);
+                $("#canvas").empty();
+
+                $("#canvas").append(html);
+
+                $('#' + behaviorData.id).droppable({
+                    greedy: true,
+                    drop: function(event, ui) {
+                        self.resolveDrop($(ui.draggable));
+                        var type = $(ui.draggable).attr('type');
+                        console.log("type=", type);
+                        var drop_id = ID();
+                        var data = {
+                            type: type,
+                            id: drop_id,
+                            behaviorId: behaviorData.id
+
+                        };
+                        var x = $(ui.draggable).position().left;
+                        var y = $(ui.draggable).position().top;
+                        if (type == 'state') {
+                            var name = prompt("Please give your state a name", "myState");
+                            if (name !== null) {
+                                data.name = name;
+                                self.trigger("ON_STATE_ADDED", [x, y, data]);
+                                $(ui.helper).remove(); //destroy clone
+                                $(ui.draggable).remove(); //remove from list
+                            }
+                        } else if (type == "brush_prop") {
+                            var mappingId = $(ui.draggable).attr('mappingId');
+                            var stateId = $(ui.draggable).attr('stateId');
+
+                            if (mappingId) {
+                                console.log("state found", stateId);
+                                $(ui.helper).remove(); //destroy clone
+                                $(ui.draggable).remove(); //remove from list
+                                self.trigger("ON_MAPPING_RELATIVE_REMOVED", [mappingId, stateId, data.id]);
+
+                            }
+
+                        } else if (type == "action") {
+                            var methodId = ID();
+                            var targetMethod = $(ui.draggable).attr('name');
+                            var defaultArgument = $(ui.draggable).attr('defaultArgument');
+                            //data.name = name;
+                            self.trigger("ON_METHOD_ADDED", [self.id, null, methodId, targetMethod, defaultArgument]);
+                            $(ui.helper).remove(); //destroy clone
+                            $(ui.draggable).remove(); //remove from list
+
+
+                        }
+
+
+                    }
+                });
+
+                this.instance.setContainer(behaviorData.id);
+
+            }
+
+            resetView() {
+                this.instance.empty(this.id);
+                $('#' + this.id).droppable("destroy");
+                this.expressions = {};
+            }
+
+            destroyView(){
+                this.resetView();
+                this.instance.cleanupListeners();
             }
 
 
@@ -283,10 +278,10 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
 
             }
 
-            newNode(x, y, state_data) {
+            newNode(state_data) {
                 var self = this;
 
-                console.log(x, y, $("#" + this.id).offset(), this.id, state_data.name);
+                console.log(state_data.x, state_data.y, $("#" + this.id).offset(), this.id, state_data.name);
                 if (!state_data) {
                     state_data = {
                         name: "state " + state_counter,
@@ -316,16 +311,10 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
 
 
 
-                d.style.left = x + "px";
-                d.style.top = y + "px";
+                d.style.left = state_data.x + "px";
+                d.style.top = state_data.y + "px";
                 this.instance.getContainer().appendChild(d);
                 this.initNode(d, state_data.name);
-                if (state_data.mappings) {
-                    for (var i = 0; i < state_data.mappings.length; i++) {
-                        console.log("mapping to add", state_data.mappings[i]);
-                        this.addMapping(d.id, state_data.mappings[i]);
-                    }
-                }
 
                 console.log("state", $('#' + id));
                 $("#" + id).attr("name", state_data.name);
@@ -384,7 +373,7 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
 
             addReferenceToExpression(mappingId, referenceType, referenceName, referenceProperties, referenceId, referenceDisplayName, name) {
                 var expression = this.expressions[mappingId];
-                var el = expression.addReference(referenceType, referenceName, referenceProperties, referenceId, referenceDisplayName,name);
+                var el = expression.addReference(referenceType, referenceName, referenceProperties, referenceId, referenceDisplayName, name);
 
                 this.makeDraggable(el);
 
@@ -450,14 +439,12 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                             var generatorId = drop_id;
                             var generatorType = name;
                             referenceProperties = [generatorId];
-                            
-                            expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, generatorId, displayName,name);
+
+                            expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, generatorId, displayName, name);
 
                             self.trigger("ON_GENERATOR_ADDED", [mapping_data.mappingId, generatorId, generatorType, self.id, target_state, displayName, relativePropertyName, expression.id, expression.getText(), expression.getPropertyList()]);
 
                         }
-
-
                     }
                 });
 
@@ -486,7 +473,7 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
             removeTransition(data) {
                 var connections = this.instance.getConnections();
                 var connection = connections.find(function(c) {
-                    return c.getId() == data.transitionId;
+                    return c.getParameter("id") == data.transitionId;
                 });
                 this.instance.detach(connection);
 
@@ -626,14 +613,14 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                             console.log("sensor prop or generator dropped");
                             var referenceId = target.attr("id");
                             var expressionId = target.attr("parent_id");
-                            if(expressionId){
-                            var mappingId = $("#" + expressionId).attr("parent_id");
-                            var expression = this.expressions[mappingId];
-                              expression.removeReference(referenceId);
-                            var expressionPropertyList = expression.getPropertyList();
-                            var expressionText = expression.getText();
+                            if (expressionId) {
+                                var mappingId = $("#" + expressionId).attr("parent_id");
+                                var expression = this.expressions[mappingId];
+                                expression.removeReference(referenceId);
+                                var expressionPropertyList = expression.getPropertyList();
+                                var expressionText = expression.getText();
 
-                            this.trigger("ON_MAPPING_REFERENCE_REMOVED", [this.id, expressionId, expressionPropertyList, expressionText]);
+                                this.trigger("ON_MAPPING_REFERENCE_REMOVED", [this.id, expressionId, expressionPropertyList, expressionText]);
                             }
                             break;
 
@@ -649,36 +636,45 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
             }
 
             initializeBehavior(data) {
+                console.log("initialize behavior");
+                console.trace();
                 var self = this;
 
 
                 for (var i = 0; i < data.states.length; i++) {
-                    this.newNode(data.states[i].x, data.states[i].y, data.states[i]);
+                    this.newNode(data.states[i]);
                 }
+                this.instance.unbind("connection");
                 for (var j = 0; j < data.transitions.length; j++) {
-                    console.log("connecting ", data.transitions[j].toState, "to", data.transitions[j].fromState);
+                    console.log("connecting ", data.transitions[j].toStateId, "to", data.transitions[j].toStateId);
                     var connection = this.instance.connect({
-                        source: data.transitions[j].fromState,
-                        target: data.transitions[j].toState,
+                        source: data.transitions[j].fromStateId,
+                        target: data.transitions[j].toStateId,
                         type: "basic"
                     });
-                    var connection_id = data.transitions[j].id;
-                    console.log("connection id", connection_id, name);
+                    var connection_id = data.transitions[j].transitionId;
+                    connection.setParameter("id",connection_id);
 
+                    console.log("connection id",data.transitions[j], connection.id);
                     self.addOverlayToConnection(data.transitions[j]);
-
                 }
+                 this.instance.bind("connection", function(info) {
+                        console.log("state transition made", info);
+                        info.connection.setParameter("id",info.connection.getId());
+                        self.trigger("ON_STATE_CONNECTION", [info.connection.getId(), info.sourceId, $(info.source).attr("name"), info.targetId, self.id]);
+                    });
             }
 
             addOverlayToConnection(transition_data) {
                 var self = this;
 
                 var id = transition_data.transitionId;
-                console.log("transition id=",id);
+                console.log("transition id=", id);
                 var connections = this.instance.getConnections();
                 var connection = connections.find(function(c) {
-                    return c.getId() == id;
+                    return c.getParameter("id") == id;
                 });
+                console.log("connection is",connection);
                 connection.addOverlay(["Custom", {
                     create: function(component) {
                         var html = transitionTemplate(transition_data);
