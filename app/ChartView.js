@@ -79,7 +79,7 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
 
                     self.instance.bind("connection", function(info) {
                         console.log("state transition made", info);
-                        info.connection.setParameter("id",info.connection.getId());
+                        info.connection.setParameter("id", info.connection.getId());
                         self.trigger("ON_STATE_CONNECTION", [info.connection.getId(), info.sourceId, $(info.source).attr("name"), info.targetId, self.id]);
                     });
 
@@ -172,6 +172,7 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                 $('#' + behaviorData.id).droppable({
                     greedy: true,
                     drop: function(event, ui) {
+                        console.log("drop event", ui);
                         self.resolveDrop($(ui.draggable));
                         var type = $(ui.draggable).attr('type');
                         console.log("type=", type);
@@ -230,7 +231,7 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                 this.expressions = {};
             }
 
-            destroyView(){
+            destroyView() {
                 this.resetView();
                 this.instance.cleanupListeners();
             }
@@ -371,16 +372,18 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
 
             }
 
-            addReferenceToExpression(mappingId, referenceType, referenceName, referenceProperties, referenceId, referenceDisplayName, name) {
+            addReferenceToExpression(mappingId, referenceType, referenceName, referenceProperties, referencePropertiesDisplayNames,referenceId, referenceDisplayName, name) {
                 var expression = this.expressions[mappingId];
-                var el = expression.addReference(referenceType, referenceName, referenceProperties, referenceId, referenceDisplayName, name);
-
+                var el = expression.addReference(referenceType, referenceName, referenceProperties,referencePropertiesDisplayNames, referenceId, referenceDisplayName, name);
+                console.log("el to make draggable");
                 this.makeDraggable(el);
 
                 return expression;
             }
 
-            addMapping(target_state, mapping_data) {
+            addMapping(mapping_data) {
+                console.log("add mapping", mapping_data);
+                var target_state = mapping_data.stateId;
                 var html = mappingTemplate(mapping_data);
                 console.log("target_state = ", target_state, mapping_data);
                 $("#" + target_state + " .state .mappings").append(html);
@@ -402,6 +405,8 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                         var name = $(ui.draggable).attr('name');
                         var displayName = $(ui.draggable).html();
                         var relativePropertyName = mapping_data.relativePropertyName;
+                        var relativePropertyItemName = mapping_data.relativePropertyItemName;
+
                         var referenceProperty = name.split("_")[0];
                         var referenceNames = name.split("_");
                         referenceNames.shift();
@@ -415,18 +420,20 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                             behaviorId: self.id
 
                         };
-                        var referenceName, referenceProperties;
+                        var referenceName, referenceProperties,referencePropertiesDisplayNames;
                         if (type == 'sensor_prop') {
                             referenceName = 'stylus';
                             console.log("sensor prop dropped on mapping", displayName);
                             $(ui.helper).remove(); //destroy cloneit'
                             referenceProperties = [name.split("_")[1]];
+                            referencePropertiesDisplayNames = [displayName];
+
                             console.log("reference properties =", referenceProperties, name.split("_"));
-                            expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, drop_id, displayName, name);
+                            expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, referencePropertiesDisplayNames, drop_id, displayName, name);
 
                             console.log('reference properties set', expression.getPropertyList());
 
-                            self.trigger("ON_MAPPING_REFERENCE_UPDATE", [mapping_data.mappingId, self.id, target_state, relativePropertyName, expression.id, expression.getText(), expression.getPropertyList(), "active"]);
+                            self.trigger("ON_MAPPING_REFERENCE_UPDATE", [mapping_data.mappingId, self.id, target_state, relativePropertyName, relativePropertyItemName, expression.id, expression.getText(), expression.getPropertyList(), "active"]);
 
                         }
 
@@ -439,10 +446,10 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                             var generatorId = drop_id;
                             var generatorType = name;
                             referenceProperties = [generatorId];
+                            referencePropertiesDisplayNames = [displayName];
+                            expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties,referencePropertiesDisplayNames, generatorId, displayName, name);
 
-                            expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, generatorId, displayName, name);
-
-                            self.trigger("ON_GENERATOR_ADDED", [mapping_data.mappingId, generatorId, generatorType, self.id, target_state, displayName, relativePropertyName, expression.id, expression.getText(), expression.getPropertyList()]);
+                            self.trigger("ON_GENERATOR_ADDED", [mapping_data.mappingId, generatorId, generatorType, self.id, target_state, relativePropertyName, relativePropertyItemName, expression.id, expression.getText(), expression.getPropertyList()]);
 
                         }
                     }
@@ -530,6 +537,13 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                 });
             }
 
+            removeMethod(data) {
+                console.log("method:", $('#' + data.methodId));
+                $('#' + data.methodId).remove();
+            }
+
+
+
             methodArgumentChanged(behaviorId, transitionId, methodId, targetMethod) {
                 var methodHTML = $('#' + methodId);
 
@@ -558,26 +572,34 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
 
             makeDraggable(target) {
                 var self = this;
-                target.mousedown(function(event) {
-                    var parent = target.parent();
-                    var parentOffset = $(this).parent().offset();
+              
 
-                    var styles = {
-                        position: "absolute",
-                        left: event.clientX,
-                        top: event.clientY,
-                        'z-index': 1000
-                    };
-                    target.css(styles);
-                    target.addClass("last_dragged");
-                    target.detach().appendTo('body');
-                    self.last_dragged = {
-                        parent: parent
-                    };
+
+                target.draggable({
+                    helper: function() {
+                        var parent = $(this).parent();
+                        self.last_dragged = {
+                            parent: parent
+                        };
+                        $(this).appendTo('body');
+                        var styles = {
+                            position: "absolute",
+                            'z-index': 1000
+                        };
+                        $(this).css(styles);
+                        $(this).addClass("last_dragged");
+                        return $(this);
+                    },
+                    start: function(event, ui) {
+                        $(this).draggable('instance').offset.click = {
+                            left: Math.floor(ui.helper.width() / 2),
+                            top: Math.floor(ui.helper.height() / 2)
+                        };
+                    },
+                    cursor: 'move',
+
                 });
 
-
-                target.draggable();
                 this.instance.draggable(target);
 
             }
@@ -605,6 +627,7 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
             resolveDrop(target, newParent) {
                 console.log("resolve drop", target.attr('type'));
                 if (this.last_dragged) {
+                    console.log("last dragged", target, this.last_dragged);
                     target.removeClass("last_dragged");
 
                     switch (target.attr('type')) {
@@ -653,16 +676,26 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                         type: "basic"
                     });
                     var connection_id = data.transitions[j].transitionId;
-                    connection.setParameter("id",connection_id);
+                    connection.setParameter("id", connection_id);
 
-                    console.log("connection id",data.transitions[j], connection.id);
+                    console.log("connection id", data.transitions[j], connection.id);
                     self.addOverlayToConnection(data.transitions[j]);
                 }
-                 this.instance.bind("connection", function(info) {
-                        console.log("state transition made", info);
-                        info.connection.setParameter("id",info.connection.getId());
-                        self.trigger("ON_STATE_CONNECTION", [info.connection.getId(), info.sourceId, $(info.source).attr("name"), info.targetId, self.id]);
+                this.instance.bind("connection", function(info) {
+                    console.log("state transition made", info);
+                    info.connection.setParameter("id", info.connection.getId());
+                    self.trigger("ON_STATE_CONNECTION", [info.connection.getId(), info.sourceId, $(info.source).attr("name"), info.targetId, self.id]);
+                });
+
+                for (var k = 0; k < data.mappings.length; k++) {
+                    var mapping_data = data.mappings[k];
+                    this.addMapping(mapping_data);
+                    var els = this.expressions[mapping_data.mappingId].updateReferences(mapping_data.expressionText, mapping_data.expressionPropertyList);
+                    els.every(function(el) {
+                        console.log("el to make draggable", el);
+                        self.makeDraggable(el);
                     });
+                }
             }
 
             addOverlayToConnection(transition_data) {
@@ -674,7 +707,7 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                 var connection = connections.find(function(c) {
                     return c.getParameter("id") == id;
                 });
-                console.log("connection is",connection);
+                console.log("connection is", connection);
                 connection.addOverlay(["Custom", {
                     create: function(component) {
                         var html = transitionTemplate(transition_data);

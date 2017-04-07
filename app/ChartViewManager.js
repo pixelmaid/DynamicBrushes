@@ -123,7 +123,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
 
                         case "mapping_added":
                             console.log("mapping added  called");
-                            this.views[behaviorId].addMapping(this.lastAuthoringRequest.data.stateId, this.lastAuthoringRequest.data);
+                            this.views[behaviorId].addMapping(this.lastAuthoringRequest.data);
                             // this.lastAuthoringRequest = null;
 
                             break;
@@ -134,6 +134,9 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                             this.lastAuthoringRequest.data.defaultArgument = data.data.defaultArgument;
                             this.views[behaviorId].addMethod(this.lastAuthoringRequest.data);
                             this.lastAuthoringRequest = null;
+                            break;
+                        case "method_removed":
+                            this.views[behaviorId].removeMethod(this.lastAuthoringRequest.data);
                             break;
                         case "mapping_updated":
                             console.log("mapping updated called");
@@ -146,7 +149,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                             console.log("generator added succesfully");
 
                             var generator_data = this.lastAuthoringRequest.data;
-                            this.views[behaviorId].trigger("ON_MAPPING_REFERENCE_UPDATE", [generator_data.mappingId, generator_data.behaviorId, generator_data.stateId, generator_data.relativePropertyName, generator_data.expressionId, generator_data.expressionText, generator_data.expressionPropertyList, "passive"]);
+                            this.views[behaviorId].trigger("ON_MAPPING_REFERENCE_UPDATE", [generator_data.mappingId, generator_data.behaviorId, generator_data.stateId, generator_data.relativePropertyName, generator_data.relativePropertyItemName, generator_data.expressionId, generator_data.expressionText, generator_data.expressionPropertyList, "passive"]);
                             break;
                         case "mapping_relative_removed":
                             console.log("mapping relative removed called");
@@ -218,7 +221,9 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                         states: [setupData, dieData],
                         dieId: dieId,
                         setupId: setupId,
-                        transitions: []
+                        transitions: [],
+                        mappings: [],
+                        methods: []
 
                     };
                     this.lastAuthoringRequest = {
@@ -271,8 +276,8 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                     this.onMethodRemoved(behaviorId, methodId);
                 }.bind(this));
 
-                chartView.addListener("ON_GENERATOR_ADDED", function(mappingId, generatorId, generator_type, behaviorId, stateId, itemName, relativePropertyName, expressionId, expressionText, expressionPropertyList) {
-                    this.onGeneratorAdded(mappingId, generatorId, generator_type, behaviorId, stateId, itemName, relativePropertyName, expressionId, expressionText, expressionPropertyList);
+                chartView.addListener("ON_GENERATOR_ADDED", function(mappingId, generatorId, generator_type, behaviorId, stateId,relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList) {
+                    this.onGeneratorAdded(mappingId, generatorId, generator_type, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList);
                 }.bind(this));
 
                 chartView.addListener("ON_STATE_ADDED", function(x, y, data) {
@@ -288,8 +293,8 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                     this.onExpressionTextModified(behaviorId, expressionId, expressionText, propertyList);
                 }.bind(this));
 
-                chartView.addListener("ON_MAPPING_REFERENCE_UPDATE", function(mappingId, behaviorId, stateId, relativePropertyName, expressionId, expressionText, expressionPropertyList, constraint_type) {
-                    this.onMappingReferenceUpdate(mappingId, behaviorId, stateId, relativePropertyName, expressionId, expressionText, expressionPropertyList, constraint_type);
+                chartView.addListener("ON_MAPPING_REFERENCE_UPDATE", function(mappingId, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList, constraint_type) {
+                    this.onMappingReferenceUpdate(mappingId, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList, constraint_type);
                 }.bind(this));
 
                 chartView.addListener("ON_MAPPING_REFERENCE_REMOVED", function(behaviorId, expressionId, expressionPropertyList, expressionText) {
@@ -413,18 +418,19 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                 this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
             }
 
-            onMappingReferenceUpdate(mappingId, behaviorId, stateId, relativePropertyName, expressionId, expressionText, expressionPropertyList, constraint_type) {
+            onMappingReferenceUpdate(mappingId, behaviorId, stateId, relativePropertyName,relativePropertyItemName, expressionId, expressionText, expressionPropertyList, constraint_type) {
                 console.log("mapping reference update", mappingId, stateId);
 
                 var transmit_data = {
                     mappingId: mappingId,
                     behaviorId: behaviorId,
                     relativePropertyName: relativePropertyName,
+                    relativePropertyItemName: relativePropertyItemName,
                     stateId: stateId,
                     expressionId: expressionId,
                     expressionText: expressionText,
                     expressionPropertyList: expressionPropertyList,
-                    constraintType: constraint_type,
+                    constraintType: constraint_type, 
                     type: "mapping_updated"
                 };
 
@@ -473,7 +479,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
 
             }
 
-            onGeneratorAdded(mappingId, generatorId, generator_type, behaviorId, stateId, itemName, relativePropertyName, expressionId, expressionText, expressionPropertyList) {
+            onGeneratorAdded(mappingId, generatorId, generator_type, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList) {
                 console.log("generator added", generatorId, generator_type, stateId);
 
                 var transmit_data = {
@@ -482,8 +488,8 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                     generator_type: generator_type,
                     behaviorId: behaviorId,
                     stateId: stateId,
-                    itemName: itemName,
                     relativePropertyName: relativePropertyName,
+                    relativePropertyItemName: relativePropertyItemName,
                     expressionId: expressionId,
                     expressionText: expressionText,
                     expressionPropertyList: expressionPropertyList,

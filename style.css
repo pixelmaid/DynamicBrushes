@@ -717,6 +717,10 @@ ul#palette_menu {
 .generator{
   background-color: #4a89eb;
 }
+
+.sensor, .sensor_prop{
+    background-color: #7D4FAE;
+}
 .drag-n-drop{
   position: absolute;
   z-index: 101;

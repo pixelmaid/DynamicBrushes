@@ -101,7 +101,7 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
 
                         var startIndex = currentText.indexOf(markText);
                         var endIndex = startIndex + markText.length;
-                        console.log("start index, end index",startIndex,endIndex);
+                        console.log("start index, end index", startIndex, endIndex);
                         var el = this.marks[key];
                         this.mirror.markText({
                             line: 0,
@@ -133,20 +133,51 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
 
             }
 
-            addReference(type, referenceName, referenceProperties, referenceId, referenceDisplayName, name) {
-                this.references[referenceId] = [referenceName, referenceProperties];
-                console.log("added reference", this.references, referenceName);
+            updateReferences(expressionText, expressionPropertyList) {
                 this.addReferenceCheck = true;
-                this.mirror.setValue(this.mirror.getValue()+"%" + referenceId + "%") ;
+                this.mirror.setValue(expressionText);
                 this.addReferenceCheck = false;
+                this.references = expressionPropertyList;
+               var els = [];
+                for (var key in expressionPropertyList) {
+                    if (expressionPropertyList.hasOwnProperty(key)) {
+                        var propList = expressionPropertyList[key];
+                        var type;
+                        if (propList[0] == "stylus") {
+                            type = "sensor_prop";
+                        } else {
+                            type = "generator";
+                        }
+                        var name = propList[1][0];
+                         var referenceDisplayName = propList[2][0];
+                      
+                        els.push($(this.addMark(referenceDisplayName, type, key, name)));
+                    }
+                }
+                this.renderMarks();
+                return els;
+            }
+
+
+            addMark(referenceDisplayName, type, referenceId, name) {
                 var el = document.createElement("span");
                 el.innerHTML = referenceDisplayName;
                 el.setAttribute("class", "block property " + type);
                 el.setAttribute("type", type);
                 el.setAttribute("parent_id", this.id);
                 el.setAttribute("id", referenceId);
-                el.setAttribute("name",name);
+                el.setAttribute("name", name);  
                 this.marks[referenceId] = el;
+                return el;
+            }
+
+            addReference(type, referenceName, referenceProperties, referencePropertyDisplayNames, referenceId, referenceDisplayName, name) {
+                this.references[referenceId] = [referenceName, referenceProperties, referencePropertyDisplayNames];
+                console.log("added reference", this.references, referenceName,referenceDisplayName);
+                this.addReferenceCheck = true;
+                this.mirror.setValue(this.mirror.getValue() + "%" + referenceId + "%");
+                this.addReferenceCheck = false;
+                var el = this.addMark(referenceDisplayName, type, referenceId, name);
 
                 this.renderMarks();
                 return $(el);

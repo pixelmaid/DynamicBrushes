@@ -32,17 +32,17 @@ define(['emitter', 'app/id', 'app/Emitter'],
 
           "sensor_properties": {
             items: [{
-              item_class: "palette block property",
+              item_class: "palette block property sensor",
               item_name: "stylus_dx",
               name: "dx",
               type:"sensor_prop"
             }, {
-              item_class: "block property palette",
+              item_class: "block property palette sensor",
               item_name: "stylus_dy",
               name: "dy",
               type:"sensor_prop"
             }, {
-              item_class: "block property palette",
+              item_class: "block property palette sensor",
               item_name: "stylus_force",
               name: "force",
               type:"sensor_prop"
@@ -96,7 +96,7 @@ define(['emitter', 'app/id', 'app/Emitter'],
               type:"generator"
             }, {
               item_class: " block property generator palette",
-              name: "uniform random",
+              name: "uniform",
               item_name: "uniform_random",
               type:"generator"
 
