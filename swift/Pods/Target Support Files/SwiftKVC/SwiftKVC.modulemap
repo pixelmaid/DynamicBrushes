@@ -1,0 +1,6 @@
+framework module SwiftKVC {
+  umbrella header "SwiftKVC-umbrella.h"
+
+  export *
+  module * { export * }
+}
