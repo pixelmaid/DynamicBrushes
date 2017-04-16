@@ -144,7 +144,7 @@ class BehaviorDefinition {
             break;
         }
         
-        print("arguments= \(arguments)")
+       // print("arguments= \(arguments)")
         self.addMethod(targetTransition: targetTransition, methodId: data["methodId"].stringValue, targetMethod: targetMethod, arguments: arguments)
         
         return methodJSON;
@@ -195,7 +195,7 @@ class BehaviorDefinition {
         var emitterOperandList = [String:(Any?,[String]?,[String]?)]();
         
         if(expressionPropertyList != nil){
-            print("expression list present\(expressionPropertyList.dictionaryValue)")
+            // print("expression list present\(expressionPropertyList.dictionaryValue)")
             let dataExpressionDictionary = expressionPropertyList.dictionaryValue;
             for (key,value) in dataExpressionDictionary{
                 let dataEmitterValue = (value.arrayValue)[0].stringValue;
@@ -237,7 +237,7 @@ class BehaviorDefinition {
             }
         }
         
-        print("emitter operand list \(emitterOperandList,expressionText)")
+        //  print("emitter operand list \(emitterOperandList,expressionText)")
       self.addExpression(id: expressionId, emitterOperandList: emitterOperandList, expressionText: expressionText)
     }
 
@@ -251,6 +251,7 @@ class BehaviorDefinition {
     }
     
     func parseStateJSON(data:JSON){
+        print("parsing state JSON \(data)");
         let stateId = data["id"].stringValue
         let stateName = data["name"].stringValue
         let stateX = data["x"].floatValue
@@ -260,7 +261,7 @@ class BehaviorDefinition {
     
     func parseTransitionJSON(data:JSON){
         let event = data["eventName"].stringValue;
-        print("adding transition \(data)")
+        //print("adding transition \(data)")
         let emitter:Emitter?
         if(data["emitter"] != JSON.null){
             switch(data["emitter"].stringValue){
@@ -390,11 +391,9 @@ class BehaviorDefinition {
             switch(targetMethod){
                 case "spawn":
                 if let methodArgs = method.2{
-                    //let spawnName = methodArgs[0] as! String;
-                   // methodArgs.append(JSON(spawnName));
                     let targetBehavior = methodArgs[0]
                     let behaviorId: String
-                    print("method args 1=\(methodArgs)");
+                   // print("method args 1=\(methodArgs)");
                     let num = methodArgs[1] as! Int
                     if let def =  targetBehavior as? BehaviorDefinition {
                         behaviorId = def.id;
@@ -551,7 +550,7 @@ class BehaviorDefinition {
     }
     
     func addState(stateId:String, stateName:String, stateX:Float, stateY:Float){
-        print("adding state\(stateId,stateName,stateX,stateY)");
+        //print("adding state\(stateId,stateName,stateX,stateY)");
         states[stateId] = (stateName,stateX,stateY);
     }
     
@@ -608,7 +607,7 @@ class BehaviorDefinition {
     
     func addTransition(transitionId:String, name:String, eventEmitter:Emitter?,parentFlag:Bool, event:String?, fromStateId:String,toStateId:String, condition:String?, displayName:String){
         transitions[transitionId]=((name,eventEmitter, parentFlag, event, fromStateId,toStateId,condition, displayName));
-        print("current transitions \(transitions.count)");
+       // print("current transitions \(transitions.count)");
     }
     
     func setTransitionToDefaultEvent(transitionId:String) throws{
@@ -624,7 +623,7 @@ class BehaviorDefinition {
     
     
     func removeTransition(id:String) throws{
-        print("removing transition \(transitions,id)")
+        //print("removing transition \(transitions,id)")
         
         removeMethodsForTransition(transitionId: id);
         
@@ -652,9 +651,7 @@ class BehaviorDefinition {
     
     
     func addMapping(id:String, referenceProperty:Any?, referenceNames:[String]?, relativePropertyName:String,stateId:String, type:String,relativePropertyItemName:String){
-        print("mapping type = \(type)");
         mappings[id] = ((referenceProperty,referenceNames,relativePropertyName,stateId,type,relativePropertyItemName))
-        print("mappings:\(mappings)")
         
     }
     

@@ -12,7 +12,9 @@ import SwiftyJSON
 let behaviorMapper = BehaviorMapper()
 var stylus = Stylus(x: 0,y:0,angle:0,force:0)
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, Requester {
+    
+
     
     // MARK: Properties
     
@@ -40,12 +42,12 @@ class ViewController: UIViewController {
     
     
     
-    var socketManager = SocketManager();
+    //var socketManager = SocketManager();
     var behaviorManager: BehaviorManager?
     var currentCanvas: Canvas?
-    let socketKey = NSUUID().uuidString
     let drawKey = NSUUID().uuidString
     let brushEventKey = NSUUID().uuidString
+    let dataEventKey = NSUUID().uuidString
 
     
     var downInCanvas = false;
@@ -80,8 +82,6 @@ class ViewController: UIViewController {
         
         
         super.viewDidLoad()
-        socketManager.socketEvent.addHandler(target: self,handler: ViewController.socketHandler, key:socketKey)
-        socketManager.connect();
         
 
         
@@ -118,77 +118,46 @@ class ViewController: UIViewController {
         
         self.fabricatorView.drawFabricatorPosition(x: Float(0), y: Float(0), z: Float(0))
         self.initCanvas()
-       // self.initRadialBrush();
-       // self.initBakeBrush();
+        
+         _ = RequestHandler.dataEvent.addHandler(target: self, handler: ViewController.processRequestHandler, key: dataEventKey)
+        
+        let configureRequest = Request(target: "storage", action: "configure", data:JSON([]), requester: self)
 
-        //radialBrush?.active = false;
+        let connectRequest = Request(target: "socket", action: "connect", data:JSON([]), requester: self)
+        
+        var templateJSON:JSON = [:]
+        templateJSON["filepath"] = "templates/basic.json"
+        let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: behaviorManager!)
+        
+        RequestHandler.addRequest(requestData:configureRequest);
+        RequestHandler.addRequest(requestData:connectRequest);
+       RequestHandler.addRequest(requestData:behaviorDownloadRequest);
+
         
     }
     
-    
-    
-    //event handler for socket connections
-    func socketHandler(data:(String,JSON?), key:String){
-        switch(data.0){
-        case "first_connection":
-            behaviorManager?.loadStandardTemplate();
-            break;
-        case "disconnected":
-            break;
-        case "connected":
-            break
-        case "data_request":
-            socketManager.sendBehaviorData(data: behaviorManager!.getAllBehaviorJSON());
-            break
-        case "authoring_request":
-            do{
-            let attempt = try behaviorManager!.handleAuthoringRequest(authoring_data: data.1! as JSON);
-                var jsonArg = "null";
-                if(attempt.2 != nil){
-                    jsonArg = (attempt.2?.rawString())!;
-                }
-                
-                socketManager.sendData(data: "{\"type\":\"authoring_response\",\"result\":\""+attempt.1+"\",\"authoring_type\":\""+attempt.0+"\",\"data\":"+jsonArg+"}");
-                behaviorManager!.backupBehavior();
-            }
-            catch{
-                print("failed authoring request");
-                socketManager.sendData(data: "{\"type\":\"authoring_response\",\"result\":\"error thrown\"}");
-            }
-            
-            break;
-        case "fabricator_data":
-            let json = data.1! as JSON;
-            let x = json["x"].stringValue;
-            let y = json["y"].stringValue;
-            
-            let z = json["z"].stringValue;
-            
-            let status = json["status"].stringValue;
-            
-            self.xOutput.text = x;
-            self.yOutput.text = y;
-            self.zOutput.text = z;
-            self.statusOutput.text = status;
-            self.fabricatorView.drawFabricatorPosition(x: Float(x)!, y: Float(y)!, z: Float(z)!)
-            
-            GCodeGenerator.fabricatorX = Float(x);
-            GCodeGenerator.fabricatorY = Float(y);
-            GCodeGenerator.fabricatorZ = Float(z);
-            GCodeGenerator.fabricatorStatus.set(newValue: Float(status)!);
-            
-            let _x = Numerical.map(value: Float(x)!, istart:0, istop: GCodeGenerator.inX, ostart: 0, ostop: GCodeGenerator.pX)
-            
-            let _y = Numerical.map(value: Float(y)!, istart:0, istop:GCodeGenerator.inY, ostart:  GCodeGenerator.pY, ostop: 0 )
-            let _z = Numerical.map(value: Float(z)!, istart: 0.2, istop: GCodeGenerator.depthLimit, ostart: 0.2, ostop: 42)
+    internal func processRequestHandler(data: (String, JSON?), key: String) {
+        self.processRequest(data:data)
+    }
 
-            let zFloat:Float = Float(z)!
-            if(Float(status)! == 33 && zFloat <= Float(0)){
-                currentCanvas?.currentDrawing!.checkBake(x: _x,y:_y,z:_z);
-            }
+    
+    //from Requester protocol. Handles result of request
+    internal func processRequest(data: (String, JSON?)) {
+        print("process request called for \(self,data)");
+    }
+    
+    
+    //event handler for incoming data
+    func dataHandler(data:(String,JSON?), key:String){
+        switch(data.0){
+        case "data_request":
+            let requestJSON:JSON = behaviorManager!.getAllBehaviorJSON();
             
-            break;
-        default:
+            let socketRequest = Request(target: "socket", action: "data_request_response", data: requestJSON, requester: self)
+            
+            RequestHandler.addRequest(requestData:socketRequest);
+            break
+               default:
             break
         }
         
@@ -207,10 +176,11 @@ class ViewController: UIViewController {
     func initCanvas(){
         currentCanvas = Canvas();
         behaviorManager = BehaviorManager(canvas: currentCanvas!);
-        socketManager.initAction(target: currentCanvas!,type:"canvas_init");
+        //socketManager.initAction(target: currentCanvas!,type:"canvas_init");
         //socketManager.initAction(stylus);
+        
         currentCanvas!.initDrawing();
-        currentCanvas!.geometryModified.addHandler(target: self,handler: ViewController.canvasDrawHandler, key:drawKey)
+        _ = currentCanvas!.geometryModified.addHandler(target: self,handler: ViewController.canvasDrawHandler, key:drawKey)
         
         
     }
@@ -220,7 +190,7 @@ class ViewController: UIViewController {
     func initDripBrush(){
         let dripBehavior = behaviorManager?.initDripBehavior();
         let dripBrush = Brush(name:"parentBehavior",behaviorDef: dripBehavior, parent:nil, canvas:self.currentCanvas!)
-        socketManager.initAction(target: dripBrush,type:"brush_init");
+        //socketManager.initAction(target: dripBrush,type:"brush_init");
 
     }
     
@@ -228,14 +198,14 @@ class ViewController: UIViewController {
     func initBakeBrush(){
         let bake_behavior = behaviorManager?.initBakeBehavior();
         bakeBrush = Brush(name:"bake_brush",behaviorDef: bake_behavior, parent:nil, canvas:self.currentCanvas!)
-        socketManager.initAction(target: bakeBrush!,type:"brush_init");
+        //socketManager.initAction(target: bakeBrush!,type:"brush_init");
     }
     
  
     func initRadialBrush(){
         let radial_behavior = behaviorManager?.initRadialBehavior();
         radialBrush = Brush(name:"radial",behaviorDef: radial_behavior, parent:nil, canvas:self.currentCanvas!)
-        socketManager.initAction(target: radialBrush!,type:"brush_init");
+       // socketManager.initAction(target: radialBrush!,type:"brush_init");
 
     }
     
@@ -243,7 +213,7 @@ class ViewController: UIViewController {
         let rootBehavior = behaviorManager?.initFractalBehavior();
         let rootBehaviorBrush = Brush(name:"rootBehaviorBrush",behaviorDef: rootBehavior, parent:nil, canvas:self.currentCanvas!)
         rootBehaviorBrush.strokeColor.b = 255;
-        socketManager.initAction(target: rootBehaviorBrush,type:"brush_init");
+       // socketManager.initAction(target: rootBehaviorBrush,type:"brush_init");
 
 
     }

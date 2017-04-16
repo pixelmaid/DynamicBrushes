@@ -24,9 +24,9 @@ class State {
         constraint_mappings[key] = mapping;
     }
     
-    func removeAllConstraintMappings(brushId:String){
+    func removeAllConstraintMappings(brush:Brush){
         for (key,_) in constraint_mappings{
-            removeConstraintMapping(brushId: brushId,key:key);
+           _ = removeConstraintMapping(key:key,brush:brush);
         }
      }
     
@@ -40,11 +40,11 @@ class State {
     }
 
     
-    func removeConstraintMapping(brushId:String, key:String)->Constraint?{
+    func removeConstraintMapping(key:String, brush:Brush)->Constraint?{
         
         constraint_mappings[key]!.relativeProperty.constrained = false;
-        constraint_mappings[key]!.reference.unsubscribe(id:brushId);
-        constraint_mappings[key]!.reference.didChange.removeHandler(key:key)
+        constraint_mappings[key]!.reference.unsubscribe(id:brush.id);
+        constraint_mappings[key]!.reference.didChange.removeHandler(target:brush, key:key)
         constraint_mappings[key]!.relativeProperty.constraintTarget = nil;
        return constraint_mappings.removeValue(forKey: key)
     }

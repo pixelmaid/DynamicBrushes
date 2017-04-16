@@ -131,7 +131,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             self.removeTransitionEvent.raise(data: (self,transition.id,transition.reference));
             }
 
-            state.removeAllConstraintMappings(brushId: self.id);
+            state.removeAllConstraintMappings(brush:self);
         }
         self.transitions.removeAll();
         self.states.removeAll();

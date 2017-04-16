@@ -1,5 +1,5 @@
 'use strict';
-define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager","app/PaletteModel", "app/PaletteView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart"],
+define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/PaletteModel", "app/PaletteView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart"],
 
 
     function($, paper, Handlebars, ID, SaveManager, PaletteModel, PaletteView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart) {
@@ -10,6 +10,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager","app/Palett
         var paletteView = new PaletteView(paletteModel, "#scripts");
         var chartViewManager = new ChartViewManager(paletteModel, "#canvas");
         var saveManager = new SaveManager();
+
+        socketController.connect();
 
         var onMessage = function(data) {
             console.log("ON MESSGE CALLED", data);
@@ -28,16 +30,36 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager","app/Palett
             } else if (data.type == "behavior_change") {
 
             } else if (data.type == "authoring_response") {
-                   
-                   
-                        chartViewManager.processAuthoringResponse(data);
-                        
-                
+
+
+                chartViewManager.processAuthoringResponse(data);
+
+
+            } else if (data.type == "synchronize") {
+
+
+                chartViewManager.synchronize(data);
+
+
             }
         };
 
         var onConnection = function() {
             console.log("connection made");
+        };
+
+        var onDrawingClientConnected = function() {
+            var transmit_data = {
+                type: "synchronize_request",
+                requester: "authoring",
+                data: {}
+
+            };
+            socketController.sendMessage(transmit_data);
+        };
+
+        var onDrawingClientDisconnected = function() {
+            //TODO: handle disconnect
         };
 
         var onAuthoringEvent = function(data) {
@@ -50,19 +72,17 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager","app/Palett
 
             };
             socketController.sendMessage(transmit_data);
-             chartViewManager.processAuthoringResponse(transmit_data);
+            chartViewManager.processAuthoringResponse(transmit_data);
         };
 
 
 
-
         socketController.addListener("ON_MESSAGE", onMessage);
+        socketController.addListener("ON_CLIENT_CONNECTED", onDrawingClientConnected);
+        socketController.addListener("ON_CLIENT_DISCONNECTED", onDrawingClientDisconnected);
         socketController.addListener("ON_CONNECTION", onConnection);
         chartViewManager.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
-       
+
 
 
     });
-
-
-

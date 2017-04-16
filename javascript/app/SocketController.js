@@ -48,7 +48,12 @@ function(EventEmitter, Emitter){
 
             	  	return;
             	  }
+                else if(message.data == "drawing client connected"){
+                  //TODO: client connected
+                  return;
+                }
             	  else{
+                  console.log("data=",message.data)
                 	var data = JSON.parse(message.data);
 
                 	console.log("data.type", data.type);

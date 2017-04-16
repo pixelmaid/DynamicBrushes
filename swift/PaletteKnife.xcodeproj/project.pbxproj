@@ -54,6 +54,7 @@
 		5FA4C72E1CDA7B5B004A728C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5FA4C72C1CDA7B5B004A728C /* LaunchScreen.storyboard */; };
 		5FA4C7391CDA7B5B004A728C /* Palette_KnifeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7381CDA7B5B004A728C /* Palette_KnifeTests.swift */; };
 		5FA4C7441CDA7B5B004A728C /* Palette_KnifeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7431CDA7B5B004A728C /* Palette_KnifeUITests.swift */; };
+		5FC91D2D1EA00C2F00A19206 /* RequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC91D2C1EA00C2F00A19206 /* RequestHandler.swift */; };
 		5FD6CD121DE0EE0E007D94AA /* sm_pen_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FD6CD111DE0EE0E007D94AA /* sm_pen_blue.png */; };
 		5FEE2AC91DE127D800080095 /* dual_pen.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FEE2AC71DE127D800080095 /* dual_pen.png */; };
 		5FEE2ACA1DE127D800080095 /* lg_pen_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FEE2AC81DE127D800080095 /* lg_pen_blue.png */; };
@@ -140,6 +141,7 @@
 		5FA4C73F1CDA7B5B004A728C /* PaletteKnife.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PaletteKnife.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FA4C7431CDA7B5B004A728C /* Palette_KnifeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette_KnifeUITests.swift; sourceTree = "<group>"; };
 		5FA4C7451CDA7B5B004A728C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5FC91D2C1EA00C2F00A19206 /* RequestHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestHandler.swift; sourceTree = "<group>"; };
 		5FD6CD111DE0EE0E007D94AA /* sm_pen_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sm_pen_blue.png; sourceTree = "<group>"; };
 		5FEE2AC71DE127D800080095 /* dual_pen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dual_pen.png; sourceTree = "<group>"; };
 		5FEE2AC81DE127D800080095 /* lg_pen_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lg_pen_blue.png; sourceTree = "<group>"; };
@@ -184,7 +186,6 @@
 		5F90F5371E9D59D4006BB9FE /* base */ = {
 			isa = PBXGroup;
 			children = (
-				5FFDAB081D21B5C400632A26 /* SocketManager.swift */,
 				5F90F5381E9D59D4006BB9FE /* Emitter.swift */,
 				5F90F5391E9D59D4006BB9FE /* Event.swift */,
 				5F90F53A1E9D59D4006BB9FE /* GCodeGenerator.swift */,
@@ -375,7 +376,9 @@
 		5FFAC4D51E9D83C20009DC5E /* util */ = {
 			isa = PBXGroup;
 			children = (
+				5FFDAB081D21B5C400632A26 /* SocketManager.swift */,
 				5FFAC4D61E9D84040009DC5E /* SaveManager.swift */,
+				5FC91D2C1EA00C2F00A19206 /* RequestHandler.swift */,
 			);
 			path = util;
 			sourceTree = "<group>";
@@ -710,6 +713,7 @@
 				5F90F54E1E9D5A16006BB9FE /* Point.swift in Sources */,
 				5F90F5451E9D59D4006BB9FE /* Numerical.swift in Sources */,
 				5F90F5361E9D588F006BB9FE /* CanvasView.swift in Sources */,
+				5FC91D2D1EA00C2F00A19206 /* RequestHandler.swift in Sources */,
 				5F90F54D1E9D5A16006BB9FE /* Color.swift in Sources */,
 				5F90F5351E9D588F006BB9FE /* FabricatorView.swift in Sources */,
 				5F90F5651E9D5BCC006BB9FE /* BehaviorDefinition.swift in Sources */,

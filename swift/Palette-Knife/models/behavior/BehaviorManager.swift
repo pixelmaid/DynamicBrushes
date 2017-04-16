@@ -14,41 +14,78 @@ enum BehaviorError: Error {
     case behaviorDoesNotExist
     case mappingDoesNotExist;
     case transitionDoesNotExist;
+    case requestDoesNotExist;
 }
 
-class BehaviorManager{
+class BehaviorManager: Requester{
     static var behaviors = [String:BehaviorDefinition]()
     var activeBehavior:BehaviorDefinition?;
-    var saveManager = SaveManager()
     var canvas:Canvas
+    let dataEventKey = NSUUID().uuidString;
     init(canvas:Canvas){
         self.canvas = canvas;
-        
-        saveManager.connect();
+        _ = RequestHandler.dataEvent.addHandler(target: self, handler: BehaviorManager.processRequestHandler, key: self.dataEventKey)
+    }
+    
+    internal func processRequestHandler(data: (String, JSON?), key: String) {
+        self.processRequest(data:data)
+    }
+    
+    //from Requester protocol. Handles result of request
+    internal func processRequest(data: (String, JSON?)) {
+        print("process request called for \(self,data.1?["type"])");
+        switch(data.0){
+            case "download_complete":
+                self.loadBehavior(json: data.1!["data"])
+                self.synchronizeWithAuthoringClient();
+                break;
+            case "upload_complete":
+                break;
+            case "synchronize_request", "authoring_client_connected":
+                self.synchronizeWithAuthoringClient();
+                break;
+            case "authoring_request":
+                
+                do{
+                    let attempt = try self.handleAuthoringRequest(authoring_data: data.1! as JSON);
+                    
+                    //error is here!!!!
+                    let socketRequest = Request(target: "socket", action: "authoring_response", data: attempt, requester: self)
+                    print("behavior manager recieved authoring  process request \(attempt)");
+
+                    RequestHandler.addRequest(requestData:socketRequest);
+                   // self.backupBehavior();
+                }
+                catch{
+                    print("failed authoring request");
+                    var jsonArg:JSON = [:]
+                    jsonArg["type"] = "authoring_response"
+                    jsonArg["result"] = "failed"
+                    
+                    let socketRequest = Request(target: "socket", action: "authoring_request_response", data: jsonArg, requester: self)
+                    
+                    RequestHandler.addRequest(requestData:socketRequest);
+                }
+                
+                break;
+        default:
+            break;
+        }
     }
     
     static func getBehaviorById(id:String)->BehaviorDefinition{
         return BehaviorManager.behaviors[id]!
     }
     
-    func loadStandardTemplate(){
-        let filepath = "templates/basic.json"
-        let url = saveManager.downloadFile(filePath: filepath)
-        do{
-            let fileText = try String(contentsOf: url!, encoding: String.Encoding.utf8)
-            if let dataFromString = fileText.data(using: .utf8, allowLossyConversion: false) {
-                let json = JSON(data: dataFromString)
-                print("json =\(json)")
-                self.loadBehaviorsFromJSON(json: json, rewriteAll: true)
-                socketManager.sendBehaviorData(data: self.getAllBehaviorJSON());
-
-            }
-            
-        }
-        catch{
-            print("error in conversion to JSON")
-        }
-
+    func loadBehavior(json:JSON){
+            print("json =\(json)")
+            self.loadBehaviorsFromJSON(json: json, rewriteAll: true)
+    }
+    
+    func synchronizeWithAuthoringClient(){
+        let behavior = self.getAllBehaviorJSON();
+        let request = Request(target: "socket", action: "synchronize", data: behavior, requester: self)
+        RequestHandler.addRequest(requestData: request)
     }
     
     func backupBehavior(){
@@ -57,8 +94,12 @@ class BehaviorManager{
             behavior_json[key] = val.toJSON();
         }
         let filename = "backups/backup_"+String(Int((NSDate().timeIntervalSince1970)*100000));
-        saveManager.uploadFile(filename:filename,data: behavior_json)
+        var backupJSON:JSON = [:]
+        backupJSON["filename"] = JSON(filename);
+        backupJSON["data"] = behavior_json
         
+        let request = Request(target: "storage", action: "upload", data: backupJSON, requester: self)
+        RequestHandler.addRequest(requestData: request);        
     }
     
     func loadBehaviorsFromJSON(json:JSON,rewriteAll:Bool){
@@ -84,17 +125,22 @@ class BehaviorManager{
         }
     }
     
-    func handleAuthoringRequest(authoring_data:JSON) throws->(String,String,JSON?){
+    func handleAuthoringRequest(authoring_data:JSON) throws->JSON{
         let data = authoring_data["data"] as JSON;
         let type = data["type"].stringValue;
         print("authoring request \(type)");
-        
+        var resultJSON:JSON = [:]
+        resultJSON["type"] = JSON("authoring_response");
+        resultJSON["authoring_type"] = JSON(type);
+
         switch(type){
         case "request_behavior_json":
             let behaviorId = data["behaviorId"].stringValue;
             let behavior = BehaviorManager.behaviors[behaviorId]!;
             let behaviorJSON:JSON = behavior.toJSON();
-            return ("request_behavior_json","success",behaviorJSON);
+            resultJSON["result"] = "success";
+            resultJSON["data"] = behaviorJSON
+            return resultJSON;
             
         case "behavior_added":
             let name = data["name"].stringValue;
@@ -114,54 +160,59 @@ class BehaviorManager{
                 activeBehavior?.addState(stateId: endId, stateName: "die", stateX: 1000.0, stateY: 150.0);
                 
                 let brush = Brush(name: "brush_"+data["id"].stringValue, behaviorDef: activeBehavior, parent: nil, canvas: canvas)
-                return ("behavior_added","success",nil)
+                
+                resultJSON["result"] = "success";
+                return resultJSON;
             }
             
-            
-            
+
             
         case "state_added":
             print("state added behaviors \(BehaviorManager.behaviors.count,data["behaviorId"].stringValue,BehaviorManager.behaviors)");
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseStateJSON(data:data);
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior()
             
-            return ("state_added","success",nil)
+            
+            resultJSON["result"] = "success";
+            return resultJSON;
         case "state_removed":
             
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.removeState(stateId: data["stateId"].stringValue);
             
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior()
             
-            return ("state_removed","success",nil)
+            resultJSON["result"] = "success";
+            return resultJSON;
             
         case "transition_added","transition_event_added":
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseTransitionJSON(data:data)
             
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior()
             
-            return ("transition_added","success",nil)
+            resultJSON["result"] = "success";
+            return resultJSON;
             
         case "transition_removed":
             do{
                 try BehaviorManager.behaviors[data["behaviorId"].stringValue]!.removeTransition(id: data["transitionId"].stringValue);
                 BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior()
                 
-                return("transition_removed","success",nil);
-            }
+                resultJSON["result"] = "success";
+                return resultJSON;            }
             catch{
                 print("transition id does not exist, cannot remove");
-                return (type,"failure",nil)
-                
+                resultJSON["result"] = "failure";
+                return resultJSON;
             }
         case "transition_event_removed":
             do{
                 try BehaviorManager.behaviors[data["behaviorId"].stringValue]!.setTransitionToDefaultEvent(transitionId: data["transitionId"].stringValue)
                 BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior();
-                return ("transition_event_removed","success",nil)
-            }
+                resultJSON["result"] = "success";
+                return resultJSON;            }
             catch{
-                return ("transition_event_removed","failure",nil)
-            }
+                resultJSON["result"] = "failure";
+                return resultJSON;            }
             
             
             
@@ -178,15 +229,18 @@ class BehaviorManager{
                 }
             }
             }
-            return ("method_added","success",methodJSON)
+            resultJSON["result"] = "success";
+            resultJSON["data"] = methodJSON;
+            return resultJSON;
+         
             
         case "method_removed":
             
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.removeMethod(methodId: data["methodId"].stringValue)
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior();
             print("removed method");
-            return ("method_removed","success",nil)
-            
+            resultJSON["result"] = "success";
+            return resultJSON;
             
         case "mapping_added":
             let behaviorId = data["behaviorId"].stringValue;
@@ -194,7 +248,8 @@ class BehaviorManager{
             BehaviorManager.behaviors[behaviorId]!.parseMappingJSON(data:data)
             BehaviorManager.behaviors[behaviorId]!.createBehavior()
             
-            return (type,"success",nil)
+            resultJSON["result"] = "success";
+            return resultJSON;
             
         case "mapping_updated":
             let behaviorId = data["behaviorId"].stringValue;
@@ -205,8 +260,8 @@ class BehaviorManager{
             BehaviorManager.behaviors[behaviorId]!.createBehavior()
             
             
-            return (type,"success",nil)
-            
+            resultJSON["result"] = "success";
+            return resultJSON;
             
         case "expression_text_modified":
             let behaviorId = data["behaviorId"].stringValue;
@@ -215,8 +270,8 @@ class BehaviorManager{
             
             BehaviorManager.behaviors[behaviorId]!.createBehavior()
             
-            return (type,"success",nil)
-            
+            resultJSON["result"] = "success";
+            return resultJSON;
             
         case "mapping_relative_removed":
             
@@ -224,13 +279,13 @@ class BehaviorManager{
                 try BehaviorManager.behaviors[data["behaviorId"].stringValue]!.removeMapping(id: data["mappingId"].stringValue);
                 BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior()
                 
-                return (type,"success",nil)
-                
+                resultJSON["result"] = "success";
+                return resultJSON;
             }
             catch{
                 print("mapping id does not exist, cannot remove");
-                return (type,"failure",nil)
-                
+                resultJSON["result"] = "failure";
+                return resultJSON;
             }
             
         case "mapping_reference_removed":
@@ -238,8 +293,8 @@ class BehaviorManager{
             
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseExpressionJSON(data:data)
             
-            return (type,"success",nil)
-            
+            resultJSON["result"] = "success";
+            return resultJSON;
             
             
         case "generator_added":
@@ -247,8 +302,8 @@ class BehaviorManager{
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseGeneratorJSON(data:data)
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior()
             
-            return ("generator_added","success",nil);
-            
+            resultJSON["result"] = "success";
+            return resultJSON;
             
             
         default:
@@ -257,20 +312,21 @@ class BehaviorManager{
         
         
         
-        return (type,"fail",nil)
+        resultJSON["result"] = "failure";
+        return resultJSON;
     }
     
     
     
-    func getAllBehaviorJSON()->String {
-        var behavior_string = "["
+    func getAllBehaviorJSON()->JSON {
+        var behaviorJSON = [JSON]()
         for (_, behavior) in BehaviorManager.behaviors {
             let data:JSON = behavior.toJSON();
             
-            behavior_string += data.stringValue+","
+            behaviorJSON.append(data);
         }
-        behavior_string = behavior_string.substring(to:behavior_string.index(before:behavior_string.endIndex)) + "]";
-        return behavior_string;
+       
+        return JSON(behaviorJSON);
         
     }
     
@@ -296,6 +352,7 @@ class BehaviorManager{
             BehaviorManager.behaviors[name] = b;
             
             b.addState(stateId: NSUUID().uuidString,stateName:"start", stateX: 20.0, stateY:150.0)
+            
             b.addState(stateId: NSUUID().uuidString,stateName:"default", stateX: 1000.0, stateY: 150.0)
             
             b.addTransition(transitionId: NSUUID().uuidString, name: "setup", eventEmitter: nil, parentFlag: false, event: "STATE_COMPLETE", fromStateId: "start", toStateId:"default", condition: nil, displayName: "state complete")

@@ -22,10 +22,10 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                 add_behavior_btn.click(function(event) {
 
 
-                    self.addBehavior();
+                    self.onBehaviorAdded();
                 });
 
-                $("#behaviorselect").change(function(){
+                $("#behaviorselect").change(function() {
                     this.changeBehavior();
                 }.bind(this));
                 //this.model.addListener("ON_ADD_CHART", this.addChart);
@@ -41,18 +41,19 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
             }
 
 
-            
+
             refreshBehaviorDropdown() {
-               $("#behaviorselect").empty();
-               
+                $("#behaviorselect").empty();
+
                 var behavior_menu = document.getElementById("behaviorselect");
+            console.log("views",this.views)
                 for (var key in this.views) {
                     if (this.views.hasOwnProperty(key)) {
                         var option = document.createElement('option');
-                        option.text =  this.views[key].name;
-                       option.value = this.views[key].id;
+                        option.text = this.views[key].name;
+                        option.value = this.views[key].id;
                         behavior_menu.add(option, 0);
-                        console.log("adding option",this.views[key].name);
+                        console.log("adding option", this.views[key].name);
                     }
                 }
 
@@ -60,10 +61,110 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
 
             }
 
-            changeBehavior(){
+            //called when drawing client is sending behavior data to synchronize
+            synchronize(sync_data) {
+                this.destroyAllViews();
+                var behaviorData = sync_data.data;
+                console.log("synch called", behaviorData.length);
+
+                for(var i=0;i<behaviorData.length;i++){
+                    this.addBehavior(behaviorData[i]);
+
+                }
+
+                this.currentView.resetView();
+                var selectedBehaviorData = behaviorData[behaviorData.length-1];
+                this.currentView = this.views[selectedBehaviorData.id];
+
+                this.currentView.createHTML(selectedBehaviorData);
+                this.currentView.initializeBehavior(selectedBehaviorData);
+            }
+
+              addBehavior(data) {
+                console.log("add behavior", data, this);
+                if (this.currentView) {
+                    this.currentView.resetView();
+                }
+                var chartView = new ChartView(data.id, data.name);
+                chartView.addListener("ON_STATE_CONNECTION", function(connectionId, sourceId, sourceName, targetId, behaviorId) {
+                    this.onConnection(connectionId, sourceId, sourceName, targetId, behaviorId);
+                }.bind(this));
+
+
+                chartView.addListener("ON_TRANSITION_REMOVED", function(behaviorId, transitionId) {
+                    this.onTransitionRemoved(behaviorId, transitionId);
+                }.bind(this));
+
+
+                chartView.addListener("ON_TRANSITION_EVENT_REMOVED", function(behaviorId, transitionId) {
+                    this.onTransitionEventRemoved(behaviorId, transitionId);
+                }.bind(this));
+
+
+                chartView.addListener("ON_TRANSITION_EVENT_ADDED", function(connectionId, eventName, displayName, sourceId, sourceName, targetId, behaviorId) {
+                    this.onTransitionEventAdded(connectionId, eventName, displayName, sourceId, sourceName, targetId, behaviorId);
+                }.bind(this));
+
+                chartView.addListener("ON_MAPPING_ADDED", function(mappingId, name, item_name, type, expressionId, stateId, behaviorId) {
+                    this.onMappingAdded(mappingId, name, item_name, type, expressionId, stateId, behaviorId);
+                }.bind(this));
+
+                chartView.addListener("ON_METHOD_ADDED", function(behaviorId, transitionId, methodId, targetMethod, args) {
+                    this.onMethodAdded(behaviorId, transitionId, methodId, targetMethod, args);
+                }.bind(this));
+
+                chartView.addListener("ON_METHOD_ARGUMENT_CHANGE", function(behaviorId, transitionId, methodId, targetMethod, args) {
+                    this.onMethodArgumentChanged(behaviorId, transitionId, methodId, targetMethod, args);
+                }.bind(this));
+
+                chartView.addListener("ON_METHOD_REMOVED", function(behaviorId, methodId) {
+                    this.onMethodRemoved(behaviorId, methodId);
+                }.bind(this));
+
+                chartView.addListener("ON_GENERATOR_ADDED", function(mappingId, generatorId, generator_type, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList) {
+                    this.onGeneratorAdded(mappingId, generatorId, generator_type, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList);
+                }.bind(this));
+
+                chartView.addListener("ON_STATE_ADDED", function(x, y, data) {
+                    this.onStateAdded(x, y, data);
+                }.bind(this));
+
+                chartView.addListener("ON_STATE_REMOVED", function(behaviorId, stateId) {
+                    this.onStateRemoved(behaviorId, stateId);
+                }.bind(this));
+
+
+                chartView.addListener("ON_EXPRESSION_TEXT_UPDATE", function(behaviorId, expressionId, expressionText, propertyList) {
+                    this.onExpressionTextModified(behaviorId, expressionId, expressionText, propertyList);
+                }.bind(this));
+
+                chartView.addListener("ON_MAPPING_REFERENCE_UPDATE", function(mappingId, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList, constraint_type) {
+                    this.onMappingReferenceUpdate(mappingId, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList, constraint_type);
+                }.bind(this));
+
+                chartView.addListener("ON_MAPPING_REFERENCE_REMOVED", function(behaviorId, expressionId, expressionPropertyList, expressionText) {
+                    this.onMappingReferenceRemoved(behaviorId, expressionId, expressionPropertyList, expressionText);
+                }.bind(this));
+
+
+                chartView.addListener("ON_MAPPING_RELATIVE_REMOVED", function(behaviorId, mappingId, stateId) {
+                    this.onMappingRelativeRemoved(behaviorId, mappingId, stateId);
+                }.bind(this));
+
+
+                chartView[data.id] = chartView;
+                chartView.initializeBehavior(data);
+                this.views[data.id] = chartView;
+                this.currentView = chartView;
+                this.refreshBehaviorDropdown();
+                console.log("add behavior", data, this.currentView);
+
+            }
+
+            changeBehavior() {
                 var selectedId = $("#behaviorselect").val();
-                console.log("change behavior to",selectedId);
-                 var transmit_data = {
+                console.log("change behavior to", selectedId);
+                var transmit_data = {
                     behaviorId: selectedId,
                     type: "request_behavior_json"
                 };
@@ -76,6 +177,15 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
 
             }
 
+            switchBehavior(data) {
+                var behaviorData = data;
+                this.currentView.resetView();
+                this.currentView = this.views[behaviorData.id];
+
+                this.currentView.createHTML(behaviorData);
+                this.currentView.initializeBehavior(data);
+            }
+
             processAuthoringResponse(data) {
                 console.log("chart manager process authoring response", data, this.lastAuthoringRequest, data.result);
                 if (data.result == "success") {
@@ -83,15 +193,10 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                     switch (this.lastAuthoringRequest.data.type) {
 
                         case "request_behavior_json":
-                            console.log("request behavior json called",data.data);
-                            var behaviorData = data.data;
-                           this.currentView.resetView();
-                           this.currentView = this.views[behaviorData.id];
+                            console.log("request behavior json called", data.data);
+                            this.switchBehavior(data.data);
 
-                           this.currentView.createHTML(behaviorData);
-                            this.currentView.initializeBehavior(data.data);
-                            
-                        break;
+                            break;
 
                         case "transition_added":
                             console.log("transition added  called");
@@ -158,7 +263,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
 
                             break;
                         case "state_added":
-                           
+
                             this.views[behaviorId].newNode(this.lastAuthoringRequest.data);
                             this.lastAuthoringRequest = null;
 
@@ -170,7 +275,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
 
                             break;
                         case "behavior_added":
-                            this.onBehaviorAdded(this.lastAuthoringRequest.data);
+                            this.addBehavior(this.lastAuthoringRequest.data);
                             this.lastAuthoringRequest = null;
 
                             break;
@@ -190,7 +295,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
 
             }
 
-            addBehavior() {
+            onBehaviorAdded() {
                 var name = prompt("Give your behavior a name", "behavior_" + behavior_counter);
                 if (name !== null) {
 
@@ -235,86 +340,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                 }
             }
 
-            onBehaviorAdded(data) {
-                console.log("add behavior", data, this);
-                if(this.currentView){
-                    this.currentView.resetView();
-                }
-                var chartView = new ChartView(data.id, data.name);
-                chartView.addListener("ON_STATE_CONNECTION", function(connectionId, sourceId, sourceName, targetId, behaviorId) {
-                    this.onConnection(connectionId, sourceId, sourceName, targetId, behaviorId);
-                }.bind(this));
-
-
-                chartView.addListener("ON_TRANSITION_REMOVED", function(behaviorId, transitionId) {
-                    this.onTransitionRemoved(behaviorId, transitionId);
-                }.bind(this));
-
-
-                chartView.addListener("ON_TRANSITION_EVENT_REMOVED", function(behaviorId, transitionId) {
-                    this.onTransitionEventRemoved(behaviorId, transitionId);
-                }.bind(this));
-
-
-                chartView.addListener("ON_TRANSITION_EVENT_ADDED", function(connectionId, eventName, displayName, sourceId, sourceName, targetId, behaviorId) {
-                    this.onTransitionEventAdded(connectionId, eventName, displayName, sourceId, sourceName, targetId, behaviorId);
-                }.bind(this));
-
-                chartView.addListener("ON_MAPPING_ADDED", function(mappingId, name, item_name, type, expressionId, stateId, behaviorId) {
-                    this.onMappingAdded(mappingId, name, item_name, type, expressionId, stateId, behaviorId);
-                }.bind(this));
-
-                chartView.addListener("ON_METHOD_ADDED", function(behaviorId, transitionId, methodId, targetMethod, args) {
-                    this.onMethodAdded(behaviorId, transitionId, methodId, targetMethod, args);
-                }.bind(this));
-
-                chartView.addListener("ON_METHOD_ARGUMENT_CHANGE", function(behaviorId, transitionId, methodId, targetMethod, args) {
-                    this.onMethodArgumentChanged(behaviorId, transitionId, methodId, targetMethod, args);
-                }.bind(this));
-
-                chartView.addListener("ON_METHOD_REMOVED", function(behaviorId, methodId) {
-                    this.onMethodRemoved(behaviorId, methodId);
-                }.bind(this));
-
-                chartView.addListener("ON_GENERATOR_ADDED", function(mappingId, generatorId, generator_type, behaviorId, stateId,relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList) {
-                    this.onGeneratorAdded(mappingId, generatorId, generator_type, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList);
-                }.bind(this));
-
-                chartView.addListener("ON_STATE_ADDED", function(x, y, data) {
-                    this.onStateAdded(x, y, data);
-                }.bind(this));
-
-                chartView.addListener("ON_STATE_REMOVED", function(behaviorId, stateId) {
-                    this.onStateRemoved(behaviorId, stateId);
-                }.bind(this));
-
-
-                chartView.addListener("ON_EXPRESSION_TEXT_UPDATE", function(behaviorId, expressionId, expressionText, propertyList) {
-                    this.onExpressionTextModified(behaviorId, expressionId, expressionText, propertyList);
-                }.bind(this));
-
-                chartView.addListener("ON_MAPPING_REFERENCE_UPDATE", function(mappingId, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList, constraint_type) {
-                    this.onMappingReferenceUpdate(mappingId, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList, constraint_type);
-                }.bind(this));
-
-                chartView.addListener("ON_MAPPING_REFERENCE_REMOVED", function(behaviorId, expressionId, expressionPropertyList, expressionText) {
-                    this.onMappingReferenceRemoved(behaviorId, expressionId, expressionPropertyList, expressionText);
-                }.bind(this));
-
-
-                chartView.addListener("ON_MAPPING_RELATIVE_REMOVED", function(behaviorId, mappingId, stateId) {
-                    this.onMappingRelativeRemoved(behaviorId, mappingId, stateId);
-                }.bind(this));
-
-
-                chartView[data.id] = chartView;
-                chartView.initializeBehavior(data);
-                this.views[data.id] = chartView;
-                this.currentView = chartView;
-                this.refreshBehaviorDropdown();
-                console.log("add behavior", data, this.currentView);
-
-            }
+          
 
 
             onConnection(connectionId, sourceId, sourceName, targetId, behaviorId) {
@@ -418,7 +444,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                 this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
             }
 
-            onMappingReferenceUpdate(mappingId, behaviorId, stateId, relativePropertyName,relativePropertyItemName, expressionId, expressionText, expressionPropertyList, constraint_type) {
+            onMappingReferenceUpdate(mappingId, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList, constraint_type) {
                 console.log("mapping reference update", mappingId, stateId);
 
                 var transmit_data = {
@@ -430,7 +456,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                     expressionId: expressionId,
                     expressionText: expressionText,
                     expressionPropertyList: expressionPropertyList,
-                    constraintType: constraint_type, 
+                    constraintType: constraint_type,
                     type: "mapping_updated"
                 };
 
@@ -581,7 +607,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
 
                 var transmit_data = data;
                 data.type = "state_added";
-                data.x =  x - $("#" + data.behaviorId).offset().left;
+                data.x = x - $("#" + data.behaviorId).offset().left;
                 data.y = y - $("#" + data.behaviorId).offset().top;
                 console.log("state created", transmit_data);
                 this.lastAuthoringRequest = {
