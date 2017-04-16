@@ -72,8 +72,7 @@ class ViewController: UIViewController, Requester {
          bakeViewLg = CanvasView(frame: CGRect(x:sX, y:sY, width:CGFloat(GCodeGenerator.pX), height:CGFloat(GCodeGenerator.pY)))
          backView = UIImageView(frame: CGRect(x:sX, y:sY, width:CGFloat(GCodeGenerator.pX), height:CGFloat(GCodeGenerator.pY)))
  
-        
-        super.init(coder: coder);
+               super.init(coder: coder);
         
     }
     
@@ -127,7 +126,7 @@ class ViewController: UIViewController, Requester {
         
         var templateJSON:JSON = [:]
         templateJSON["filepath"] = "templates/basic.json"
-        let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: behaviorManager!)
+        let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: self)
         
         RequestHandler.addRequest(requestData:configureRequest);
         RequestHandler.addRequest(requestData:connectRequest);
@@ -144,6 +143,66 @@ class ViewController: UIViewController, Requester {
     //from Requester protocol. Handles result of request
     internal func processRequest(data: (String, JSON?)) {
         print("process request called for \(self,data)");
+
+        switch(data.0){
+        
+        case "download_complete":
+        behaviorManager?.loadBehavior(json: data.1!["data"])
+        self.synchronizeWithAuthoringClient();
+        break;
+        case "upload_complete":
+        break;
+        case "synchronize_request", "authoring_client_connected":
+        self.synchronizeWithAuthoringClient();
+        break;
+        case "authoring_request":
+        
+        do{
+            let attempt = try behaviorManager?.handleAuthoringRequest(authoring_data: data.1! as JSON);
+            
+            //error is here!!!!
+            let socketRequest = Request(target: "socket", action: "authoring_response", data: attempt, requester: self)
+            print("behavior manager recieved authoring  process request \(attempt)");
+            
+            RequestHandler.addRequest(requestData:socketRequest);
+            // self.backupBehavior();
+        }
+        catch{
+            print("failed authoring request");
+            var jsonArg:JSON = [:]
+            jsonArg["type"] = "authoring_response"
+            jsonArg["result"] = "failed"
+            
+            let socketRequest = Request(target: "socket", action: "authoring_request_response", data: jsonArg, requester: self)
+            
+            RequestHandler.addRequest(requestData:socketRequest);
+        }
+        
+        break;
+        default:
+            break;
+            
+        }
+    }
+    
+    func synchronizeWithAuthoringClient(){
+        let behavior = behaviorManager?.getAllBehaviorJSON();
+        let request = Request(target: "socket", action: "synchronize", data: behavior, requester: self)
+        RequestHandler.addRequest(requestData: request)
+    }
+    
+    func backupBehavior(){
+        var behavior_json:JSON = [:]
+        for (key,val) in BehaviorManager.behaviors{
+            behavior_json[key] = val.toJSON();
+        }
+        let filename = "backups/backup_"+String(Int((NSDate().timeIntervalSince1970)*100000));
+        var backupJSON:JSON = [:]
+        backupJSON["filename"] = JSON(filename);
+        backupJSON["data"] = behavior_json
+        
+        let request = Request(target: "storage", action: "upload", data: backupJSON, requester: self)
+        RequestHandler.addRequest(requestData: request);
     }
     
     

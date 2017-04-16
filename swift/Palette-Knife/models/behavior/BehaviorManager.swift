@@ -17,61 +17,16 @@ enum BehaviorError: Error {
     case requestDoesNotExist;
 }
 
-class BehaviorManager: Requester{
+class BehaviorManager{
     static var behaviors = [String:BehaviorDefinition]()
     var activeBehavior:BehaviorDefinition?;
     var canvas:Canvas
-    let dataEventKey = NSUUID().uuidString;
     init(canvas:Canvas){
         self.canvas = canvas;
-        _ = RequestHandler.dataEvent.addHandler(target: self, handler: BehaviorManager.processRequestHandler, key: self.dataEventKey)
+       
     }
     
-    internal func processRequestHandler(data: (String, JSON?), key: String) {
-        self.processRequest(data:data)
-    }
-    
-    //from Requester protocol. Handles result of request
-    internal func processRequest(data: (String, JSON?)) {
-        print("process request called for \(self,data.1?["type"])");
-        switch(data.0){
-            case "download_complete":
-                self.loadBehavior(json: data.1!["data"])
-                self.synchronizeWithAuthoringClient();
-                break;
-            case "upload_complete":
-                break;
-            case "synchronize_request", "authoring_client_connected":
-                self.synchronizeWithAuthoringClient();
-                break;
-            case "authoring_request":
-                
-                do{
-                    let attempt = try self.handleAuthoringRequest(authoring_data: data.1! as JSON);
-                    
-                    //error is here!!!!
-                    let socketRequest = Request(target: "socket", action: "authoring_response", data: attempt, requester: self)
-                    print("behavior manager recieved authoring  process request \(attempt)");
-
-                    RequestHandler.addRequest(requestData:socketRequest);
-                   // self.backupBehavior();
-                }
-                catch{
-                    print("failed authoring request");
-                    var jsonArg:JSON = [:]
-                    jsonArg["type"] = "authoring_response"
-                    jsonArg["result"] = "failed"
-                    
-                    let socketRequest = Request(target: "socket", action: "authoring_request_response", data: jsonArg, requester: self)
-                    
-                    RequestHandler.addRequest(requestData:socketRequest);
-                }
-                
-                break;
-        default:
-            break;
-        }
-    }
+  
     
     static func getBehaviorById(id:String)->BehaviorDefinition{
         return BehaviorManager.behaviors[id]!
@@ -82,25 +37,7 @@ class BehaviorManager: Requester{
             self.loadBehaviorsFromJSON(json: json, rewriteAll: true)
     }
     
-    func synchronizeWithAuthoringClient(){
-        let behavior = self.getAllBehaviorJSON();
-        let request = Request(target: "socket", action: "synchronize", data: behavior, requester: self)
-        RequestHandler.addRequest(requestData: request)
-    }
-    
-    func backupBehavior(){
-        var behavior_json:JSON = [:]
-        for (key,val) in BehaviorManager.behaviors{
-            behavior_json[key] = val.toJSON();
-        }
-        let filename = "backups/backup_"+String(Int((NSDate().timeIntervalSince1970)*100000));
-        var backupJSON:JSON = [:]
-        backupJSON["filename"] = JSON(filename);
-        backupJSON["data"] = behavior_json
-        
-        let request = Request(target: "storage", action: "upload", data: backupJSON, requester: self)
-        RequestHandler.addRequest(requestData: request);        
-    }
+   
     
     func loadBehaviorsFromJSON(json:JSON,rewriteAll:Bool){
         if(rewriteAll){
