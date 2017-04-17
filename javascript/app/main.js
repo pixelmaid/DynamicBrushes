@@ -1,8 +1,8 @@
 'use strict';
-define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/PaletteModel", "app/PaletteView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart"],
+define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveView", "app/PaletteModel", "app/PaletteView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart"],
 
 
-    function($, paper, Handlebars, ID, SaveManager, PaletteModel, PaletteView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart) {
+    function($, paper, Handlebars, ID, SaveManager, SaveView, PaletteModel, PaletteView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart) {
 
         var socketController = new SocketController();
         var socketView = new SocketView(socketController, "#socket");
@@ -10,7 +10,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/Palet
         var paletteView = new PaletteView(paletteModel, "#scripts");
         var chartViewManager = new ChartViewManager(paletteModel, "#canvas");
         var saveManager = new SaveManager();
-
+        var saveView = new SaveView(saveManager,"#save-menu");
         socketController.connect();
 
         var onMessage = function(data) {
@@ -42,13 +42,18 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/Palet
 
 
             }
+            else if (data.type == "storage_data"){
+                saveManager.loadStorageData(data);
+            }
         };
 
         var onConnection = function() {
             console.log("connection made");
+            requestFileList();
         };
 
         var onDrawingClientConnected = function() {
+            console.log("drawing client connected");
             var transmit_data = {
                 type: "synchronize_request",
                 requester: "authoring",
@@ -56,6 +61,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/Palet
 
             };
             socketController.sendMessage(transmit_data);
+            requestFileList();
+           
         };
 
         var onDrawingClientDisconnected = function() {
@@ -72,8 +79,33 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/Palet
 
             };
             socketController.sendMessage(transmit_data);
-            chartViewManager.processAuthoringResponse(transmit_data);
+            
         };
+         var onStorageEvent = function(data) {
+            console.log("storage_data", data);
+
+            var transmit_data = {
+                type: "storage_request",
+                requester: "authoring",
+                data: data
+
+            };
+            socketController.sendMessage(transmit_data);
+        };
+
+        var requestFileList = function(){
+              var file_request_data = {
+                type: "storage_request",
+                requester: "authoring",
+                data: {
+                    targetFolder:"saved_files",
+                    type: "filelist_request"
+                }
+
+            };
+            socketController.sendMessage(file_request_data);
+        };
+
 
 
 
@@ -82,6 +114,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/Palet
         socketController.addListener("ON_CLIENT_DISCONNECTED", onDrawingClientDisconnected);
         socketController.addListener("ON_CONNECTION", onConnection);
         chartViewManager.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
+        saveManager.addListener("ON_SAVE_EVENT", onStorageEvent);
 
 
 

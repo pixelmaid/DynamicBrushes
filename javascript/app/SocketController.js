@@ -49,6 +49,8 @@ function(EventEmitter, Emitter){
             	  	return;
             	  }
                 else if(message.data == "drawing client connected"){
+                      self.emitter.trigger("ON_CLIENT_CONNECTED");
+
                   //TODO: client connected
                   return;
                 }
@@ -76,9 +78,9 @@ function(EventEmitter, Emitter){
  
 
 	sendMessage(message){
-		if(this.connection !== null){
+	//	if(this.connection !== null){
 			this.connection.send(JSON.stringify(message));
-		}
+		//}
 	}
 
 

@@ -68,13 +68,13 @@ class RequestHandler{
                 case "disconnect":
                     RequestHandler.socketManager.disconnect();
                     break;
-                case "data_request":
+                case "send_storage_data":
                     let data = RequestHandler.activeItem!.data!
                     var send_data:JSON = [:]
                     send_data["data"] = data;
-                    send_data["type"] = JSON("behavior_data")
+                    send_data["type"] = JSON("storage_data")
                     RequestHandler.socketManager.sendData(data: send_data);
-                    break
+                    break;
                 case "authoring_response":
                     let data = RequestHandler.activeItem!.data!
                     print("sending authoring response \(data)");
@@ -98,14 +98,20 @@ class RequestHandler{
                 switch RequestHandler.activeItem!.action{
                     
                 case "configure":
-                    
                     RequestHandler.saveManager.configure();
+                    break;
                     
                 case "upload":
                     RequestHandler.saveManager.uploadFile(uploadData:RequestHandler.activeItem!.data!)
                     break;
+                    
                 case "download":
                     RequestHandler.saveManager.downloadFile(downloadData:RequestHandler.activeItem!.data!)
+                    break;
+                    
+                case "filelist":
+                    let targetFolder = RequestHandler.activeItem!.data!["targetFolder"].stringValue
+                    RequestHandler.saveManager.accessFileList(targetFolder: targetFolder,uploadData: nil)
                     break;
                 default:
                     break;
@@ -176,6 +182,8 @@ class RequestHandler{
     }
     
     private func saveDataHandler(data:(String,JSON?), key:String){
+        print("save data handler called \(data.0,data.1?["type"].stringValue,RequestHandler.activeItem == nil )")
+
         RequestHandler.dataQueue.append(data);
         RequestHandler.checkRequest();
     }

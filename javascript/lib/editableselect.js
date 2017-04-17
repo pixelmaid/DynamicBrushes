@@ -117,11 +117,11 @@ define(["jquery"],
 			}
 
 			static createEditableSelect(dest) {
-
+				console.log("dest=",dest.offsetWidth,dest);
 				dest.className = 'selectBoxInput';
 				var div = document.createElement('DIV');
 				div.style.styleFloat = 'left';
-				div.style.width = dest.offsetWidth + 'px';
+				div.style.width = '90px';
 				div.style.position = 'relative';
 				div.id = 'selectBox' + selectBoxIds;
 				var parent = dest.parentNode;

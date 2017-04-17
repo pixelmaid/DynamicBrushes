@@ -491,6 +491,7 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
             }
 
             addMethod(data) {
+                console.log("method data =", data);
                 var self = this;
                 var argumentList = "";
 
@@ -499,20 +500,22 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                         argumentList += arg + "|" + data.methodArguments[arg] + ";";
                     }
                 }
-
+                var methodTemplateData = {};
 
                 argumentList = argumentList.slice(0, -1);
                 console.log("data.methodArguments", data.methodArguments, argumentList);
 
-                data.argumentList = argumentList;
-                data.defaultArgumentName = data.methodArguments[data.defaultArgument];
-                data.defaultArgumentId = data.defaultArgument;
-                data.methodTextId = data.methodId + "_text";
+                methodTemplateData.targetMethod = data.targetMethod;
+                methodTemplateData.methodId = data.methodId;
+                methodTemplateData.argumentList = argumentList;
+                methodTemplateData.defaultArgumentName = data.methodArguments[data.defaultArgument];
+                methodTemplateData.defaultArgumentId = data.defaultArgument;
+                methodTemplateData.methodTextId = data.methodId + "_text";
                 if (data.targetMethod == "spawn") {
-                    data.methodNumberId = data.methodId + "_num";
+                    methodTemplateData.methodNumberId = data.methodId + "_num";
                 }
 
-                var html = methodTemplate(data);
+                var html = methodTemplate(methodTemplateData);
                 if (data.targetTransition) {
                     $($('#' + data.targetTransition).find(".methods")[0]).prepend(html);
 
@@ -523,11 +526,11 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                 }
                 this.makeDraggable($("#" + data.methodId));
 
-                console.log("get text box by id", document.getElementById(data.methodTextId), data.methodTextId);
-                EditableSelect.createEditableSelect(document.getElementById(data.methodTextId));
+                console.log("get text box by id", document.getElementById(methodTemplateData.methodTextId), methodTemplateData.methodTextId);
+                EditableSelect.createEditableSelect(document.getElementById(methodTemplateData.methodTextId));
 
-                console.log("method added event", $("#" + data.targetTransition + " .methods .block"), data, $('#' + data.methodTextId));
-                $('#' + data.methodTextId).change(function() {
+                console.log("method added event", $("#" + data.targetTransition + " .methods .block"), data, $('#' + methodTemplateData.methodTextId));
+                $('#' +  methodTemplateData.methodTextId).change(function() {
                     console.log("change!");
                     self.methodArgumentChanged(self.id, data.transitionId, data.methodId, data.targetMethod);
                 });
@@ -695,6 +698,13 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                         console.log("el to make draggable", el);
                         self.makeDraggable(el);
                     });
+                }
+
+                  for (var m = 0; m< data.methods.length; m++) {
+                    var method_data = data.methods[m];
+                    this.addMethod(method_data);
+
+                   
                 }
             }
 

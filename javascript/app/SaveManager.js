@@ -1,65 +1,72 @@
 //Save Manager
 "use strict";
-define(["aws-sdk-js"],
+define(["app/Emitter"],
 
-function(AWS){
+function(Emitter){
 	
 	var saved_params,s3, bucket;
-    console.log(AWS);
 
 
-	var SaveManager = class {
+	var SaveManager = class extends Emitter{
 		constructor(){
-
-			AWS.config.region = 'us-east-1'; // Region
-			var creds = new AWS.CognitoIdentityCredentials({
-				IdentityPoolId: 'us-east-1:ae662e85-94d0-4dcf-81b5-9e27df28af8f'
-			});
-			AWS.config.credentials = creds;
-
-
-			saved_params = {
-				Bucket: 'dynabtest',
-				Delimiter: '/',
-				Prefix: 'saved_files/'
-			};
-			s3 = new AWS.S3();
-			s3.listObjects(saved_params, function(error, data) {
-				if (error) {
-					console.log(error); // an error occurred
-
-				} else {
-					console.log("success", data.Contents);
-					for (var i = 0; i < data.Contents.length; i++) {
-						//var key = data.Contents[i].Key.split('/')[1].split('.txt')[0];
-						//self.addFileToSelect(key, data.Contents[i].Key);
-					}
-				}
-			});
-
-
-
-			bucket = new AWS.S3({
-				params: {
-					Bucket: 'dynabtest'
-				}
-			});
+			super();
+			this.saved_files = {};
+			this.backup_files = {};
+			this.currentFile = null;
+			this.currentName = null;
 		}
 
-		saveFile(data,filename){
-			var file = {
-				Key: 'saved_files/' + filename + '.txt',
-				Body: JSON.stringify(data),
-				ACL: 'public-read-write'
+
+		save(filename){
+			var data={
+				type:"save_request",
+				filename: filename
 
 			};
-			bucket.upload(file, function(err, data) {
-				var results = err ? 'ERROR!' : 'SAVED.';
-				alert(results);
-			});	
+                    this.emitter.emit("ON_SAVE_EVENT", data);
 
+		}
 
+		loadRequest(filename){
+				var data={
+				type:"load_request",
+				filename: filename
 
+			};
+			this.emitter.emit("ON_SAVE_EVENT", data);
+
+		}
+
+		loadSavedFile(fileval){
+			var filename = this.saved_files[fileval];
+			this.currentFile = fileval;
+			this.currentName = filename;
+			this.loadRequest(filename);
+		}
+
+		updateFileList(storage_data){
+			this.saved_files = storage_data.filelist;
+				
+				this.trigger("ON_SAVED_FILES_UPDATED");
+		}
+
+		loadStorageData(data){
+			console.log("load storage data called",data);
+			var storage_data = data.data;
+			var filelist = storage_data.filelist;
+			var type = storage_data.type;
+			if(type == "save"){
+				console.log("type = save");
+				this.currentFile = storage_data.filename;
+				this.currentName = this.currentFile.split("/")[1];
+				this.updateFileList(storage_data);
+			}
+			else if(type == "backup"){
+				this.backup_files = filelist;
+			}
+			else if(type == "filelist"){
+				this.updateFileList(storage_data);
+			}
 		}
 
 

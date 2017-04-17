@@ -44,7 +44,7 @@ class BehaviorDefinition {
             self.parseGeneratorJSON(data:generatorJSON[i])
         }
         for i in 0..<stateJSON.count{
-          self.parseStateJSON(data: stateJSON[i])
+            self.parseStateJSON(data: stateJSON[i])
         }
         for i in 0..<transitionJSON.count{
             self.parseTransitionJSON(data: transitionJSON[i])
@@ -53,9 +53,9 @@ class BehaviorDefinition {
         }
         for i in 0..<mappingJSON.count{
             self.parseMappingJSON(data: mappingJSON[i])
- 
+            
         }
-
+        
         for i in 0..<methodJSON.count{
             self.parseMethodJSON(data:methodJSON[i]);
         }
@@ -100,7 +100,7 @@ class BehaviorDefinition {
             
             
             behavior_list["self"] = "self";
-            methodJSON["argumentList"] = JSON(behavior_list);
+            methodJSON["methodArguments"] = JSON(behavior_list);
             methodJSON["defaultArgument"] = JSON("self");
             break;
             
@@ -128,7 +128,7 @@ class BehaviorDefinition {
             else{
                 arguments = [stylus.position];
             }
-            methodJSON["argumentList"] = JSON(["stylus_position":"stylus_position","parent_position":"parent_position","parent_origin":"parent_origin" ])
+            methodJSON["methodArguments"] = JSON(["stylus_position":"stylus_position","parent_position":"parent_position","parent_origin":"parent_origin" ])
             methodJSON["defaultArgument"] = JSON("stylus_position");
             
             break;
@@ -144,7 +144,7 @@ class BehaviorDefinition {
             break;
         }
         
-       // print("arguments= \(arguments)")
+        // print("arguments= \(arguments)")
         self.addMethod(targetTransition: targetTransition, methodId: data["methodId"].stringValue, targetMethod: targetMethod, arguments: arguments)
         
         return methodJSON;
@@ -169,11 +169,11 @@ class BehaviorDefinition {
             
         case "range":
             
-           self.addRange(name: data["generatorId"].stringValue, min: data["min"].intValue, max: data["max"].intValue, start: data["start"].floatValue, stop: data["stop"].floatValue)
+            self.addRange(name: data["generatorId"].stringValue, min: data["min"].intValue, max: data["max"].intValue, start: data["start"].floatValue, stop: data["stop"].floatValue)
             break;
             
         case "sine":
-          self.addSine(name: data["generatorId"].stringValue, freq: data["freq"].floatValue, amp: data["amp"].floatValue, phase: data["phase"].floatValue);
+            self.addSine(name: data["generatorId"].stringValue, freq: data["freq"].floatValue, amp: data["amp"].floatValue, phase: data["phase"].floatValue);
             
             break;
             // case "random_walk":
@@ -238,15 +238,15 @@ class BehaviorDefinition {
         }
         
         //  print("emitter operand list \(emitterOperandList,expressionText)")
-      self.addExpression(id: expressionId, emitterOperandList: emitterOperandList, expressionText: expressionText)
+        self.addExpression(id: expressionId, emitterOperandList: emitterOperandList, expressionText: expressionText)
     }
-
+    
     
     func parseMappingJSON(data:JSON){
-       self.parseExpressionJSON(data:data)
-
+        self.parseExpressionJSON(data:data)
+        
         let expressionId = data["expressionId"].stringValue;
-
+        
         self.addMapping(id: data["mappingId"].stringValue, referenceProperty:nil, referenceNames: [expressionId], relativePropertyName: data["relativePropertyName"].stringValue, stateId: data["stateId"].stringValue,type: data["constraintType"].stringValue,relativePropertyItemName: data["relativePropertyItemName"].stringValue)
     }
     
@@ -290,8 +290,8 @@ class BehaviorDefinition {
         self.addTransition(transitionId: data["transitionId"].stringValue, name: data["name"].stringValue, eventEmitter: emitter, parentFlag: data["parentFlag"].boolValue, event: data["eventName"].stringValue, fromStateId: data["fromStateId"].stringValue, toStateId: data["toStateId"].stringValue, condition: data["condition"].stringValue,displayName:data["displayName"].stringValue)
         
     }
-
-        
+    
+    
     func toJSON()->JSON{
         var json_obj:JSON = [:]
         json_obj["name"] = JSON(self.name);
@@ -305,12 +305,12 @@ class BehaviorDefinition {
             generatorJSON["generatorId"] = JSON(key)
             switch(type){
             case "random":
-              generatorJSON["min"] = JSON(data.1[0])
-               generatorJSON["max"] = JSON(data.1[1])
-              break;
+                generatorJSON["min"] = JSON(data.1[0])
+                generatorJSON["max"] = JSON(data.1[1])
+                break;
             case "alternate":
                 generatorJSON["values"] = JSON(data.1[0])
-            break;
+                break;
             case "range":
                 generatorJSON["min"] = JSON(data.1[0])
                 generatorJSON["max"] = JSON(data.1[1])
@@ -331,11 +331,11 @@ class BehaviorDefinition {
             //  return "success";
             default:
                 break;
-
+                
             }
             generatorArray.append(generatorJSON);
         }
-
+        
         
         var statesArray = [JSON]();
         for (key,data) in states {
@@ -382,73 +382,83 @@ class BehaviorDefinition {
         
         for (key,data) in methods {
             for method in data {
-            var methodJSON:JSON = [:]
-            //targetTransition:String?, methodId: String, targetMethod:String, arguments:[Any]?
-            let methodId = method.0
-            let targetMethod = method.1
-            var arguments = [JSON]();
-            
-            switch(targetMethod){
-                case "spawn":
-                if let methodArgs = method.2{
-                    let targetBehavior = methodArgs[0]
-                    let behaviorId: String
-                   // print("method args 1=\(methodArgs)");
-                    let num = methodArgs[1] as! Int
-                    if let def =  targetBehavior as? BehaviorDefinition {
-                        behaviorId = def.id;
-                        arguments.append(JSON(behaviorId));
-
-                    }
-                    else if let def =  targetBehavior as? String {
-                        behaviorId = def;
-                        arguments.append(JSON(behaviorId));
-
-                    }
-                    arguments.append(JSON(num))
-                }
-                break
-            case "setOrigin", "newStroke":
-                if let methodArgs = method.2{
-                    let pointString:String;
-                    let methodPoint = methodArgs[0]
-                    if let def = methodPoint as? Point{
-                        if(def == stylus.position){
-                            pointString = "stylus_position"
-                            arguments.append(JSON(pointString));
-
-                        }
-                        else{
-                            //TODO: handle arbitrary point values here
-
-                        }
-                    }
-                    else if let def = methodPoint as? String{
-                        pointString = def;
-                        arguments.append(JSON(pointString));
-
-                    }
-    
-                }
-                break;
-            default:
-            break
-            }
+                var methodJSON:JSON = [:]
+                //targetTransition:String?, methodId: String, targetMethod:String, arguments:[Any]?
+                let methodId = method.0
+                let targetMethod = method.1
                 
-            methodJSON["methodId"] = JSON(methodId);
-            methodJSON["targetMethod"] = JSON(targetMethod);
-            methodJSON["args"] = JSON(arguments);
-            methodJSON["targetTransition"] = JSON(key);
-            
-           
-            
-          
-            methodArray.append(methodJSON);
+                switch(targetMethod){
+                case "spawn":
+                    var behavior_list = [String:String]()
+                    for (key,value) in BehaviorManager.behaviors{
+                        if key != self.id {
+                            behavior_list[key] = value.name;
+                        }
+                    }
+                      behavior_list["self"] = "self";
+                    methodJSON["methodArguments"] = JSON(behavior_list);
+                    methodJSON["defaultArgument"] = JSON("self");
+
+                    if let methodArgs = method.2{
+                        let targetBehavior = methodArgs[0]
+                        let behaviorId: String
+                        // print("method args 1=\(methodArgs)");
+                        let num = methodArgs[1] as! Int
+                        if let def =  targetBehavior as? BehaviorDefinition {
+                            behaviorId = def.id;
+                            methodJSON["currentArgument"] = JSON(behaviorId);
+                            
+                        }
+                        else if let def =  targetBehavior as? String {
+                            behaviorId = def;
+                            methodJSON["currentArgument"] = JSON(behaviorId);
+                            
+                        }
+                    }
+                    break
+                case "setOrigin", "newStroke":
+                    methodJSON["methodArguments"] = JSON(["stylus_position":"stylus_position","parent_position":"parent_position","parent_origin":"parent_origin" ])
+                    methodJSON["defaultArgument"] = JSON("stylus_position");
+                    
+                    if let methodArgs = method.2{
+                        let pointString:String;
+                        let methodPoint = methodArgs[0]
+                        if let def = methodPoint as? Point{
+                            if(def == stylus.position){
+                                pointString = "stylus_position"
+                                methodJSON["currentArgument"]="stylus_position"
+                                
+                            }
+                            else{
+                                //TODO: handle arbitrary point values here
+                                
+                            }
+                        }
+                        else if let def = methodPoint as? String{
+                            pointString = def;
+                            methodJSON["currentArgument"] = JSON(pointString);
+                            
+                        }
+                        
+                    }
+                    break;
+                default:
+                    break
+                }
+                
+                methodJSON["methodId"] = JSON(methodId);
+                methodJSON["targetMethod"] = JSON(targetMethod);
+                methodJSON["targetTransition"] = JSON(key);
+                
+                
+                
+                
+                methodArray.append(methodJSON);
             }
         }
-
+        
         var mappingsArray = [JSON]();
-
+        
         for(key, data) in mappings{
             var mappingJSON:JSON = [:]
             
@@ -463,7 +473,7 @@ class BehaviorDefinition {
                 let emitter = pData.0;
                 let propertyList = pData.1;
                 let displayNameList = pData.2;
-
+                
                 var propEmitter = [JSON]();
                 if (emitter as? Stylus) != nil{
                     propEmitter.append(JSON("stylus"));
@@ -472,7 +482,7 @@ class BehaviorDefinition {
                     propEmitter.append(JSON("null"));
                 }
                 propEmitter.append(JSON(propertyList!));
-                 propEmitter.append(JSON(displayNameList!));
+                propEmitter.append(JSON(displayNameList!));
                 expressionPropertyListJSON[pId] = JSON(propEmitter);
                 
             }
@@ -490,7 +500,7 @@ class BehaviorDefinition {
             mappingsArray.append(mappingJSON);
             
         }
- 
+        
         json_obj["states"] = JSON(statesArray);
         json_obj["transitions"] = JSON(transitionsArray);
         json_obj["mappings"] = JSON(mappingsArray);
@@ -607,7 +617,7 @@ class BehaviorDefinition {
     
     func addTransition(transitionId:String, name:String, eventEmitter:Emitter?,parentFlag:Bool, event:String?, fromStateId:String,toStateId:String, condition:String?, displayName:String){
         transitions[transitionId]=((name,eventEmitter, parentFlag, event, fromStateId,toStateId,condition, displayName));
-       // print("current transitions \(transitions.count)");
+        // print("current transitions \(transitions.count)");
     }
     
     func setTransitionToDefaultEvent(transitionId:String) throws{
@@ -911,7 +921,7 @@ class BehaviorDefinition {
             targetBrush.clearBehavior();
         }
         self.brushInstances.removeAll();
-
+        
     }
     
     func createBehavior(){

@@ -174,7 +174,6 @@ h1{
   opacity: 0;  
 }
 
-
 .conditionals{
   height: 35px;
   width: 100%;
@@ -186,6 +185,9 @@ h1{
 .methods{
   margin: 10px 5px 5px;
   min-height: 20px;
+  max-width: 200px;
+  display: inline-block;
+  text-align: center;
 }
 
 .expression {
@@ -206,7 +208,6 @@ div.text_entry, div.property{
   margin: 0 auto; 
   margin-left: 4px;
   margin-right: 4px;
-
 }
 
 .text_entry input{

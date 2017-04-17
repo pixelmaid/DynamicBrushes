@@ -12,14 +12,10 @@ define(["jquery"],
                 this.model = model;
                 statusInput = this.el.find("#socket_status");
                 connectBtn = this.el.find("#connect_btn");
-                requestBtn = this.el.find("#request_btn");
 
                 var self = this;
 
-                requestBtn.click(function() {
-
-                    self.requestBehaviorData(self.model);
-                });
+             
 
                 connectBtn.click(function() {
 

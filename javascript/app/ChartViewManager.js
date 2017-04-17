@@ -235,7 +235,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
 
                         case "method_added":
                             console.log("method added  called", data.data.argumentList, data.data);
-                            this.lastAuthoringRequest.data.methodArguments = data.data.argumentList;
+                            this.lastAuthoringRequest.data.methodArguments = data.data.methodArguments;
                             this.lastAuthoringRequest.data.defaultArgument = data.data.defaultArgument;
                             this.views[behaviorId].addMethod(this.lastAuthoringRequest.data);
                             this.lastAuthoringRequest = null;
