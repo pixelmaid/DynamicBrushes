@@ -9,6 +9,23 @@
 /* Begin PBXBuildFile section */
 		5F4D8CEC1DEE072A008042FE /* shopbot_position_active.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F4D8CEA1DEE072A008042FE /* shopbot_position_active.png */; };
 		5F4D8CED1DEE072A008042FE /* shopbot_position_inactive.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F4D8CEB1DEE072A008042FE /* shopbot_position_inactive.png */; };
+		5F50370A1EA94C26004ABAC1 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F5037081EA94C26004ABAC1 /* GLKit.framework */; };
+		5F50370B1EA94C26004ABAC1 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F5037091EA94C26004ABAC1 /* OpenGLES.framework */; };
+		5F50370D1EA94C47004ABAC1 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F50370C1EA94C47004ABAC1 /* UIKit.framework */; };
+		5F50370F1EA94C50004ABAC1 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F50370E1EA94C50004ABAC1 /* QuartzCore.framework */; };
+		5F5037111EA94C5F004ABAC1 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F5037101EA94C5F004ABAC1 /* CoreGraphics.framework */; };
+		5F5037131EA94C67004ABAC1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F5037121EA94C67004ABAC1 /* Foundation.framework */; };
+		5F5037151EA94D2C004ABAC1 /* BitmapCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5037141EA94D2C004ABAC1 /* BitmapCanvasView.swift */; };
+		5F50371A1EA9533A004ABAC1 /* fileUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5037171EA9533A004ABAC1 /* fileUtil.swift */; };
+		5F50371B1EA9533A004ABAC1 /* shaderUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5037181EA9533A004ABAC1 /* shaderUtil.swift */; };
+		5F50371D1EA957F5004ABAC1 /* debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F50371C1EA957F5004ABAC1 /* debug.swift */; };
+		5F5037201EA95833004ABAC1 /* NumTypes+Conversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F50371F1EA95833004ABAC1 /* NumTypes+Conversion.swift */; };
+		5F5037221EA95D7B004ABAC1 /* Particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F5037211EA95D7B004ABAC1 /* Particle.png */; };
+		5F5037261EA95DD0004ABAC1 /* point.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 5F5037241EA95DD0004ABAC1 /* point.fsh */; };
+		5F5037271EA95DD0004ABAC1 /* point.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 5F5037251EA95DD0004ABAC1 /* point.vsh */; };
+		5F50372A1EA95E37004ABAC1 /* Recording.data in Resources */ = {isa = PBXBuildFile; fileRef = 5F5037291EA95E37004ABAC1 /* Recording.data */; };
+		5F50372C1EAC025E004ABAC1 /* particle_hard.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F50372B1EAC025E004ABAC1 /* particle_hard.png */; };
+		5F50372E1EAD48BB004ABAC1 /* MathUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F50372D1EAD48BB004ABAC1 /* MathUtil.swift */; };
 		5F90F5351E9D588F006BB9FE /* FabricatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5331E9D588F006BB9FE /* FabricatorView.swift */; };
 		5F90F5361E9D588F006BB9FE /* CanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5341E9D588F006BB9FE /* CanvasView.swift */; };
 		5F90F5411E9D59D4006BB9FE /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5381E9D59D4006BB9FE /* Emitter.swift */; };
@@ -88,6 +105,23 @@
 		5F1E15891F199E478AB56B38 /* Pods-PaletteKnife.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnife.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnife/Pods-PaletteKnife.debug.xcconfig"; sourceTree = "<group>"; };
 		5F4D8CEA1DEE072A008042FE /* shopbot_position_active.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shopbot_position_active.png; sourceTree = "<group>"; };
 		5F4D8CEB1DEE072A008042FE /* shopbot_position_inactive.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shopbot_position_inactive.png; sourceTree = "<group>"; };
+		5F5037081EA94C26004ABAC1 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		5F5037091EA94C26004ABAC1 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		5F50370C1EA94C47004ABAC1 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		5F50370E1EA94C50004ABAC1 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		5F5037101EA94C5F004ABAC1 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		5F5037121EA94C67004ABAC1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		5F5037141EA94D2C004ABAC1 /* BitmapCanvasView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BitmapCanvasView.swift; sourceTree = "<group>"; };
+		5F5037171EA9533A004ABAC1 /* fileUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = fileUtil.swift; sourceTree = "<group>"; };
+		5F5037181EA9533A004ABAC1 /* shaderUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = shaderUtil.swift; sourceTree = "<group>"; };
+		5F50371C1EA957F5004ABAC1 /* debug.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = debug.swift; sourceTree = "<group>"; };
+		5F50371F1EA95833004ABAC1 /* NumTypes+Conversion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NumTypes+Conversion.swift"; sourceTree = "<group>"; };
+		5F5037211EA95D7B004ABAC1 /* Particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Particle.png; sourceTree = "<group>"; };
+		5F5037241EA95DD0004ABAC1 /* point.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = point.fsh; sourceTree = "<group>"; };
+		5F5037251EA95DD0004ABAC1 /* point.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = point.vsh; sourceTree = "<group>"; };
+		5F5037291EA95E37004ABAC1 /* Recording.data */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Recording.data; sourceTree = "<group>"; };
+		5F50372B1EAC025E004ABAC1 /* particle_hard.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle_hard.png; sourceTree = "<group>"; };
+		5F50372D1EAD48BB004ABAC1 /* MathUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MathUtil.swift; path = ../models/base/MathUtil.swift; sourceTree = "<group>"; };
 		5F90F5331E9D588F006BB9FE /* FabricatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FabricatorView.swift; sourceTree = "<group>"; };
 		5F90F5341E9D588F006BB9FE /* CanvasView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CanvasView.swift; sourceTree = "<group>"; };
 		5F90F5381E9D59D4006BB9FE /* Emitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Emitter.swift; sourceTree = "<group>"; };
@@ -160,6 +194,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5F5037131EA94C67004ABAC1 /* Foundation.framework in Frameworks */,
+				5F5037111EA94C5F004ABAC1 /* CoreGraphics.framework in Frameworks */,
+				5F50370F1EA94C50004ABAC1 /* QuartzCore.framework in Frameworks */,
+				5F50370D1EA94C47004ABAC1 /* UIKit.framework in Frameworks */,
+				5F50370A1EA94C26004ABAC1 /* GLKit.framework in Frameworks */,
+				5F50370B1EA94C26004ABAC1 /* OpenGLES.framework in Frameworks */,
 				86D9E5D4C68732BC03AD249A /* Pods_PaletteKnife.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -183,6 +223,33 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5F50371E1EA95833004ABAC1 /* OOPUtils */ = {
+			isa = PBXGroup;
+			children = (
+				5F50371F1EA95833004ABAC1 /* NumTypes+Conversion.swift */,
+			);
+			path = OOPUtils;
+			sourceTree = "<group>";
+		};
+		5F5037231EA95DD0004ABAC1 /* Shaders */ = {
+			isa = PBXGroup;
+			children = (
+				5F5037241EA95DD0004ABAC1 /* point.fsh */,
+				5F5037251EA95DD0004ABAC1 /* point.vsh */,
+			);
+			name = Shaders;
+			path = ../Shaders;
+			sourceTree = "<group>";
+		};
+		5F5037281EA95E27004ABAC1 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				5F5037291EA95E37004ABAC1 /* Recording.data */,
+			);
+			name = Resources;
+			path = ..;
+			sourceTree = "<group>";
+		};
 		5F90F5371E9D59D4006BB9FE /* base */ = {
 			isa = PBXGroup;
 			children = (
@@ -285,6 +352,8 @@
 		5FA4C7221CDA7B5B004A728C /* PaletteKnife */ = {
 			isa = PBXGroup;
 			children = (
+				5F5037281EA95E27004ABAC1 /* Resources */,
+				5F5037231EA95DD0004ABAC1 /* Shaders */,
 				5FFAC4D51E9D83C20009DC5E /* util */,
 				5FD6CD0F1DE0EE0E007D94AA /* ui */,
 				5FA4C7561CDB9EAF004A728C /* views */,
@@ -338,6 +407,7 @@
 			children = (
 				5F90F5331E9D588F006BB9FE /* FabricatorView.swift */,
 				5F90F5341E9D588F006BB9FE /* CanvasView.swift */,
+				5F5037141EA94D2C004ABAC1 /* BitmapCanvasView.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -353,6 +423,8 @@
 		5FD6CD101DE0EE0E007D94AA /* image_assets */ = {
 			isa = PBXGroup;
 			children = (
+				5F50372B1EAC025E004ABAC1 /* particle_hard.png */,
+				5F5037211EA95D7B004ABAC1 /* Particle.png */,
 				5F9F25B11DEFE490005CB5D8 /* radial.png */,
 				5F9F25A31DEFE3A0005CB5D8 /* shopbot_position_active@2x.png */,
 				5F9F25A41DEFE3A0005CB5D8 /* draw_icon2x.png */,
@@ -376,9 +448,14 @@
 		5FFAC4D51E9D83C20009DC5E /* util */ = {
 			isa = PBXGroup;
 			children = (
+				5F50371E1EA95833004ABAC1 /* OOPUtils */,
+				5F50371C1EA957F5004ABAC1 /* debug.swift */,
+				5F5037171EA9533A004ABAC1 /* fileUtil.swift */,
+				5F5037181EA9533A004ABAC1 /* shaderUtil.swift */,
 				5FFDAB081D21B5C400632A26 /* SocketManager.swift */,
 				5FFAC4D61E9D84040009DC5E /* SaveManager.swift */,
 				5FC91D2C1EA00C2F00A19206 /* RequestHandler.swift */,
+				5F50372D1EAD48BB004ABAC1 /* MathUtil.swift */,
 			);
 			path = util;
 			sourceTree = "<group>";
@@ -399,6 +476,12 @@
 		A8FB9B6AFF975A979A8CC39F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5F5037121EA94C67004ABAC1 /* Foundation.framework */,
+				5F5037101EA94C5F004ABAC1 /* CoreGraphics.framework */,
+				5F50370E1EA94C50004ABAC1 /* QuartzCore.framework */,
+				5F50370C1EA94C47004ABAC1 /* UIKit.framework */,
+				5F5037081EA94C26004ABAC1 /* GLKit.framework */,
+				5F5037091EA94C26004ABAC1 /* OpenGLES.framework */,
 				76DB207CD163015E13C1998B /* Pods_PaletteKnife.framework */,
 				BC68E1A2193A02A54E663498 /* Pods_PaletteKnifeTests.framework */,
 				498164694B9DBA035C9503A9 /* Pods_PaletteKnifeUITests.framework */,
@@ -528,10 +611,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				5FA4C72E1CDA7B5B004A728C /* LaunchScreen.storyboard in Resources */,
+				5F50372A1EA95E37004ABAC1 /* Recording.data in Resources */,
 				5F9118D91DEE345100A6B247 /* select_icon.png in Resources */,
+				5F5037271EA95DD0004ABAC1 /* point.vsh in Resources */,
 				5F9F25AA1DEFE3A0005CB5D8 /* shopbot_position_active@2x.png in Resources */,
 				5FEE2AC91DE127D800080095 /* dual_pen.png in Resources */,
 				5F9F25AD1DEFE3A0005CB5D8 /* shopbot_position_inactive2x.png in Resources */,
+				5F5037261EA95DD0004ABAC1 /* point.fsh in Resources */,
 				5F9118D81DEE345100A6B247 /* draw_icon.png in Resources */,
 				5FA4C72B1CDA7B5B004A728C /* Assets.xcassets in Resources */,
 				5F9F25AC1DEFE3A0005CB5D8 /* select_icon2x.png in Resources */,
@@ -546,6 +632,8 @@
 				5F9F25AE1DEFE3A0005CB5D8 /* dual_pen2x.png in Resources */,
 				5FD6CD121DE0EE0E007D94AA /* sm_pen_blue.png in Resources */,
 				5FEE2ACA1DE127D800080095 /* lg_pen_blue.png in Resources */,
+				5F50372C1EAC025E004ABAC1 /* particle_hard.png in Resources */,
+				5F5037221EA95D7B004ABAC1 /* Particle.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -696,18 +784,23 @@
 				5F90F5481E9D59D4006BB9FE /* TimeSeries.swift in Sources */,
 				5F90F5411E9D59D4006BB9FE /* Emitter.swift in Sources */,
 				5F90F5561E9D5A41006BB9FE /* Drawing.swift in Sources */,
+				5F50372E1EAD48BB004ABAC1 /* MathUtil.swift in Sources */,
 				5F90F5431E9D59D4006BB9FE /* GCodeGenerator.swift in Sources */,
 				5F90F5551E9D5A41006BB9FE /* Canvas.swift in Sources */,
 				5F90F5691E9D5BCC006BB9FE /* Expression.swift in Sources */,
 				5F90F5491E9D59D4006BB9FE /* WebTransmitter.swift in Sources */,
+				5F50371B1EA9533A004ABAC1 /* shaderUtil.swift in Sources */,
 				5F90F56B1E9D5BCC006BB9FE /* State.swift in Sources */,
+				5F50371A1EA9533A004ABAC1 /* fileUtil.swift in Sources */,
 				5F90F56E1E9D5BE3006BB9FE /* Stylus.swift in Sources */,
 				5F90F55C1E9D5A5C006BB9FE /* Brush.swift in Sources */,
 				5F90F56A1E9D5BCC006BB9FE /* Generator.swift in Sources */,
+				5F50371D1EA957F5004ABAC1 /* debug.swift in Sources */,
 				5FA4C7261CDA7B5B004A728C /* ViewController.swift in Sources */,
 				5F90F5681E9D5BCC006BB9FE /* Condition.swift in Sources */,
 				5F90F5661E9D5BCC006BB9FE /* BehaviorManager.swift in Sources */,
 				5FFAC4D71E9D84040009DC5E /* SaveManager.swift in Sources */,
+				5F5037201EA95833004ABAC1 /* NumTypes+Conversion.swift in Sources */,
 				5F90F5671E9D5BCC006BB9FE /* BehaviorMapper.swift in Sources */,
 				5FFDAB091D21B5C400632A26 /* SocketManager.swift in Sources */,
 				5F90F54E1E9D5A16006BB9FE /* Point.swift in Sources */,
@@ -718,6 +811,7 @@
 				5F90F5351E9D588F006BB9FE /* FabricatorView.swift in Sources */,
 				5F90F5651E9D5BCC006BB9FE /* BehaviorDefinition.swift in Sources */,
 				5F90F5471E9D59D4006BB9FE /* SVGGenerator.swift in Sources */,
+				5F5037151EA94D2C004ABAC1 /* BitmapCanvasView.swift in Sources */,
 				5F90F5581E9D5A41006BB9FE /* Line.swift in Sources */,
 				5F90F5571E9D5A41006BB9FE /* Fabricator.swift in Sources */,
 				5F90F5441E9D59D4006BB9FE /* Matrix.swift in Sources */,

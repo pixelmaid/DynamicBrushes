@@ -19,7 +19,7 @@ class TimeSeries: Emitter{
         timer = NSDate()
 
         super.init()
-        self.events =  ["TICK"]
+        self.events =  ["TIME_INTERVAL"]
         self.createKeyStorage();
         timerTime.name = "time";
         
@@ -56,20 +56,22 @@ class TimeSeries: Emitter{
         let currentTime = NSDate();
         let t = Float(currentTime.timeIntervalSince(timer as Date))
         self.timerTime.set(newValue: t)
-        for key in keyStorage["TICK"]!
+        print("timer intervals =",keyStorage["TIME_INTERVAL"]?.count);
+        for key in keyStorage["TIME_INTERVAL"]!
         {
             
             if(key.1 != nil){
                 let condition = key.1;
                 let evaluation = condition?.evaluate();
+                print("evaluation is",evaluation)
                 if(evaluation)!{
                     
-                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"TICK"])
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"TIME_INTERVAL"])
                 }
             }
             else{
                 
-               NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"TICK"])
+               NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"TIME_INTERVAL"])
             }
             
             

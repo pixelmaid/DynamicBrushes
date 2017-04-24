@@ -121,7 +121,10 @@ class BehaviorManager{
             resultJSON["result"] = "success";
             return resultJSON;
             
-        case "transition_added","transition_event_added":
+        case "transition_added","transition_event_added", "transition_event_condition_changed":
+
+          
+            
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseTransitionJSON(data:data)
             
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior()
@@ -141,7 +144,7 @@ class BehaviorManager{
                 resultJSON["result"] = "failure";
                 return resultJSON;
             }
-        case "transition_event_removed":
+        case "transition_event_removed" :
             do{
                 try BehaviorManager.behaviors[data["behaviorId"].stringValue]!.setTransitionToDefaultEvent(transitionId: data["transitionId"].stringValue)
                 BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior();
@@ -151,7 +154,7 @@ class BehaviorManager{
                 resultJSON["result"] = "failure";
                 return resultJSON;            }
             
-            
+   
             
         case "method_added","method_argument_changed":
             let behaviorId = data["behaviorId"].stringValue

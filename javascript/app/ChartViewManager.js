@@ -46,7 +46,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                 $("#behaviorselect").empty();
 
                 var behavior_menu = document.getElementById("behaviorselect");
-            console.log("views",this.views)
+            console.log("views",this.views);
                 for (var key in this.views) {
                     if (this.views.hasOwnProperty(key)) {
                         var option = document.createElement('option');
@@ -101,8 +101,12 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                 }.bind(this));
 
 
-                chartView.addListener("ON_TRANSITION_EVENT_ADDED", function(connectionId, eventName, displayName, sourceId, sourceName, targetId, behaviorId) {
-                    this.onTransitionEventAdded(connectionId, eventName, displayName, sourceId, sourceName, targetId, behaviorId);
+                chartView.addListener("ON_TRANSITION_EVENT_ADDED", function(connectionId, eventName, conditions, displayName, sourceId, sourceName, targetId, behaviorId) {
+                    this.onTransitionEventAdded(connectionId, eventName, conditions, displayName, sourceId, sourceName, targetId, behaviorId);
+                }.bind(this));
+
+                chartView.addListener("ON_TRANSITION_CONDITION_CHANGED",function(behaviorId, transitionId,eventName,fromStateId,toStateId,displayName,name,conditions){
+                    this.onTransitionEventConditionChanged(behaviorId, transitionId,eventName,fromStateId,toStateId,displayName,name,conditions);
                 }.bind(this));
 
                 chartView.addListener("ON_MAPPING_ADDED", function(mappingId, name, item_name, type, expressionId, stateId, behaviorId) {
@@ -366,7 +370,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
 
             }
 
-            onTransitionEventAdded(connectionId, eventName, displayName, sourceId, sourceName, targetId, behaviorId) {
+            onTransitionEventAdded(connectionId, eventName, conditions, displayName, sourceId, sourceName, targetId, behaviorId) {
                 console.log("transition event added", connectionId, eventName, displayName);
 
 
@@ -374,12 +378,35 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                     fromStateId: sourceId,
                     toStateId: targetId,
                     eventName: eventName,
+                    conditions: conditions,
                     displayName: displayName,
                     name: sourceName,
                     transitionId: connectionId,
                     behaviorId: behaviorId,
                     parentFlag: "false",
                     type: "transition_event_added"
+                };
+
+                this.lastAuthoringRequest = {
+                    data: transmit_data
+                };
+
+                console.log("state transition made chart view", this);
+                this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
+            }
+
+            onTransitionEventConditionChanged(behaviorId, transitionId,eventName,fromStateId,toStateId,displayName,name,conditions){
+
+                var transmit_data = {
+                    fromStateId: fromStateId,
+                    toStateId: toStateId,
+                    name: name,
+                    displayName: displayName,
+                    conditions: conditions,
+                    behaviorId: behaviorId,
+                    eventName: eventName,
+                    transitionId: transitionId,
+                    type: "transition_event_condition_changed"
                 };
 
                 this.lastAuthoringRequest = {

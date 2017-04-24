@@ -119,7 +119,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         return stroke;
     }
     
-    func addSegmentToStroke(parentID:String, point:Point, weight:Float, color:Color){
+    func addSegmentToStroke(parentID:String, point:Point, weight:Float, color:Color, alpha:Float){
         if (self.activeStrokes[parentID] == nil){
             return
         }
@@ -128,6 +128,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
             var seg = currentStroke.addSegment(point: point,d:weight)
             if(seg != nil){
             seg!.color = color;
+            seg!.alpha = alpha;
             var data = "\"drawing_id\":\""+self.id+"\","
             data += "\"stroke_id\":\""+currentStroke.id+"\","
             data += "\"type\":\"stroke_data\","

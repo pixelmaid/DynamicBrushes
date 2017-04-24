@@ -22,9 +22,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var childHandlers = [Brush:[Disposable]]()
     
     //geometric/stylistic properties
-    var strokeColor = Color(r: 0, g: 0, b: 0,a:1);
-    var fillColor = Color(r:0,g:0,b:0,a:1);
-    var weight = Observable<Float>(5.0)
+    //var strokeColor = Color(r: 0, g: 0, b: 0,a:1);
+    var diameter = Observable<Float>(5.0)
     var reflectY = Observable<Float>(0)
     var reflectX = Observable<Float>(0)
     var position = Point(x:0,y:0)
@@ -46,6 +45,11 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var dy:Observable<Float>
     var ox:Observable<Float>
     var oy:Observable<Float>
+    var alpha:Observable<Float>
+    var hue:Observable<Float>
+    var lightness:Observable<Float>
+    var saturation:Observable<Float>
+    
     //TODO: need to fix scaling so that it works with behaviors
     var scaling = Point(x:1,y:1)
     var angle = Observable<Float>(0)
@@ -85,6 +89,12 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.dy = delta.y
         self.ox = origin.x;
         self.oy = origin.y;
+        
+        self.alpha = Observable<Float>(1);
+        self.hue = Observable<Float>(1);
+        self.lightness = Observable<Float>(0.5);
+        self.saturation = Observable<Float>(1);
+        
         delta.parentName = "brush"
         self.currentState = "start";
         self.behavior_id = behaviorDef!.id;
@@ -114,13 +124,14 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
         self.setCanvasTarget(canvas: canvas)
         self.parent = parent
-        
         //setup behavior
         if(behaviorDef != nil){
             behaviorDef?.addBrush(targetBrush: self)
         }
         //  _  = NSTimer.scheduledTimerWithTimeInterval(0.00001, target: self, selector: #selector(Brush.defaultCallback), userInfo: nil, repeats: false)
-          }
+        self.startInterval();
+
+    }
     
     
     func clearBehavior(){
@@ -233,9 +244,10 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         yBuffer.push(v: yDelt);
         bufferLimitX.set(newValue: 0)
         bufferLimitY.set(newValue: 0)
-        let cweight = self.weight.get(id: nil);
+        let cweight = self.diameter.get(id: nil);
         weightBuffer.push(v: cweight);
-        self.currentCanvas!.currentDrawing!.addSegmentToStroke(parentID: self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight:cweight , color: self.strokeColor);
+        let color = Color(h: self.hue.get(id: nil), s: self.saturation.get(id: nil), l: self.lightness.get(id: nil), a: 1)
+        self.currentCanvas!.currentDrawing!.addSegmentToStroke(parentID: self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight:cweight , color: color,alpha:self.alpha.get(id:nil));
         self.position.set(x:_dx,y:_dy);
         print("brush moved \(transformedCoords.0,transformedCoords.1,cweight)")
         

@@ -16,7 +16,7 @@ class BehaviorDefinition {
     var states = [String:(String,Float,Float)]()
     var expressions = [String:([String:(Any?,[String]?,[String]?)],String)]();
     var conditions = [(String,Any?,[String]?,Any?,[String]?,String)]()
-    var generators = [String:(String,[Any])]()
+    var generators = [String:(String,[Any?])]()
     var storedGenerators = [String:Generator]()
     var methods = [String:[(String,String,[Any]?)]]()
     var transitions = [String:(String,Emitter?,Bool,String?,String,String,String?,String)]()
@@ -278,16 +278,30 @@ class BehaviorDefinition {
             case "STYLUS_UP","STYLUS_DOWN","STYLUS_MOVE":
                 emitter = stylus
                 break;
-            case "TICK","STATE_COMPLETE":
-                emitter = nil;
-                break;
             default:
                 emitter = nil
                 break;
             }
         }
         
-        self.addTransition(transitionId: data["transitionId"].stringValue, name: data["name"].stringValue, eventEmitter: emitter, parentFlag: data["parentFlag"].boolValue, event: data["eventName"].stringValue, fromStateId: data["fromStateId"].stringValue, toStateId: data["toStateId"].stringValue, condition: data["condition"].stringValue,displayName:data["displayName"].stringValue)
+        let conditionName:String?
+        let condition_list = data["conditions"].arrayValue;
+        switch(event){
+            case "TIME_INTERVAL":
+        conditionName = "condition_" + NSUUID().uuidString
+        let interval_name = "interval_" + NSUUID().uuidString
+        let interval_value = condition_list[0].floatValue;
+        self.addInterval(name: interval_name, inc: interval_value, times: nil)
+
+        self.addCondition(name: conditionName!, reference: nil, referenceNames: ["time"], relative: nil, relativeNames: [interval_name], relational: "within")
+            break;
+        default:
+            conditionName = nil;
+            break;
+
+        }
+        
+        self.addTransition(transitionId: data["transitionId"].stringValue, name: data["name"].stringValue, eventEmitter: emitter, parentFlag: data["parentFlag"].boolValue, event: data["eventName"].stringValue, fromStateId: data["fromStateId"].stringValue, toStateId: data["toStateId"].stringValue, condition: conditionName,displayName:data["displayName"].stringValue)
         
     }
     
@@ -529,7 +543,7 @@ class BehaviorDefinition {
     }
     
     func addInterval(name:String,inc:Float,times:Int?){
-        generators[name] = ("interval",[inc,times!]);
+        generators[name] = ("interval",[inc,times]);
     }
     
     func addIncrement(name:String,inc:Observable<Float>,start:Observable<Float>){
@@ -633,7 +647,7 @@ class BehaviorDefinition {
     
     
     func removeTransition(id:String) throws{
-        //print("removing transition \(transitions,id)")
+        print("removing transition \(transitions,id)")
         
         removeMethodsForTransition(transitionId: id);
         
@@ -717,7 +731,7 @@ class BehaviorDefinition {
     
     
     //TODO: add in cases for other generators
-    func generateGenerator(name:String, data:(String,[Any])){
+    func generateGenerator(name:String, data:(String,[Any?])){
         switch(data.0){
         case "interval":
             let interval = Interval(inc:data.1[0] as! Float,times:data.1[1] as? Int)

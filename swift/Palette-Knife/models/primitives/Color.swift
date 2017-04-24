@@ -10,20 +10,59 @@ import Foundation
 import UIKit
 
 struct Color {
-    var r = Float(0);
-    var g = Float(0);
-    var b = Float(0);
-    var a = Float(1);
+    var red:Float
+    var green:Float
+    var blue:Float
+    var hue:Float
+    var saturation:Float
+    var lightness:Float
+    var alpha:Float
+    var uiColor:UIColor
     
-    mutating func setValue(value:Color){
-        self.r = value.r;
-        self.g = value.g;
-        self.b = value.b;
-        self.a = value.a;
+    init(h:Float,s:Float,l:Float, a:Float){
+        
+        hue = h;
+        saturation = s;
+        lightness = l;
+        alpha = a;
+       uiColor = UIColor(hue: CGFloat(hue), saturation: CGFloat(saturation), brightness: CGFloat(lightness), alpha: CGFloat(alpha))
+        let cgColor = uiColor.cgColor;
+        
+       let components = cgColor.components
+            
+            red = Float(components![0]);
+            green = Float(components![1]);
+            blue = Float(components![2]);
+        
+        print("color init \(red,green,blue,hue,saturation,lightness)")
+        
+    }
+    
+    init(r:Float,g:Float,b:Float,a:Float){
+       
+        red = r;
+        blue = b;
+        green = g;
+        alpha = a;
+
+        self.uiColor = UIColor(red: CGFloat(r), green: CGFloat(g), blue: CGFloat(b), alpha: CGFloat(alpha))
+        var _hue = CGFloat(0)
+        var _saturation = CGFloat(0)
+        var _brightness = CGFloat(0)
+        var _alpha = CGFloat(0)
+        let success = self.uiColor.getHue(&_hue, saturation: &_saturation, brightness: &_brightness, alpha: &_alpha)
+        
+            self.hue = Float(_hue)
+            self.saturation = Float(_saturation)
+            self.lightness = Float(_brightness)
+        
+        
+        print("color init \(red,green,blue,hue,saturation,lightness)")
+        
     }
     
     func toCGColor()->CGColor{
-        return UIColor(red:CGFloat(self.r/255),green:CGFloat(self.g/255),blue:CGFloat(self.b/255), alpha:CGFloat(a)).cgColor;
+        return self.uiColor.cgColor;
     }
     
 }

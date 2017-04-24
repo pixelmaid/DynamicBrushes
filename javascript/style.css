@@ -133,7 +133,7 @@ h1{
 .event_block {
   float: left;
   min-width: 124px;
-  min-height: 24px;
+  height: 24px;
   background-color: black;
   padding: 2px;
   border-radius: 8px;
@@ -150,6 +150,8 @@ h1{
   min-height: 100px;
   padding:10px;
   float:left;
+  display: inline-block;
+    text-align: right;
 
 }
 
@@ -186,6 +188,7 @@ h1{
   margin: 10px 5px 5px;
   min-height: 20px;
   max-width: 200px;
+  width:200px;
   display: inline-block;
   text-align: center;
 }
@@ -227,9 +230,10 @@ div.text_entry, div.property{
 }
 
 .mapping{
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
   height: 22px;
+  display: inline-block;
 }
 
 .block{
@@ -475,8 +479,9 @@ button {
   border: none;
   padding: 10px;
 }
-button:hover {background-color: #3e8e41}
-
+button:hover {
+    background-color: #f3f3f3;
+}
 button:active {
   background-color: #3e8e41
 }
@@ -643,6 +648,11 @@ section {
 
 .clear-both {
  clear: both;
+}
+
+.clearfix {
+    clear: both;
+    display: block;
 }
 
 

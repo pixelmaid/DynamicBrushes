@@ -1,10 +1,10 @@
 //ChartView     
 "use strict";
-define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "app/Emitter", "app/id", "hbs!app/templates/method", "hbs!app/templates/behavior", "hbs!app/templates/state", "hbs!app/templates/start", "hbs!app/templates/transition", "hbs!app/templates/mapping"],
+define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "app/Emitter", "app/id", "hbs!app/templates/method", "hbs!app/templates/event", "hbs!app/templates/behavior", "hbs!app/templates/state", "hbs!app/templates/start", "hbs!app/templates/transition", "hbs!app/templates/mapping"],
 
 
 
-    function($, contextmenu, ui, jsPlumb, EditableSelect, Expression, Emitter, ID, methodTemplate, behaviorTemplate, stateTemplate, startTemplate, transitionTemplate, mappingTemplate) {
+    function($, contextmenu, ui, jsPlumb, EditableSelect, Expression, Emitter, ID, methodTemplate, eventTemplate,behaviorTemplate, stateTemplate, startTemplate, transitionTemplate, mappingTemplate) {
 
         var block_was_dragged = null;
 
@@ -80,7 +80,7 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                     self.instance.bind("connection", function(info) {
                         console.log("state transition made", info);
                         info.connection.setParameter("id", info.connection.getId());
-                        self.trigger("ON_STATE_CONNECTION", [info.connection.getId(), info.sourceId, $(info.source).attr("name"), info.targetId, self.id]);
+                        self.trigger("ON_STATE_CONNECTION", [info.connection.getParameter("id"), info.sourceId, $(info.source).attr("name"), info.targetId, self.id]);
                     });
 
                     window.jsp = self.instance;
@@ -109,7 +109,7 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                     selector: '#' + self.id + ' .jsplumb-connector',
                     callback: function(key, options) {
                         if (key == "delete") {
-                            var c_id = options.$trigger[0]._jsPlumb.getId();
+                            var c_id = options.$trigger[0]._jsPlumb.getParameter("id");
 
                             self.trigger("ON_TRANSITION_REMOVED", [self.id, c_id]);
                         }
@@ -460,7 +460,21 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
             }
 
             addTransitionEvent(data) {
-                var html = "<div parent_id='" + data.transitionId + "'name='" + data.eventName + "'type='transition' class='block transition'>" + data.displayName + "</div>";
+                console.log("adding transition event",data);
+                //var html = "<div parent_id='" + data.transitionId + "'name='" + data.eventName + "'type='transition' class='block transition'>" + data.displayName + "</div>";
+               var self = this;
+               var eventTemplateData = {
+                transitionId:data.transitionId,
+                eventName: data.eventName,
+                displayName: data.displayName,
+               };
+
+               if(data.eventName == "TIME_INTERVAL" || data.eventName == "DISTANCE_INTERVAL"){
+                eventTemplateData.transitionNumberId = data.transitionId+"_num";
+               }
+
+               var html = eventTemplate(eventTemplateData);
+
                 $($('#' + data.transitionId).find(".events .event_block")[0]).empty();
                 $($('#' + data.transitionId).find(".events .event_block")[0]).prepend(html);
                 var target = $("#" + data.transitionId + " .events .event_block .block");
@@ -473,9 +487,28 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                     this.makeDraggable(target);
 
                 }
+
+                $('#' + data.transitionId + "_num").change(function() {
+                    console.log("change!");
+                    self.transitionConditionChanged(self.id, data.transitionId, data.eventName,data.fromStateId,data.toStateId,data.displayName,data.name);
+                });
                 console.log("update event", $("#" + data.transitionId + " .events .event_block .block"), data);
 
             }
+
+             transitionConditionChanged(behaviorId, transitionId,eventName,fromStateId,toStateId,displayName,name) {
+                var transitionHTML = $('#' + transitionId);
+                var conditions = [];
+                 if(eventName == "TIME_INTERVAL" || eventName == "DISTANCE_INTERVAL"){
+                    var num_condition = $('#' + transitionId + "_num").val();
+                    conditions.push(num_condition);
+                 console.log("transition condition  changed for ", eventName, num_condition);
+
+                }
+                
+                this.trigger("ON_TRANSITION_CONDITION_CHANGED", [behaviorId, transitionId,eventName,fromStateId,toStateId,displayName,name,conditions]);
+            }
+
 
             removeTransition(data) {
                 var connections = this.instance.getConnections();
@@ -516,7 +549,8 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                 }
 
                 var html = methodTemplate(methodTemplateData);
-                if (data.targetTransition) {
+                console.log("target transition:",data.targetTransition,$('#' + data.targetTransition),  $($('#' + data.targetTransition).find(".methods")));
+                if (data.targetTransition && data.targetTransition!= "globalTransition") {
                     $($('#' + data.targetTransition).find(".methods")[0]).prepend(html);
 
                 } else {
@@ -683,11 +717,12 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
 
                     console.log("connection id", data.transitions[j], connection.id);
                     self.addOverlayToConnection(data.transitions[j]);
+                    self.addTransitionEvent(data.transitions[j]);
                 }
                 this.instance.bind("connection", function(info) {
                     console.log("state transition made", info);
                     info.connection.setParameter("id", info.connection.getId());
-                    self.trigger("ON_STATE_CONNECTION", [info.connection.getId(), info.sourceId, $(info.source).attr("name"), info.targetId, self.id]);
+                    self.trigger("ON_STATE_CONNECTION", [info.connection.getParameter("id"), info.sourceId, $(info.source).attr("name"), info.targetId, self.id]);
                 });
 
                 for (var k = 0; k < data.mappings.length; k++) {
@@ -784,9 +819,9 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                         console.log("type=", type);
 
                         if (type == 'transition') {
-
+                            var conditions = [1];
                             //data.name = name;
-                            self.trigger("ON_TRANSITION_EVENT_ADDED", [id, eventName, displayName, sourceId, sourceName, targetId, self.id]);
+                            self.trigger("ON_TRANSITION_EVENT_ADDED", [id, eventName, conditions, displayName, sourceId, sourceName, targetId, self.id]);
                             $(ui.helper).remove(); //destroy clone
                             $(ui.draggable).remove(); //remove from list
 

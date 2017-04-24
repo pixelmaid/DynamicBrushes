@@ -12,6 +12,21 @@ import SwiftyJSON
 let behaviorMapper = BehaviorMapper()
 var stylus = Stylus(x: 0,y:0,angle:0,force:0)
 
+//CONSTANTS:
+
+let kBrightness =       1.0
+let kSaturation =       0.45
+
+let kPaletteHeight =	30
+let kPaletteSize =	5
+let kMinEraseInterval =	0.5
+
+// Padding for margins
+let kLeftMargin =	10.0
+let kTopMargin =	10.0
+let kRightMargin =      10.0
+
+
 class ViewController: UIViewController, Requester {
     
     
@@ -21,11 +36,10 @@ class ViewController: UIViewController, Requester {
     @IBOutlet weak var dualBrushButton: UIButton!
     @IBOutlet weak var largeBrushButton: UIButton!
     @IBOutlet weak var smallBrushButton: UIButton!
-    var canvasViewSm:CanvasView
-    var canvasViewLg:CanvasView
-    var bakeViewSm:CanvasView
+    @IBOutlet weak var bitmapView: BitmapCanvasView!
     
-    var bakeViewLg:CanvasView
+    //var canvasViewLg:CanvasView
+    
     var backView:UIImageView
     var fabricatorView = FabricatorView();
     // var canvasViewBakeSm:CanvasView;
@@ -63,13 +77,11 @@ class ViewController: UIViewController, Requester {
         let sY = (screenSize.height-CGFloat(GCodeGenerator.pY))/2.0
         
         GCodeGenerator.setCanvasOffset(x: Float(sX),y:Float(sY));
-        canvasViewSm = CanvasView(frame: CGRect(x:sX, y:sY, width:CGFloat(GCodeGenerator.pX), height:CGFloat(GCodeGenerator.pY)))
         
-        canvasViewLg = CanvasView(frame: CGRect(x:sX, y:sY, width:CGFloat(GCodeGenerator.pX), height:CGFloat(GCodeGenerator.pY)))
+        //canvasViewLg = CanvasView(frame: CGRect(x:sX, y:sY, width:CGFloat(GCodeGenerator.pX), height:CGFloat(GCodeGenerator.pY)))
         
-        bakeViewSm = CanvasView(frame: CGRect(x:sX, y:sY, width:CGFloat(GCodeGenerator.pX), height:CGFloat(GCodeGenerator.pY)))
+        //bitmapView = BitmapCanvasView(frame:CGRect(x:sX, y:sY, width:CGFloat(GCodeGenerator.pX), height:CGFloat(GCodeGenerator.pY)))
         
-        bakeViewLg = CanvasView(frame: CGRect(x:sX, y:sY, width:CGFloat(GCodeGenerator.pX), height:CGFloat(GCodeGenerator.pY)))
         backView = UIImageView(frame: CGRect(x:sX, y:sY, width:CGFloat(GCodeGenerator.pX), height:CGFloat(GCodeGenerator.pY)))
         
         super.init(coder: coder);
@@ -83,39 +95,20 @@ class ViewController: UIViewController, Requester {
         super.viewDidLoad()
         
         
-        
-        canvasViewSm.backgroundColor=UIColor.white
-        self.view.addSubview(canvasViewSm)
-        
-        canvasViewLg.backgroundColor=UIColor.clear
-        self.view.addSubview(canvasViewLg)
+     //   canvasViewLg.backgroundColor=UIColor.clear
+      //  self.view.addSubview(canvasViewLg)
+      //self.view.addSubview(bitmapView);
         
         
-        bakeViewLg.backgroundColor=UIColor.clear
-        self.view.addSubview(bakeViewLg)
+
         
-        bakeViewSm.backgroundColor=UIColor.clear
-        self.view.addSubview(bakeViewSm)
+        //self.view.sendSubview(toBack: bitmapView)
+        //self.view.sendSubview(toBack: canvasViewLg)
         
-        backView.backgroundColor=UIColor.white
-        self.view.addSubview(backView)
-        
-        fabricatorView.frame = CGRect(x:0, y:0, width:CGFloat(GCodeGenerator.pX), height:CGFloat(GCodeGenerator.pY))
-        fabricatorView.backgroundColor = UIColor.clear;
-        self.view.addSubview(fabricatorView);
-        self.view.sendSubview(toBack: fabricatorView)
-        self.view.sendSubview(toBack: bakeViewLg)
-        self.view.sendSubview(toBack: bakeViewSm)
-        
-        self.view.sendSubview(toBack: canvasViewLg)
-        self.view.sendSubview(toBack: canvasViewSm)
-        self.view.sendSubview(toBack: backView)
-        
-        canvasViewLg.alpha = 1;
-        canvasViewSm.alpha = 0.25;
+        //canvasViewLg.alpha = 1;
         
         
-        self.fabricatorView.drawFabricatorPosition(x: Float(0), y: Float(0), z: Float(0))
+       // self.fabricatorView.drawFabricatorPosition(x: Float(0), y: Float(0), z: Float(0))
         self.initCanvas()
         
         _ = RequestHandler.dataEvent.addHandler(target: self, handler: ViewController.processRequestHandler, key: dataEventKey)
@@ -131,7 +124,6 @@ class ViewController: UIViewController, Requester {
         RequestHandler.addRequest(requestData:configureRequest);
         RequestHandler.addRequest(requestData:connectRequest);
         RequestHandler.addRequest(requestData:behaviorDownloadRequest);
-        
         
     }
     
@@ -345,7 +337,7 @@ class ViewController: UIViewController, Requester {
     func initFractalBrush(){
         let rootBehavior = behaviorManager?.initFractalBehavior();
         let rootBehaviorBrush = Brush(name:"rootBehaviorBrush",behaviorDef: rootBehavior, parent:nil, canvas:self.currentCanvas!)
-        rootBehaviorBrush.strokeColor.b = 255;
+        //rootBehaviorBrush.strokeColor.b = 255;
         // socketManager.initAction(target: rootBehaviorBrush,type:"brush_init");
         
         
@@ -356,6 +348,7 @@ class ViewController: UIViewController, Requester {
     
     
     func canvasDrawHandler(data:(Geometry,String,String), key:String){
+        print("draw handler called")
         switch data.2{
             
         case "DRAW":
@@ -366,8 +359,27 @@ class ViewController: UIViewController, Requester {
                 let prevSeg = seg.getPreviousSegment()
                 
                 if(prevSeg != nil){
+                    print("Rendering line")
                     
-                    canvasViewLg.drawIsolatedPath(fP: prevSeg!.point,tP: seg.point, w:seg.diameter, c:seg.color)
+                    let bounds = bitmapView.bounds
+                    var previousLocation = prevSeg!.point.toCGPoint();
+                    var location = seg.point.toCGPoint()
+                        location.y = bounds.size.height - location.y
+                        previousLocation.y = bounds.size.height - previousLocation.y
+                    
+                    let color = seg.color.toCGColor().components;
+                    let alpha = seg.alpha;
+                    print("alpha = ",alpha);
+                    let diameter = seg.diameter;
+                    
+                    
+                    // Defer to the OpenGL view to set the brush color
+                    bitmapView.setBrushColor(red:color![0], green: color![1], blue: color![2], alpha: alpha)
+                    bitmapView.setBrushDiameter(brushDiameter: diameter)
+                
+
+                    
+                    bitmapView.renderLine(from:previousLocation, to: location);
                     
                     
                     
@@ -417,9 +429,9 @@ class ViewController: UIViewController, Requester {
         
         if let touch = touches.first  {
             
-            _ = touch.location(in: canvasViewSm);
+            _ = touch.location(in: bitmapView);
             _ = Float(touch.force);
-            _ = Float(touch.azimuthAngle(in: canvasViewSm))
+            _ = Float(touch.azimuthAngle(in: bitmapView))
             if(downInCanvas){
                 stylus.onStylusUp()
                 downInCanvas = false
@@ -438,16 +450,15 @@ class ViewController: UIViewController, Requester {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = touches.first  {
-            let point = touch.location(in: canvasViewSm)
+            let point = touch.location(in: bitmapView)
             let x = Float(point.x)
             let y = Float(point.y)
             ;
             let force = Float(touch.force);
-            let angle = Float(touch.azimuthAngle(in: canvasViewSm))
-            if(x>=0 && y>=0 && x<=GCodeGenerator.pX && y<=GCodeGenerator.pY){
+            let angle = Float(touch.azimuthAngle(in: bitmapView))
                 stylus.onStylusDown(x: x, y:y, force:force, angle:angle)
                 downInCanvas = true;
-            }
+            
             // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
             // socketManager.sendStylusData();
             
@@ -464,18 +475,16 @@ class ViewController: UIViewController, Requester {
         
         if let touch = touches.first  {
             
-            let point = touch.location(in: canvasViewSm);
+            let point = touch.location(in: bitmapView);
             let x = Float(point.x)
             let y = Float(point.y)
             let force = Float(touch.force);
-            let angle = Float(touch.azimuthAngle(in: canvasViewSm))
-            if(x>=0 && y>=0 && x<=GCodeGenerator.pX && y<=GCodeGenerator.pY){
-                
+            let angle = Float(touch.azimuthAngle(in: bitmapView))
+            
                 stylus.onStylusMove(x: x, y:y, force:force, angle:angle)
                 downInCanvas = true;
                 
-            }
-            // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
+                        // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
             // socketManager.sendStylusData();
         }
         

@@ -43,23 +43,27 @@ class CanvasView:  UIImageView {
     
     
     func drawSingleStroke(stroke:Stroke,i:Int,context:CGContext){
-        var c:Color;
        
         for j in 1..<stroke.segments.count{
           
             let seg = stroke.segments[j];
             print("segment color \(seg.color)")
-            c = seg.color;
+            let c = seg.color;
+            let d = seg.diameter
             
-            self.drawPath(fP: (seg.getPreviousSegment()?.point)!,tP:seg.point,w:seg.diameter, c:c,context:context)
+            let normal = 
+            
+            
+            self.drawPath(fP: (seg.getPreviousSegment()?.point)!,tP:seg.point,w:seg.diameter, c:c, alpha: seg.alpha,context:context)
         }
     }
     
     
     
-    func drawPath(fP: Point, tP: Point, w:Float, c:Color, context:CGContext) {
+    func drawPath(fP: Point, tP: Point, w:Float, c:Color, alpha:Float, context:CGContext) {
         
-        let color = c.toCGColor();
+        var color = c.toCGColor();
+        color = color.copy(alpha: CGFloat(alpha))!;
         let fromPoint = fP.toCGPoint();
         let toPoint = tP.toCGPoint();
         context.setLineCap(CGLineCap.round)
@@ -74,12 +78,14 @@ class CanvasView:  UIImageView {
         
     }
     
-    func drawIsolatedPath(fP: Point, tP: Point, w:Float, c:Color) {
+    func drawIsolatedPath(fP: Point, tP: Point, w:Float, c:Color, alpha:Float) {
         UIGraphicsBeginImageContext(self.frame.size)
         let context = UIGraphicsGetCurrentContext()!
         self.image?.draw(in: CGRect(x: 0, y: 0, width: self.frame.size.width, height: self.frame.size.height))
         
-        let color = c.toCGColor();
+        var color = c.toCGColor();
+        color = color.copy(alpha: CGFloat(alpha))!;
+
         let fromPoint = fP.toCGPoint();
         let toPoint = tP.toCGPoint();
         context.setLineCap(CGLineCap.round)

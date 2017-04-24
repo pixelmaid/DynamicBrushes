@@ -75,14 +75,41 @@ define(['emitter', 'app/id', 'app/Emitter'],
 
             }, {
               item_class: " block property palette",
-              name: "weight",
-              item_name: "weight",
+              name: "diameter",
+              item_name: "diameter",
               type:"brush_prop"
 
-            }, {
+            }, /*{
               item_class: " block property palette",
               name: "color",
               item_name: "color",
+              type:"brush_prop"
+
+            }*/{
+              item_class: " block property palette",
+              name: "hue",
+              item_name: "hue",
+              type:"brush_prop"
+
+            },
+            {
+              item_class: " block property palette",
+              name: "lightness",
+              item_name: "lightness",
+              type:"brush_prop"
+
+            },
+            {
+              item_class: " block property palette",
+              name: "saturation",
+              item_name: "saturation",
+              type:"brush_prop"
+
+            },
+            {
+              item_class: " block property palette",
+              name: "alpha",
+              item_name: "alpha",
               type:"brush_prop"
 
             }]
@@ -117,6 +144,7 @@ define(['emitter', 'app/id', 'app/Emitter'],
               type:"generator"
             }]
           },
+
           "brush_actions": {
             items: [{
               item_class: "block method palette",
@@ -152,17 +180,8 @@ define(['emitter', 'app/id', 'app/Emitter'],
           },
 
           "transitions": {
-            items: [{
-              item_class: "block transition palette",
-              item_name: "TICK",
-              name: "tick",
-              type:"transition"
-            }, /*{
-              item_class: "block transition palette",
-              item_name: "STATE_COMPLETE",
-              name: "stateComplete",
-              type:"transition"
-            },*/ {
+            items: [
+            {
               item_class: "block transition palette",
               item_name: "STYLUS_DOWN",
               name: "stylusDown",
@@ -176,6 +195,24 @@ define(['emitter', 'app/id', 'app/Emitter'],
               item_class: "block transition palette",
               item_name: "STYLUS_MOVE",
               name: "stylusMove",
+              type:"transition"
+            },
+            {
+              item_class: "block transition palette",
+              item_name: "TIME_INTERVAL",
+              name: "timeInterval",
+              type:"transition"
+            },
+             {
+              item_class: "block transition palette",
+              item_name: "DISTANCE_INTERVAL",
+              name: "distanceInterval",
+              type:"transition"
+            },
+              {
+              item_class: "block transition palette",
+              item_name: "INTERSECTION",
+              name: "intersection",
               type:"transition"
             }]
           }

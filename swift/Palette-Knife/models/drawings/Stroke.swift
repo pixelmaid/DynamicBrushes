@@ -42,6 +42,7 @@ struct Segment:Geometry, Equatable {
     var index:Int?
     var diameter = Float(1);
     var color = Color(r:0,g:0,b:0,a:1);
+    var alpha = Float(0.5);
     var time = Float(0);
     
     init(x:Float,y:Float) {
