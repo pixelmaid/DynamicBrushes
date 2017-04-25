@@ -1,6 +1,8 @@
 <div name= {{targetMethod}} id="{{methodId}}" type="method" class="block method statement">
   <div class ="methodName resizeDiv">{{targetMethod}}</div>
+   {{#if hasArguments}}
   <div class="methodArguments resizeDiv">
+
   <input type="text" id="{{methodTextId}}" argumentId="{{defaultArgumentId}}" value="{{defaultArgumentName}}" selectBoxOptions="{{argumentList}}">
   {{#if methodNumberId}}
   <div class= "selectBox selectBoxNumber">
@@ -8,5 +10,6 @@
   </div>
   {{/if}}
   </div>
+  {{/if}}
  <div class="clearfix"></div>
 </div>

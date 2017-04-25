@@ -4,7 +4,7 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
 
 
 
-    function($, contextmenu, ui, jsPlumb, EditableSelect, Expression, Emitter, ID, methodTemplate, eventTemplate,behaviorTemplate, stateTemplate, startTemplate, transitionTemplate, mappingTemplate) {
+    function($, contextmenu, ui, jsPlumb, EditableSelect, Expression, Emitter, ID, methodTemplate, eventTemplate, behaviorTemplate, stateTemplate, startTemplate, transitionTemplate, mappingTemplate) {
 
         var block_was_dragged = null;
 
@@ -372,9 +372,9 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
 
             }
 
-            addReferenceToExpression(mappingId, referenceType, referenceName, referenceProperties, referencePropertiesDisplayNames,referenceId, referenceDisplayName, name) {
+            addReferenceToExpression(mappingId, referenceType, referenceName, referenceProperties, referencePropertiesDisplayNames, referenceId, referenceDisplayName, name) {
                 var expression = this.expressions[mappingId];
-                var el = expression.addReference(referenceType, referenceName, referenceProperties,referencePropertiesDisplayNames, referenceId, referenceDisplayName, name);
+                var el = expression.addReference(referenceType, referenceName, referenceProperties, referencePropertiesDisplayNames, referenceId, referenceDisplayName, name);
                 console.log("el to make draggable");
                 this.makeDraggable(el);
 
@@ -420,7 +420,7 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                             behaviorId: self.id
 
                         };
-                        var referenceName, referenceProperties,referencePropertiesDisplayNames;
+                        var referenceName, referenceProperties, referencePropertiesDisplayNames;
                         if (type == 'sensor_prop') {
                             referenceName = 'stylus';
                             console.log("sensor prop dropped on mapping", displayName);
@@ -447,7 +447,7 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                             var generatorType = name;
                             referenceProperties = [generatorId];
                             referencePropertiesDisplayNames = [displayName];
-                            expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties,referencePropertiesDisplayNames, generatorId, displayName, name);
+                            expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, referencePropertiesDisplayNames, generatorId, displayName, name);
 
                             self.trigger("ON_GENERATOR_ADDED", [mapping_data.mappingId, generatorId, generatorType, self.id, target_state, relativePropertyName, relativePropertyItemName, expression.id, expression.getText(), expression.getPropertyList()]);
 
@@ -460,20 +460,20 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
             }
 
             addTransitionEvent(data) {
-                console.log("adding transition event",data);
+                console.log("adding transition event", data);
                 //var html = "<div parent_id='" + data.transitionId + "'name='" + data.eventName + "'type='transition' class='block transition'>" + data.displayName + "</div>";
-               var self = this;
-               var eventTemplateData = {
-                transitionId:data.transitionId,
-                eventName: data.eventName,
-                displayName: data.displayName,
-               };
+                var self = this;
+                var eventTemplateData = {
+                    transitionId: data.transitionId,
+                    eventName: data.eventName,
+                    displayName: data.displayName,
+                };
 
-               if(data.eventName == "TIME_INTERVAL" || data.eventName == "DISTANCE_INTERVAL"){
-                eventTemplateData.transitionNumberId = data.transitionId+"_num";
-               }
+                if (data.eventName == "TIME_INTERVAL" || data.eventName == "DISTANCE_INTERVAL") {
+                    eventTemplateData.transitionNumberId = data.transitionId + "_num";
+                }
 
-               var html = eventTemplate(eventTemplateData);
+                var html = eventTemplate(eventTemplateData);
 
                 $($('#' + data.transitionId).find(".events .event_block")[0]).empty();
                 $($('#' + data.transitionId).find(".events .event_block")[0]).prepend(html);
@@ -490,23 +490,23 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
 
                 $('#' + data.transitionId + "_num").change(function() {
                     console.log("change!");
-                    self.transitionConditionChanged(self.id, data.transitionId, data.eventName,data.fromStateId,data.toStateId,data.displayName,data.name);
+                    self.transitionConditionChanged(self.id, data.transitionId, data.eventName, data.fromStateId, data.toStateId, data.displayName, data.name);
                 });
                 console.log("update event", $("#" + data.transitionId + " .events .event_block .block"), data);
 
             }
 
-             transitionConditionChanged(behaviorId, transitionId,eventName,fromStateId,toStateId,displayName,name) {
+            transitionConditionChanged(behaviorId, transitionId, eventName, fromStateId, toStateId, displayName, name) {
                 var transitionHTML = $('#' + transitionId);
                 var conditions = [];
-                 if(eventName == "TIME_INTERVAL" || eventName == "DISTANCE_INTERVAL"){
+                if (eventName == "TIME_INTERVAL" || eventName == "DISTANCE_INTERVAL") {
                     var num_condition = $('#' + transitionId + "_num").val();
                     conditions.push(num_condition);
-                 console.log("transition condition  changed for ", eventName, num_condition);
+                    console.log("transition condition  changed for ", eventName, num_condition);
 
                 }
-                
-                this.trigger("ON_TRANSITION_CONDITION_CHANGED", [behaviorId, transitionId,eventName,fromStateId,toStateId,displayName,name,conditions]);
+
+                this.trigger("ON_TRANSITION_CONDITION_CHANGED", [behaviorId, transitionId, eventName, fromStateId, toStateId, displayName, name, conditions]);
             }
 
 
@@ -540,17 +540,21 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
 
                 methodTemplateData.targetMethod = data.targetMethod;
                 methodTemplateData.methodId = data.methodId;
-                methodTemplateData.argumentList = argumentList;
-                methodTemplateData.defaultArgumentName = data.methodArguments[data.defaultArgument];
-                methodTemplateData.defaultArgumentId = data.defaultArgument;
-                methodTemplateData.methodTextId = data.methodId + "_text";
-                if (data.targetMethod == "spawn") {
-                    methodTemplateData.methodNumberId = data.methodId + "_num";
-                }
+                if (data.hasArguments) {
+                    methodTemplateData.argumentList = argumentList;
+                    methodTemplateData.hasArguments = true;
+                    methodTemplateData.defaultArgumentName = data.methodArguments[data.defaultArgument];
+                    methodTemplateData.defaultArgumentId = data.defaultArgument;
 
+                    methodTemplateData.methodTextId = data.methodId + "_text";
+                    if (data.targetMethod == "spawn") {
+                        methodTemplateData.methodNumberId = data.methodId + "_num";
+                    }
+
+                }
                 var html = methodTemplate(methodTemplateData);
-                console.log("target transition:",data.targetTransition,$('#' + data.targetTransition),  $($('#' + data.targetTransition).find(".methods")));
-                if (data.targetTransition && data.targetTransition!= "globalTransition") {
+                console.log("target transition:", data.targetTransition, $('#' + data.targetTransition), $($('#' + data.targetTransition).find(".methods")));
+                if (data.targetTransition && data.targetTransition != "globalTransition") {
                     $($('#' + data.targetTransition).find(".methods")[0]).prepend(html);
 
                 } else {
@@ -559,19 +563,20 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
 
                 }
                 this.makeDraggable($("#" + data.methodId));
+                if (data.hasArguments) {
+                    console.log("get text box by id", document.getElementById(methodTemplateData.methodTextId), methodTemplateData.methodTextId);
+                    EditableSelect.createEditableSelect(document.getElementById(methodTemplateData.methodTextId));
 
-                console.log("get text box by id", document.getElementById(methodTemplateData.methodTextId), methodTemplateData.methodTextId);
-                EditableSelect.createEditableSelect(document.getElementById(methodTemplateData.methodTextId));
-
-                console.log("method added event", $("#" + data.targetTransition + " .methods .block"), data, $('#' + methodTemplateData.methodTextId));
-                $('#' +  methodTemplateData.methodTextId).change(function() {
-                    console.log("change!");
-                    self.methodArgumentChanged(self.id, data.transitionId, data.methodId, data.targetMethod);
-                });
-                $('#' + data.methodId + "_num").change(function() {
-                    console.log("change!");
-                    self.methodArgumentChanged(self.id, data.transitionId, data.methodId, data.targetMethod);
-                });
+                    console.log("method added event", $("#" + data.targetTransition + " .methods .block"), data, $('#' + methodTemplateData.methodTextId));
+                    $('#' + methodTemplateData.methodTextId).change(function() {
+                        console.log("change!");
+                        self.methodArgumentChanged(self.id, data.transitionId, data.methodId, data.targetMethod);
+                    });
+                    $('#' + data.methodId + "_num").change(function() {
+                        console.log("change!");
+                        self.methodArgumentChanged(self.id, data.transitionId, data.methodId, data.targetMethod);
+                    });
+                }
             }
 
             removeMethod(data) {
@@ -609,7 +614,7 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
 
             makeDraggable(target) {
                 var self = this;
-              
+
 
 
                 target.draggable({
@@ -735,11 +740,11 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                     });
                 }
 
-                  for (var m = 0; m< data.methods.length; m++) {
+                for (var m = 0; m < data.methods.length; m++) {
                     var method_data = data.methods[m];
                     this.addMethod(method_data);
 
-                   
+
                 }
             }
 

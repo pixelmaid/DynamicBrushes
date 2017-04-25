@@ -129,7 +129,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             behaviorDef?.addBrush(targetBrush: self)
         }
         //  _  = NSTimer.scheduledTimerWithTimeInterval(0.00001, target: self, selector: #selector(Brush.defaultCallback), userInfo: nil, repeats: false)
-        self.startInterval();
 
     }
     

@@ -102,6 +102,8 @@ class BehaviorDefinition {
             behavior_list["self"] = "self";
             methodJSON["methodArguments"] = JSON(behavior_list);
             methodJSON["defaultArgument"] = JSON("self");
+            methodJSON["hasArguments"] = JSON(true)
+
             break;
             
             
@@ -130,13 +132,18 @@ class BehaviorDefinition {
             }
             methodJSON["methodArguments"] = JSON(["stylus_position":"stylus_position","parent_position":"parent_position","parent_origin":"parent_origin" ])
             methodJSON["defaultArgument"] = JSON("stylus_position");
-            
+            methodJSON["hasArguments"] = JSON(true)
+
             break;
         case "startTimer":
-            arguments = nil
+            methodJSON["hasArguments"] = JSON(false)
+
+            arguments = [];
             break;
         case "stopTimer":
-            arguments = nil
+            methodJSON["hasArguments"] = JSON(false)
+
+            arguments = [];
             
             break;
         default:
@@ -275,7 +282,7 @@ class BehaviorDefinition {
         }
         else{
             switch(event){
-            case "STYLUS_UP","STYLUS_DOWN","STYLUS_MOVE":
+            case "STYLUS_UP","STYLUS_DOWN","STYLUS_MOVE_BY","STYLUS_X_MOVE_BY","STYLUS_Y_MOVE_BY":
                 emitter = stylus
                 break;
             default:
@@ -403,6 +410,7 @@ class BehaviorDefinition {
                 
                 switch(targetMethod){
                 case "spawn":
+                    methodJSON["hasArguments"] = JSON(true)
                     var behavior_list = [String:String]()
                     for (key,value) in BehaviorManager.behaviors{
                         if key != self.id {
@@ -431,6 +439,8 @@ class BehaviorDefinition {
                     }
                     break
                 case "setOrigin", "newStroke":
+                    methodJSON["hasArguments"] = JSON(true)
+
                     methodJSON["methodArguments"] = JSON(["stylus_position":"stylus_position","parent_position":"parent_position","parent_origin":"parent_origin" ])
                     methodJSON["defaultArgument"] = JSON("stylus_position");
                     
@@ -457,6 +467,8 @@ class BehaviorDefinition {
                     }
                     break;
                 default:
+                    methodJSON["hasArguments"] = JSON(false)
+
                     break
                 }
                 

@@ -137,21 +137,6 @@ class Range:Generator{
 }
 
 
-class RandomGenerator: Generator{
-    let start:Float
-    let end:Float
-    let val:Float;
-    init(start:Float,end:Float){
-        self.start = start;
-        self.end = end;
-        val = Float(arc4random()) / Float(UINT32_MAX) * abs(self.start - self.end) + min(self.start, self.end)
-
-    }
-    
-    override func get(id:String?) -> Float {
-        return val
-    }
-}
 
 class LogiGrowthGenerator: Generator{
     let a:Float;
@@ -228,6 +213,26 @@ class Sine:Generator{
 
     
 }
+
+
+
+class RandomGenerator: Generator{
+    let start:Float
+    let end:Float
+    var val:Float;
+    init(start:Float,end:Float){
+        self.start = start;
+        self.end = end;
+        val = Float(arc4random()) / Float(UINT32_MAX) * abs(self.start - self.end) + min(self.start, self.end)
+        
+    }
+    
+    override func get(id:String?) -> Float {
+        val = Float(arc4random()) / Float(UINT32_MAX) * abs(self.start - self.end) + min(self.start, self.end)
+        return val
+    }
+}
+
 
 class easeInOut:Generator{
     var start:Observable<Float>

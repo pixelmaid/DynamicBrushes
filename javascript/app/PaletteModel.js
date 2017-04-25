@@ -123,8 +123,8 @@ define(['emitter', 'app/id', 'app/Emitter'],
               type:"generator"
             }, {
               item_class: " block property generator palette",
-              name: "uniform",
-              item_name: "uniform_random",
+              name: "random",
+              item_name: "random",
               type:"generator"
 
             }, {
@@ -193,8 +193,20 @@ define(['emitter', 'app/id', 'app/Emitter'],
               type:"transition"
             }, {
               item_class: "block transition palette",
-              item_name: "STYLUS_MOVE",
-              name: "stylusMove",
+              item_name: "STYLUS_MOVE_BY",
+              name: "stylusMoveBy",
+              type:"transition"
+            },
+             {
+              item_class: "block transition palette",
+              item_name: "STYLUS_X_MOVE_BY",
+              name: "stylusXMoveBy",
+              type:"transition"
+            },
+             {
+              item_class: "block transition palette",
+              item_name: "STYLUS_Y_MOVE_BY",
+              name: "stylusYMoveBy",
               type:"transition"
             },
             {

@@ -52,7 +52,7 @@ class Stylus: TimeSeries, WebTransmitter {
         self.time = self.timerTime
         
         position.set(x: x, y:y)
-        self.events =  ["STYLUS_UP","STYLUS_DOWN","STYLUS_MOVE"]
+        self.events =  ["STYLUS_UP","STYLUS_DOWN","STYLUS_MOVE_BY","STYLUS_X_MOVE_BY","STYLUS_Y_MOVE_BY"]
         self.createKeyStorage();
         
         //self.startInterval();
@@ -147,11 +147,11 @@ class Stylus: TimeSeries, WebTransmitter {
     }
     
     func onStylusMove(x:Float,y:Float,force:Float,angle:Float){
-        for key in keyStorage["STYLUS_MOVE"]!  {
+        for key in keyStorage["STYLUS_MOVE_BY"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;
                 if(eventCondition?.evaluate())!{
-                     NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_MOVE"])
+                     NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_MOVE_BY"])
                     
                 }
                 else{
@@ -162,10 +162,50 @@ class Stylus: TimeSeries, WebTransmitter {
             else{
                 
                     moveDist = 0;
-                       NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_MOVE"])
+                       NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_MOVE_BY"])
                 
             }
         }
+        for key in keyStorage["STYLUS_X_MOVE_BY"]!  {
+            if(key.1 != nil){
+                let eventCondition = key.1;
+                if(eventCondition?.evaluate())!{
+                    NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_X_MOVE_BY"])
+                    
+                }
+                else{
+                    //print("EVALUATION FOR CONDITION FAILED")
+                }
+                
+            }
+            else{
+                
+                moveDist = 0;
+                NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_X_MOVE"])
+                
+            }
+        }
+        for key in keyStorage["STYLUS_Y_MOVE_BY"]!  {
+            if(key.1 != nil){
+                let eventCondition = key.1;
+                if(eventCondition?.evaluate())!{
+                    NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_Y_MOVE_BY"])
+                    
+                }
+                else{
+                    //print("EVALUATION FOR CONDITION FAILED")
+                }
+                
+            }
+            else{
+                
+                moveDist = 0;
+                NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_Y_MOVE_BY"])
+                
+            }
+        }
+
+
         self.prevPosition.set(val:position);
         
         self.position.set(x: x,y:y)

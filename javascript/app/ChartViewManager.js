@@ -205,6 +205,8 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                         case "transition_added":
                             console.log("transition added  called");
                             this.views[behaviorId].addOverlayToConnection(this.lastAuthoringRequest.data);
+                            this.views[behaviorId].addTransitionEvent(this.lastAuthoringRequest.data);
+
                             this.lastAuthoringRequest = null;
 
                             break;
