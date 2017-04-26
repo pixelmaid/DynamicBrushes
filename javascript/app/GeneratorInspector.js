@@ -13,10 +13,7 @@ define(["jquery", "app/id", "app/Emitter"],
 
 			addDefaultValues(type,data){
 				switch (type){
-					case "random":
-					data.min = 1;
-					data.max = 100;
-					break;
+					
 					case "alternate":
 					data.values = [1,100];
 					break;
@@ -28,7 +25,7 @@ define(["jquery", "app/id", "app/Emitter"],
 					break;
 					case "random":
 					data.min = 0;
-					data.max = 100;
+					data.max = 1;
 					break;
 					case "sine":
 					data.freq = 0.05;

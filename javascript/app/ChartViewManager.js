@@ -1,8 +1,8 @@
 //ChartViewManager.js
 'use strict';
-define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspector"],
+define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspector", "hbs!app/templates/behavioritem"],
 
-    function($, ID, Emitter, ChartView, GeneratorInspector) {
+    function($, ID, Emitter, ChartView, GeneratorInspector, BehaviorItemTemplate) {
         var behavior_counter = 1;
         var ChartViewManager = class extends Emitter {
 
@@ -37,55 +37,117 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                     this.views[i].destroy();
                 }
                 $('#canvas').empty();
-                this.views.length = 0;
+                this.views = {};
             }
 
 
 
-            refreshBehaviorDropdown() {
+            refreshBehaviorList() {
+                console.log("refresh behavior dropdown",this.views);
+                var self = this;
                 $("#behaviorselect").empty();
 
-                var behavior_menu = document.getElementById("behaviorselect");
-            console.log("views",this.views);
+                var behavior_menu = $("#behaviorselect");
+                console.log("views", this.views);
                 for (var key in this.views) {
                     if (this.views.hasOwnProperty(key)) {
-                        var option = document.createElement('option');
-                        option.text = this.views[key].name;
-                        option.value = this.views[key].id;
-                        behavior_menu.add(option, 0);
-                        console.log("adding option", this.views[key].name);
+                        if (this.views[key].name) {
+                            var cur_id = this.views[key].id;
+                            var name = this.views[key].name;
+                            var active_status = this.views[key].active_status;
+                            var option = BehaviorItemTemplate(this.views[key]);
+                            behavior_menu.append(option);
+                            self.addBehaviorListItem(cur_id,active_status,name);
+                            console.log("adding option", this.views[key].name);
+                        }
                     }
                 }
 
-                $("#behaviorselect").val(this.currentView.id);
 
+            }
+
+            removeBehaviorFromList(behaviorId){
+                console.log("remove behavior from list",behaviorId);
+                delete this.views[behaviorId];
+                this.refreshBehaviorList();
+            }
+
+            deselectAllBehaviors() {
+                for (var key in this.views) {
+                    if (this.views.hasOwnProperty(key)) {
+                        if (this.views[key].name) {
+                            var id = this.views[key].id;
+                            $("li#" + id).removeClass("selected");
+                        }
+                    }
+                }
+            }
+
+            addBehaviorListItem(id,active_status,name) {
+                var self = this;
+                $("li#" + id + " .name").click(function(event) {
+                    self.deselectAllBehaviors();
+                    $("li#" + id).addClass("selected");
+                    self.changeBehavior(id);
+                });
+                var active_toggle = $("#" + id + " .active_toggle");
+                var trash_toggle = $("#" + id + " .trash");
+
+                if(active_status){
+                    active_toggle.addClass("active");
+                }
+
+                active_toggle.click(function(event) {
+
+                    if(!active_toggle.hasClass("active")){
+                        active_toggle.addClass("active");
+                        self.views[id].active_status = true;
+                        self.onActiveStatusChanged(id,true);
+
+                    }
+                    else{
+                        active_toggle.removeClass("active");
+                         self.views[id].active_status = false;
+                         self.onActiveStatusChanged(id,false);
+                    }
+                   
+                });
+
+              trash_toggle.click(function(event) {
+                 if (confirm("this will delete" + name)) {
+                         self.onDeleteBehavior(id);
+                    }
+                   
+                });
             }
 
             //called when drawing client is sending behavior data to synchronize
             synchronize(sync_data) {
                 this.destroyAllViews();
+               this.refreshBehaviorList();
+
                 var behaviorData = sync_data.data;
                 console.log("synch called", behaviorData.length);
 
-                for(var i=0;i<behaviorData.length;i++){
+                for (var i = 0; i < behaviorData.length; i++) {
                     this.addBehavior(behaviorData[i]);
 
                 }
 
                 this.currentView.resetView();
-                var selectedBehaviorData = behaviorData[behaviorData.length-1];
+                var selectedBehaviorData = behaviorData[behaviorData.length - 1];
                 this.currentView = this.views[selectedBehaviorData.id];
 
                 this.currentView.createHTML(selectedBehaviorData);
                 this.currentView.initializeBehavior(selectedBehaviorData);
             }
 
-              addBehavior(data) {
+            addBehavior(data) {
                 console.log("add behavior", data, this);
                 if (this.currentView) {
                     this.currentView.resetView();
                 }
-                var chartView = new ChartView(data.id, data.name);
+                var chartView = new ChartView(data.id, data.name, data.active_status);
                 chartView.addListener("ON_STATE_CONNECTION", function(connectionId, sourceId, sourceName, targetId, behaviorId) {
                     this.onConnection(connectionId, sourceId, sourceName, targetId, behaviorId);
                 }.bind(this));
@@ -105,8 +167,8 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                     this.onTransitionEventAdded(connectionId, eventName, conditions, displayName, sourceId, sourceName, targetId, behaviorId);
                 }.bind(this));
 
-                chartView.addListener("ON_TRANSITION_CONDITION_CHANGED",function(behaviorId, transitionId,eventName,fromStateId,toStateId,displayName,name,conditions){
-                    this.onTransitionEventConditionChanged(behaviorId, transitionId,eventName,fromStateId,toStateId,displayName,name,conditions);
+                chartView.addListener("ON_TRANSITION_CONDITION_CHANGED", function(behaviorId, transitionId, eventName, fromStateId, toStateId, displayName, name, conditions) {
+                    this.onTransitionEventConditionChanged(behaviorId, transitionId, eventName, fromStateId, toStateId, displayName, name, conditions);
                 }.bind(this));
 
                 chartView.addListener("ON_MAPPING_ADDED", function(mappingId, name, item_name, type, expressionId, stateId, behaviorId) {
@@ -160,13 +222,12 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                 chartView.initializeBehavior(data);
                 this.views[data.id] = chartView;
                 this.currentView = chartView;
-                this.refreshBehaviorDropdown();
+                this.refreshBehaviorList();
                 console.log("add behavior", data, this.currentView);
 
             }
 
-            changeBehavior() {
-                var selectedId = $("#behaviorselect").val();
+            changeBehavior(selectedId) {
                 console.log("change behavior to", selectedId);
                 var transmit_data = {
                     behaviorId: selectedId,
@@ -192,7 +253,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
 
             processAuthoringResponse(data) {
                 console.log("chart manager process authoring response", data, this.lastAuthoringRequest, data.result);
-                if (data.result == "success") {
+                if (data.result == "success" || data.result == "check") {
                     var behaviorId = this.lastAuthoringRequest.data.behaviorId;
                     switch (this.lastAuthoringRequest.data.type) {
 
@@ -240,12 +301,14 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                             break;
 
                         case "method_added":
-                            console.log("method added  called", data.data.argumentList, data.data);
+                            console.log("method added  called", data.data.methodArguments, data.data);
                             this.lastAuthoringRequest.data.methodArguments = data.data.methodArguments;
                             this.lastAuthoringRequest.data.defaultArgument = data.data.defaultArgument;
+                            this.lastAuthoringRequest.data.hasArguments = data.data.hasArguments;
                             this.views[behaviorId].addMethod(this.lastAuthoringRequest.data);
                             this.lastAuthoringRequest = null;
                             break;
+
                         case "method_removed":
                             this.views[behaviorId].removeMethod(this.lastAuthoringRequest.data);
                             break;
@@ -284,6 +347,20 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                             this.addBehavior(this.lastAuthoringRequest.data);
                             this.lastAuthoringRequest = null;
 
+                            break;
+                        case "delete_behavior_request":
+                        if (data.result == "check"){
+                            if(!confirm("This behavior is referenced by other behaviors. Deleting it will cause the spawn methods in these behaviors stop working. Do you still want to delete it?")){
+                                return;
+                            }
+
+                        }
+                            this.onHardDeleteBehavior(this.lastAuthoringRequest.data.behaviorId);
+
+                            break;
+                        case "hard_delete_behavior":
+                            this.removeBehaviorFromList(this.lastAuthoringRequest.data.behaviorId);
+                            this.lastAuthoringRequest = null;
                             break;
                         case "expression_added":
                             console.log("expression added succesfully");
@@ -346,8 +423,50 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                 }
             }
 
-          
 
+            onActiveStatusChanged(behaviorId,active_status) {
+
+                var transmit_data = {
+                    behaviorId: behaviorId,
+                    active_status: active_status,
+                    type: "set_behavior_active"
+                };
+                this.lastAuthoringRequest = {
+                    data: transmit_data
+                };
+                console.log("active status set", active_status, behaviorId);
+
+                this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
+            }
+
+
+            onDeleteBehavior(behaviorId){
+                   var transmit_data = {
+                    behaviorId: behaviorId,
+                    type: "delete_behavior_request"
+                };
+
+                this.lastAuthoringRequest = {
+                    data: transmit_data
+                };
+                console.log("delete behavior request", behaviorId);
+
+                this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
+            }
+
+            onHardDeleteBehavior(behaviorId){
+                    var transmit_data = {
+                    behaviorId: behaviorId,
+                    type: "hard_delete_behavior"
+                };
+
+                this.lastAuthoringRequest = {
+                    data: transmit_data
+                };
+                console.log("hard delete behavior", behaviorId);
+
+                this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
+            }
 
             onConnection(connectionId, sourceId, sourceName, targetId, behaviorId) {
 
@@ -397,7 +516,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                 this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
             }
 
-            onTransitionEventConditionChanged(behaviorId, transitionId,eventName,fromStateId,toStateId,displayName,name,conditions){
+            onTransitionEventConditionChanged(behaviorId, transitionId, eventName, fromStateId, toStateId, displayName, name, conditions) {
 
                 var transmit_data = {
                     fromStateId: fromStateId,
@@ -580,7 +699,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
             }
 
             onMethodArgumentChanged(behaviorId, transitionId, methodId, targetMethod, args) {
-                console.log("method argument changed", methodId, targetMethod);
+                console.log("method argument changed", methodId, targetMethod,transitionId);
 
                 var transmit_data = {
                     behaviorId: behaviorId,

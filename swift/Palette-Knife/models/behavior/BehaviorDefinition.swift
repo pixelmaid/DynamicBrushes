@@ -26,14 +26,27 @@ class BehaviorDefinition {
     var storedConditions = [String:Condition]()
     var name:String;
     var id: String;
+    private var active_status:Bool;
+    private var auto_spawn_num = 0;
     
     init(id:String, name:String){
         self.name = name;
         self.id = id;
+        self.active_status = true;
     }
     
     
+    func setActiveStatus(status:Bool){
+        self.active_status = status;
+    }
+    
+    func setAutoSpawnNum(num:Int){
+        self.auto_spawn_num = num;
+    }
+    
     func parseJSON(json:JSON){
+        self.setActiveStatus(status:json["active_status"].boolValue);
+        self.setAutoSpawnNum(num:json["auto_spawn_num"].intValue);
         let stateJSON = json["states"].arrayValue;
         let transitionJSON = json["transitions"].arrayValue;
         let mappingJSON = json["mappings"].arrayValue;
@@ -103,7 +116,7 @@ class BehaviorDefinition {
             methodJSON["methodArguments"] = JSON(behavior_list);
             methodJSON["defaultArgument"] = JSON("self");
             methodJSON["hasArguments"] = JSON(true)
-
+            
             break;
             
             
@@ -133,16 +146,16 @@ class BehaviorDefinition {
             methodJSON["methodArguments"] = JSON(["stylus_position":"stylus_position","parent_position":"parent_position","parent_origin":"parent_origin" ])
             methodJSON["defaultArgument"] = JSON("stylus_position");
             methodJSON["hasArguments"] = JSON(true)
-
+            
             break;
         case "startTimer":
             methodJSON["hasArguments"] = JSON(false)
-
+            
             arguments = [];
             break;
         case "stopTimer":
             methodJSON["hasArguments"] = JSON(false)
-
+            
             arguments = [];
             
             break;
@@ -294,18 +307,18 @@ class BehaviorDefinition {
         let conditionName:String?
         let condition_list = data["conditions"].arrayValue;
         switch(event){
-            case "TIME_INTERVAL":
-        conditionName = "condition_" + NSUUID().uuidString
-        let interval_name = "interval_" + NSUUID().uuidString
-        let interval_value = condition_list[0].floatValue;
-        self.addInterval(name: interval_name, inc: interval_value, times: nil)
-
-        self.addCondition(name: conditionName!, reference: nil, referenceNames: ["time"], relative: nil, relativeNames: [interval_name], relational: "within")
+        case "TIME_INTERVAL":
+            conditionName = "condition_" + NSUUID().uuidString
+            let interval_name = "interval_" + NSUUID().uuidString
+            let interval_value = condition_list[0].floatValue;
+            self.addInterval(name: interval_name, inc: interval_value, times: nil)
+            
+            self.addCondition(name: conditionName!, reference: nil, referenceNames: ["time"], relative: nil, relativeNames: [interval_name], relational: "within")
             break;
         default:
             conditionName = nil;
             break;
-
+            
         }
         
         self.addTransition(transitionId: data["transitionId"].stringValue, name: data["name"].stringValue, eventEmitter: emitter, parentFlag: data["parentFlag"].boolValue, event: data["eventName"].stringValue, fromStateId: data["fromStateId"].stringValue, toStateId: data["toStateId"].stringValue, condition: conditionName,displayName:data["displayName"].stringValue)
@@ -317,6 +330,8 @@ class BehaviorDefinition {
         var json_obj:JSON = [:]
         json_obj["name"] = JSON(self.name);
         json_obj["id"] = JSON(self.id);
+        json_obj["active_status"] = JSON(self.active_status);
+        json_obj["auto_spawn_num"] = JSON(self.auto_spawn_num);
         
         var generatorArray = [JSON]();
         for (key,data) in generators {
@@ -417,10 +432,10 @@ class BehaviorDefinition {
                             behavior_list[key] = value.name;
                         }
                     }
-                      behavior_list["self"] = "self";
+                    behavior_list["self"] = "self";
                     methodJSON["methodArguments"] = JSON(behavior_list);
                     methodJSON["defaultArgument"] = JSON("self");
-
+                    
                     if let methodArgs = method.2{
                         let targetBehavior = methodArgs[0]
                         let behaviorId: String
@@ -432,6 +447,8 @@ class BehaviorDefinition {
                             
                         }
                         else if let def =  targetBehavior as? String {
+                            print("target behavior",targetBehavior)
+
                             behaviorId = def;
                             methodJSON["currentArgument"] = JSON(behaviorId);
                             
@@ -440,7 +457,7 @@ class BehaviorDefinition {
                     break
                 case "setOrigin", "newStroke":
                     methodJSON["hasArguments"] = JSON(true)
-
+                    
                     methodJSON["methodArguments"] = JSON(["stylus_position":"stylus_position","parent_position":"parent_position","parent_origin":"parent_origin" ])
                     methodJSON["defaultArgument"] = JSON("stylus_position");
                     
@@ -468,7 +485,7 @@ class BehaviorDefinition {
                     break;
                 default:
                     methodJSON["hasArguments"] = JSON(false)
-
+                    
                     break
                 }
                 
@@ -610,18 +627,42 @@ class BehaviorDefinition {
         if(methods[tt] == nil){
             methods [tt] = [];
         }
+        for i in 0..<methods[tt]!.count {
+            if methods[tt]?[i].0 == methodId{
+                    methods[tt]?.remove(at: i)
+            }
+        }
         methods[tt]!.append((methodId,targetMethod,arguments))
     }
     
+    func checkDependency(behaviorId:String)->Bool{
+        for (_, methodlist) in methods{
+            for method in methodlist{
+                let targetMethod = method.1
+                if(targetMethod == "spawn"){
+                    let args = method.2;
+                    let spawn_id = args?[0] as! String;
+                    if(spawn_id == behaviorId){
+                        return true;
+                    }
+                    
+                }
+            }
+        }
+        
+        return false;
+    }
+    
     func removeMethod(methodId:String){
-        for (_, var method_list) in methods{
+        for (key, method_list) in methods{
             for i in 0..<method_list.count{
                 if method_list[i].0 == methodId{
-                    method_list.remove(at: i);
+                    methods[key]?.remove(at: i)
                     if method_list.count == 0{
                         methods.removeValue(forKey: methodId);
                         
                     }
+                   
                     return;
                 }
                 
@@ -945,104 +986,108 @@ class BehaviorDefinition {
         for i in 0..<self.brushInstances.count{
             let targetBrush = self.brushInstances[i];
             targetBrush.clearBehavior();
+            targetBrush.destroyChildren();
+            targetBrush.destroy();
+
         }
         self.brushInstances.removeAll();
         
     }
     
-    func createBehavior(){
-        print("create behavior called \(self.brushInstances.count)");
-        print("expressions before behavior created \(self.storedExpressions)");
-        self.storedExpressions.removeAll();
-        self.storedConditions.removeAll();
-        self.storedGenerators.removeAll();
-        print("expressions after clear \(self.storedExpressions)");
+    func createBehavior(canvas:Canvas){
+        clearBehavior();
         
-        for i in 0..<self.brushInstances.count{
-            let targetBrush = self.brushInstances[i];
-            targetBrush.clearBehavior();
-            targetBrush.createGlobals();
-            
-            for (key, generator_data) in generators{
-                self.generateGenerator(name: key,data:generator_data)
-            }
-            
-            for i in 0..<conditions.count{
-                self.generateCondition(targetBrush: targetBrush,data:conditions[i])
-            }
-            
-            for (key,expression_data) in expressions{
-                self.generateExpression(targetBrush: targetBrush,name:key,data:expression_data)
-                
-                
-                
-            }
-            print("expressions after created \(self.storedExpressions)");
-            
-            for (id,state) in states{
-                behaviorMapper.createState(target: targetBrush,stateId:id, stateName:state.0)
-                
-            }
-            print("transitions:\(transitions)")
-            for (key,transition) in transitions{
-                if((transition.3?.isEmpty) == false){
-                    var reference:Any
-                    if(transition.1 == nil){
-                        if(transition.2){
-                            reference = targetBrush.parent!
-                        }
-                        else{
-                            reference = targetBrush
-                        }
-                    }
-                    else{
-                        reference = transition.1!;
-                    }
-                    let condition:Condition?
-                    if((transition.6) != nil){
-                        condition = storedConditions[transition.6!]
-                    }
-                    else{
-                        condition = nil
-                    }
-                    
-                    
-                    print("generating transition \(key) because event is: \(transition.3)");
-                    
-                    behaviorMapper.createStateTransition(id: key,name: transition.0,reference:reference as! Emitter, relative: targetBrush, eventName: transition.3!, fromStateId:transition.4,toStateId:transition.5, condition: condition)
-                }
-                    
-                    
-                else{
-                    print("could not generate transition \(key) because event is empty")
-                    
-                }
-                
-            }
-            
-            for (key,method_list) in methods{
-                for method in method_list {
-                    print("generating method:\(targetBrush,transitionName:key,methodId:method.0,methodName:method.1,arguments:method.2)");
-                    behaviorMapper.addMethod(relative: targetBrush,transitionName:key,methodId:method.0,methodName:method.1,arguments:method.2);
-                }
-            }
-            
-            //referenceProperty!,referenceName!,relativePropertyName,stateId
-            for (id, mapping_data) in mappings{
-                if(mapping_data.0 != nil || mapping_data.1 != nil ){
-                    print("generating mapping \(id) because reference is not nil")
-                    
-                    self.generateMapping(targetBrush: targetBrush,id:id, data:mapping_data);
-                }
-                else{
-                    print("could not generate mapping \(id) because reference is nil")
-                }
-                targetBrush.setupTransition();
-                
+        if(self.active_status){
+            for i in 0..<self.auto_spawn_num{
+                print("create new brush",i);
+                let targetBrush = Brush(name: "brush_" + String(i) + "_" + self.id, behaviorDef: self, parent: nil, canvas: canvas)
+                self.initBrushBehavior(targetBrush:targetBrush);
             }
         }
         
         
+    }
+    
+    func initBrushBehavior(targetBrush:Brush){
+        targetBrush.createGlobals();
+        
+        for (key, generator_data) in generators{
+            self.generateGenerator(name: key,data:generator_data)
+        }
+        
+        for i in 0..<conditions.count{
+            self.generateCondition(targetBrush: targetBrush,data:conditions[i])
+        }
+        
+        for (key,expression_data) in expressions{
+            self.generateExpression(targetBrush: targetBrush,name:key,data:expression_data)
+            
+            
+            
+        }
+        print("expressions after created \(self.storedExpressions)");
+        
+        for (id,state) in states{
+            behaviorMapper.createState(target: targetBrush,stateId:id, stateName:state.0)
+            
+        }
+        print("transitions:\(transitions)")
+        for (key,transition) in transitions{
+            if((transition.3?.isEmpty) == false){
+                var reference:Any
+                if(transition.1 == nil){
+                    if(transition.2){
+                        reference = targetBrush.parent!
+                    }
+                    else{
+                        reference = targetBrush
+                    }
+                }
+                else{
+                    reference = transition.1!;
+                }
+                let condition:Condition?
+                if((transition.6) != nil){
+                    condition = storedConditions[transition.6!]
+                }
+                else{
+                    condition = nil
+                }
+                
+                
+                print("generating transition \(key) because event is: \(transition.3)");
+                
+                behaviorMapper.createStateTransition(id: key,name: transition.0,reference:reference as! Emitter, relative: targetBrush, eventName: transition.3!, fromStateId:transition.4,toStateId:transition.5, condition: condition)
+            }
+                
+                
+            else{
+                print("could not generate transition \(key) because event is empty")
+                
+            }
+            
+        }
+        
+        for (key,method_list) in methods{
+            for method in method_list {
+                print("generating method:\(targetBrush,transitionName:key,methodId:method.0,methodName:method.1,arguments:method.2)");
+                behaviorMapper.addMethod(relative: targetBrush,transitionName:key,methodId:method.0,methodName:method.1,arguments:method.2);
+            }
+        }
+        
+        //referenceProperty!,referenceName!,relativePropertyName,stateId
+        for (id, mapping_data) in mappings{
+            if(mapping_data.0 != nil || mapping_data.1 != nil ){
+                print("generating mapping \(id) because reference is not nil")
+                
+                self.generateMapping(targetBrush: targetBrush,id:id, data:mapping_data);
+            }
+            else{
+                print("could not generate mapping \(id) because reference is nil")
+            }
+            targetBrush.setupTransition();
+            
+        }
     }
     
 }

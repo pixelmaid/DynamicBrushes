@@ -80,8 +80,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var jogPoint:Point!
     var offCanvas = Observable<Float>(0);
     
-    var active = true;
-    
     init(name:String, behaviorDef:BehaviorDefinition?, parent:Brush?, canvas:Canvas){
         self.x = self.position.x;
         self.y = self.position.y;
@@ -275,7 +273,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     dynamic func stateTransitionHandler(notification: NSNotification){
         
-        if(active){
+       
             let key = notification.userInfo?["key"] as! String
             let mapping = states[currentState]?.getTransitionMapping(key: key)
             
@@ -287,7 +285,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 self.transitionToState(transition: stateTransition!)
                 
             }
-        }
+        
     }
     
     func transitionToState(transition:StateTransition){
@@ -470,7 +468,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     func setHandler(data:(String,Float,Float),stateKey:String){
         // let reference = notification.userInfo?["emitter"] as! Emitter
         
-        if(active){
+        
             let mapping = states[currentState]?.getConstraintMapping(key: stateKey)
             
             if(mapping != nil){
@@ -478,7 +476,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 //let constraint = mapping as! Constraint
                 self.setConstraint(constraint: mapping!)
             }
-        }
+        
     }
     
     func setConstraint(constraint:Constraint){

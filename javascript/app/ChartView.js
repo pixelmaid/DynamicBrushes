@@ -14,7 +14,7 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
         var state_counter = 0;
         var ChartView = class extends Emitter {
 
-            constructor(id, name) {
+            constructor(id, name,active_status) {
                 super();
                 var behavior_data = {
                     id: id,
@@ -23,6 +23,7 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                 this.setupId = null;
                 this.dieId = null;
                 this.name = name;
+                this.active_status = active_status;
                 this.expressions = {};
                 var self = this;
                 var last_dragged = null;
@@ -227,7 +228,14 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
 
             resetView() {
                 this.instance.empty(this.id);
-                $('#' + this.id).droppable("destroy");
+                if($('#' + this.id).data('ui-droppable')){
+                    console.log("droppable initialized");
+
+                    $('#' + this.id).droppable("destroy");
+                }
+                else{
+                    console.log("droppable not initialized");
+                }
                 this.expressions = {};
             }
 
@@ -540,11 +548,19 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
 
                 methodTemplateData.targetMethod = data.targetMethod;
                 methodTemplateData.methodId = data.methodId;
+                console.log("has arguments?",data.hasArguments);
                 if (data.hasArguments) {
                     methodTemplateData.argumentList = argumentList;
                     methodTemplateData.hasArguments = true;
-                    methodTemplateData.defaultArgumentName = data.methodArguments[data.defaultArgument];
-                    methodTemplateData.defaultArgumentId = data.defaultArgument;
+                    if(data.currentArgument){
+                        methodTemplateData.defaultArgumentName = data.methodArguments[data.currentArgument];
+                        methodTemplateData.defaultArgumentId = data.currentArgument;
+
+                    }
+                    else{
+                        methodTemplateData.defaultArgumentName = data.methodArguments[data.defaultArgument];
+                        methodTemplateData.defaultArgumentId = data.defaultArgument;
+                    }
 
                     methodTemplateData.methodTextId = data.methodId + "_text";
                     if (data.targetMethod == "spawn") {
@@ -570,11 +586,11 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                     console.log("method added event", $("#" + data.targetTransition + " .methods .block"), data, $('#' + methodTemplateData.methodTextId));
                     $('#' + methodTemplateData.methodTextId).change(function() {
                         console.log("change!");
-                        self.methodArgumentChanged(self.id, data.transitionId, data.methodId, data.targetMethod);
+                        self.methodArgumentChanged(self.id, data.targetTransition, data.methodId, data.targetMethod);
                     });
                     $('#' + data.methodId + "_num").change(function() {
                         console.log("change!");
-                        self.methodArgumentChanged(self.id, data.transitionId, data.methodId, data.targetMethod);
+                        self.methodArgumentChanged(self.id, data.targetTransition, data.methodId, data.targetMethod);
                     });
                 }
             }
@@ -589,7 +605,7 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
             methodArgumentChanged(behaviorId, transitionId, methodId, targetMethod) {
                 var methodHTML = $('#' + methodId);
 
-                var currentArgument = $('#' + methodId + "_text").val();
+                var currentArgument = $('#' + methodId + "_text").attr('argumentid')
                 console.log("method argument changed for ", methodId, currentArgument);
                 var args = [currentArgument];
                 if (targetMethod == "spawn") {
@@ -702,7 +718,6 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
 
             initializeBehavior(data) {
                 console.log("initialize behavior");
-                console.trace();
                 var self = this;
 
 

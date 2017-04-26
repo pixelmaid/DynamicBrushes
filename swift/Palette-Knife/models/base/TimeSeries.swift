@@ -41,7 +41,9 @@ class TimeSeries: Emitter{
     }
     
     func stopInterval(){
+        if(intervalTimer != nil){
          intervalTimer.invalidate();
+        }
         
     }
 

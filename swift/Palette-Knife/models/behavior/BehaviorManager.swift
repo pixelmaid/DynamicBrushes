@@ -19,7 +19,6 @@ enum BehaviorError: Error {
 
 class BehaviorManager{
     static var behaviors = [String:BehaviorDefinition]()
-    var activeBehavior:BehaviorDefinition?;
     var canvas:Canvas
     init(canvas:Canvas){
         self.canvas = canvas;
@@ -54,9 +53,7 @@ class BehaviorManager{
             }
             let behavior = BehaviorDefinition(id:key,name:value["name"].stringValue);
             behavior.parseJSON(json: value)
-            activeBehavior = behavior
-            let brush = Brush(name: "brush_"+key, behaviorDef: behavior, parent: nil, canvas: canvas)
-            behavior.createBehavior();
+            behavior.createBehavior(canvas:canvas);
             BehaviorManager.behaviors[key] = behavior;
             
         }
@@ -71,6 +68,15 @@ class BehaviorManager{
         resultJSON["authoring_type"] = JSON(type);
 
         switch(type){
+        case "set_behavior_active":
+            let behaviorId = data["behaviorId"].stringValue;
+            let behavior = BehaviorManager.behaviors[behaviorId]!;
+            let active_status = data["active_status"].boolValue;
+            behavior.setActiveStatus(status:active_status);
+            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)
+            resultJSON["result"] = "success";
+            return resultJSON;
+
         case "request_behavior_json":
             let behaviorId = data["behaviorId"].stringValue;
             let behavior = BehaviorManager.behaviors[behaviorId]!;
@@ -92,22 +98,41 @@ class BehaviorManager{
             }
             else{
                 BehaviorManager.behaviors[id] = behavior;
-                activeBehavior = behavior;
-                activeBehavior?.addState(stateId: setupId, stateName: "setup", stateX: 20.0, stateY:150.0);
-                activeBehavior?.addState(stateId: endId, stateName: "die", stateX: 1000.0, stateY: 150.0);
-                
-                let brush = Brush(name: "brush_"+data["id"].stringValue, behaviorDef: activeBehavior, parent: nil, canvas: canvas)
-                
+               
+                behavior.addState(stateId: setupId, stateName: "setup", stateX: 20.0, stateY:150.0);
+                behavior.addState(stateId: endId, stateName: "die", stateX: 1000.0, stateY: 150.0);
                 resultJSON["result"] = "success";
                 return resultJSON;
             }
             
-
+            //request to check dependency
+        case "delete_behavior_request":
+            let behaviorId = data["behaviorId"].stringValue;
+            let behavior = BehaviorManager.behaviors[behaviorId]!;
+            let dependents = self.checkDependency(behaviorId:behavior.id);
+            if(dependents.count == 0){
+                resultJSON["result"] = "success";
+            }
+            else{
+                resultJSON["result"] = "check";
+                resultJSON["data"] = ["dependents":JSON(dependents)]
+            }
+            return resultJSON;
+            
+        //hard delete despite any dependencies
+        case "hard_delete_behavior":
+            
+            let behaviorId = data["behaviorId"].stringValue;
+            let behavior = BehaviorManager.behaviors[behaviorId]!;
+            BehaviorManager.behaviors.removeValue(forKey: behaviorId)
+            behavior.clearBehavior();
+            resultJSON["result"] = "success"
+            return resultJSON
             
         case "state_added":
-            print("state added behaviors \(BehaviorManager.behaviors.count,data["behaviorId"].stringValue,BehaviorManager.behaviors)");
+            print("state added behaviors\(BehaviorManager.behaviors.count,data["behaviorId"].stringValue,BehaviorManager.behaviors)");
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseStateJSON(data:data);
-            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior()
+            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)
             
             
             resultJSON["result"] = "success";
@@ -116,18 +141,14 @@ class BehaviorManager{
             
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.removeState(stateId: data["stateId"].stringValue);
             
-            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior()
+            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)
             
             resultJSON["result"] = "success";
             return resultJSON;
             
         case "transition_added","transition_event_added", "transition_event_condition_changed":
-
-          
-            
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseTransitionJSON(data:data)
-            
-            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior()
+            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)
             
             resultJSON["result"] = "success";
             return resultJSON;
@@ -135,7 +156,7 @@ class BehaviorManager{
         case "transition_removed":
             do{
                 try BehaviorManager.behaviors[data["behaviorId"].stringValue]!.removeTransition(id: data["transitionId"].stringValue);
-                BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior()
+                BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)
                 
                 resultJSON["result"] = "success";
                 return resultJSON;            }
@@ -147,7 +168,7 @@ class BehaviorManager{
         case "transition_event_removed" :
             do{
                 try BehaviorManager.behaviors[data["behaviorId"].stringValue]!.setTransitionToDefaultEvent(transitionId: data["transitionId"].stringValue)
-                BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior();
+                BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas);
                 resultJSON["result"] = "success";
                 return resultJSON;            }
             catch{
@@ -159,7 +180,7 @@ class BehaviorManager{
         case "method_added","method_argument_changed":
             let behaviorId = data["behaviorId"].stringValue
             let methodJSON = BehaviorManager.behaviors[behaviorId]!.parseMethodJSON(data: data)
-            BehaviorManager.behaviors[behaviorId]!.createBehavior();
+            BehaviorManager.behaviors[behaviorId]!.createBehavior(canvas:canvas);
             let targetMethod = data["targetMethod"].stringValue
             if(targetMethod == "spawn"){
             var behavior_list =  methodJSON["argumentList"]
@@ -175,9 +196,8 @@ class BehaviorManager{
          
             
         case "method_removed":
-            
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.removeMethod(methodId: data["methodId"].stringValue)
-            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior();
+            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas);
             print("removed method");
             resultJSON["result"] = "success";
             return resultJSON;
@@ -186,7 +206,7 @@ class BehaviorManager{
             let behaviorId = data["behaviorId"].stringValue;
             
             BehaviorManager.behaviors[behaviorId]!.parseMappingJSON(data:data)
-            BehaviorManager.behaviors[behaviorId]!.createBehavior()
+            BehaviorManager.behaviors[behaviorId]!.createBehavior(canvas:canvas)
             
             resultJSON["result"] = "success";
             return resultJSON;
@@ -197,7 +217,7 @@ class BehaviorManager{
             print("behavior update mapping, target state:\(data["stateId"].stringValue)");
             
             BehaviorManager.behaviors[behaviorId]!.parseMappingJSON(data: data)
-            BehaviorManager.behaviors[behaviorId]!.createBehavior()
+            BehaviorManager.behaviors[behaviorId]!.createBehavior(canvas:canvas)
             
             
             resultJSON["result"] = "success";
@@ -208,7 +228,7 @@ class BehaviorManager{
             
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseExpressionJSON(data:data)
             
-            BehaviorManager.behaviors[behaviorId]!.createBehavior()
+            BehaviorManager.behaviors[behaviorId]!.createBehavior(canvas:canvas)
             
             resultJSON["result"] = "success";
             return resultJSON;
@@ -217,7 +237,7 @@ class BehaviorManager{
             
             do{
                 try BehaviorManager.behaviors[data["behaviorId"].stringValue]!.removeMapping(id: data["mappingId"].stringValue);
-                BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior()
+                BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)
                 
                 resultJSON["result"] = "success";
                 return resultJSON;
@@ -240,7 +260,7 @@ class BehaviorManager{
         case "generator_added":
           
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseGeneratorJSON(data:data)
-            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior()
+            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)
             
             resultJSON["result"] = "success";
             return resultJSON;
@@ -256,7 +276,22 @@ class BehaviorManager{
         return resultJSON;
     }
     
-    
+    //checks to see if other behaviors reference the target behavior
+    func checkDependency(behaviorId:String)->[String:String]{
+        var dependentBehaviors = [String:String]()
+        
+        for (_,value) in BehaviorManager.behaviors {
+            if(value.id != behaviorId){
+                let dependent = value.checkDependency(behaviorId: behaviorId);
+                if(dependent){
+                    dependentBehaviors[value.id] = value.name;
+                }
+            }
+        }
+        
+        return dependentBehaviors;
+        
+    }
     
     func getAllBehaviorJSON()->JSON {
         var behaviorJSON = [JSON]()
