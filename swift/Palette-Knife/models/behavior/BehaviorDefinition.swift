@@ -196,6 +196,12 @@ class BehaviorDefinition {
             self.addSine(name: data["generatorId"].stringValue, freq: data["freq"].floatValue, amp: data["amp"].floatValue, phase: data["phase"].floatValue);
             
             break;
+            
+        case "index":
+            self.addIndex(name: data["generatorId"].stringValue);
+            
+            break;
+
             // case "random_walk":
             
             //return "success"
@@ -587,6 +593,11 @@ class BehaviorDefinition {
         generators[name] = ("sine",[freq,amp,phase]);
     }
     
+    func addIndex(name:String){
+        generators[name] = ("index",[]);
+    }
+    
+    
     
     func addRandomGenerator(name:String,min:Float,max:Float){
         generators[name] = ("random",[min,max]);
@@ -784,7 +795,7 @@ class BehaviorDefinition {
     
     
     //TODO: add in cases for other generators
-    func generateGenerator(name:String, data:(String,[Any?])){
+    func generateGenerator(name:String, data:(String,[Any?]),targetBrush:Brush){
         switch(data.0){
         case "interval":
             let interval = Interval(inc:data.1[0] as! Float,times:data.1[1] as? Int)
@@ -810,7 +821,9 @@ class BehaviorDefinition {
         case "increment":
             let increment = Increment(inc:data.1[0] as! Observable<Float>, start:data.1[1] as! Observable<Float>)
             storedGenerators[name] = increment;
-            
+        case "index":
+            let index = Index(val:targetBrush.index);
+            storedGenerators[name] = index;
         default:
             break;
         }
@@ -1012,7 +1025,7 @@ class BehaviorDefinition {
         targetBrush.createGlobals();
         
         for (key, generator_data) in generators{
-            self.generateGenerator(name: key,data:generator_data)
+            self.generateGenerator(name: key,data:generator_data,targetBrush:targetBrush)
         }
         
         for i in 0..<conditions.count{

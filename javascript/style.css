@@ -477,7 +477,7 @@ path, .jsplumb-endpoint { cursor:pointer; }
 
 button {
   border: none;
-  padding: 10px;
+  height: 20px;
 }
 button:hover {
   background-color: #f3f3f3;
@@ -500,11 +500,12 @@ input[type="button"]{
 }
 
 .behavior_container {
-  height: 350px;
-  border: 1px solid gray;
-  margin: 5px 5px 5px 5px;
+  height: 100%;
+  width: 100%;
+  /*border: 1px solid gray;*/
+  margin: 0;
   position: relative;
-  overflow: hidden;
+  /*overflow: hidden;*/
 }
 
 .canvas-wrapper {
@@ -526,7 +527,7 @@ input[type="button"]{
 }
 
 #canvas{
-  height: 800px;
+  height: 100%;
   float:left;
   display: -ms-flex; 
   display: -webkit-flex; 
@@ -553,7 +554,7 @@ input[type="button"]{
   /*border-bottom: solid 1px #B2B2B2;*/
 }
 .menubar-container{
-  height: 77px;
+  height: 50px;
 
 }
 
@@ -562,21 +563,33 @@ input[type="button"]{
 }
 
 .horz-toolbar{
-  height: 100%;
+    height: 100%;
 }
 .horz-toolbar span{
-  float:left;
-  margin:10px 10px;
+    float:left;
+    margin:10px 10px;
 }
 .horz-toolbar-section{
-  margin-left:10px;
-  width:300px;
-  height:36px;
-  float:left;
-  margin-top: 20px;
+    margin-left:10px;
+    height:36px;
+    float:left;
+    margin-top: 10px;
 }
 
 
+
+.horz-group{
+  float:left;
+  margin: 0 5px;
+}
+
+.horz-group input {
+    margin-top: 5px;
+}
+
+.horz-group div, .horz-group button {
+    display: inline-block;
+}
 .properties-wrapper.layers-wrapper{
   /*float:left;*/
 }
@@ -607,7 +620,7 @@ input[type="button"]{
   position: relative;
   min-height: 100%;
   height: 100%;
-  padding: 77px 0px 0px 0px;
+  padding: 50px 0px 0px 0px;
   z-index:100;
 }
 
@@ -642,9 +655,6 @@ section {
 
 }
 
-#save-menu{
-  height:300px;
-}
 
 .clear-both {
  clear: both;
@@ -659,14 +669,16 @@ section {
 
 #main_container{
   margin-bottom:0;
+  width:100%;
+  height:100%;
   display: -ms-flex; 
   display: -webkit-flex; 
   display: flex;
-  padding-top: 77px;
+  /*padding-top: 77px;*/
 
 }
 nav ul#behaviorselect{
-  height:75px;
+  height:120px;
   overflow:hidden; 
   overflow-y:scroll;
 }
@@ -738,6 +750,7 @@ span.trash{
 
 #selected_palette{
   padding:0;
+  text-align: center;
 }
 
 .selectel {
@@ -752,6 +765,7 @@ span.trash{
  border: 0;
  border-radius: 0;
  height: 15px;
+     color: white;
 }
 
 
@@ -823,4 +837,58 @@ span.trash{
 .clearfix {
   clear: both;
   display: block;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+.tooltip .tooltiptext {
+    visibility: hidden;
+    position: absolute;
+    width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    z-index: 1;
+}
+
+.tooltip-top {
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+}
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+.tooltip-top::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+ *:before, *:after {
+    box-sizing: inherit;
 }

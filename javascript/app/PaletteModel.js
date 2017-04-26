@@ -120,29 +120,40 @@ define(['emitter', 'app/id', 'app/Emitter'],
               item_class: "block property generator palette",
               name: "sine wave",
               item_name: "sine",
-              type:"generator"
+              type:"generator",
+              help_text: "returns a series of values corresponding to a sine wave"
             }, {
               item_class: " block property generator palette",
               name: "random",
               item_name: "random",
-              type:"generator"
-
+              type:"generator",
+              help_text: "returns a series of uniform random values"
             }, {
               item_class: " block property generator palette",
               name: "range",
               item_name: "range",
-              type:"generator"
+              type:"generator",
+               help_text: "returns cycling range of values"
             }, {
               item_class: " block property generator palette",
               name: "alternate",
               item_name: "alternate",
-              type:"generator"
-            }, {
+              type:"generator",
+              help_text: "returns a series of alternating values"
+            }, /*{
               item_class: " block property generator palette",
               name: "random walk",
               item_name: "random_walk",
-              type:"generator"
-            }]
+              type:"generator",
+              help_text: "returns a succession of random steps"
+            },*/
+            { item_class: " block property generator palette",
+              name: "index",
+              item_name: "index",
+              type:"generator",
+              help_text: "returns the index of the brush instance"
+            }
+            ]
           },
 
           "brush_actions": {

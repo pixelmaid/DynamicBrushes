@@ -32,6 +32,8 @@ define(["jquery", "app/id", "app/Emitter"],
 					data.amp = 1;
 					data.phase = 0
 					break;
+					case "index":
+					break;
 
 				}
 				return data;

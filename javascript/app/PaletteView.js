@@ -59,7 +59,7 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", 'app/i
                     $.each(attributes, function() {
                         clone.attr(this.name, this.value);
                     });
-                    clone.html($(event.target).html());
+                    clone.html($(event.target).attr('display_name'));
                     clone.addClass("drag-n-drop");
                     console.log("cloning", clone);
 

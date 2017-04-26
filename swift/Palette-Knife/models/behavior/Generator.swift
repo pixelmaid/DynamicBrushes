@@ -187,6 +187,16 @@ class Increment:Generator{
     
 }
 
+class Index:Generator{
+    var val:Observable<Float>
+    init (val:Observable<Float>){
+        self.val = val;
+    }
+    override func get(id:String?) -> Float {
+        return self.val.get(id: nil);
+    }
+}
+
 class Sine:Generator{
     var freq:Float
     var phase:Float

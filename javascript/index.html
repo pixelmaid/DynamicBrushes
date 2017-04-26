@@ -21,85 +21,118 @@
     <div class ="canvas-wrapper">
       <div id = "main_container">
        <div class = "jtk-demo-canvas canvas-wide statemachine-demo jtk-surface jtk-surface-nopan" id = "canvas">
-</div>
-</div>
        </div>
+     </div>
+   </div>
 
-    <div class = "menubar-wrapper">
-      <div class = "menubar-container">
-    <div id="socket" class="horz-toolbar toolbar-container">
-      <button type="button" id="connect_btn">connect</button>
-      <label for="socket_status">status:</label>
-      <input type="text" id="socket_status" value="disconnected"></input>
-      <!--<button type="button" id="request_btn">update behavior</button>-->
+   <div class = "menubar-wrapper">
+    <div class = "menubar-container">
+      <div class="horz-toolbar toolbar-container" style="display: block;">
+        <div id="socket" class="horz-toolbar-section toolbar-container">
+          <div class = "horz-group">
+            <label for="socket_status">status</label>
+            <input type="text" id="socket_status" value="disconnected"></input>
+            <button type="button" id="connect_btn">connect</button>
 
+          </div>
+
+        </div>
+
+
+        <div id = "save-menu" class="horz-toolbar-section toolbar-container">
+         <div class = "horz-group">
+         <label for="fileselect_div">load file</label>
+          <div id="fileselect_div" class="selectel">
+            <select id ="fileselect" class="form-control"></select>
+          </div>
+            <button type="button" id="save">save file</button>
+          </div>
+        </div>
+
+
+         <div id="zoompan" class="horz-toolbar-section toolbar-container">
+          <div class = "horz-group">
+          <label for="zoom_select_div">zoom</label>
+          <div id="zoom_select_div" class="selectel">
+            <select id="zoom_select">
+              <option value="1.5">150%</option>
+              <option value="1.25">125%</option>
+              <option selected value="1">100%</option>
+              <option value="0.75">75%</option>
+              <option value="0.5">50%</option>
+              <option value="0.25">25%</option>
+            </select>
+          </div>
+        </div>
+        </div>
+
+
+      </div>
     </div>
   </div>
-  </div>
 
- 
-      <!--======================= PROPERTIES PANEL =======================-->
-<div class="properties-wrapper">
-  <div class="properties-container">
-    <div id = 'prop-menu' class="properties">
-      <section id = "behaviors">
-         
+  <!--======================= PROPERTIES PANEL =======================-->
+  <div class="properties-wrapper">
+    <div class="properties-container">
+      <div id = 'prop-menu' class="properties">
+        <section id = "behaviors">
+
           <header>
 
-         <h2>
+           <h2>
             Behaviors
           </h2>
-                <div class="clearfix"></div>
+          <div class="clearfix"></div>
 
         </header>
         <div class = "section-background">
           <button type="button" id="add_behavior_btn">add behavior</button>
-</div>
-     <nav>
-    <ul class="list_menu" id ="behaviorselect"></ul>
-  </nav>
+        </div>
+        <nav>
+          <ul class="list_menu" id ="behaviorselect"></ul>
+        </nav>
       </section>
-       <section id = "scripts">
-          <header>
+      <section id = "scripts">
+        <header>
 
          <h2>
-            Palette
-          </h2>
-                <div class="clearfix"></div>
+          Palette
+        </h2>
+        <div class="clearfix"></div>
 
-        </header>
-        <ul class="list_menu" id="palette_menu">
-          <li id="states" class = "selected">states</li>
-          <li id="brush_properties" >brush properties</li>
-          <li id="sensor_properties">sensor properties</li>
-          <li id="generators">generators</li>
-          <li id="brush_actions">brush actions</li>
-          <li id="transitions">transitions</li>
-        </ul>
-        <ul id = "selected_palette">
-        </ul>
-      </section>
-<section id = "save-menu">
+      </header>
+      <ul class="list_menu" id="palette_menu">
+        <li id="states" class = "selected">states</li>
+        <li id="brush_properties" >brush properties</li>
+        <li id="sensor_properties">sensor properties</li>
+        <li id="generators">generators</li>
+        <li id="brush_actions">brush actions</li>
+        <li id="transitions">transitions</li>
+      </ul>
+      <ul id = "selected_palette">
+      </ul>
+    </section>
+    <!--  <section id = "save-menu">
     <header >
-      <h2>Save or Load a file</h2>
-      <div class="clearfix"></div>
-    </header>
-    <div  class="section-background">
-      <label>load file</label>
-     <div class="form-group selectel">
-      <select id ="fileselect" class="form-control"></select>
-    </div>
-    <div class="form-group">
-        <button type="button" id="save">save</button>
-    </div>
-</div>
-  </section> <!--/save-menu-->
-</div>
+        <h2>Save or Load a file</h2>
+        <div class="clearfix"></div>
+      </header>
+      <div  class="section-background">
+        <label>load file</label>
+        <div class="form-group selectel">
+          <select id ="fileselect" class="form-control"></select>
+        </div>
+        <div class="form-group">
+          <button type="button" id="save">save</button>
+        </div>
+      </div>
+    </section> <!--/save-menu-->
+  </div>
 </div>
 
-    </div>
-    <div class = "clear-both">
-      <script src="lib/require.js"></script>
-      <script src="app.js"></script>
-    </body>
-    </html>
+</div>
+<div class = "clear-both">
+  <script src="lib/require.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

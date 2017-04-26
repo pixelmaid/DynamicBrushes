@@ -17,6 +17,7 @@ requirejs.config({
 		'jsplumb' : 'jsPlumb',
 		'text': 'text',
 		'jquery-ui': 'jquery-ui',
+		'jquery.panzoom': 'jquery.panzoom',
 		'codemirror': 'codemirror',
 		'editableselect': 'editableselect',	
 		'contextmenu': 'jquery.contextMenu',

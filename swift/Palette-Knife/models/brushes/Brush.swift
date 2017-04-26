@@ -160,6 +160,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     
     func setupTransition(){
+        print("setup transition called for \(self.id),\(self.index.get(id:nil))");
         let setupTransition = self.getTransitionByName(name: "setup");
         if(setupTransition != nil){
             self.transitionToState(transition: setupTransition!)
@@ -569,20 +570,19 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     //creates number of clones specified by num and adds them as children
     func spawn(behavior:BehaviorDefinition,num:Int) {
+        print("spawing brushes",num);
         lastSpawned.removeAll()
         for i in 0...num-1{
             let child = Brush(name:name, behaviorDef: behavior, parent:self, canvas:self.currentCanvas!)
             self.children.append(child);
             child.index.set(newValue: Float(self.children.count-1));
-            // child.angle.set(Float(arc4random_uniform(60) + 1));
-            
             child.ancestors.set(newValue: self.ancestors.get(id: nil)+1);
             let handler = self.children.last!.geometryModified.addHandler(target: self,handler: Brush.brushDrawHandler, key:child.drawKey)
             childHandlers[child]=[Disposable]();
             childHandlers[child]?.append(handler)
             lastSpawned.append(child)
             self.initEvent.raise(data: (child,"brush_init"));
-            
+            child.setupTransition();
             
         }
         

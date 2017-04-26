@@ -1,20 +1,19 @@
 //ChartView     
 "use strict";
-define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "app/Emitter", "app/id", "hbs!app/templates/method", "hbs!app/templates/event", "hbs!app/templates/behavior", "hbs!app/templates/state", "hbs!app/templates/start", "hbs!app/templates/transition", "hbs!app/templates/mapping"],
+define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "app/Emitter", "app/id", "hbs!app/templates/method", "hbs!app/templates/event", "hbs!app/templates/behavior", "hbs!app/templates/state", "hbs!app/templates/start", "hbs!app/templates/transition", "hbs!app/templates/mapping"],
 
 
 
-    function($, contextmenu, ui, jsPlumb, EditableSelect, Expression, Emitter, ID, methodTemplate, eventTemplate, behaviorTemplate, stateTemplate, startTemplate, transitionTemplate, mappingTemplate) {
+    function($, panzoom, contextmenu, ui, jsPlumb, EditableSelect, Expression, Emitter, ID, methodTemplate, eventTemplate, behaviorTemplate, stateTemplate, startTemplate, transitionTemplate, mappingTemplate) {
 
         var block_was_dragged = null;
-
 
         console.log("start template", startTemplate);
         console.log("state template", stateTemplate);
         var state_counter = 0;
         var ChartView = class extends Emitter {
 
-            constructor(id, name,active_status) {
+            constructor(id, name, active_status) {
                 super();
                 var behavior_data = {
                     id: id,
@@ -163,6 +162,27 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
 
             }
 
+            enablePan() {
+                console.log("enable pan");
+                $('#' + this.id).panzoom("enable");
+            }
+
+            disablePan() {
+                console.log("disable pan");
+                $('#' + this.id).panzoom("disable");
+            }
+
+            zoom(scaleAmount, point) {
+                console.log("zoom", scaleAmount, point);
+                this.enablePan();
+                $('#' + this.id).panzoom("zoom", scaleAmount, {
+                    focal: point
+                });
+                this.disablePan();
+            }
+
+
+
             createHTML(behaviorData) {
                 var self = this;
                 var html = behaviorTemplate(behaviorData);
@@ -191,9 +211,10 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                             if (name !== null) {
                                 data.name = name;
                                 self.trigger("ON_STATE_ADDED", [x, y, data]);
-                                $(ui.helper).remove(); //destroy clone
-                                $(ui.draggable).remove(); //remove from list
+                                
                             }
+                            $(ui.helper).remove(); //destroy clone
+                            $(ui.draggable).remove(); //remove from list
                         } else if (type == "brush_prop") {
                             var mappingId = $(ui.draggable).attr('mappingId');
                             var stateId = $(ui.draggable).attr('stateId');
@@ -223,17 +244,20 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
                 });
 
                 this.instance.setContainer(behaviorData.id);
+                $('#' + behaviorData.id).panzoom({
+                    cursor: "grab"
+                });
+                this.disablePan();
 
             }
 
             resetView() {
                 this.instance.empty(this.id);
-                if($('#' + this.id).data('ui-droppable')){
+                if ($('#' + this.id).data('ui-droppable')) {
                     console.log("droppable initialized");
 
                     $('#' + this.id).droppable("destroy");
-                }
-                else{
+                } else {
                     console.log("droppable not initialized");
                 }
                 this.expressions = {};
@@ -548,16 +572,15 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
 
                 methodTemplateData.targetMethod = data.targetMethod;
                 methodTemplateData.methodId = data.methodId;
-                console.log("has arguments?",data.hasArguments);
+                console.log("has arguments?", data.hasArguments);
                 if (data.hasArguments) {
                     methodTemplateData.argumentList = argumentList;
                     methodTemplateData.hasArguments = true;
-                    if(data.currentArgument){
+                    if (data.currentArgument) {
                         methodTemplateData.defaultArgumentName = data.methodArguments[data.currentArgument];
                         methodTemplateData.defaultArgumentId = data.currentArgument;
 
-                    }
-                    else{
+                    } else {
                         methodTemplateData.defaultArgumentName = data.methodArguments[data.defaultArgument];
                         methodTemplateData.defaultArgumentId = data.defaultArgument;
                     }
@@ -605,7 +628,7 @@ define(["jquery", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/
             methodArgumentChanged(behaviorId, transitionId, methodId, targetMethod) {
                 var methodHTML = $('#' + methodId);
 
-                var currentArgument = $('#' + methodId + "_text").attr('argumentid')
+                var currentArgument = $('#' + methodId + "_text").attr('argumentid');
                 console.log("method argument changed for ", methodId, currentArgument);
                 var args = [currentArgument];
                 if (targetMethod == "spawn") {
