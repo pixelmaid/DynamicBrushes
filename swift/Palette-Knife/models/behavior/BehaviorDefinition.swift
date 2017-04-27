@@ -993,13 +993,25 @@ class BehaviorDefinition {
     }
     
     func clearBehavior(){
+        for (_,value) in self.storedExpressions{
+            value.destroy();
+        }
         self.storedExpressions.removeAll();
+        
+        for (_,value) in self.storedConditions{
+            value.destroy();
+        }
+
         self.storedConditions.removeAll();
+       
+        for (_,value) in self.storedGenerators{
+            value.destroy();
+        }
         self.storedGenerators.removeAll();
+        
         for i in 0..<self.brushInstances.count{
             let targetBrush = self.brushInstances[i];
             targetBrush.clearBehavior();
-            targetBrush.destroyChildren();
             targetBrush.destroy();
 
         }

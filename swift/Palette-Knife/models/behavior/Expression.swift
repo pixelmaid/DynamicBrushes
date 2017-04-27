@@ -76,6 +76,8 @@ class TextExpression:Observable<Float>{
         var valueString = "";
 
         let stringArr = text.characters.split{$0 == "%"}.map(String.init);
+        print(Thread.callStackSymbols)
+
         print ("stringArr =\(stringArr,self.operandList)");
         //xprint(NSThread.callStackSymbols())
 
@@ -115,6 +117,15 @@ class TextExpression:Observable<Float>{
     func setHandler(data:(String,Float,Float),key:String){
         let result = self.calculateValue();
         self.set(newValue: result)
+    }
+    
+    override func destroy(){
+        print("expression being destroyed:",self,self.name)
+        for (_,value) in operandList{
+            value.didChange.removeAllHandlers(target: self);
+        }
+        self.operandList.removeAll();
+        super.destroy();
     }
     
 

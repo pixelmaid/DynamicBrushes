@@ -34,8 +34,8 @@ class Stylus: TimeSeries, WebTransmitter {
     var initEvent = Event<(WebTransmitter,String)>()
 
     var constraintTransmitComplete = true;
-    var time = Observable<Float>(0)
     var moveDist = Float(0);
+    
     // var testCount = 4;
     init(x:Float,y:Float,angle:Float,force:Float){
         prevPosition = Point(x:0, y:0)
@@ -49,7 +49,6 @@ class Stylus: TimeSeries, WebTransmitter {
         self.dy = delta.y
         super.init()
         self.name = "stylus"
-        self.time = self.timerTime
         
         position.set(x: x, y:y)
         self.events =  ["STYLUS_UP","STYLUS_DOWN","STYLUS_MOVE_BY","STYLUS_X_MOVE_BY","STYLUS_Y_MOVE_BY"]

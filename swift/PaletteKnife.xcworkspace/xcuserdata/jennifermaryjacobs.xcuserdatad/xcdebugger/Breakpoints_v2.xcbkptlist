@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Palette-Knife/models/behavior/BehaviorDefinition.swift"
-            timestampString = "514940547.085972"
+            timestampString = "515006697.467219"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1107"
-            endingLineNumber = "1107">
+            startingLineNumber = "1119"
+            endingLineNumber = "1119">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

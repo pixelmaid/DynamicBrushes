@@ -9,7 +9,7 @@
 import Foundation
 import SwiftKVC
 
-class Observable<T>:Object  {
+class Observable<T>:Object, DisposableObservable {
     
     var name = "observable"
     var isPassive = false;
@@ -18,6 +18,7 @@ class Observable<T>:Object  {
     var subscribers = [String:Int]();
     var constraintTarget: Observable<T>?
     let didChange = Event<(String,T, T)>()
+    var observables = [DisposableObservable]();
     private var value: T
     
     init(_ initialValue: T) {
@@ -64,5 +65,22 @@ class Observable<T>:Object  {
         print("unsubscribe called\(id,subscribers)");
         subscribers.removeValue(forKey: id)
     }
+    
+    func destroy(){
+        print("observable being destroyed:",self,self.name);
+        for observable in observables {
+            observable.destroy();
+        }
+        self.didChange.removeAllHandlers(target: self);
+        self.subscribers.removeAll();
+        self.constraintTarget = nil;
+        
+    }
 
+}
+
+protocol DisposableObservable {
+    
+    func destroy()
+    
 }

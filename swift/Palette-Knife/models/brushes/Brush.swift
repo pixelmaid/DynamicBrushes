@@ -12,138 +12,181 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     //hierarcical data
     var children = [Brush]();
     var parent: Brush?
-    var lastSpawned = [Brush]();
-    let gCodeGenerator = GCodeGenerator();
+    
     //dictionary to store expressions for emitter->action handlers
     var states = [String:State]();
     var transitions = [String:StateTransition]();
     var currentState:String
-    //dictionary for storing arrays of handlers for children (for later removal)
-    var childHandlers = [Brush:[Disposable]]()
     
     //geometric/stylistic properties
-    //var strokeColor = Color(r: 0, g: 0, b: 0,a:1);
-    var diameter = Observable<Float>(5.0)
-    var reflectY = Observable<Float>(0)
-    var reflectX = Observable<Float>(0)
-    var position = Point(x:0,y:0)
-    var delta = Point(x:0,y:0)
-    var deltaKey = NSUUID().uuidString;
-    var distance = Observable<Float>(0);
-    var xDistance = Observable<Float>(0);
-    var yDistance = Observable<Float>(0);
+    let position:Point
+    let x:Observable<Float>
+    let y:Observable<Float>
     
-    var xBuffer = CircularBuffer()
-    var yBuffer = CircularBuffer()
-    var bufferKey = NSUUID().uuidString;
+    let delta:Point
+    let dx:Observable<Float>
+    let dy:Observable<Float>
+
+    let origin:Point;
+    let ox:Observable<Float>
+    let oy:Observable<Float>
     
-    var weightBuffer = CircularBuffer()
-    var origin = Point(x:0,y:0)
-    var x:Observable<Float>
-    var y:Observable<Float>
-    var dx:Observable<Float>
-    var dy:Observable<Float>
-    var ox:Observable<Float>
-    var oy:Observable<Float>
-    var alpha:Observable<Float>
-    var hue:Observable<Float>
-    var lightness:Observable<Float>
-    var saturation:Observable<Float>
+    let scaling:Point;
+    let sx:Observable<Float>
+    let sy:Observable<Float>
+
+    let reflectY:Observable<Float>
+    let reflectX:Observable<Float>
+    let rotation:Observable<Float>
     
-    //TODO: need to fix scaling so that it works with behaviors
-    var scaling = Point(x:1,y:1)
-    var angle = Observable<Float>(0)
-    var bufferLimitX = Observable<Float>(0)
-    var bufferLimitY = Observable<Float>(0)
+    let distance:Observable<Float>
+    let xDistance:Observable<Float>
+    let yDistance:Observable<Float>
+
+    let index:Observable<Float>
     
-    //event Handler wrapper for draw updates
-    var drawKey = NSUUID().uuidString;
+    let diameter:Observable<Float>
+    let alpha:Observable<Float>
+    let hue:Observable<Float>
+    let lightness:Observable<Float>
+    let saturation:Observable<Float>
+    
+    let xBuffer:CircularBuffer
+    let yBuffer:CircularBuffer
+    let weightBuffer:CircularBuffer
+    let bufferLimitX:Observable<Float>
+    let bufferLimitY:Observable<Float>
+    
+    //list of obeservables (for later disposal)
     
     var currentCanvas:Canvas?
     var currentStroke:Stroke?
+   
+    //Events
     var geometryModified = Event<(Geometry,String,String)>()
     var transmitEvent = Event<(String)>()
     var initEvent = Event<(WebTransmitter,String)>()
-    
     let removeMappingEvent = Event<(Brush,String,Observable<Float>)>()
     let removeTransitionEvent = Event<(Brush,String,Emitter)>()
+    //Events
     
-    var time = Observable<Float>(0)
+    
     var id = NSUUID().uuidString;
-    let behavior_id:String?
-    let behaviorDef:BehaviorDefinition?
+    var behavior_id:String?
+    var behaviorDef:BehaviorDefinition?
     var matrix = Matrix();
-    var index = Observable<Float>(0) //stores index of child
-    var ancestors = Observable<Float>(0);
-    
-    var jogHandlerKey:String
-    var jogPoint:Point!
-    var offCanvas = Observable<Float>(0);
-    
+    var deltaKey = NSUUID().uuidString;
+    var drawKey = NSUUID().uuidString;
+    var bufferKey = NSUUID().uuidString;
+
+   
     init(name:String, behaviorDef:BehaviorDefinition?, parent:Brush?, canvas:Canvas){
+       
+        //==BEGIN OBSERVABLES==//
+        self.position = Point(x:0,y:0)
         self.x = self.position.x;
         self.y = self.position.y;
+        
+        self.delta = Point(x:0,y:0)
         self.dx = delta.x;
         self.dy = delta.y
+        
+        self.origin = Point(x:0,y:0)
         self.ox = origin.x;
         self.oy = origin.y;
         
-        self.alpha = Observable<Float>(1);
-        self.hue = Observable<Float>(1);
-        self.lightness = Observable<Float>(0.5);
-        self.saturation = Observable<Float>(1);
+        self.scaling = Point(x:1,y:1)
+        self.sx = scaling.x;
+        self.sy = scaling.y;
         
+        self.reflectY = Observable<Float>(0)
+        self.reflectX = Observable<Float>(0)
+        self.rotation = Observable<Float>(0)
+        
+        self.distance = Observable<Float>(0)
+        self.xDistance = Observable<Float>(0)
+        self.yDistance = Observable<Float>(0)
+        
+        self.index = Observable<Float>(0)
+        
+        self.diameter = Observable<Float>(1)
+        self.alpha = Observable<Float>(1)
+        self.hue = Observable<Float>(0.5)
+        self.lightness = Observable<Float>(0.25)
+        self.saturation = Observable<Float>(1)
+        
+        self.xBuffer = CircularBuffer()
+        self.yBuffer = CircularBuffer()
+        self.weightBuffer = CircularBuffer()
+
+        self.bufferLimitX = Observable<Float>(0)
+        self.bufferLimitY = Observable<Float>(0)
+        //==END OBSERVABLES==//
+
+
         delta.parentName = "brush"
         self.currentState = "start";
+
+       super.init()
+        
+        //==BEGIN APPEND OBSERVABLES==//
+        observables.append(position)
+        observables.append(delta)
+        observables.append(origin)
+        observables.append(scaling)
+        
+        observables.append(reflectY);
+        observables.append(reflectX);
+        observables.append(rotation);
+        
+        observables.append(distance)
+        observables.append(xDistance)
+        observables.append(yDistance)
+        
+        observables.append(index)
+        
+        observables.append(diameter)
+        observables.append(alpha)
+        observables.append(hue)
+        observables.append(lightness)
+        observables.append(saturation)
+
+        observables.append(xBuffer);
+        observables.append(yBuffer);
+        observables.append(weightBuffer);
+        
+        observables.append(bufferLimitX)
+        observables.append(bufferLimitY)
+        //==END APPEND OBSERVABLES==//
+
+        
         self.behavior_id = behaviorDef!.id;
         self.behaviorDef = behaviorDef;
         
-        //key for listening to status change events
-        self.jogHandlerKey = NSUUID().uuidString;
         
-        super.init()
         self.name = name;
-        self.time = self.timerTime
         
         //setup events and create listener storage
         self.events =  ["SPAWN", "STATE_COMPLETE", "DELTA_BUFFER_LIMIT_REACHED"]
         self.createKeyStorage();
         
         
-        //add in default state
-        //self.createState(currentState);
-        
-        //self.addStateTransition(NSUUID().UUIDString, name:"setup", reference: self, fromState: nil, toState: "default")
-        
         //setup listener for delta observable
-        self.delta.didChange.addHandler(target: self, handler:Brush.deltaChange, key:deltaKey)
-        self.xBuffer.bufferEvent.addHandler(target: self, handler: Brush.deltaBufferLimitReached, key: bufferKey)
+        _ = self.delta.didChange.addHandler(target: self, handler:Brush.deltaChange, key:deltaKey)
+        _ = self.xBuffer.bufferEvent.addHandler(target: self, handler: Brush.deltaBufferLimitReached, key: bufferKey)
         
         
         self.setCanvasTarget(canvas: canvas)
         self.parent = parent
+        
         //setup behavior
         if(behaviorDef != nil){
             behaviorDef?.addBrush(targetBrush: self)
         }
-        //  _  = NSTimer.scheduledTimerWithTimeInterval(0.00001, target: self, selector: #selector(Brush.defaultCallback), userInfo: nil, repeats: false)
-
+       
     }
     
     
-    func clearBehavior(){
-        for (_,state) in self.states{
-            let removedTransitions = state.removeAllTransitions();
-            for i in 0..<removedTransitions.count{
-                let transition = removedTransitions[i]
-            self.removeTransitionEvent.raise(data: (self,transition.id,transition.reference));
-            }
-
-            state.removeAllConstraintMappings(brush:self);
-        }
-        self.transitions.removeAll();
-        self.states.removeAll();
-    }
     
     //creates states and transitions for global actions and mappings
     func createGlobals(){
@@ -160,13 +203,15 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     
     func setupTransition(){
-        print("setup transition called for \(self.id),\(self.index.get(id:nil))");
+        
         let setupTransition = self.getTransitionByName(name: "setup");
         if(setupTransition != nil){
+            print("setup transition called for \(self.id),\(self.index.get(id:nil))");
+
             self.transitionToState(transition: setupTransition!)
         }
         else{
-            print("no setup transition");
+            print("no setup transition called for \(self.id),\(self.index.get(id:nil))");
         }
     }
     
@@ -218,15 +263,12 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             yScale *= -1.0;
         }
         self.matrix.scale(x: xScale, y: yScale, centerX: centerX, centerY: centerY);
-        self.matrix.rotate(_angle: self.angle.get(id: nil), centerX: centerX, centerY: centerY)
+        self.matrix.rotate(_angle: self.rotation.get(id: nil), centerX: centerX, centerY: centerY)
         let _dx = self.position.x.get(id: nil)+delta.x.get(id: nil);
         let _dy = self.position.y.get(id: nil)+delta.y.get(id: nil);
         
         let transformedCoords = self.matrix.transformPoint(x: _dx, y: _dy)
         print("pos\(_dx,_dy,delta.y.getSilent(),delta.y.getSilent())))")
-        
-        // if(transformedCoords.0 >= 0 && transformedCoords.1 >= 0 && transformedCoords.0 <= GCodeGenerator.pX && transformedCoords.1 <= GCodeGenerator.pY ){
-        
         
         
         let xDelt = delta.x.get(id: nil);
@@ -248,20 +290,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.currentCanvas!.currentDrawing!.addSegmentToStroke(parentID: self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight:cweight , color: color,alpha:self.alpha.get(id:nil));
         self.position.set(x:_dx,y:_dy);
         print("brush moved \(transformedCoords.0,transformedCoords.1,cweight)")
-        
-        //if(_dx < 0  || _dx > GCodeGenerator.pX || _dy < 0 || _dy > GCodeGenerator.pY){
-        // self.offCanvas.set(1);
-        // }
-        //  else{
-        self.offCanvas.set(newValue: 0);
-        
-        // }
-        // }
-        //else{
-        //    currentCanvas!.currentDrawing!.retireCurrentStrokes(self.id)
-        // }
-        
-        
         
     }
     
@@ -318,6 +346,10 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
         _  = Timer.scheduledTimer(timeInterval: 0.00001, target: self, selector: #selector(Brush.completeCallback), userInfo: nil, repeats: false)
         
+        if(states[currentState]?.name == "die"){
+            print("transitioning to die state!!!");
+            self.die();
+        }
     }
     
     func raiseBehaviorEvent(d:String, event:String){
@@ -412,18 +444,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                     }
                 
                 self.spawn(behavior:behaviorDef,num:(method.arguments![1] as! Int));
-                break;
-            case "bake":
-                self.bake();
-                break;
-            case "jogAndBake":
-                self.jogAndBake();
-                break;
-            case "jogTo":
-                self.jogTo(point: self.origin)
-                break;
-            case "liftUp":
-                self.liftUp()
                 break;
             default:
                 break;
@@ -529,26 +549,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     }
     
     
-    /*
-     TODO: Finish implementing clone
-     func clone()->Brush{
-     let clone = Brush(behaviorDef: nil, parent: self.parent, canvas: self.currentCanvas)
-     
-     clone.reflectX = self.reflectX;
-     clone.reflectY = self.reflectY;
-     clone.position = self.position.clone();
-     clone.scaling = self.scaling.clone();
-     clone.strokeColor = self.strokeColor;
-     clone.fillColor = self.fillColor;
-     return clone;
-     
-     }*/
-    
-    
-    
-    
     func removeTransition(key:String){
-        for (key, var val) in states {
+        for (key,val) in states {
             if(val.hasTransitionKey(key: key)){
                 let removal =  val.removeTransitionMapping(key: key)!
                 let data = (self, key, removal.reference)
@@ -558,50 +560,48 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         }
     }
     
-    //METHODS AVAILABLE TO USER
+    //===============METHODS AVAILABLE TO USER===============//
     
     
     
     func newStroke(){
-        
         currentCanvas!.currentDrawing!.retireCurrentStrokes(parentID: self.id)
         self.currentStroke = currentCanvas!.currentDrawing!.newStroke(parentID: self.id);
     }
     
     //creates number of clones specified by num and adds them as children
     func spawn(behavior:BehaviorDefinition,num:Int) {
-        print("spawing brushes",num);
-        lastSpawned.removeAll()
-        for i in 0...num-1{
+
+        for _ in 0...num-1{
             let child = Brush(name:name, behaviorDef: behavior, parent:self, canvas:self.currentCanvas!)
             self.children.append(child);
             child.index.set(newValue: Float(self.children.count-1));
-            child.ancestors.set(newValue: self.ancestors.get(id: nil)+1);
-            let handler = self.children.last!.geometryModified.addHandler(target: self,handler: Brush.brushDrawHandler, key:child.drawKey)
-            childHandlers[child]=[Disposable]();
-            childHandlers[child]?.append(handler)
-            lastSpawned.append(child)
             self.initEvent.raise(data: (child,"brush_init"));
-            child.setupTransition();
-            
+            behavior.initBrushBehavior(targetBrush: child);
         }
         
+        
+        //notify listeners of spawn event
         for key in keyStorage["SPAWN"]!  {
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"SPAWN"])
         }
     }
     
+     //=============END METHODS AVAILABLE TO USER==================//
+    
+    
+    //========= CLEANUP METHODS ==================//
     //removes child at an index and returns it
     // removes listener on child, but does not destroy it
     func removeChildAt(index:Int)->Brush{
         let child = self.children.remove(at: index)
-        for h in childHandlers[child]!{
-            h.dispose()
-        }
-        childHandlers.removeValue(forKey: child)
         return child
     }
     
+    
+    func die(){
+        self.destroy();
+    }
     
     
     func destroyChildren(){
@@ -609,50 +609,40 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             child.destroy();
             
         }
+        self.children.removeAll();
+    }
+    
+    func clearBehavior(){
+        for (_,state) in self.states{
+            let removedTransitions = state.removeAllTransitions();
+            for i in 0..<removedTransitions.count{
+                let transition = removedTransitions[i]
+                self.removeTransitionEvent.raise(data: (self,transition.id,transition.reference));
+            }
+            
+            state.removeAllConstraintMappings(brush:self);
+        }
+        self.transitions.removeAll();
+        self.states.removeAll();
+    }
+    
+    
+    func clearAllEventHandlers(){
+    self.initEvent.removeAllHandlers(target: self)
+    self.geometryModified.removeAllHandlers(target: self)
+    self.transmitEvent.removeAllHandlers(target: self)
+    self.removeMappingEvent.removeAllHandlers(target: self)
+    self.removeTransitionEvent.removeAllHandlers(target: self)
     }
     
     override func destroy() {
         currentCanvas!.currentDrawing!.retireCurrentStrokes(parentID: self.id)
+        self.clearBehavior();
+        self.clearAllEventHandlers();
         super.destroy();
     }
-    
-    //sends the current strokes in the bake queue as gcode to the server
-    func bake(){
-        self.currentCanvas!.currentDrawing!.bake(parentID: self.id);
-    }
-    
-    func jogAndBake(){
-        self.currentCanvas!.currentDrawing!.jogAndBake(parentID: self.id);
-    }
-    
-    func liftUp(){
-        let _x = Numerical.map(value: self.position.x.get(id: nil), istart:0, istop: GCodeGenerator.pX, ostart: 0, ostop: GCodeGenerator.inX)
-        
-        let _y = Numerical.map(value: self.position.y.get(id: nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
-        
-        
-        var source_string = ""
-        source_string += "\""+gCodeGenerator.jog3(x: _x,y:_y,z:GCodeGenerator.retractHeight)+"\""
-        self.currentCanvas!.currentDrawing!.transmitJogEvent(data: source_string)
-        
-    }
-    
-    func jogTo(point:Point){
-        jogPoint = point;
-        
-        let _x = Numerical.map(value: jogPoint!.x.get(id: nil), istart:0, istop: GCodeGenerator.pX, ostart: 0, ostop: GCodeGenerator.inX)
-        
-        let _y = Numerical.map(value: jogPoint!.y.get(id: nil), istart:0, istop:GCodeGenerator.pY, ostart:  GCodeGenerator.inY, ostop: 0 )
-        
-        
-        var source_string = ""
-        source_string += "\""+gCodeGenerator.jog3(x: _x,y:_y,z:GCodeGenerator.retractHeight)+"\""
-        self.currentCanvas!.currentDrawing!.transmitJogEvent(data: source_string)
-        jogPoint = nil;
-        
-    }
-    
-    //END METHODS AVAILABLE TO USER
+      //========= END CLEANUP METHODS ==================//
+   
 }
 
 

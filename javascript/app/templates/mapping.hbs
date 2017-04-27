@@ -1,8 +1,8 @@
-<div stateId = {{stateId}} id={{mappingId}} class = "mapping">
+<div stateId = "{{stateId}}" id="{{mappingId}}" class = "mapping">
  
  
-   <div id={{expressionId}} parent_id={{mappingId}} class = "reference_expression expression">       
-    <!--{{#if reference}}<div stateId = {{stateId}}, mappingId = {{mappingId}} name={{referencePropertyName}} type= {{referencePropertyType}} class="block property">{{reference}}</div>{{/if}}-->
+   <div id="{{expressionId}}" parent_id="{{mappingId}}" class = "reference_expression expression">       
+    <!--{{#if reference}}<div stateId = "{{stateId}}", mappingId = {{mappingId}} name="{{referencePropertyName}}" class="block property">{{reference}}</div>{{/if}}-->
       <textarea  class="text_entry">
         {{reference_text}}
       </textarea>  
@@ -14,7 +14,7 @@
   </div> 
 
  <div class = "relative_expression expression">
-    <div stateId = {{stateId}}, mappingId = {{mappingId}} type= {{relativePropertyType}}  name={{relativePropertyName}}  class="block property palette">{{relativePropertyItemName}}</div>
+    <div stateId = "{{stateId}}", mappingId = "{{mappingId}}" name="{{relativePropertyName}}"  class="block property palette">{{relativePropertyItemName}}</div>
   </div>
 
   </div>

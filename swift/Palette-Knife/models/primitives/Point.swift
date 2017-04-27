@@ -13,8 +13,8 @@ import UIKit
 
 class Point:Observable<(Float,Float)>,Geometry{
   
-    var x = Observable<Float>(0)
-    var y = Observable<Float>(0)
+    let x:Observable<Float>
+    let y:Observable<Float>
     var prevX = Float(0);
     var prevY = Float(0);
     var angle = Float(0);
@@ -23,16 +23,26 @@ class Point:Observable<(Float,Float)>,Geometry{
     var storedValue = Float(0);
     var parentName = "stylus"
     init(x:Float,y:Float) {
+        //==BEGIN OBSERVABLES==//
+        self.x = Observable<Float>(0);
+        self.y = Observable<Float>(0);
+        //==END OBSERVABLES==//
+
         super.init((x, y))
         self.x.set(newValue: x);
         self.y.set(newValue: y);
         self.angle = atan2(y, x) * Float(180 / M_PI);
 
+        //==BEGIN APPEND OBSERVABLES==//
+        observables.append(self.x);
+        observables.append(self.y)
+        //==END APPEND OBSERVABLES==//
+
         self.x.name = "x"
         self.y.name = "y"
         self.name = "point"
-        self.x.didChange.addHandler(target: self, handler: Point.coordinateChange,key:xKey)
-        self.y.didChange.addHandler(target: self, handler: Point.coordinateChange,key:yKey)
+        _ = self.x.didChange.addHandler(target: self, handler: Point.coordinateChange,key:xKey)
+        _ = self.y.didChange.addHandler(target: self, handler: Point.coordinateChange,key:yKey)
 
     }
     
@@ -41,6 +51,11 @@ class Point:Observable<(Float,Float)>,Geometry{
         return string;
     }
     
+    override func destroy(){
+        x.destroy();
+        y.destroy();
+        super.destroy();
+    }
     
     //coordinateChange
     //handler that only triggers when both x and y have been updated (assuming they're both constrained)

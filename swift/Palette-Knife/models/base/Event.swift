@@ -39,7 +39,6 @@ public class Event<T> {
     }
     
     /// removes the given handler that matches the key
-    //TODO: UNTESTED!!!!
     public func removeHandler<U: AnyObject>(target:U, key:String){
        for i in 0..<eventHandlers.count{
         let e = eventHandlers[i]
@@ -47,9 +46,14 @@ public class Event<T> {
             if eW.key == key{
                 print("found event handler for key to remove\(key)")
                 eventHandlers.remove(at: i);
+                eW.dispose();
                 return;
             }
         }
+    }
+    
+    public func removeAllHandlers<U: AnyObject>(target:U){
+        self.eventHandlers.removeAll();
     }
     
 }

@@ -54,12 +54,12 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", 'app/i
                 this.el.find(".palette").mousedown(function(event) {
                     var clone = $("<div id=" + $(event.target).attr('id') + "></div>");
 
-                    var attributes = $(event.target).prop("attributes");
-
-                    $.each(attributes, function() {
-                        clone.attr(this.name, this.value);
-                    });
+                    
                     clone.html($(event.target).attr('display_name'));
+                    clone.attr("type",$(event.target).attr('type'));
+                    clone.attr("name",$(event.target).attr('name'));
+                    clone.attr("class", $(event.target).attr('class'));
+                    
                     clone.addClass("drag-n-drop");
                     console.log("cloning", clone);
 

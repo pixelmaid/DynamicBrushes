@@ -51,8 +51,9 @@ class Emitter: Observable<Float>, Equatable  {
     
    
     
-    func destroy(){
+    override func destroy(){
         NotificationCenter.default.removeObserver(self);
+        super.destroy();
         
     }
 }
