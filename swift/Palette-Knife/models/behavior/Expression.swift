@@ -48,18 +48,20 @@ class TextExpression:Observable<Float>{
     var operandList:[String:Observable<Float>];
     var text:String;
     var id: String;
+    var eventHandlers = [Disposable]();
 
     init(id:String,operandList:[String:Observable<Float>],text:String){
         self.id = id;
         self.text = text;
         self.operandList = operandList;
         super.init(0);
-
+        
         for (key,value) in self.operandList{
             print("subscribing to \(key,value)");
            value.subscribe(id: self.id);
             let operandKey = NSUUID().uuidString;
-           value.didChange.addHandler(target: self, handler: TextExpression.setHandler,key:operandKey)
+            let handler = value.didChange.addHandler(target: self, handler: TextExpression.setHandler,key:operandKey)
+           eventHandlers.append(handler)
         }
         
     }
@@ -76,17 +78,11 @@ class TextExpression:Observable<Float>{
         var valueString = "";
 
         let stringArr = text.characters.split{$0 == "%"}.map(String.init);
-        print(Thread.callStackSymbols)
-
-        print ("stringArr =\(stringArr,self.operandList)");
-        //xprint(NSThread.callStackSymbols())
-
         var currentVals = [String: Float]();
         
         
         for (key,value) in self.operandList{
             currentVals[key] = value.get(id:self.id);
-            print("operand value at = \(key, currentVals[key])");
             
         }
         
@@ -100,29 +96,27 @@ class TextExpression:Observable<Float>{
             }
             
         }
-        print("text expression string to evaluate = \(valueString)");
         var result:Float = 0;
         let exception = tryBlock {
         let exp: NSExpression = NSExpression(format: valueString)
            result  = exp.expressionValue(with: nil, context: nil) as! Float// 25.0
         
-        print("result of text expression = \(result)");
         }
-        print("exception: \(exception)")
+        //print("exception: \(exception)")
 
         return result;
 
     }
   
     func setHandler(data:(String,Float,Float),key:String){
+        print("set handler called for \(self.id)")
         let result = self.calculateValue();
         self.set(newValue: result)
     }
     
     override func destroy(){
-        print("expression being destroyed:",self,self.name)
-        for (_,value) in operandList{
-            value.didChange.removeAllHandlers(target: self);
+        for h in eventHandlers{
+            h.dispose();
         }
         self.operandList.removeAll();
         super.destroy();

@@ -50,6 +50,8 @@ typealias textureInfo_t = (
 @objc(BitmapCanvasView)
 class BitmapCanvasView: UIView {
    
+
+    
     // The pixel dimensions of the backbuffer
     private var backingWidth: GLint = 0
     private var backingHeight: GLint = 0
@@ -87,19 +89,28 @@ class BitmapCanvasView: UIView {
         return CAEAGLLayer.self
     }
     
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
     }
+    
     
     // The GL view is stored in the nib file. When it's unarchived it's sent -initWithCoder:
     required init?(coder: NSCoder) {
         super.init(coder: coder)
 
+   
+        
+    }
+    
+    // If our view is resized, we'll be asked to layout subviews.
+    // This is the perfect opportunity to also update the framebuffer so that it is
+    // the same size as our display area.
+    override func layoutSubviews() {
+        self.backgroundColor = UIColor.clear;
         let eaglLayer = self.layer as! CAEAGLLayer
         
         //eaglLayer.isOpaque = true;
-
+        
         // In this application, we want to retain the EAGLDrawable contents after a call to presentRenderbuffer.
         eaglLayer.drawableProperties = [
             kEAGLDrawablePropertyRetainedBacking: true,
@@ -117,13 +128,6 @@ class BitmapCanvasView: UIView {
         
         // Make sure to start with a cleared buffer
         needsErase = true
-        
-    }
-    
-    // If our view is resized, we'll be asked to layout subviews.
-    // This is the perfect opportunity to also update the framebuffer so that it is
-    // the same size as our display area.
-    override func layoutSubviews() {
         EAGLContext.setCurrent(context)
         
         if !initialized {
@@ -134,7 +138,7 @@ class BitmapCanvasView: UIView {
         
         // Clear the framebuffer the first time it is allocated
         if needsErase {
-            self.erase()
+           self.erase()
             needsErase = false
         }
     }
@@ -242,6 +246,7 @@ class BitmapCanvasView: UIView {
     }
     
     private func initGL() -> Bool {
+        
         // Generate IDs for a framebuffer object and a color renderbuffer
         glGenFramebuffers(1, &viewFramebuffer)
         glGenRenderbuffers(1, &viewRenderbuffer)
@@ -250,7 +255,9 @@ class BitmapCanvasView: UIView {
         glBindRenderbuffer(GL_RENDERBUFFER.ui, viewRenderbuffer)
         // This call associates the storage for the current render buffer with the EAGLDrawable (our CAEAGLLayer)
         // allowing us to draw into a buffer that will later be rendered to screen wherever the layer is (which corresponds with our view).
-        context.renderbufferStorage(GL_RENDERBUFFER.l, from: (self.layer as! EAGLDrawable))
+        let from = (self.layer as! EAGLDrawable)
+        let buffer = GL_RENDERBUFFER.l
+        context.renderbufferStorage(buffer, from: from)
         glFramebufferRenderbuffer(GL_FRAMEBUFFER.ui, GL_COLOR_ATTACHMENT0.ui, GL_RENDERBUFFER.ui, viewRenderbuffer)
         
         glGetRenderbufferParameteriv(GL_RENDERBUFFER.ui, GL_RENDERBUFFER_WIDTH.ui, &backingWidth)
@@ -282,7 +289,9 @@ class BitmapCanvasView: UIView {
         // Enable blending and set a blending function appropriate for premultiplied alpha pixel data
         glEnable(GL_BLEND.ui)
         glBlendFunc(GL_ONE.ui, GL_ONE_MINUS_SRC_ALPHA.ui)
-        
+      
+        glDisable(GL_DEPTH_TEST.ui);
+
         // Playback recorded path, which is "Shake Me"
         /*let recordedPaths = NSArray(contentsOfFile: Bundle.main.path(forResource: "Recording", ofType: "data")!)! as! [Data]
         if recordedPaths.count != 0 {
@@ -363,9 +372,10 @@ class BitmapCanvasView: UIView {
         
         // Clear the buffer
         glBindFramebuffer(GL_FRAMEBUFFER.ui, viewFramebuffer)
-        glClearColor(1.0, 1.0, 1.0, 0.0)
+        //glClearColor(1.0, 0.0, 0.0, 0.0)
         
-        glClear(GL_COLOR_BUFFER_BIT.ui)
+        glClear(GL_COLOR_BUFFER_BIT.ui | GL_DEPTH_BUFFER_BIT.ui);
+        
         
         // Display the buffer
         glBindRenderbuffer(GL_RENDERBUFFER.ui, viewRenderbuffer)
@@ -377,7 +387,7 @@ class BitmapCanvasView: UIView {
         
         // point size
         kBrushScale = Double(MathUtil.map(value: brushDiameter, low1: 1, high1: 100, low2: 64, high2: 1000))
-        print("kbrushscale =",kBrushScale,brushDiameter,brushTexture.width)
+       //print("kbrushscale =",kBrushScale,brushDiameter,brushTexture.width)
         glUniform1f(program[PROGRAM_POINT].uniform[UNIFORM_POINT_SIZE],GLfloat(kBrushScale))
         
     }
@@ -527,7 +537,7 @@ class BitmapCanvasView: UIView {
         brushColor[2] = blue.f// * kBrushOpacity.f
         brushColor[3] = 0.5;
         
-        print("setting alpha",brushColor[3])
+        //print("setting alpha",brushColor[3])
         if initialized {
             glUseProgram(program[PROGRAM_POINT].id)
             glUniform4fv(program[PROGRAM_POINT].uniform[UNIFORM_VERTEX_COLOR], 1, brushColor)

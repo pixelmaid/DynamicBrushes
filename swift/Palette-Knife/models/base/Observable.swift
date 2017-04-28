@@ -62,16 +62,14 @@ class Observable<T>:Object, DisposableObservable {
     }
     
     func unsubscribe(id:String){
-        print("unsubscribe called\(id,subscribers)");
         subscribers.removeValue(forKey: id)
     }
     
     func destroy(){
-        print("observable being destroyed:",self,self.name);
         for observable in observables {
             observable.destroy();
         }
-        self.didChange.removeAllHandlers(target: self);
+        self.didChange.removeAllHandlers();
         self.subscribers.removeAll();
         self.constraintTarget = nil;
         

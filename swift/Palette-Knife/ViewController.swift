@@ -27,16 +27,19 @@ let kTopMargin =	10.0
 let kRightMargin =      10.0
 
 
-class ViewController: UIViewController, Requester {
+class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
     
     
     // MARK: Properties
     
-    @IBOutlet weak var dualBrushButton: UIButton!
-    @IBOutlet weak var largeBrushButton: UIButton!
-    @IBOutlet weak var smallBrushButton: UIButton!
-    @IBOutlet weak var bitmapView: BitmapCanvasView!
+    //@IBOutlet weak var bitmapView: BitmapCanvasView!
+    @IBOutlet weak var eraseButton: UIButton!
+    @IBOutlet weak var addLayerButton: UIButton!
+    @IBOutlet weak var layerContainerView: UIView!
+    
+    var layers = [BitmapCanvasView]();
+    var activeLayer:BitmapCanvasView?
     
     //var canvasViewLg:CanvasView
     
@@ -46,13 +49,6 @@ class ViewController: UIViewController, Requester {
     // var canvasViewBakeLg:CanvasView;
     
     
-    @IBOutlet weak var xOutput: UITextField!
-    
-    @IBOutlet weak var yOutput: UITextField!
-    
-    @IBOutlet weak var zOutput: UITextField!
-    
-    @IBOutlet weak var statusOutput: UITextField!
     
     
     
@@ -78,11 +74,9 @@ class ViewController: UIViewController, Requester {
         
         GCodeGenerator.setCanvasOffset(x: Float(sX),y:Float(sY));
         
-        //canvasViewLg = CanvasView(frame: CGRect(x:sX, y:sY, width:CGFloat(GCodeGenerator.pX), height:CGFloat(GCodeGenerator.pY)))
-        
-        //bitmapView = BitmapCanvasView(frame:CGRect(x:sX, y:sY, width:CGFloat(GCodeGenerator.pX), height:CGFloat(GCodeGenerator.pY)))
         
         backView = UIImageView(frame: CGRect(x:sX, y:sY, width:CGFloat(GCodeGenerator.pX), height:CGFloat(GCodeGenerator.pY)))
+        
         
         super.init(coder: coder);
         
@@ -92,23 +86,9 @@ class ViewController: UIViewController, Requester {
     override func viewDidLoad() {
         
         
+        
         super.viewDidLoad()
         
-        
-     //   canvasViewLg.backgroundColor=UIColor.clear
-      //  self.view.addSubview(canvasViewLg)
-      //self.view.addSubview(bitmapView);
-        
-        
-
-        
-        //self.view.sendSubview(toBack: bitmapView)
-        //self.view.sendSubview(toBack: canvasViewLg)
-        
-        //canvasViewLg.alpha = 1;
-        
-        
-       // self.fabricatorView.drawFabricatorPosition(x: Float(0), y: Float(0), z: Float(0))
         self.initCanvas()
         
         _ = RequestHandler.dataEvent.addHandler(target: self, handler: ViewController.processRequestHandler, key: dataEventKey)
@@ -124,12 +104,36 @@ class ViewController: UIViewController, Requester {
         RequestHandler.addRequest(requestData:configureRequest);
         RequestHandler.addRequest(requestData:connectRequest);
         RequestHandler.addRequest(requestData:behaviorDownloadRequest);
+       
+        newLayer(sender: nil);
         
+        eraseButton.addTarget(self, action: #selector(ViewController.onErase), for: .touchUpInside)
+        addLayerButton.addTarget(self, action: #selector(ViewController.newLayer), for: .touchUpInside)
+
+        
+    }
+    
+    func newLayer(sender: UIButton!){
+        print("new layer created")
+        let screenSize = layerContainerView.bounds
+        let origin = layerContainerView.frame.origin
+        activeLayer = BitmapCanvasView(frame: CGRect(x:origin.x, y:origin.y, width:screenSize.width, height:screenSize.height))
+        self.layers.append(activeLayer!)
+        layerContainerView.addSubview(activeLayer!)
+        
+        
+    }
+    
+    func onErase(sender: UIButton!) {
+        if(activeLayer != nil){
+            activeLayer!.erase();
+        }
     }
     
     internal func processRequestHandler(data: (String, JSON?), key: String) {
         self.processRequest(data:data)
     }
+    
     
     
     //from Requester protocol. Handles result of request
@@ -249,7 +253,7 @@ class ViewController: UIViewController, Requester {
         var loadJSON:JSON = [:]
         loadJSON["filename"] = JSON(filename);
         loadJSON["type"] = JSON("load")
-
+        
         loadJSON["targetFolder"] = JSON("saved_files")
         let request = Request(target: "storage", action: "download", data: loadJSON, requester: self)
         RequestHandler.addRequest(requestData: request);
@@ -288,135 +292,54 @@ class ViewController: UIViewController, Requester {
         
     }
     
-    
-    
-    func newCanvasClicked(sender: AnyObject?){
-        self.initCanvas();
-    }
-    
-    func newDrawingClicked(sender: AnyObject){
-        currentCanvas?.initDrawing();
-    }
-    
     func initCanvas(){
         currentCanvas = Canvas();
         behaviorManager = BehaviorManager(canvas: currentCanvas!);
-        //socketManager.initAction(target: currentCanvas!,type:"canvas_init");
-        //socketManager.initAction(stylus);
-        
         currentCanvas!.initDrawing();
         _ = currentCanvas!.geometryModified.addHandler(target: self,handler: ViewController.canvasDrawHandler, key:drawKey)
-        
-        
     }
-    
-    
-    //----------------------------------  HARDCODED BRUSHES ---------------------------------- //
-    func initDripBrush(){
-        let dripBehavior = behaviorManager?.initDripBehavior();
-        let dripBrush = Brush(name:"parentBehavior",behaviorDef: dripBehavior, parent:nil, canvas:self.currentCanvas!)
-        //socketManager.initAction(target: dripBrush,type:"brush_init");
-        
-    }
-    
-    
-    func initBakeBrush(){
-        let bake_behavior = behaviorManager?.initBakeBehavior();
-        bakeBrush = Brush(name:"bake_brush",behaviorDef: bake_behavior, parent:nil, canvas:self.currentCanvas!)
-        //socketManager.initAction(target: bakeBrush!,type:"brush_init");
-    }
-    
-    
-    func initRadialBrush(){
-        let radial_behavior = behaviorManager?.initRadialBehavior();
-        radialBrush = Brush(name:"radial",behaviorDef: radial_behavior, parent:nil, canvas:self.currentCanvas!)
-        // socketManager.initAction(target: radialBrush!,type:"brush_init");
-        
-    }
-    
-    func initFractalBrush(){
-        let rootBehavior = behaviorManager?.initFractalBehavior();
-        let rootBehaviorBrush = Brush(name:"rootBehaviorBrush",behaviorDef: rootBehavior, parent:nil, canvas:self.currentCanvas!)
-        //rootBehaviorBrush.strokeColor.b = 255;
-        // socketManager.initAction(target: rootBehaviorBrush,type:"brush_init");
-        
-        
-    }
-    
-    //---------------------------------- END HARDCODED BRUSHES ---------------------------------- //
-    
-    
     
     func canvasDrawHandler(data:(Geometry,String,String), key:String){
-        print("draw handler called")
-        switch data.2{
-            
-        case "DRAW":
-            switch data.1{
-            case "SEGMENT":
-                let seg = data.0 as! Segment
+        if(activeLayer != nil){
+            switch data.2{
                 
-                let prevSeg = seg.getPreviousSegment()
-                
-                if(prevSeg != nil){
-                    print("Rendering line")
+            case "DRAW":
+                switch data.1{
+                case "SEGMENT":
+                    let seg = data.0 as! Segment
                     
-                    let bounds = bitmapView.bounds
-                    var previousLocation = prevSeg!.point.toCGPoint();
-                    var location = seg.point.toCGPoint()
+                    let prevSeg = seg.getPreviousSegment()
+                    
+                    if(prevSeg != nil){
+                        
+                        let bounds = activeLayer!.bounds
+                        var previousLocation = prevSeg!.point.toCGPoint();
+                        var location = seg.point.toCGPoint()
                         location.y = bounds.size.height - location.y
                         previousLocation.y = bounds.size.height - previousLocation.y
-                    
-                    let color = seg.color.toCGColor().components;
-                    let alpha = seg.alpha;
-                    print("alpha = ",alpha);
-                    let diameter = seg.diameter;
-                    
-                    
-                    // Defer to the OpenGL view to set the brush color
-                    bitmapView.setBrushColor(red:color![0], green: color![1], blue: color![2], alpha: alpha)
-                    bitmapView.setBrushDiameter(brushDiameter: diameter)
-                
-
-                    
-                    bitmapView.renderLine(from:previousLocation, to: location);
-                    
-                    
-                    
+                        
+                        let color = seg.color.toCGColor().components;
+                        let alpha = seg.alpha;
+                        let diameter = seg.diameter;
+                        
+                        
+                        // Defer to the OpenGL view to set the brush color
+                        activeLayer!.setBrushColor(red:color![0], green: color![1], blue: color![2], alpha: alpha)
+                        activeLayer!.setBrushDiameter(brushDiameter: diameter)
+                        
+                        
+                        
+                        activeLayer!.renderLine(from:previousLocation, to: location);
+                        
+                        
+                        
+                    }
+                    break
+                default : break
                 }
-                break
-                /*case "ARC":
-                 let arc = data.0 as! Arc
-                 canvasView.drawArc(arc.center, radius: arc.radius, startAngle: arc.startAngle, endAngle: arc.endAngle, w: 10, c: Color(r:0,g:0,b:0))
-                 break*/
-                
-            case "LINE":
-                _ = data.0 as! Line
-                
-                break
-                
-            case "LEAF":
-                _ = data.0 as! StoredDrawing
-                
-                break
-                
-            case "FLOWER":
-                _ = data.0 as! StoredDrawing
-                
-                break
-                
-            case "POLYGON":
-                //canvasView.drawPath(stylus.prevPosition, tP:stylus.position, w:10, c:Color(r:0,g:0,b:0))
-                break
             default:
                 break
-                
             }
-            break
-        case "DELETE":
-            
-            break
-        default : break
         }
     }
     
@@ -429,9 +352,9 @@ class ViewController: UIViewController, Requester {
         
         if let touch = touches.first  {
             
-            _ = touch.location(in: bitmapView);
+            _ = touch.location(in: activeLayer!);
             _ = Float(touch.force);
-            _ = Float(touch.azimuthAngle(in: bitmapView))
+            _ = Float(touch.azimuthAngle(in: activeLayer!))
             if(downInCanvas){
                 stylus.onStylusUp()
                 downInCanvas = false
@@ -450,14 +373,14 @@ class ViewController: UIViewController, Requester {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = touches.first  {
-            let point = touch.location(in: bitmapView)
+            let point = touch.location(in: activeLayer)
             let x = Float(point.x)
             let y = Float(point.y)
             ;
             let force = Float(touch.force);
-            let angle = Float(touch.azimuthAngle(in: bitmapView))
-                stylus.onStylusDown(x: x, y:y, force:force, angle:angle)
-                downInCanvas = true;
+            let angle = Float(touch.azimuthAngle(in: activeLayer))
+            stylus.onStylusDown(x: x, y:y, force:force, angle:angle)
+            downInCanvas = true;
             
             // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
             // socketManager.sendStylusData();
@@ -475,19 +398,51 @@ class ViewController: UIViewController, Requester {
         
         if let touch = touches.first  {
             
-            let point = touch.location(in: bitmapView);
+            let point = touch.location(in: activeLayer);
             let x = Float(point.x)
             let y = Float(point.y)
             let force = Float(touch.force);
-            let angle = Float(touch.azimuthAngle(in: bitmapView))
+            let angle = Float(touch.azimuthAngle(in: activeLayer))
             
-                stylus.onStylusMove(x: x, y:y, force:force, angle:angle)
-                downInCanvas = true;
-                
-                        // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
+            stylus.onStylusMove(x: x, y:y, force:force, angle:angle)
+            downInCanvas = true;
+            
+            // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
             // socketManager.sendStylusData();
         }
         
+    }
+    
+    
+    
+    @IBAction func handlePinch(recognizer : UIPinchGestureRecognizer) {
+        print("pinch")
+        if let view = recognizer.view {
+            view.transform = view.transform.scaledBy(x: recognizer.scale, y: recognizer.scale)
+            recognizer.scale = 1
+        }
+    }
+    
+    @IBAction func handleRotate(recognizer : UIRotationGestureRecognizer) {
+        print("rotate")
+
+        if let view = recognizer.view {
+            view.transform = view.transform.rotated(by: recognizer.rotation)
+            recognizer.rotation = 0
+        }
+    }
+    
+    @IBAction func handlePan(recognizer:UIPanGestureRecognizer) {
+        let translation = recognizer.translation(in: self.view)
+        if let view = recognizer.view {
+            view.center = CGPoint(x:view.center.x + translation.x,
+                                  y:view.center.y + translation.y)
+        }
+        recognizer.setTranslation(CGPoint.zero, in: self.view)
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
     }
     
     

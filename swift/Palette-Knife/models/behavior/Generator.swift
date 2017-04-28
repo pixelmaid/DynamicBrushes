@@ -155,7 +155,6 @@ class LogiGrowthGenerator: Generator{
     override func get(id:String?) -> Float {
         self.val = a/(1+pow(2.7182818284590451,0-(x*k-b)))+1
         self.x += 1;
-        print("logigrowth value \(val,x)");
         return self.val
     }
 
@@ -217,7 +216,6 @@ class Sine:Generator{
     override func get(id:String?) -> Float {
         let v =  sin(self.index.get(id: nil)*freq+phase)*amp+amp;
         self.incrementIndex();
-        print("returning sine value of \(v)");
         return v;
     }
 

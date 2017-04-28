@@ -42,7 +42,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     let distance:Observable<Float>
     let xDistance:Observable<Float>
     let yDistance:Observable<Float>
-
+    
+    var time:Observable<Float>
     let index:Observable<Float>
     
     let diameter:Observable<Float>
@@ -66,6 +67,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var geometryModified = Event<(Geometry,String,String)>()
     var transmitEvent = Event<(String)>()
     var initEvent = Event<(WebTransmitter,String)>()
+    var dieEvent = Event<(String)>()
+
     let removeMappingEvent = Event<(Brush,String,Observable<Float>)>()
     let removeTransitionEvent = Event<(Brush,String,Emitter)>()
     //Events
@@ -108,6 +111,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.yDistance = Observable<Float>(0)
         
         self.index = Observable<Float>(0)
+        self.time = Observable<Float>(0)
         
         self.diameter = Observable<Float>(1)
         self.alpha = Observable<Float>(1)
@@ -129,6 +133,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
 
        super.init()
         
+        //TODO: this code is annoying because KVC assigment issues. Find a fix?
+        self.time = _time
         //==BEGIN APPEND OBSERVABLES==//
         observables.append(position)
         observables.append(delta)
@@ -183,7 +189,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         if(behaviorDef != nil){
             behaviorDef?.addBrush(targetBrush: self)
         }
-       
+        print("brush time \(self["time"],self["position"])");
     }
     
     
@@ -206,12 +212,12 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
         let setupTransition = self.getTransitionByName(name: "setup");
         if(setupTransition != nil){
-            print("setup transition called for \(self.id),\(self.index.get(id:nil))");
+            //print("setup transition called for \(self.id),\(self.index.get(id:nil))");
 
             self.transitionToState(transition: setupTransition!)
         }
         else{
-            print("no setup transition called for \(self.id),\(self.index.get(id:nil))");
+            //print("no setup transition called for \(self.id),\(self.index.get(id:nil))");
         }
     }
     
@@ -268,7 +274,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         let _dy = self.position.y.get(id: nil)+delta.y.get(id: nil);
         
         let transformedCoords = self.matrix.transformPoint(x: _dx, y: _dy)
-        print("pos\(_dx,_dy,delta.y.getSilent(),delta.y.getSilent())))")
+        //print("pos\(_dx,_dy,delta.y.getSilent(),delta.y.getSilent())))")
         
         
         let xDelt = delta.x.get(id: nil);
@@ -289,7 +295,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         let color = Color(h: self.hue.get(id: nil), s: self.saturation.get(id: nil), l: self.lightness.get(id: nil), a: 1)
         self.currentCanvas!.currentDrawing!.addSegmentToStroke(parentID: self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight:cweight , color: color,alpha:self.alpha.get(id:nil));
         self.position.set(x:_dx,y:_dy);
-        print("brush moved \(transformedCoords.0,transformedCoords.1,cweight)")
+        //print("brush moved \(transformedCoords.0,transformedCoords.1,cweight)")
         
     }
     
@@ -331,12 +337,12 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         }
         self.currentState = transition.toStateId;
         self.raiseBehaviorEvent(d: states[currentState]!.toJSON(), event: "state")
-        print("transitioning to state \(states[currentState]?.name, self.name)")
+        //print("transitioning to state \(states[currentState]?.name, self.name)")
         self.executeTransitionMethods(methods: transition.methods)
         
         constraint_mappings =  states[currentState]!.constraint_mappings
         for (key, value) in constraint_mappings{
-            print("constraining:\(key,value)");
+            //print("constraining:\(key,value)");
             value.relativeProperty.constrained = true;
         }
         //execute methods
@@ -347,7 +353,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         _  = Timer.scheduledTimer(timeInterval: 0.00001, target: self, selector: #selector(Brush.completeCallback), userInfo: nil, repeats: false)
         
         if(states[currentState]?.name == "die"){
-            print("transitioning to die state!!!");
+           // print("transitioning to die state!!!");
             self.die();
         }
     }
@@ -374,7 +380,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 }
             }
             else{
-                print("key 0",key.0);
+                //print("key 0",key.0);
                  NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STATE_COMPLETE"])
             }
             
@@ -392,7 +398,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             switch (methodName){
             case "newStroke":
                 let arg = method.arguments![0];
-                print("set origin argument \(method.arguments![0])");
+                //print("set origin argument \(method.arguments![0])");
                 if  let arg_string = arg as? String {
                     if(arg_string  == "parent_position"){
                         self.setOrigin(p: self.parent!.position)
@@ -406,15 +412,15 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
 
                 self.newStroke();
                 break;
-            case "startInterval":
+            case "startTimer":
                 self.startInterval();
                 break;
-            case "stopInterval":
+            case "stopTimer":
                 self.stopInterval();
                 break;
             case "setOrigin":
                 let arg = method.arguments![0];
-                print("set origin argument \(method.arguments![0])");
+                //print("set origin argument \(method.arguments![0])");
                 if  let arg_string = arg as? String {
                     if(arg_string  == "parent_position"){
                         self.setOrigin(p: self.parent!.position)
@@ -429,7 +435,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 self.destroy();
                 break;
             case "spawn":
-                print("spawning brush")
+                //print("spawning brush")
                 let arg = method.arguments![0];
                 let behaviorDef:BehaviorDefinition!;
                let arg_string = arg as? String
@@ -467,17 +473,16 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
      //or generators and buffers which will return a new value each time they are accessed
      */
     func addConstraint(id:String,reference:Observable<Float>, relative:Observable<Float>, stateId:String, type:String){
-        //let stateKey = NSUUID().UUIDString; 
-        print("adding constraint \(type,reference,relative,stateId)")
+        //print("adding constraint \(type,reference,relative,stateId)")
         if(type == "active"){
             reference.subscribe(id: self.id);
-            reference.didChange.addHandler(target: self, handler:  Brush.setHandler, key:id)
+           _ = reference.didChange.addHandler(target: self, handler:  Brush.setHandler, key:id)
         }
             
         else if(type == "passive"){
             relative.passiveConstrain(target: reference);
         }
-        print("target state = \(stateId)");
+        //print("target state = \(stateId)");
         states[stateId]!.addConstraintMapping(key: id,reference:reference,relativeProperty: relative,type:type)
     }
     
@@ -517,13 +522,13 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     }
     
     func removeStateTransition(data:(Brush, String, Emitter),key:String){
-        print("removing state transition \(key)");
+        //print("removing state transition \(key)");
         NotificationCenter.default.removeObserver(data.0, name: NSNotification.Name(rawValue: data.1), object: data.2)
         data.2.removeKey(key: data.1)
     }
     
     func addMethod(transitionId:String, methodId:String, methodName:String, arguments:[Any]?){
-        print("adding method \(methodId) for transition \(transitionId,transitions)");
+        //print("adding method \(methodId) for transition \(transitionId,transitions)");
         
         (transitions[transitionId]!).addMethod(id: methodId, name:methodName,arguments:arguments)
         
@@ -600,6 +605,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     
     func die(){
+        self.dieEvent.raise(data:(self.id));
         self.destroy();
     }
     
@@ -628,11 +634,12 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     
     func clearAllEventHandlers(){
-    self.initEvent.removeAllHandlers(target: self)
-    self.geometryModified.removeAllHandlers(target: self)
-    self.transmitEvent.removeAllHandlers(target: self)
-    self.removeMappingEvent.removeAllHandlers(target: self)
-    self.removeTransitionEvent.removeAllHandlers(target: self)
+    self.initEvent.removeAllHandlers()
+    self.geometryModified.removeAllHandlers()
+    self.transmitEvent.removeAllHandlers()
+    self.removeMappingEvent.removeAllHandlers()
+    self.removeTransitionEvent.removeAllHandlers()
+    self.dieEvent.removeAllHandlers()
     }
     
     override func destroy() {

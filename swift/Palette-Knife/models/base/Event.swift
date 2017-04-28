@@ -7,6 +7,7 @@
 
 
 public protocol Disposable {
+    var key:String { get }
     func dispose()
 }
 
@@ -39,20 +40,19 @@ public class Event<T> {
     }
     
     /// removes the given handler that matches the key
-    public func removeHandler<U: AnyObject>(target:U, key:String){
+    public func removeHandler(key:String){
        for i in 0..<eventHandlers.count{
         let e = eventHandlers[i]
-            let eW = e as! EventHandlerWrapper<U,T>
+            let eW = e as! Disposable
             if eW.key == key{
                 print("found event handler for key to remove\(key)")
-                eventHandlers.remove(at: i);
                 eW.dispose();
                 return;
             }
         }
     }
     
-    public func removeAllHandlers<U: AnyObject>(target:U){
+    public func removeAllHandlers(){
         self.eventHandlers.removeAll();
     }
     

@@ -30,7 +30,7 @@ class CanvasView:  UIImageView {
         let context = UIGraphicsGetCurrentContext()!
         self.image?.draw(in: CGRect(x: 0, y: 0, width: self.frame.size.width, height: self.frame.size.height))
         
-        print("redraw all strokes \(strokeList.count)");
+        //print("redraw all strokes \(strokeList.count)");
         
         for i in 0..<strokeList.count{
             let stroke = strokeList[i];
@@ -47,7 +47,7 @@ class CanvasView:  UIImageView {
         for j in 1..<stroke.segments.count{
           
             let seg = stroke.segments[j];
-            print("segment color \(seg.color)")
+            //print("segment color \(seg.color)")
             let c = seg.color;
             let d = seg.diameter
             

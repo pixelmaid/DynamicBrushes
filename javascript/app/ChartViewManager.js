@@ -477,7 +477,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                         id: setupId,
                         mappings: [],
                         x: 20,
-                        y: 150
+                        y: 200
                     };
 
                     var dieData = {
@@ -485,7 +485,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                         id: dieId,
                         mappings: [],
                         x: 1000,
-                        y: 150
+                        y: 200
                     };
 
                     var data = {
@@ -792,7 +792,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                     targetTransition: transitionId,
                     methodId: methodId,
                     targetMethod: targetMethod,
-                    args: args,
+                    currentArguments: args,
                     type: "method_argument_changed"
                 };
 

@@ -32,7 +32,7 @@ class BehaviorManager{
     }
     
     func loadBehavior(json:JSON){
-            print("json =\(json)")
+            //print("json =\(json)")
             self.loadBehaviorsFromJSON(json: json, rewriteAll: true)
     }
     
@@ -62,7 +62,6 @@ class BehaviorManager{
     func handleAuthoringRequest(authoring_data:JSON) throws->JSON{
         let data = authoring_data["data"] as JSON;
         let type = data["type"].stringValue;
-        print("authoring request \(type)");
         var resultJSON:JSON = [:]
         resultJSON["type"] = JSON("authoring_response");
         resultJSON["authoring_type"] = JSON(type);
@@ -73,6 +72,13 @@ class BehaviorManager{
             let behavior = BehaviorManager.behaviors[behaviorId]!;
             let active_status = data["active_status"].boolValue;
             behavior.setActiveStatus(status:active_status);
+            if(active_status){
+            behavior.setAutoSpawnNum(num: 1)
+            }
+            else{
+                behavior.setAutoSpawnNum(num: 0)
+  
+            }
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)
             resultJSON["result"] = "success";
             return resultJSON;
@@ -90,7 +96,7 @@ class BehaviorManager{
             let id = data["id"].stringValue;
             let setupId = data["setupId"].stringValue;
             let endId = data["dieId"].stringValue;
-            print("behaviors with name\(name, BehaviorManager.behaviors[name])");
+            //print("behaviors with name\(name, BehaviorManager.behaviors[name])");
             
             let behavior = BehaviorDefinition(id:data["id"].stringValue, name: data["name"].stringValue);
             if(BehaviorManager.behaviors[id] != nil){
@@ -130,7 +136,7 @@ class BehaviorManager{
             return resultJSON
             
         case "state_added":
-            print("state added behaviors\(BehaviorManager.behaviors.count,data["behaviorId"].stringValue,BehaviorManager.behaviors)");
+           // print("state added behaviors\(BehaviorManager.behaviors.count,data["behaviorId"].stringValue,BehaviorManager.behaviors)");
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseStateJSON(data:data);
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)
             
@@ -198,7 +204,7 @@ class BehaviorManager{
         case "method_removed":
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.removeMethod(methodId: data["methodId"].stringValue)
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas);
-            print("removed method");
+            //print("removed method");
             resultJSON["result"] = "success";
             return resultJSON;
             
@@ -214,7 +220,7 @@ class BehaviorManager{
         case "mapping_updated":
             let behaviorId = data["behaviorId"].stringValue;
             
-            print("behavior update mapping, target state:\(data["stateId"].stringValue)");
+            //print("behavior update mapping, target state:\(data["stateId"].stringValue)");
             
             BehaviorManager.behaviors[behaviorId]!.parseMappingJSON(data: data)
             BehaviorManager.behaviors[behaviorId]!.createBehavior(canvas:canvas)

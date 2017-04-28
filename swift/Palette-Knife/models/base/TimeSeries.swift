@@ -13,13 +13,13 @@ class TimeSeries: Emitter{
     var timer:NSDate!
     var intervalTimer:Timer!
     //TODO: this is duplication to facilitate KVC- should be removed/fixed
-    var time:Observable<Float>
+    internal let _time:Observable<Float>
     
     override init(){
         
         //==BEGIN OBSERVABLES==//
-        self.time = Observable<Float>(0)
-        time.name = "time";
+        self._time = Observable<Float>(0)
+        _time.name = "time";
 
         //==END OBSERVABLES==//
 
@@ -28,7 +28,7 @@ class TimeSeries: Emitter{
         super.init()
         
         //==BEGIN APPEND OBSERVABLES==//
-        observables.append(time);
+        observables.append(_time);
         //==END APPEND OBSERVABLES==//
 
         self.events =  ["TIME_INTERVAL"]
@@ -44,6 +44,7 @@ class TimeSeries: Emitter{
     }
     
     func startInterval(){
+        print("start interval")
        // if(intervalTimer == nil){
         intervalTimer  = Timer.scheduledTimer(timeInterval: 0.0001, target: self, selector: #selector(TimeSeries.timerIntervalCallback), userInfo: nil, repeats: true)
         //}
@@ -66,9 +67,10 @@ class TimeSeries: Emitter{
     
     @objc func timerIntervalCallback()
     {
+        
         let currentTime = NSDate();
         let t = Float(currentTime.timeIntervalSince(timer as Date))
-        self.time.set(newValue: t)
+        self._time.set(newValue: t)
         for key in keyStorage["TIME_INTERVAL"]!
         {
             
@@ -76,7 +78,7 @@ class TimeSeries: Emitter{
                 let condition = key.1;
                 let evaluation = condition?.evaluate();
                 if(evaluation)!{
-                    
+                    print("interval worked?")
                     NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"TIME_INTERVAL"])
                 }
             }

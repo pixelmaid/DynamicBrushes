@@ -149,7 +149,7 @@ class RequestHandler{
         print("socket request handler called \(RequestHandler.activeItem)")
         
         if(RequestHandler.activeItem != nil){
-            RequestHandler.socketManager.requestEvent.removeHandler(target:self, key: RequestHandler.socketKey)
+            RequestHandler.socketManager.requestEvent.removeHandler(key: RequestHandler.socketKey)
             
             RequestHandler.activeItem?.requester.processRequest(data:data)
             print("setting handler to nil \(RequestHandler.activeItem?.action)")
@@ -167,7 +167,7 @@ class RequestHandler{
         print("save request handler called \(RequestHandler.activeItem)")
         if(RequestHandler.activeItem != nil){
             let activeItem = RequestHandler.activeItem;
-            RequestHandler.saveManager.requestEvent.removeHandler(target:self, key: RequestHandler.storageKey)
+            RequestHandler.saveManager.requestEvent.removeHandler(key: RequestHandler.storageKey)
             activeItem?.requester.processRequest(data:data)
             print("setting handler to nil \(RequestHandler.activeItem?.action)")
 

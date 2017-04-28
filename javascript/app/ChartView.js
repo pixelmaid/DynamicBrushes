@@ -211,7 +211,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                             if (name !== null) {
                                 data.name = name;
                                 self.trigger("ON_STATE_ADDED", [x, y, data]);
-                                
+
                             }
                             $(ui.helper).remove(); //destroy clone
                             $(ui.draggable).remove(); //remove from list
@@ -576,9 +576,9 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 if (data.hasArguments) {
                     methodTemplateData.argumentList = argumentList;
                     methodTemplateData.hasArguments = true;
-                    if (data.currentArgument) {
-                        methodTemplateData.defaultArgumentName = data.methodArguments[data.currentArgument];
-                        methodTemplateData.defaultArgumentId = data.currentArgument;
+                    if (data.currentArguments) {
+                        methodTemplateData.defaultArgumentName = data.methodArguments[data.currentArguments[0]];
+                        methodTemplateData.defaultArgumentId = data.currentArguments[0];
 
                     } else {
                         methodTemplateData.defaultArgumentName = data.methodArguments[data.defaultArgument];
@@ -588,6 +588,13 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     methodTemplateData.methodTextId = data.methodId + "_text";
                     if (data.targetMethod == "spawn") {
                         methodTemplateData.methodNumberId = data.methodId + "_num";
+                        if (data.currentArguments) {
+                            methodTemplateData.defaultNumberArgument = data.currentArguments[1];
+
+                        } else {
+                            methodTemplateData.defaultNumberArgument = 1;
+                        }
+
                     }
 
                 }

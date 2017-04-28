@@ -44,7 +44,7 @@ class State {
         
         constraint_mappings[key]!.relativeProperty.constrained = false;
         constraint_mappings[key]!.reference.unsubscribe(id:brush.id);
-        constraint_mappings[key]!.reference.didChange.removeHandler(target:brush, key:key)
+        constraint_mappings[key]!.reference.didChange.removeHandler(key:key)
         constraint_mappings[key]!.relativeProperty.constraintTarget = nil;
        return constraint_mappings.removeValue(forKey: key)
     }
