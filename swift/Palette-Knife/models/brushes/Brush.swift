@@ -7,6 +7,28 @@
 //
 import Foundation
 
+struct DeltaStorage{
+    var dX = Float(0)
+    var dY = Float(0)
+    //var pX = Float(0)
+    //var pY = Float(0)
+    //var oX = Float(0)
+    //var oY = Float(0)
+    var r = Float(0)
+    var sX = Float(0)
+    var sY = Float(0)
+    var rX = Float(0)
+    var rY = Float(0)
+    var d = Float(0)
+    var h = Float(0)
+    var s = Float(0)
+    var l = Float(0)
+    var a = Float(0)
+    var dist = Float(0);
+    var xDist = Float(0);
+    var yDist = Float(0);
+}
+
 class Brush: TimeSeries, WebTransmitter, Hashable{
     
     //hierarcical data
@@ -82,6 +104,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var drawKey = NSUUID().uuidString;
     var bufferKey = NSUUID().uuidString;
 
+    var deltaChangeBuffer = [DeltaStorage]();
    
     init(name:String, behaviorDef:BehaviorDefinition?, parent:Brush?, canvas:Canvas){
        
@@ -190,6 +213,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             behaviorDef?.addBrush(targetBrush: self)
         }
         print("brush time \(self["time"],self["position"])");
+        self.delta.name = "delta_"+self.id;
     }
     
     
@@ -243,66 +267,109 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         bufferLimitX.set(newValue: 1)
     }
     
-    
-    
     func deltaChange(data:(String,(Float,Float),(Float,Float)),key:String){
+       // DispatchQueue.global(qos: .userInitiated).async {
+        let dX = self.dx.get(id:nil)
+        let dY = self.dy.get(id:nil)
+        
+        //let pX = self.position.x.get(id:nil);
+        //let pY = self.position.y.get(id:nil);
+        
+        //let oX = self.origin.x.get(id:nil)
+        //let oY = self.origin.y.get(id:nil)
+        
+        let r = self.rotation.get(id:nil)
+        
+        let sX = self.scaling.x.get(id:nil)
+        let sY = self.scaling.y.get(id:nil)
+        
+        let rX = self.reflectX.get(id:nil)
+        let rY = self.reflectY.get(id:nil)
+        
+        let d = self.diameter.get(id:nil)
+        let h = self.hue.get(id:nil)
+        let s = self.saturation.get(id:nil)
+        let l = self.lightness.get(id:nil)
+        let a = self.alpha.get(id:nil)
+
+        let dist = self.distance.get(id:nil);
+        let xDist = self.xDistance.get(id:nil);
+        let yDist = self.yDistance.get(id:nil);
+            
+        let ds = DeltaStorage(dX:dX,dY:dY,r:r,sX:sX,sY:sY,rX:rX,rY:rY,d:d,h:h,s:s,l:l,a:a,dist:dist,xDist:xDist,yDist:yDist)
+        
+       
+            
+            //DispatchQueue.main.async {
+                self.processDeltaBuffer(ds:ds)
+          //  }
+        //}
+    }
+    
+    func processDeltaBuffer(ds:DeltaStorage){
         
         //  print("angle\(self.angle.get(nil),self.index.get(nil)))")
-        let centerX = origin.x.get(id: nil);
-        let centerY = origin.y.get(id: nil);
+        let centerX = self.origin.x.get(id:nil)
+        let centerY =  self.origin.y.get(id:nil)
         
         self.matrix.reset();
         if(self.parent != nil){
             self.matrix.prepend(mx: self.parent!.matrix)
         }
-        var xScale = self.scaling.x.get(id: nil);
-        /* if((self.index.get(nil)%2==0) && (self.parent != nil)){
-         self.reflectY.set(1);
-         }*/
+        var xScale = ds.sX
         
-        if(self.reflectX.get(id: nil)==1){
+        if(ds.rX == 1){
             
             xScale *= -1.0;
         }
-        var yScale = self.scaling.y.get(id: nil);
-        if(self.reflectY.get(id: nil)==1){
+        var yScale = ds.sY
+        if(ds.rY == 1){
             yScale *= -1.0;
         }
+        let r = ds.r
         self.matrix.scale(x: xScale, y: yScale, centerX: centerX, centerY: centerY);
-        self.matrix.rotate(_angle: self.rotation.get(id: nil), centerX: centerX, centerY: centerY)
-        let _dx = self.position.x.get(id: nil)+delta.x.get(id: nil);
-        let _dy = self.position.y.get(id: nil)+delta.y.get(id: nil);
+        self.matrix.rotate(_angle: r, centerX: centerX, centerY: centerY)
+       
+        let xDelt = ds.dX
+        let yDelt = ds.dY
+        
+        let _dx = self.position.x.get(id:nil) + xDelt;
+        let _dy = self.position.y.get(id:nil) + yDelt;
         
         let transformedCoords = self.matrix.transformPoint(x: _dx, y: _dy)
         //print("pos\(_dx,_dy,delta.y.getSilent(),delta.y.getSilent())))")
-        
-        
-        let xDelt = delta.x.get(id: nil);
-        let yDelt = delta.y.get(id: nil);
-        
-        self.distance.set(newValue: self.distance.get(id: nil)+sqrt(pow(xDelt,2)+pow(yDelt,2)));
-        self.xDistance.set(newValue: self.xDistance.get(id: nil)+abs(xDelt));
-        self.yDistance.set(newValue: self.yDistance.get(id: nil)+abs(yDelt));
-        
-        xBuffer.push(v: xDelt);
+
+        self.distance.set(newValue: ds.dist + sqrt(pow(xDelt,2)+pow(yDelt,2)));
+        self.xDistance.set(newValue: ds.xDist + abs(xDelt));
+        self.yDistance.set(newValue: ds.yDist + abs(yDelt));
         
         xBuffer.push(v: xDelt);
         yBuffer.push(v: yDelt);
+        
         bufferLimitX.set(newValue: 0)
         bufferLimitY.set(newValue: 0)
-        let cweight = self.diameter.get(id: nil);
-        weightBuffer.push(v: cweight);
-        let color = Color(h: self.hue.get(id: nil), s: self.saturation.get(id: nil), l: self.lightness.get(id: nil), a: 1)
-        self.currentCanvas!.currentDrawing!.addSegmentToStroke(parentID: self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight:cweight , color: color,alpha:self.alpha.get(id:nil));
-        self.position.set(x:_dx,y:_dy);
-        //print("brush moved \(transformedCoords.0,transformedCoords.1,cweight)")
         
+        let cweight = ds.d;
+        weightBuffer.push(v: cweight);
+       
+        let color = Color(h: ds.h, s: ds.s, l: ds.l, a: 1)
+       
+        self.currentCanvas!.currentDrawing!.addSegmentToStroke(parentID: self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight:cweight , color: color,alpha:ds.a)
+        
+        self.position.set(x:_dx,y:_dy);
+
+        // print("brush moved \(transformedCoords.0,transformedCoords.1,cweight)")
+       // print("brush moved \(xDelt,yDelt,self.id)")
     }
     
     
     func setOrigin(p:Point){
-        self.origin.set(val:p);
-        self.position.set(val:origin)
+        /*  DispatchQueue.global(qos: .userInitiated).async {
+            DispatchQueue.main.async {*/
+            self.origin.set(val:p);
+                self.position.set(val:self.origin)
+           // }
+        //}
         
     }
     
@@ -341,8 +408,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.executeTransitionMethods(methods: transition.methods)
         
         constraint_mappings =  states[currentState]!.constraint_mappings
-        for (key, value) in constraint_mappings{
-            //print("constraining:\(key,value)");
+        for (_, value) in constraint_mappings{
             value.relativeProperty.constrained = true;
         }
         //execute methods
@@ -394,7 +460,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         for i in 0..<methods.count{
             let method = methods[i];
             let methodName = method.name;
-            print("executing method:\(method.name)");
+            print("executing method:\(method.name,self.id,self.name)");
             switch (methodName){
             case "newStroke":
                 let arg = method.arguments![0];

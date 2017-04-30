@@ -265,6 +265,12 @@ class BehaviorDefinition {
             self.addSine(name: data["generatorId"].stringValue, freq: data["freq"].floatValue, amp: data["amp"].floatValue, phase: data["phase"].floatValue);
             
             break;
+            
+        case "ease":
+            print("adding ease\(data["k"])")
+            self.addEaseGenerator(name: data["generatorId"].stringValue, a: data["a"].floatValue, b: data["b"].floatValue, k: data["k"].floatValue);
+            
+            break;
         case "interval":
             var  times:Int? = nil
             if (data["times"] != JSON.null){
@@ -273,6 +279,7 @@ class BehaviorDefinition {
             self.addInterval(name: data["generatorId"].stringValue, inc: data["inc"].floatValue, times:times );
             
             break;
+        
         case "index":
             self.addIndex(name: data["generatorId"].stringValue);
             
@@ -444,6 +451,11 @@ class BehaviorDefinition {
                 generatorJSON["freq"] = JSON(data.1[0]!)
                 generatorJSON["amp"] = JSON(data.1[1]!)
                 generatorJSON["phase"] = JSON(data.1[2]!)
+                break;
+            case "ease":
+                generatorJSON["a"] = JSON(data.1[0]!)
+                generatorJSON["b"] = JSON(data.1[1]!)
+                generatorJSON["k"] = JSON(data.1[2]!)
                 break;
             case "interval":
                 generatorJSON["inc"] = JSON(data.1[0]!)
@@ -730,9 +742,9 @@ class BehaviorDefinition {
         generators[name] = ("random",[min,max]);
     }
     
-    func addLogiGrowthGenerator(name:String,a:Float,b:Float,k:Float){
+    func addEaseGenerator(name:String,a:Float,b:Float,k:Float){
         
-        generators[name] = ("logigrowth",[a,b,k]);
+        generators[name] = ("ease",[a,b,k]);
     }
     
     
@@ -939,9 +951,9 @@ class BehaviorDefinition {
         case "random":
             let random = RandomGenerator(start:data.1[0] as! Float, end:data.1[1] as! Float)
             storedGenerators[id]![name] = random;
-        case "logigrowth":
-            let logigrowth = LogiGrowthGenerator(a: data.1[0] as! Float, b:  data.1[1] as! Float, k:  data.1[2] as! Float)
-            storedGenerators[id]![name] = logigrowth;
+        case "ease":
+            let ease = Ease(a: data.1[0] as! Float, b:  data.1[1] as! Float, k:  data.1[2] as! Float)
+            storedGenerators[id]![name] = ease;
             
             break;
         case "alternate":
@@ -953,6 +965,7 @@ class BehaviorDefinition {
         case "index":
             let index = Index(val:targetBrush.index);
             storedGenerators[id]![name] = index;
+        
         default:
             break;
         }
@@ -1296,9 +1309,10 @@ class BehaviorDefinition {
             else{
                 //print("could not generate mapping \(id) because reference is nil")
             }
-            targetBrush.setupTransition();
             
         }
+        targetBrush.setupTransition();
+
     }
     
 }

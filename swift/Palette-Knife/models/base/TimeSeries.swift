@@ -68,17 +68,17 @@ class TimeSeries: Emitter{
     @objc func timerIntervalCallback()
     {
         
-        let currentTime = NSDate();
+               let currentTime = NSDate();
         let t = Float(currentTime.timeIntervalSince(timer as Date))
         self._time.set(newValue: t)
         for key in keyStorage["TIME_INTERVAL"]!
         {
-            
+ 
             if(key.1 != nil){
                 let condition = key.1;
                 let evaluation = condition?.evaluate();
+
                 if(evaluation)!{
-                    print("interval worked?")
                     NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"TIME_INTERVAL"])
                 }
             }

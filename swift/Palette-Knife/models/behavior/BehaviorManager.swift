@@ -405,7 +405,7 @@ class BehaviorManager{
     func initDripBehavior()->BehaviorDefinition?{
         let dripBehavior = initSpawnTemplate(name: "dripBehavior");
         
-        dripBehavior!.addLogiGrowthGenerator(name: "weightGenerator", a:10,b:15,k:0.36);
+        dripBehavior!.addEaseGenerator(name: "weightGenerator", a:10,b:15,k:0.36);
         //  dripBehavior!.addExpression("weightExpression", emitter1: nil, operand1Names:["weight"], emitter2: nil, operand2Names: ["weightGenerator"], type: "add")
         dripBehavior!.addRandomGenerator(name: "randomTimeGenerator", min:50, max: 100)
         dripBehavior!.addCondition(name: "lengthCondition", reference: nil, referenceNames: ["distance"], relative: nil, relativeNames: ["randomTimeGenerator"], relational: ">")

@@ -22,6 +22,8 @@ class Interval:Generator{
     var index = 0;
     var infinite = false;
     let inc:Float
+    
+    
     init(inc:Float,times:Int?){
         self.inc = inc;
         super.init();
@@ -44,7 +46,9 @@ class Interval:Generator{
     
     override func get(id:String?) -> Float {
         if(infinite){
-            return Float(self.index)*self.inc
+            let inf = Float(self.index)*self.inc
+            print("interval val \(inf,inc)");
+            return inf;
         }
         if(index < val.count){
             let v = val[index]
@@ -138,7 +142,7 @@ class Range:Generator{
 
 
 
-class LogiGrowthGenerator: Generator{
+class Ease: Generator{
     let a:Float;
     let b:Float;
     let k:Float;
@@ -153,7 +157,9 @@ class LogiGrowthGenerator: Generator{
     }
         
     override func get(id:String?) -> Float {
-        self.val = a/(1+pow(2.7182818284590451,0-(x*k-b)))+1
+        self.val = a/(1+pow(2.7182818284590451,(x-b)*k))
+        print("ease val: \(self.val,self.x,a,b,k)");
+
         self.x += 1;
         return self.val
     }

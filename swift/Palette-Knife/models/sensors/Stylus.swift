@@ -159,8 +159,7 @@ class Stylus: TimeSeries, WebTransmitter {
                 
             }
             else{
-                
-                    moveDist = 0;
+                moveDist = 0;
                        NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_MOVE_BY"])
                 
             }
@@ -208,10 +207,14 @@ class Stylus: TimeSeries, WebTransmitter {
         self.prevPosition.set(val:position);
         
         self.position.set(x: x,y:y)
-        self.delta.set(val:self.position.sub(point: self.prevPosition))
-      //  print("stylus pos\(self.delta.x.getSilent(),self.delta.y.getSilent(),self.position.x.getSilent(),self.position.y.getSilent())");
+        
+        let d = self.position.sub(point: self.prevPosition)
+        //print("stylus pos\(d.x.get(id: nil),d.y.get(id: nil))");
 
-        self.delta.set(x: 0,y:0)
+        
+        self.delta.set(val:d)
+
+        //self.delta.set(x: 0,y:0)
 
         deltaChangeBuffer.append(self.position.sub(point: self.prevPosition));
         self.distance += prevPosition.dist(point:position)

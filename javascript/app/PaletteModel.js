@@ -152,6 +152,12 @@ define(['emitter', 'app/id', 'app/Emitter'],
               item_name: "index",
               type:"generator",
               help_text: "returns the index of the brush instance"
+            }, 
+            { item_class: " block property generator palette",
+              name: "ease",
+              item_name: "ease",
+              type:"generator",
+              help_text: "generator that eases in and out"
             }
             ]
           },

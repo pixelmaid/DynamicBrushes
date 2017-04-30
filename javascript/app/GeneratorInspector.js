@@ -34,6 +34,11 @@ define(["jquery", "app/id", "app/Emitter"],
 					break;
 					case "index":
 					break;
+					case "ease":
+					data.a = 1;
+					data.k = -5;
+					data.b = 400;
+					break;
 
 				}
 				return data;

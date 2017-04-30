@@ -109,7 +109,6 @@ class TextExpression:Observable<Float>{
     }
   
     func setHandler(data:(String,Float,Float),key:String){
-        print("set handler called for \(self.id)")
         let result = self.calculateValue();
         self.set(newValue: result)
     }

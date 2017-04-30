@@ -61,7 +61,7 @@ class Point:Observable<(Float,Float)>,Geometry{
     //handler that only triggers when both x and y have been updated (assuming they're both constrained)
     func coordinateChange(data:(String, Float,Float),key:String){
         
-
+       // print("x constrained,yconstrained",x.constrained,y.constrained,self.name)
         let name = data.0;
         let oldValue = data.1;
         _ = data.2;

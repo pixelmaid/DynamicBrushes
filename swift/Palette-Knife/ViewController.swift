@@ -120,6 +120,16 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         activeLayer = BitmapCanvasView(frame: CGRect(x:origin.x, y:origin.y, width:screenSize.width, height:screenSize.height))
         self.layers.append(activeLayer!)
         layerContainerView.addSubview(activeLayer!)
+        let color = Color(r: 1.0, g: 0, b: 0, a: 1).toCGColor().components;
+        let alpha = 1.0;
+        let diameter = 2.0;
+        
+        
+        // Defer to the OpenGL view to set the brush color
+        activeLayer!.setBrushColor(red:color![0], green: color![1], blue: color![2], alpha: Float(alpha))
+        activeLayer!.setBrushDiameter(brushDiameter: Float(diameter))
+        
+
         
         
     }
@@ -325,7 +335,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
                         
                         // Defer to the OpenGL view to set the brush color
                         activeLayer!.setBrushColor(red:color![0], green: color![1], blue: color![2], alpha: alpha)
-                        activeLayer!.setBrushDiameter(brushDiameter: diameter)
+                            activeLayer!.setBrushDiameter(brushDiameter: diameter)
                         
                         
                         
