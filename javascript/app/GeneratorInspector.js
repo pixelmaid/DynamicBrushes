@@ -35,9 +35,9 @@ define(["jquery", "app/id", "app/Emitter"],
 					case "index":
 					break;
 					case "ease":
-					data.a = 1;
-					data.k = -5;
-					data.b = 400;
+					data.a = 1.2;
+					data.k = -0.3;
+					data.b = 10;
 					break;
 
 				}

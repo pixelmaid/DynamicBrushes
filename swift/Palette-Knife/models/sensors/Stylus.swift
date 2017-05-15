@@ -54,7 +54,7 @@ class Stylus: TimeSeries, WebTransmitter {
         self.events =  ["STYLUS_UP","STYLUS_DOWN","STYLUS_MOVE_BY","STYLUS_X_MOVE_BY","STYLUS_Y_MOVE_BY"]
         self.createKeyStorage();
         
-        //self.startInterval();
+        self.startInterval();
         
     }
     

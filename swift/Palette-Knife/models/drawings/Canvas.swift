@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+import UIKit
 //Canvas
 //stores multiple drawings
 
@@ -18,12 +18,12 @@ class Canvas: WebTransmitter, Hashable{
     var currentDrawing:Drawing?
     var transmitEvent = Event<(String)>()
     var initEvent = Event<(WebTransmitter,String)>()
-
+    
     var geometryModified = Event<(Geometry,String,String)>()
-
+    
     let drawKey = NSUUID().uuidString;
     let  dataKey = NSUUID().uuidString;
-
+    
     
     //MARK: - Hashable
     var hashValue : Int {
@@ -37,27 +37,35 @@ class Canvas: WebTransmitter, Hashable{
         name = "default_"+id;
     }
     
+    func drawSegment(context:CGContext){
+        for i in 0..<drawings.count{
+            if(drawings[i].dirty){
+                drawings[i].drawSegment(context:context);
+            }
+        }
+    }
+    
     func initDrawing(){
         currentDrawing = Drawing();
         drawings.append(currentDrawing!)
         currentDrawing!.transmitEvent.addHandler(target: self,handler: Canvas.drawingDataGenerated, key:drawKey);
         currentDrawing!.geometryModified.addHandler(target: self,handler: Canvas.drawHandler, key:dataKey);
-
+        
         var string = "{\"canvas_id\":\""+self.id+"\","
         string += "\"drawing_id\":\""+currentDrawing!.id+"\","
         string += "\"type\":\"new_drawing\"}"
         self.transmitEvent.raise(data:(string));
-
+        
     }
     
     func hitTest(point:Point, threshold:Float)->Stroke?{
-       let hit = currentDrawing!.hitTest(point: point,threshold:threshold)
+        let hit = currentDrawing!.hitTest(point: point,threshold:threshold)
         if(hit != nil){
             print("found stroke \(hit)");
             return hit;
         }
         print("found no stroke");
-
+        
         return nil;
     }
     
@@ -87,4 +95,4 @@ func ==(lhs:Canvas, rhs:Canvas) -> Bool {
     return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
 }
 
-  
+

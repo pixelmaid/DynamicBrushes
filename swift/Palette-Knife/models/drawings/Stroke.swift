@@ -6,6 +6,7 @@
 //  Copyright © 2016 pixelmaid. All rights reserved.
 //
 import Foundation
+import UIKit
 
 enum DrawError: Error {
     case InvalidArc
@@ -43,7 +44,6 @@ struct Segment:Geometry, Equatable {
     var diameter = Float(1);
     var color = Color(r:0,g:0,b:0,a:1);
     var alpha = Float(0.5);
-    var time = Float(0);
     
     init(x:Float,y:Float) {
         self.init(x:x,y:y,hi_x:0,hi_y:0,ho_x:0,ho_y:0)
@@ -68,7 +68,7 @@ struct Segment:Geometry, Equatable {
     }
     
     
-    func getTimeDelta()->Float{
+   /* func getTimeDelta()->Float{
         let prevSeg = self.getPreviousSegment();
         if(prevSeg == nil){
             return 0;
@@ -78,7 +78,7 @@ struct Segment:Geometry, Equatable {
         let prevTime = prevSeg!.time;
         return currentTime-prevTime;
     }
-    
+    */
    
     func hitTest(testPoint:Point,threshold:Float)->Bool{
         let dist = self.point.dist(point: testPoint);
@@ -87,6 +87,23 @@ struct Segment:Geometry, Equatable {
         }
         return false;
     }
+    
+    func drawIntoContext(context:CGContext?) {
+         if(self.getPreviousSegment() != nil){
+        
+        self.color.toUIColor().setStroke();
+            print("color:\(self.color, self.color.toUIColor())")
+        context?.setLineWidth(CGFloat(self.diameter))
+        context?.setLineCap(.round)
+        context?.setAlpha(CGFloat(self.alpha));
+        
+        context?.move(to: self.point.toCGPoint())
+       
+        context?.addLine(to:(self.getPreviousSegment()?.point.toCGPoint())!)
+        context?.strokePath()
+        }
+    }
+
     
     func getPreviousSegment()->Segment?{
         if(self.parent != nil){
@@ -110,87 +127,26 @@ func ==(lhs: Segment, rhs: Segment) -> Bool {
 }
 
 
-/*class Arc:Geometry {
-    var center:Point
-    var radius:Float
-    var startAngle:Float
-    var endAngle:Float
-    
-    
-    init(center:Point,startAngle:Float,endAngle:Float, radius:Float)    {
-        self.center=center
-        self.startAngle = startAngle
-        self.endAngle = endAngle
-        self.radius = radius
- 
-    }
-    
-    convenience init(point:Point,length:Float,angle:Float, radius:Float)    {
-        
-        let p2 = point.pointAtDistance(length, a: angle);
-        let p3 = Line(p:point,v:p2,asVector: false).getMidpoint()
-        let centerX =  p3.x + sqrt(pow(radius,2)-pow((length/2),2))*(point.y-p2.y)/length
-        let centerY = p3.y + sqrt(pow(radius,2)-pow((length/2),2))*(p2.x-point.x)/length
-        let center = Point(x: centerX, y: centerY)
-        let startAngle = atan2(point.y - center.y, point.x - center.x);
-        let endAngle = atan2(p2.y - center.y, p2.x - center.x);
-        self.init(center:center,startAngle:startAngle,endAngle:endAngle,radius:radius)
-        
-    }
-    
-    convenience init(x1:Float,y1:Float,x2:Float,y2:Float,x3:Float,y3:Float){
-        
-        let r = Line(px:x1,py: y1,vx: x2,vy: y2,asVector: false)
-        let t = Line(px: x2,py: y2,vx: x3,vy: y3,asVector: false)
-        let rM = r.getSlope();
-        //let rB = r.getYIntercept();
-        let tM = t.getSlope();
-        //let tB = t.getYIntercept();
-        
-        
-        let r_midpoint = r.getMidpoint();
-        //let t_midpoint = t.getMidpoint();
-        let rpM = 0-(1/rM)
-        //let tpM = 0-(1/tM)
-        let rpB = -rpM*r_midpoint.x+r_midpoint.y;
-        
-        let centerX = (rM*tM*(y3-y1)+rM*(x2+x3)-tM*(x1+x2))/(2*(rM-tM))
-        let centerY = rpM*centerX + rpB
-        let center = Point(x:centerX,y:centerY)
-        let radius = center.dist(Point(x:x1,y:y1));
-        let startAngle = atan2(y1 - center.y, x1 - center.x);
-        let endAngle = atan2(y3 - center.y, x3 - center.x);
-        
-        
-       self.init(center:center,startAngle:startAngle,endAngle:endAngle,radius:radius)
-    }
-    func toJSON()->String{
-        let string = "\"center\":{\"x\":"+String(self.point.x)+",\"y\":"+String(self.point.y)+"\""
-        return string
-    }
-
-
-
-}*/
-
 
 // Stroke: Model for storing a stroke object in multiple representations
 // as a series of segments
 // as a series of vectors over time
 class Stroke:TimeSeries, Geometry {
+    //check for if segments need drawing;
+    var dirty = false
+    var dirtySegments = [Segment]()
+    var toDrawSegments = [Segment]()
     var segments = [Segment]();
     var xBuffer = CircularBuffer();
     var yBuffer = CircularBuffer();
     var weightBuffer = CircularBuffer();
     let id = NSUUID().uuidString;
-    let gCodeGenerator = GCodeGenerator();
     var parentID: String;
     var selected = false;
     
     init(parentID:String){
         self.parentID = parentID;
         super.init();
-        gCodeGenerator.startNewStroke();
     }
     
     func hitTest(testPoint:Point,threshold:Float)->Segment?{
@@ -204,12 +160,24 @@ class Stroke:TimeSeries, Geometry {
     
     }
     
+    func drawSegment(context:CGContext){
+        self.toDrawSegments.append(contentsOf: self.dirtySegments)
+        self.dirtySegments.removeAll();
+        for i in 0..<toDrawSegments.count{
+            toDrawSegments[i].drawIntoContext(context: context);
+        }
+        self.toDrawSegments.removeAll();
+        self.dirty = false;
+    }
+    
     
     func addSegment(_segment:Segment)->Segment?{
+        self.dirty = true;
+        
         var segment = _segment;
         segment.parent = self
         segment.index = self.segments.count;
-        segment.time = Float(0-timer.timeIntervalSinceNow);
+        //segment.time = Float(0-timer.timeIntervalSinceNow);
         
         if(segments.count>0){
             let prevSeg = segments[segments.count-1];
@@ -227,9 +195,7 @@ class Stroke:TimeSeries, Geometry {
             yBuffer.push(v: 0)
         }
         segments.append(segment)
-
-        gCodeGenerator.drawSegment(segment: segment)
-        
+        dirtySegments.append(segment);
         return segment
     }
     
@@ -238,9 +204,11 @@ class Stroke:TimeSeries, Geometry {
         return self.addSegment(_segment:segment)
     }
     
-    func addSegment(point:Point, d:Float)->Segment?{
+    func addSegment(point:Point, d:Float, color:Color, alpha:Float)->Segment?{
         var segment = Segment(point:point)
         segment.diameter = d
+        segment.color = color;
+        segment.alpha = alpha;
         weightBuffer.push(v: d);
         return self.addSegment(_segment:segment)
     }

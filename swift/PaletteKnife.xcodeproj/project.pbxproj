@@ -27,11 +27,9 @@
 		5F50372A1EA95E37004ABAC1 /* Recording.data in Resources */ = {isa = PBXBuildFile; fileRef = 5F5037291EA95E37004ABAC1 /* Recording.data */; };
 		5F50372C1EAC025E004ABAC1 /* particle_hard.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F50372B1EAC025E004ABAC1 /* particle_hard.png */; };
 		5F50372E1EAD48BB004ABAC1 /* MathUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F50372D1EAD48BB004ABAC1 /* MathUtil.swift */; };
-		5F90F5351E9D588F006BB9FE /* FabricatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5331E9D588F006BB9FE /* FabricatorView.swift */; };
 		5F90F5361E9D588F006BB9FE /* CanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5341E9D588F006BB9FE /* CanvasView.swift */; };
 		5F90F5411E9D59D4006BB9FE /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5381E9D59D4006BB9FE /* Emitter.swift */; };
 		5F90F5421E9D59D4006BB9FE /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5391E9D59D4006BB9FE /* Event.swift */; };
-		5F90F5431E9D59D4006BB9FE /* GCodeGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F53A1E9D59D4006BB9FE /* GCodeGenerator.swift */; };
 		5F90F5441E9D59D4006BB9FE /* Matrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F53B1E9D59D4006BB9FE /* Matrix.swift */; };
 		5F90F5451E9D59D4006BB9FE /* Numerical.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F53C1E9D59D4006BB9FE /* Numerical.swift */; };
 		5F90F5461E9D59D4006BB9FE /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F53D1E9D59D4006BB9FE /* Observable.swift */; };
@@ -124,11 +122,9 @@
 		5F5037291EA95E37004ABAC1 /* Recording.data */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Recording.data; sourceTree = "<group>"; };
 		5F50372B1EAC025E004ABAC1 /* particle_hard.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle_hard.png; sourceTree = "<group>"; };
 		5F50372D1EAD48BB004ABAC1 /* MathUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MathUtil.swift; path = ../models/base/MathUtil.swift; sourceTree = "<group>"; };
-		5F90F5331E9D588F006BB9FE /* FabricatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FabricatorView.swift; sourceTree = "<group>"; };
 		5F90F5341E9D588F006BB9FE /* CanvasView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CanvasView.swift; sourceTree = "<group>"; };
 		5F90F5381E9D59D4006BB9FE /* Emitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Emitter.swift; sourceTree = "<group>"; };
 		5F90F5391E9D59D4006BB9FE /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
-		5F90F53A1E9D59D4006BB9FE /* GCodeGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GCodeGenerator.swift; sourceTree = "<group>"; };
 		5F90F53B1E9D59D4006BB9FE /* Matrix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Matrix.swift; sourceTree = "<group>"; };
 		5F90F53C1E9D59D4006BB9FE /* Numerical.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Numerical.swift; sourceTree = "<group>"; };
 		5F90F53D1E9D59D4006BB9FE /* Observable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
@@ -257,7 +253,6 @@
 			children = (
 				5F90F5381E9D59D4006BB9FE /* Emitter.swift */,
 				5F90F5391E9D59D4006BB9FE /* Event.swift */,
-				5F90F53A1E9D59D4006BB9FE /* GCodeGenerator.swift */,
 				5F90F53B1E9D59D4006BB9FE /* Matrix.swift */,
 				5F90F53C1E9D59D4006BB9FE /* Numerical.swift */,
 				5F90F53D1E9D59D4006BB9FE /* Observable.swift */,
@@ -407,7 +402,6 @@
 		5FA4C7561CDB9EAF004A728C /* views */ = {
 			isa = PBXGroup;
 			children = (
-				5F90F5331E9D588F006BB9FE /* FabricatorView.swift */,
 				5F90F5341E9D588F006BB9FE /* CanvasView.swift */,
 				5F5037141EA94D2C004ABAC1 /* BitmapCanvasView.swift */,
 				5F0EB6611EB5775100225A6E /* ModifiedCanvasView.swift */,
@@ -788,7 +782,6 @@
 				5F90F5411E9D59D4006BB9FE /* Emitter.swift in Sources */,
 				5F90F5561E9D5A41006BB9FE /* Drawing.swift in Sources */,
 				5F50372E1EAD48BB004ABAC1 /* MathUtil.swift in Sources */,
-				5F90F5431E9D59D4006BB9FE /* GCodeGenerator.swift in Sources */,
 				5F90F5551E9D5A41006BB9FE /* Canvas.swift in Sources */,
 				5F90F5691E9D5BCC006BB9FE /* Expression.swift in Sources */,
 				5F90F5491E9D59D4006BB9FE /* WebTransmitter.swift in Sources */,
@@ -812,7 +805,6 @@
 				5FC91D2D1EA00C2F00A19206 /* RequestHandler.swift in Sources */,
 				5F0EB6621EB5775100225A6E /* ModifiedCanvasView.swift in Sources */,
 				5F90F54D1E9D5A16006BB9FE /* Color.swift in Sources */,
-				5F90F5351E9D588F006BB9FE /* FabricatorView.swift in Sources */,
 				5F90F5651E9D5BCC006BB9FE /* BehaviorDefinition.swift in Sources */,
 				5F90F5471E9D59D4006BB9FE /* SVGGenerator.swift in Sources */,
 				5F5037151EA94D2C004ABAC1 /* BitmapCanvasView.swift in Sources */,

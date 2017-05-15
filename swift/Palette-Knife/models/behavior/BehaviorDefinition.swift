@@ -267,7 +267,7 @@ class BehaviorDefinition {
             break;
             
         case "ease":
-            print("adding ease\(data["k"])")
+            //print("adding ease\(data["k"])")
             self.addEaseGenerator(name: data["generatorId"].stringValue, a: data["a"].floatValue, b: data["b"].floatValue, k: data["k"].floatValue);
             
             break;
@@ -969,7 +969,7 @@ class BehaviorDefinition {
         default:
             break;
         }
-        print("generate generator\(storedGenerators,id)")
+       // print("generate generator\(storedGenerators,id)")
     }
     
     func generateSingleOperand(targetBrush:Brush, emitter:Any?,propList:[String]?)->Observable<Float>{

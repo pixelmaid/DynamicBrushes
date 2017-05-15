@@ -65,4 +65,8 @@ struct Color {
         return self.uiColor.cgColor;
     }
     
+    func toUIColor()->UIColor{
+        return UIColor(red: CGFloat(self.red), green: CGFloat(self.green), blue: CGFloat(self.blue), alpha: CGFloat(self.alpha))
+    }
+    
 }

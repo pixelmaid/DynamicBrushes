@@ -33,7 +33,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     //hierarcical data
     var children = [Brush]();
-    var parent: Brush?
+    var parent: Brush!
     
     //dictionary to store expressions for emitter->action handlers
     var states = [String:State]();
@@ -268,7 +268,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     }
     
     func deltaChange(data:(String,(Float,Float),(Float,Float)),key:String){
-       // DispatchQueue.global(qos: .userInitiated).async {
+        DispatchQueue.global(qos: .userInitiated).async {
         let dX = self.dx.get(id:nil)
         let dY = self.dy.get(id:nil)
         
@@ -300,10 +300,10 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
        
             
-            //DispatchQueue.main.async {
+            DispatchQueue.main.sync {
                 self.processDeltaBuffer(ds:ds)
-          //  }
-        //}
+            }
+        }
     }
     
     func processDeltaBuffer(ds:DeltaStorage){
@@ -364,12 +364,12 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     
     func setOrigin(p:Point){
-        /*  DispatchQueue.global(qos: .userInitiated).async {
-            DispatchQueue.main.async {*/
+          DispatchQueue.global(qos: .userInitiated).async {
+            DispatchQueue.main.sync {
             self.origin.set(val:p);
                 self.position.set(val:self.origin)
-           // }
-        //}
+           }
+        }
         
     }
     
@@ -463,14 +463,28 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             print("executing method:\(method.name,self.id,self.name)");
             switch (methodName){
             case "newStroke":
+                
                 let arg = method.arguments![0];
                 //print("set origin argument \(method.arguments![0])");
                 if  let arg_string = arg as? String {
                     if(arg_string  == "parent_position"){
-                        self.setOrigin(p: self.parent!.position)
+                        if(self.parent != nil){
+                            self.setOrigin(p: self.parent!.position)
+                        }
+                        else{
+                            
+                            print("cannot set origin, no parent position")
+                        }
                     }
                     else if(arg_string  == "parent_origin"){
+                        if(self.parent != nil){
+
                         self.setOrigin(p: self.parent!.origin)
+                        }
+                        else{
+                            print("cannot set origin, no parent position")
+  
+                        }
                     }
                 }else {
                     self.setOrigin(p: method.arguments![0] as! Point)
@@ -636,13 +650,17 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     
     func newStroke(){
-        currentCanvas!.currentDrawing!.retireCurrentStrokes(parentID: self.id)
-        self.currentStroke = currentCanvas!.currentDrawing!.newStroke(parentID: self.id);
+        DispatchQueue.global(qos: .userInitiated).async {
+            DispatchQueue.main.sync {
+        self.currentCanvas!.currentDrawing!.retireCurrentStrokes(parentID: self.id)
+        self.currentStroke = self.currentCanvas!.currentDrawing!.newStroke(parentID: self.id);
+            }
+        }
     }
     
     //creates number of clones specified by num and adds them as children
     func spawn(behavior:BehaviorDefinition,num:Int) {
-
+        print("spawn called")
         for _ in 0...num-1{
             let child = Brush(name:name, behaviorDef: behavior, parent:self, canvas:self.currentCanvas!)
             self.children.append(child);

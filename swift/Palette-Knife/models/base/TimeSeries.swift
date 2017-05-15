@@ -53,7 +53,11 @@ class TimeSeries: Emitter{
     }
     
     func stopInterval(){
+        print("stop interval")
+
         if(intervalTimer != nil){
+            print("invalidate timer")
+
          intervalTimer.invalidate();
         }
         
@@ -68,9 +72,11 @@ class TimeSeries: Emitter{
     @objc func timerIntervalCallback()
     {
         
-               let currentTime = NSDate();
+        let currentTime = NSDate();
+        //TODO: Fix how this is calucated to deal with lag..
         let t = Float(currentTime.timeIntervalSince(timer as Date))
         self._time.set(newValue: t)
+        print("keys in timer storage \(t,self,keyStorage.count)");
         for key in keyStorage["TIME_INTERVAL"]!
         {
  

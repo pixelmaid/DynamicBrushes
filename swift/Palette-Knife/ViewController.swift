@@ -25,7 +25,8 @@ let kMinEraseInterval =	0.5
 let kLeftMargin =	10.0
 let kTopMargin =	10.0
 let kRightMargin =      10.0
-
+let pX = 1024
+let pY = 768
 
 class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
@@ -38,44 +39,32 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     @IBOutlet weak var addLayerButton: UIButton!
     @IBOutlet weak var layerContainerView: UIView!
     
-    var layers = [BitmapCanvasView]();
-    var activeLayer:BitmapCanvasView?
+    var layers = [ModifiedCanvasView]();
+    var activeLayer:ModifiedCanvasView?
     
-    //var canvasViewLg:CanvasView
     
     var backView:UIImageView
-    var fabricatorView = FabricatorView();
-    // var canvasViewBakeSm:CanvasView;
-    // var canvasViewBakeLg:CanvasView;
     
-    
-    
-    
-    
-    //var socketManager = SocketManager();
     var behaviorManager: BehaviorManager?
     var currentCanvas: Canvas?
+    
     let drawKey = NSUUID().uuidString
     let brushEventKey = NSUUID().uuidString
     let dataEventKey = NSUUID().uuidString
     
-    
-    var downInCanvas = false;
-    
-    var radialBrush:Brush?
-    var bakeBrush:Brush?
-    
     var brushes = [String:Brush]()
+    var drawInterval:Timer!
+
     
     required init?(coder: NSCoder) {
         let screenSize = UIScreen.main.bounds
-        let sX = (screenSize.width-CGFloat(GCodeGenerator.pX))/2.0
-        let sY = (screenSize.height-CGFloat(GCodeGenerator.pY))/2.0
+        let sX = (screenSize.width-CGFloat(pX))/2.0
+        let sY = (screenSize.height-CGFloat(pY))/2.0
         
-        GCodeGenerator.setCanvasOffset(x: Float(sX),y:Float(sY));
+       
         
         
-        backView = UIImageView(frame: CGRect(x:sX, y:sY, width:CGFloat(GCodeGenerator.pX), height:CGFloat(GCodeGenerator.pY)))
+        backView = UIImageView(frame: CGRect(x:sX, y:sY, width:CGFloat(pX), height:CGFloat(pY)))
         
         
         super.init(coder: coder);
@@ -109,28 +98,27 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         
         eraseButton.addTarget(self, action: #selector(ViewController.onErase), for: .touchUpInside)
         addLayerButton.addTarget(self, action: #selector(ViewController.newLayer), for: .touchUpInside)
-
+        
+        drawInterval  = Timer.scheduledTimer(timeInterval:0.016 , target: self, selector: #selector(ViewController.drawIntervalCallback), userInfo: nil, repeats: true)
         
     }
+    
+    @objc func drawIntervalCallback(){
+        if(activeLayer != nil){
+            let context = activeLayer?.pushContext();
+            currentCanvas?.drawSegment(context:context!)
+            activeLayer?.popContext();
+        }
+    }
+
     
     func newLayer(sender: UIButton!){
         print("new layer created")
         let screenSize = layerContainerView.bounds
         let origin = layerContainerView.frame.origin
-        activeLayer = BitmapCanvasView(frame: CGRect(x:origin.x, y:origin.y, width:screenSize.width, height:screenSize.height))
+        activeLayer = ModifiedCanvasView(frame: CGRect(x:origin.x, y:origin.y, width:screenSize.width, height:screenSize.height))
         self.layers.append(activeLayer!)
-        layerContainerView.addSubview(activeLayer!)
-        let color = Color(r: 1.0, g: 0, b: 0, a: 1).toCGColor().components;
-        let alpha = 1.0;
-        let diameter = 2.0;
-        
-        
-        // Defer to the OpenGL view to set the brush color
-        activeLayer!.setBrushColor(red:color![0], green: color![1], blue: color![2], alpha: Float(alpha))
-        activeLayer!.setBrushDiameter(brushDiameter: Float(diameter))
-        
-
-        
+        layerContainerView.addSubview(activeLayer!);
         
     }
     
@@ -306,10 +294,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         currentCanvas = Canvas();
         behaviorManager = BehaviorManager(canvas: currentCanvas!);
         currentCanvas!.initDrawing();
-        _ = currentCanvas!.geometryModified.addHandler(target: self,handler: ViewController.canvasDrawHandler, key:drawKey)
+       // _ = currentCanvas!.geometryModified.addHandler(target: self,handler: ViewController.canvasDrawHandler, key:drawKey)
     }
     
-    func canvasDrawHandler(data:(Geometry,String,String), key:String){
+    /*func canvasDrawHandler(data:(Geometry,String,String), key:String){
         if(activeLayer != nil){
             switch data.2{
                 
@@ -325,22 +313,15 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
                         let bounds = activeLayer!.bounds
                         var previousLocation = prevSeg!.point.toCGPoint();
                         var location = seg.point.toCGPoint()
-                        location.y = bounds.size.height - location.y
-                        previousLocation.y = bounds.size.height - previousLocation.y
+                        //location.y = bounds.size.height - location.y
+                        //previousLocation.y = bounds.size.height - previousLocation.y
                         
-                        let color = seg.color.toCGColor().components;
+                        var color = seg.color;
                         let alpha = seg.alpha;
-                        let diameter = seg.diameter;
+                        color.alpha = alpha;
+                        let diameter = CGFloat(seg.diameter);
                         
-                        
-                        // Defer to the OpenGL view to set the brush color
-                        activeLayer!.setBrushColor(red:color![0], green: color![1], blue: color![2], alpha: alpha)
-                            activeLayer!.setBrushDiameter(brushDiameter: diameter)
-                        
-                        
-                        
-                        activeLayer!.renderLine(from:previousLocation, to: location);
-                        
+                        activeLayer!.drawStroke(from: previousLocation, to: location, lineWidth: diameter, color: color.toUIColor())
                         
                         
                     }
@@ -351,7 +332,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
                 break
             }
         }
-    }
+    }*/
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -359,70 +340,36 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
-        if let touch = touches.first  {
-            
-            _ = touch.location(in: activeLayer!);
-            _ = Float(touch.force);
-            _ = Float(touch.azimuthAngle(in: activeLayer!))
-            if(downInCanvas){
-                stylus.onStylusUp()
-                downInCanvas = false
-            }
-            // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
-            //socketManager.sendStylusData();
-            
+        if(activeLayer != nil){
+            activeLayer?.touchesEnded(touches, with: event)
         }
-        
-        
-        
+      
     }
-    
-    
     
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if let touch = touches.first  {
-            let point = touch.location(in: activeLayer)
-            let x = Float(point.x)
-            let y = Float(point.y)
-            ;
-            let force = Float(touch.force);
-            let angle = Float(touch.azimuthAngle(in: activeLayer))
-            stylus.onStylusDown(x: x, y:y, force:force, angle:angle)
-            downInCanvas = true;
-            
-            // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
-            // socketManager.sendStylusData();
-            
-            
-            // currentCanvas!.hitTest(Point(x:x,y:y),threshold:20);
-            
-        }
-        
+            if(activeLayer != nil){
+                activeLayer?.touchesBegan(touches, with: event)
+            }
     }
-    
     
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
-        if let touch = touches.first  {
-            
-            let point = touch.location(in: activeLayer);
-            let x = Float(point.x)
-            let y = Float(point.y)
-            let force = Float(touch.force);
-            let angle = Float(touch.azimuthAngle(in: activeLayer))
-            
-            stylus.onStylusMove(x: x, y:y, force:force, angle:angle)
-            downInCanvas = true;
-            
-            // socketManager.sendStylusData(force, position: stylus.position, angle: angle, delta: stylus.position.sub(stylus.prevPosition),penDown:stylus.penDown)
-            // socketManager.sendStylusData();
+        if(activeLayer != nil){
+
+            self.activeLayer?.touchesMoved(touches, with: event)
+        }
+    }
+    
+    
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if(activeLayer != nil){
+            activeLayer?.touchesCancelled(touches, with: event)
         }
         
     }
     
+
     
     
     @IBAction func handlePinch(recognizer : UIPinchGestureRecognizer) {
