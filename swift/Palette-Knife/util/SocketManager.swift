@@ -12,8 +12,7 @@ import Starscream
 
 //central manager for all requests to web socket
 class SocketManager: WebSocketDelegate{
-     var socket = WebSocket(url: NSURL(string: "ws://dynamic-brushes.herokuapp.com/")! as URL, protocols: ["drawing_user1"])
-    //var socket = WebSocket(url: NSURL(string: "ws://localhost:5000")!, protocols: ["ipad_client"])
+    var socket: WebSocket?
     var dataEvent = Event<(String,JSON?)>();
     var requestEvent = Event<(String,JSON?)>();
 
@@ -26,17 +25,22 @@ class SocketManager: WebSocketDelegate{
     let dataKey = NSUUID().uuidString;
     
     init(){
-             socket.delegate = self;
 
 
     }
     
     @objc func pingIntervalCallback(){
-        socket.write(string:"{\"name\":\"ping\"}")
+        if(socket != nil){
+            socket?.write(string:"{\"name\":\"ping\"}")
+        }
     }
     
     func connect(){
-        socket.connect()
+        let userkey = UserDefaults.standard.string(forKey:"userkey");
+        socket = WebSocket(url: NSURL(string: "ws://dynamic-brushes.herokuapp.com/")! as URL, protocols: ["drawing_"+userkey!])
+        socket?.delegate = self;
+
+            socket?.connect()
     }
     
     
@@ -46,7 +50,7 @@ class SocketManager: WebSocketDelegate{
         print("websocket is connected")
         //send name of client
         pingInterval = Timer.scheduledTimer(timeInterval: 15, target: self, selector: #selector(SocketManager.pingIntervalCallback), userInfo: nil, repeats: true)
-          socket.write(string:"{\"name\":\"drawing\"}")
+          socket?.write(string:"{\"name\":\"drawing\"}")
         if(firstConnection){
             requestEvent.raise(data: ("first_connection",nil));
         }
@@ -76,7 +80,7 @@ class SocketManager: WebSocketDelegate{
 
             if(dataQueue.count>0){
                 
-                 socket.write(string:dataQueue.remove(at: 0).rawString()!);
+                 socket?.write(string:dataQueue.remove(at: 0).rawString()!);
             }
             else{
                 
@@ -106,9 +110,8 @@ class SocketManager: WebSocketDelegate{
     // MARK: Disconnect Action
     
     func disconnect() {
-        if socket.isConnected {
-            
-            socket.disconnect()
+        if (socket?.isConnected)! {
+            socket?.disconnect()
         }
     }
     
@@ -131,10 +134,11 @@ class SocketManager: WebSocketDelegate{
     }*/
     
     func sendData(data:JSON){
+        if(socket != nil){
         let dataString = data.rawString();
         if(transmitComplete){
             transmitComplete = false;
-             socket.write(string:dataString!)
+             socket?.write(string:dataString!)
             
         }
         else{
@@ -143,6 +147,7 @@ class SocketManager: WebSocketDelegate{
             dataQueue.append(data)
             objc_sync_exit(dataQueue)
             
+        }
         }
     }
 

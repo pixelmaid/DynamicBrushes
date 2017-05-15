@@ -55,6 +55,11 @@ define(['emitter', 'app/Emitter'],
 
             //TODO: client connected
             return;
+          } else if (message.data == "drawing client disconnected") {
+            self.emitter.trigger("ON_CLIENT_DISCONNECTED");
+
+            //TODO: client connected
+            return;
           } else {
             console.log("data=", message.data);
             var data = JSON.parse(message.data);

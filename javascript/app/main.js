@@ -10,12 +10,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
         var paletteView = new PaletteView(paletteModel, "#scripts");
         var chartViewManager = new ChartViewManager(paletteModel, "#canvas");
         var saveManager = new SaveManager();
-        var saveView = new SaveView(saveManager,"#save-menu");
+        var saveView = new SaveView(saveManager, "#save-menu");
 
-        var codename = prompt("please enter your login key");
-                if (codename !== null) {
-                 socketController.connect(codename);
-         }
 
         var onMessage = function(data) {
             console.log("ON MESSGE CALLED", data);
@@ -34,21 +30,15 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
             } else if (data.type == "behavior_change") {
 
             } else if (data.type == "authoring_response") {
-
-
                 chartViewManager.processAuthoringResponse(data);
 
-
             } else if (data.type == "synchronize") {
-
-
                 chartViewManager.synchronize(data);
 
-
-            }
-            else if (data.type == "storage_data"){
+            } else if (data.type == "storage_data") {
                 saveManager.loadStorageData(data);
             }
+            else
         };
 
         var onConnection = function() {
@@ -66,12 +56,16 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
             };
             socketController.sendMessage(transmit_data);
             requestFileList();
-           
+
         };
 
         var onDrawingClientDisconnected = function() {
-            //TODO: handle disconnect
+            console.log("drawing client disconnected");
         };
+
+        var onDisconnect = function(){
+            promptConnect();
+        }
 
         var onAuthoringEvent = function(data) {
             console.log("transmit_data", data);
@@ -83,9 +77,9 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
 
             };
             socketController.sendMessage(transmit_data);
-            
+
         };
-         var onStorageEvent = function(data) {
+        var onStorageEvent = function(data) {
             console.log("storage_data", data);
 
             var transmit_data = {
@@ -97,12 +91,12 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
             socketController.sendMessage(transmit_data);
         };
 
-        var requestFileList = function(){
-              var file_request_data = {
+        var requestFileList = function() {
+            var file_request_data = {
                 type: "storage_request",
                 requester: "authoring",
                 data: {
-                    targetFolder:"saved_files",
+                    targetFolder: "saved_files",
                     type: "filelist_request"
                 }
 
@@ -110,16 +104,24 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
             socketController.sendMessage(file_request_data);
         };
 
+        var promptConnect = function() {
 
+            var codename = prompt("please enter your login key");
+            if (codename !== null) {
+                socketController.connect(codename);
+            }
 
+        };
 
         socketController.addListener("ON_MESSAGE", onMessage);
+        socketController.addListener("ON_DISCONNECT", onDisconnect);
+
         socketController.addListener("ON_CLIENT_CONNECTED", onDrawingClientConnected);
         socketController.addListener("ON_CLIENT_DISCONNECTED", onDrawingClientDisconnected);
         socketController.addListener("ON_CONNECTION", onConnection);
         chartViewManager.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
         saveManager.addListener("ON_SAVE_EVENT", onStorageEvent);
-
+        promptConnect();
 
 
     });

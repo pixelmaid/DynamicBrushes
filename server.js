@@ -77,9 +77,15 @@ wss.on('connection', (ws) => {
 		
 		if (clientName == "authoring") {
 			delete authoring_clients[userkey];
+			if(drawing_clients[userkey]){
+				drawing_clients[userkey].send("authoring client disconnected");
+			}
 		}
 		if (clientName == "drawing") {
 			delete drawing_clients[userkey];
+			if(authoring_clients[userkey]){
+				authoring_clients[userkey].send("drawing client disconnected");
+			}
 		} 
 	});
 }	

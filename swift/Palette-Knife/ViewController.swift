@@ -79,20 +79,14 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         super.viewDidLoad()
         
         self.initCanvas()
+       
         
         _ = RequestHandler.dataEvent.addHandler(target: self, handler: ViewController.processRequestHandler, key: dataEventKey)
         
         let configureRequest = Request(target: "storage", action: "configure", data:JSON([]), requester: self)
         
-        let connectRequest = Request(target: "socket", action: "connect", data:JSON([]), requester: self)
-        
-        var templateJSON:JSON = [:]
-        templateJSON["filename"] = "templates/basic.json"
-        let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: self)
-        
         RequestHandler.addRequest(requestData:configureRequest);
-        RequestHandler.addRequest(requestData:connectRequest);
-        RequestHandler.addRequest(requestData:behaviorDownloadRequest);
+
        
         newLayer(sender: nil);
         
@@ -101,6 +95,51 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         
         drawInterval  = Timer.scheduledTimer(timeInterval:0.016 , target: self, selector: #selector(ViewController.drawIntervalCallback), userInfo: nil, repeats: true)
         
+    }
+    
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated);
+         self.presentAlert();
+
+    }
+    
+    func addConnectionRequests(){
+        print("adding connection request")
+        let connectRequest = Request(target: "socket", action: "connect", data:JSON([]), requester: self)
+        RequestHandler.addRequest(requestData:connectRequest);
+        var templateJSON:JSON = [:]
+        templateJSON["filename"] = "templates/basic.json"
+        let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: self)
+        RequestHandler.addRequest(requestData:behaviorDownloadRequest);
+
+    }
+    
+    
+    func presentAlert() {
+        let alertController = UIAlertController(title: "login_key", message: "Enter your login key", preferredStyle: .alert)
+        print("present alert",alertController);
+        let confirmAction = UIAlertAction(title: "Confirm", style: .default) { (_) in
+            if let field = alertController.textFields?[0] {
+                // store your data
+                UserDefaults.standard.set(field.text, forKey: "userkey")
+                UserDefaults.standard.synchronize()
+                self.addConnectionRequests();
+            } else {
+                print("no login key provided");
+            }
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in }
+        
+        alertController.addTextField { (textField) in
+            textField.placeholder = ""
+        }
+        
+        alertController.addAction(confirmAction)
+        alertController.addAction(cancelAction)
+        
+        self.present(alertController, animated: true, completion: nil)
     }
     
     @objc func drawIntervalCallback(){
