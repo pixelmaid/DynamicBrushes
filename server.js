@@ -25,10 +25,10 @@ wss.on('connection', (ws) => {
 	
 	var userkey = ws.protocol.split("_")[1];
 	if(keys.find(function(e){return e == userkey;})){
-	var protocol = ws.protocol.split("_")[0];
+	var protocol = ws.protocol;
 	
 	var connection = ws;
-	var clientName = ws.protocol;
+	var clientName = ws.protocol.split("_")[0];
 	if (clientName == 'drawing') {
 		drawing_clients[userkey] = connection;
 
