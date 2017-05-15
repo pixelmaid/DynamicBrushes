@@ -5,12 +5,9 @@ const path = require('path');
 
 
 // list of currently connected clients
-var drawing_client;
-var fabricator_client;
-var browser_client;
-var authoring_client;
-var clients = [];
-
+var drawing_clients = {};
+var authoring_clients = {};
+var keys = ["jen","fish","ben"];
 
 const PORT = process.env.PORT || 3000;
 const INDEX = path.join(__dirname, 'index.html');
@@ -25,42 +22,36 @@ const wss = new SocketServer({
 
 wss.on('connection', (ws) => {
 	console.log('Client connected', ws.protocol);
-	var protocol = ws.protocol;
+	
+	var userkey = ws.protocol.split("_")[1];
+	if(keys.find(function(e){return e == userkey;})){
+	var protocol = ws.protocol.split("_")[0];
+	
 	var connection = ws;
-	var index = clients.push(connection) - 1;
 	var clientName = ws.protocol;
 	if (clientName == 'drawing') {
-		if (authoring_client) {
-			authoring_client.send("drawing client connected");
+		drawing_clients[userkey] = connection;
+
+		if (authoring_clients[userkey]) {
+			authoring_clients[userkey].send("drawing client connected");
 		}
 
 
-		drawing_client = ws;
-		if (fabricator_client) {
-			drawing_client.send("fabricator connected");
-		}
-	} else if (clientName == 'fabricator') {
-		fabricator_client = ws;
-
-
-	} else if (clientName == 'authoring') {
-		authoring_client = ws;
-		if (drawing_client) {
+	}  else if (clientName == 'authoring') {
+		authoring_clients[userkey] = connection;
+		if (drawing_clients[userkey]) {
 			console.log("sending authoring connected message");
-			drawing_client.send("authoring_client_connected");
+			drawing_clients[userkey].send("authoring_client_connected");
 		}
 	} 
 
 	ws.on('message', function incoming(message) {
-		console.log('message', clientName, message);
+		console.log('message', clientName, userkey, message);
 
-		if (browser_client) {
-			//browser_client.send(message);
-		}
 		var json_data = JSON.parse(message);
 		 if (json_data.type == "synchronize" || json_data.type == "behavior_data" || json_data.type == "authoring_response" || json_data.type == "storage_data" ) {
-			if (authoring_client) {
-				authoring_client.send(JSON.stringify(json_data));
+			if (authoring_clients[userkey]) {
+				authoring_clients[userkey].send(JSON.stringify(json_data));
 			}
 		}
 
@@ -71,9 +62,9 @@ wss.on('connection', (ws) => {
 		}
 
 		if (json_data.type == "data_request" || json_data.type == "synchronize_request" || json_data.type == "authoring_request" || json_data.type == "storage_request") {
-			if(json_data.requester == "authoring" && authoring_client && drawing_client){
+			if(json_data.requester == "authoring" && authoring_clients[userkey] && drawing_clients[userkey]){
 				console.log("requesting authoring response from drawing client");
-				drawing_client.send(JSON.stringify(json_data));
+				drawing_clients[userkey].send(JSON.stringify(json_data));
 			}
 		}
 
@@ -82,21 +73,17 @@ wss.on('connection', (ws) => {
 
 
 	ws.on('close', function close() {
-		console.log(clientName + ' client disconnected');
-		if (clientName != "browser" && browser_client) {
-			browser_client.send(clientName + ' client disconnected');
-		}
+		console.log(clientName +' '+userkey+ 'client disconnected');
+		
 		if (clientName == "authoring") {
-			authoring_client = null;
+			delete authoring_clients[userkey];
 		}
 		if (clientName == "drawing") {
-			drawing_client = null;
-		} else if (clientName == "fabricator") {
-			fabricator_client = null;
-
-		} else if (clientName == "browser") {
-			browser_client = null;
-		}
-		clients.splice(index, 1);
+			delete drawing_clients[userkey];
+		} 
 	});
+}	
+else{
+	console.log("key not recognized");
+}
 });

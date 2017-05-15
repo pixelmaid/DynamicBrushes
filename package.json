@@ -1,21 +1,30 @@
 {
-  "name": "CNCserver",
+  "name": "dynamicbrushes",
   "version": "1.0.0",
   "engines": {
     "node": "6.2.0"
   },
-  "description": "",
+  "description": "a dynamic drawing system",
   "main": "index.js",
   "scripts": {
     "start": "node server.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Jennifer Jacobs",
+  "license": "MIT",
   "dependencies": {
     "bufferutil": "1.2.1",
     "express": "4.13.4",
     "utf-8-validate": "1.2.1",
     "ws": "1.1.0"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pixelmaid/DynamicBrushes.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pixelmaid/DynamicBrushes/issues"
+  },
+  "homepage": "https://github.com/pixelmaid/DynamicBrushes#readme"
 }

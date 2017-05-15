@@ -12,7 +12,7 @@ import Starscream
 
 //central manager for all requests to web socket
 class SocketManager: WebSocketDelegate{
-     var socket = WebSocket(url: NSURL(string: "ws://pure-beach-75578.herokuapp.com/")! as URL, protocols: ["drawing"])
+     var socket = WebSocket(url: NSURL(string: "ws://dynamic-brushes.herokuapp.com/")! as URL, protocols: ["drawing_user1"])
     //var socket = WebSocket(url: NSURL(string: "ws://localhost:5000")!, protocols: ["ipad_client"])
     var dataEvent = Event<(String,JSON?)>();
     var requestEvent = Event<(String,JSON?)>();

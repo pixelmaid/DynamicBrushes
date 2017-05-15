@@ -11,7 +11,11 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
         var chartViewManager = new ChartViewManager(paletteModel, "#canvas");
         var saveManager = new SaveManager();
         var saveView = new SaveView(saveManager,"#save-menu");
-        socketController.connect();
+
+        var codename = prompt("please enter your login key");
+                if (codename !== null) {
+                 socketController.connect(codename);
+         }
 
         var onMessage = function(data) {
             console.log("ON MESSGE CALLED", data);
