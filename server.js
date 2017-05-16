@@ -24,10 +24,11 @@ wss.on('connection', (ws) => {
 	console.log('Client connected', ws.protocol);
 	
 	var userkey = ws.protocol.split("_")[1];
+		var connection = ws;
+
 	if(keys.find(function(e){return e == userkey;})){
 	var protocol = ws.protocol;
 	
-	var connection = ws;
 	var clientName = ws.protocol.split("_")[0];
 	if (clientName == 'drawing') {
 		drawing_clients[userkey] = connection;
@@ -91,5 +92,6 @@ wss.on('connection', (ws) => {
 }	
 else{
 	console.log("key not recognized");
+	connection.send("key not recognized");
 }
 });

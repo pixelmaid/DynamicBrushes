@@ -142,6 +142,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         self.present(alertController, animated: true, completion: nil)
     }
     
+    
     @objc func drawIntervalCallback(){
         if(activeLayer != nil){
             let context = activeLayer?.pushContext();

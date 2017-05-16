@@ -36,7 +36,7 @@ define(['emitter', 'app/Emitter'],
 
         this.connection.onerror = function(error) {
           console.log('connection error', error);
-
+          self.emitter.trigger("ON_CONNECTION_ERROR");
           // an error occurred when sending/receiving data
         };
 
@@ -60,7 +60,13 @@ define(['emitter', 'app/Emitter'],
 
             //TODO: client connected
             return;
-          } else {
+          }
+          else if(message.data == "key not recognized"){
+            self.emitter.trigger("ON_KEY_NOT_RECOGNIZED");
+            return;
+          } 
+
+          else {
             console.log("data=", message.data);
             var data = JSON.parse(message.data);
 

@@ -1,8 +1,8 @@
 'use strict';
-define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveView", "app/PaletteModel", "app/PaletteView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart"],
+define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveView", "app/PaletteModel", "app/PaletteView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart", "hbs!app/templates/overlay"],
 
 
-    function($, paper, Handlebars, ID, SaveManager, SaveView, PaletteModel, PaletteView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart) {
+    function($, paper, Handlebars, ID, SaveManager, SaveView, PaletteModel, PaletteView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart, OverlayTemplate) {
 
         var socketController = new SocketController();
         var socketView = new SocketView(socketController, "#socket");
@@ -11,7 +11,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
         var chartViewManager = new ChartViewManager(paletteModel, "#canvas");
         var saveManager = new SaveManager();
         var saveView = new SaveView(saveManager, "#save-menu");
-
+        var codename;
 
         var onMessage = function(data) {
             console.log("ON MESSGE CALLED", data);
@@ -33,18 +33,34 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
                 chartViewManager.processAuthoringResponse(data);
 
             } else if (data.type == "synchronize") {
+                hideOverlay();
                 chartViewManager.synchronize(data);
 
             } else if (data.type == "storage_data") {
                 saveManager.loadStorageData(data);
             }
-            else
+
         };
 
         var onConnection = function() {
             console.log("connection made");
             requestFileList();
         };
+
+        var onConnectionError = function() {
+            if (confirm('There was an error trying to connect. Try again?')) {
+                if (codename) {
+                    socketController.connect(codename);
+                } else {
+                    promptConnect();
+                }
+
+            } else {
+                // Do nothing!
+            }
+        };
+
+
 
         var onDrawingClientConnected = function() {
             console.log("drawing client connected");
@@ -56,16 +72,18 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
             };
             socketController.sendMessage(transmit_data);
             requestFileList();
+            hideOverlay();
 
         };
 
         var onDrawingClientDisconnected = function() {
             console.log("drawing client disconnected");
+            showOverlay();
         };
 
-        var onDisconnect = function(){
+        var onDisconnect = function() {
             promptConnect();
-        }
+        };
 
         var onAuthoringEvent = function(data) {
             console.log("transmit_data", data);
@@ -106,11 +124,30 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
 
         var promptConnect = function() {
 
-            var codename = prompt("please enter your login key");
+            codename = prompt("please enter your login key");
             if (codename !== null) {
+
                 socketController.connect(codename);
             }
 
+        };
+
+        var showOverlay = function() {
+            $("#overlay").removeClass("invisible");
+            $("#overlay_dialog").removeClass("invisible");
+        };
+
+        var hideOverlay = function() {
+            $("#overlay").addClass("invisible");
+            $("#overlay_dialog").addClass("invisible");
+        };
+
+        var onKeyNotRecognized = function(){
+             codename = prompt("login key not recognized, please re-enter your key");
+            if (codename !== null) {
+
+                socketController.connect(codename);
+            }
         };
 
         socketController.addListener("ON_MESSAGE", onMessage);
@@ -119,6 +156,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
         socketController.addListener("ON_CLIENT_CONNECTED", onDrawingClientConnected);
         socketController.addListener("ON_CLIENT_DISCONNECTED", onDrawingClientDisconnected);
         socketController.addListener("ON_CONNECTION", onConnection);
+        socketController.addListener("ON_CONNECTION_ERROR", onConnectionError);
+        socketController.addListener("ON_KEY_NOT_RECOGNIZED",onKeyNotRecognized);
         chartViewManager.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
         saveManager.addListener("ON_SAVE_EVENT", onStorageEvent);
         promptConnect();
