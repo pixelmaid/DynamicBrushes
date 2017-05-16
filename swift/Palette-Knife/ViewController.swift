@@ -100,7 +100,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated);
-         self.presentAlert();
+        self.loginAlert();
 
     }
     
@@ -116,8 +116,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     }
     
     
-    func presentAlert() {
-        let alertController = UIAlertController(title: "login_key", message: "Enter your login key", preferredStyle: .alert)
+    func loginAlert() {
+        let alertController = UIAlertController(title: "Login", message: "Enter your login key", preferredStyle: .alert)
         print("present alert",alertController);
         let confirmAction = UIAlertAction(title: "Confirm", style: .default) { (_) in
             if let field = alertController.textFields?[0] {
@@ -142,6 +142,21 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         self.present(alertController, animated: true, completion: nil)
     }
     
+    func recconnectAlert(){
+         let alertController = UIAlertController(title:"Connection Issue", message: "You were disconnected from the server. Try to reconnect?", preferredStyle: .alert)
+        
+        let confirmAction = UIAlertAction(title: "Confirm", style: .default) { (_) in
+                self.addConnectionRequests();
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in }
+        
+        alertController.addAction(confirmAction)
+        alertController.addAction(cancelAction)
+        
+        self.present(alertController, animated: true, completion: nil)
+
+    }
     
     @objc func drawIntervalCallback(){
         if(activeLayer != nil){
@@ -179,6 +194,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         print("process request called for \(self,data)");
         
         switch(data.0){
+        case "disconnected":
+            print("disconnected from server");
+            recconnectAlert();
+            break;
         case "filelist_complete":
             print("adding filelist complete request")
             let filelist_complete_request = Request(target:"socket",action:"send_storage_data",data:data.1,requester:self)
