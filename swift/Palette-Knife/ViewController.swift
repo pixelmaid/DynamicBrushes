@@ -118,7 +118,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
     func loginAlert() {
         let alertController = UIAlertController(title: "Login", message: "Enter your login key", preferredStyle: .alert)
-        print("present alert",alertController);
+        //print("present alert",alertController);
         let confirmAction = UIAlertAction(title: "Confirm", style: .default) { (_) in
             if let field = alertController.textFields?[0] {
                 // store your data
@@ -159,10 +159,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     }
     
     @objc func drawIntervalCallback(){
-        if(activeLayer != nil){
-            let context = activeLayer?.pushContext();
-            currentCanvas?.drawSegment(context:context!)
-            activeLayer?.popContext();
+        if(activeLayer != nil && currentCanvas!.dirty){
+           let context = activeLayer?.pushContext();
+             currentCanvas?.drawSegment(context:context!)
+             activeLayer?.popContext();
+            //print("timer callback");
         }
     }
 
@@ -174,7 +175,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         activeLayer = ModifiedCanvasView(frame: CGRect(x:origin.x, y:origin.y, width:screenSize.width, height:screenSize.height))
         self.layers.append(activeLayer!)
         layerContainerView.addSubview(activeLayer!);
-        
+       // print("screenSize",screenSize);
     }
     
     func onErase(sender: UIButton!) {
@@ -191,7 +192,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
     //from Requester protocol. Handles result of request
     internal func processRequest(data: (String, JSON?)) {
-        print("process request called for \(self,data)");
+       // print("process request called for \(self,data)");
         
         switch(data.0){
         case "disconnected":
@@ -432,7 +433,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
     
     @IBAction func handlePinch(recognizer : UIPinchGestureRecognizer) {
-        print("pinch")
+      //  print("pinch")
         if let view = recognizer.view {
             view.transform = view.transform.scaledBy(x: recognizer.scale, y: recognizer.scale)
             recognizer.scale = 1
@@ -440,7 +441,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     }
     
     @IBAction func handleRotate(recognizer : UIRotationGestureRecognizer) {
-        print("rotate")
+       // print("rotate")
 
         if let view = recognizer.view {
             view.transform = view.transform.rotated(by: recognizer.rotation)

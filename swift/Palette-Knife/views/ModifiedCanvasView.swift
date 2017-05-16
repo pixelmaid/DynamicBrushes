@@ -55,16 +55,16 @@ class ModifiedCanvasView: UIImageView {
         } else {
             touches.append(touch)
         }
-        
+        //print("touches count",touches.count)
         for touch in touches {
-           // if touch.type == .stylus {
+            if touch.type == .stylus {
               let location = touch.location(in: self)
                 let x = Float(location.x);
                 let y = Float(location.y);
                 let force = Float(touch.force);
                 let angle = Float(touch.azimuthAngle(in: self))
                 stylus.onStylusMove(x: x, y:y, force:force, angle:angle)
-            //}
+            }
 
         }
         
@@ -83,9 +83,6 @@ class ModifiedCanvasView: UIImageView {
                     //}
             }
         }*/
-        
-        // Update image
-       
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {

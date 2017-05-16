@@ -354,7 +354,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
        
         let color = Color(h: ds.h, s: ds.s, l: ds.l, a: 1)
        
-        self.currentCanvas!.currentDrawing!.addSegmentToStroke(parentID: self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight:cweight , color: color,alpha:ds.a)
+        self.currentCanvas!.addSegmentToStroke(parentID: self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight:cweight , color: color,alpha:ds.a)
         
         self.position.set(x:_dx,y:_dy);
 

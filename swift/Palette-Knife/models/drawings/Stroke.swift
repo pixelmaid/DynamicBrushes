@@ -164,7 +164,7 @@ class Stroke:TimeSeries, Geometry {
         self.toDrawSegments.append(contentsOf: self.dirtySegments)
         self.dirtySegments.removeAll();
         for i in 0..<toDrawSegments.count{
-            toDrawSegments[i].drawIntoContext(context: context);
+           toDrawSegments[i].drawIntoContext(context: context);
         }
         self.toDrawSegments.removeAll();
         self.dirty = false;
@@ -183,9 +183,9 @@ class Stroke:TimeSeries, Geometry {
             let prevSeg = segments[segments.count-1];
             let dist = segment.point.dist(point: prevSeg.point)
             
-            if(dist < 10){
-                return nil;
-            }
+            //if(dist < 10){
+              //  return nil;
+            //}
             xBuffer.push(v: segment.point.x.get(id: nil)-prevSeg.point.x.get(id: nil))
             yBuffer.push(v: segment.point.y.get(id: nil)-prevSeg.point.y.get(id: nil))
 

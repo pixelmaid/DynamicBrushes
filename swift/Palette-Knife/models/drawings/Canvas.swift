@@ -18,7 +18,7 @@ class Canvas: WebTransmitter, Hashable{
     var currentDrawing:Drawing?
     var transmitEvent = Event<(String)>()
     var initEvent = Event<(WebTransmitter,String)>()
-    
+    var dirty = false;
     var geometryModified = Event<(Geometry,String,String)>()
     
     let drawKey = NSUUID().uuidString;
@@ -37,12 +37,17 @@ class Canvas: WebTransmitter, Hashable{
         name = "default_"+id;
     }
     
+    
     func drawSegment(context:CGContext){
-        for i in 0..<drawings.count{
+        if(currentDrawing!.dirty){
+            currentDrawing?.drawSegment(context: context)
+        }
+        self.dirty = false;
+        /*for i in 0..<drawings.count{
             if(drawings[i].dirty){
                 drawings[i].drawSegment(context:context);
             }
-        }
+        }*/
     }
     
     func initDrawing(){
@@ -57,6 +62,17 @@ class Canvas: WebTransmitter, Hashable{
         self.transmitEvent.raise(data:(string));
         
     }
+    
+    func addSegmentToStroke(parentID:String, point:Point, weight:Float, color:Color, alpha:Float){
+        if (self.currentDrawing == nil){
+            return
+        }
+        
+        self.dirty = true
+        
+        self.currentDrawing!.addSegmentToStroke(parentID: parentID, point: point, weight: weight, color: color, alpha: alpha)
+    }
+
     
     func hitTest(point:Point, threshold:Float)->Stroke?{
         let hit = currentDrawing!.hitTest(point: point,threshold:threshold)

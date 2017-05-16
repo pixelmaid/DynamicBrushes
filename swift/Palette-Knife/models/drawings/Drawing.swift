@@ -17,11 +17,10 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     
     var id = NSUUID().uuidString;
     var activeStrokes = [String:[Stroke]]();
-    var allStrokes = [String:[Stroke]]();
-    var drawnStrokes  = [String:[Stroke]]();
+    var allStrokes = [Stroke]();
     var transmitEvent = Event<(String)>()
     var initEvent = Event<(WebTransmitter,String)>()
-    
+
     let svgGenerator = SVGGenerator();
     
     var geometryModified = Event<(Geometry,String,String)>()
@@ -32,13 +31,12 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     }
     
     func drawSegment(context:CGContext){
-        for (_,strokes) in allStrokes{
-            for i in 0..<strokes.count{
+       
+            for i in 0..<allStrokes.count{
                 // print("strokes \(i,strokes[i].dirty)");
+                if(allStrokes[i].dirty){
+                   allStrokes[i].drawSegment(context:context);
                 
-                if(strokes[i].dirty){
-                    strokes[i].drawSegment(context:context);
-                }
             }
         }
         self.dirty = false
@@ -46,23 +44,21 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     
     func getSVG()->String{
         var orderedStrokes = [Stroke]()
-        for list in self.allStrokes{
-            for i in 0..<list.1.count{
-                orderedStrokes.append(list.1[i])
-            }
+        for i in 0..<allStrokes.count{
+                orderedStrokes.append(allStrokes[i])
         }
+        
         return svgGenerator.generate(strokes: orderedStrokes)
         
     }
     
     func hitTest(point:Point,threshold:Float)->Stroke?{
-        for list in allStrokes {
-            for stroke in list.1{
+        for i in 0..<allStrokes.count{
+            let stroke = allStrokes[i];
                 let seg = stroke.hitTest(testPoint: point,threshold:threshold);
                 if(seg != nil){
                     return stroke;
                 }
-            }
         }
         return nil
     }
@@ -88,13 +84,10 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         }
         self.activeStrokes[parentID]!.append(stroke);
         
-        if (self.allStrokes[parentID] == nil){
-            self.allStrokes[parentID] = [Stroke]()
-            
-        }
+       
        
         
-        self.allStrokes[parentID]!.append(stroke);
+        self.allStrokes.append(stroke);
        
         return stroke;
     }

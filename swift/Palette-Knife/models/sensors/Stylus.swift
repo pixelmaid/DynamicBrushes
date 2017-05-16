@@ -126,7 +126,7 @@ class Stylus: TimeSeries, WebTransmitter {
         //TODO: silent set, need to make more robust/ readable
         self.position.x.setSilent(newValue: x)
         self.position.y.setSilent(newValue: y)
-        print("stylus down listeners\(self.keyStorage["STYLUS_DOWN"])");
+        //print("stylus down listeners\(self.keyStorage["STYLUS_DOWN"])");
         for key in self.keyStorage["STYLUS_DOWN"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;
@@ -209,7 +209,7 @@ class Stylus: TimeSeries, WebTransmitter {
         self.position.set(x: x,y:y)
         
         let d = self.position.sub(point: self.prevPosition)
-        //print("stylus pos\(d.x.get(id: nil),d.y.get(id: nil))");
+       // print("stylus pos\(d.x.get(id: nil),d.y.get(id: nil))");
 
         
         self.delta.set(val:d)
