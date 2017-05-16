@@ -82,7 +82,16 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
         };
 
         var onDisconnect = function() {
-            promptConnect();
+            if (confirm('You were disconnected. Try to reconnect?')) {
+                if (codename) {
+                    socketController.connect(codename);
+                } else {
+                    promptConnect();
+                }
+
+            } else {
+                // Do nothing!
+            }
         };
 
         var onAuthoringEvent = function(data) {
