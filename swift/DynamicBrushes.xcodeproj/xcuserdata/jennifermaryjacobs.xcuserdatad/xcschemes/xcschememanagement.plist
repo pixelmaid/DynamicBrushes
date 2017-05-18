@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>DynamicBrushes_dev.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>11</integer>
+		</dict>
 		<key>Palette-Knife.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -12,6 +17,21 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>5F1109241ECE248E000FBF24</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5F1109371ECE248E000FBF24</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5F1109421ECE248E000FBF24</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>5FA4C71F1CDA7B5B004A728C</key>
 		<dict>
 			<key>primary</key>

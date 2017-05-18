@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5FA4C71F1CDA7B5B004A728C"
-               BuildableName = "PaletteKnife.app"
-               BlueprintName = "PaletteKnife"
-               ReferencedContainer = "container:PaletteKnife.xcodeproj">
+               BuildableName = "DynamicBrushes.app"
+               BlueprintName = "DynamicBrushes"
+               ReferencedContainer = "container:DynamicBrushes.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5FA4C7331CDA7B5B004A728C"
-               BuildableName = "PaletteKnife.xctest"
-               BlueprintName = "PaletteKnifeTests"
-               ReferencedContainer = "container:PaletteKnife.xcodeproj">
+               BuildableName = "DynamicBrushes.xctest"
+               BlueprintName = "DynamicBrushesTests"
+               ReferencedContainer = "container:DynamicBrushes.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -43,9 +43,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5FA4C73E1CDA7B5B004A728C"
-               BuildableName = "PaletteKnife.xctest"
-               BlueprintName = "PaletteKnifeUITests"
-               ReferencedContainer = "container:PaletteKnife.xcodeproj">
+               BuildableName = "DynamicBrushes.xctest"
+               BlueprintName = "DynamicBrushesUITests"
+               ReferencedContainer = "container:DynamicBrushes.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -53,9 +53,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5FA4C71F1CDA7B5B004A728C"
-            BuildableName = "PaletteKnife.app"
-            BlueprintName = "PaletteKnife"
-            ReferencedContainer = "container:PaletteKnife.xcodeproj">
+            BuildableName = "DynamicBrushes.app"
+            BlueprintName = "DynamicBrushes"
+            ReferencedContainer = "container:DynamicBrushes.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -76,9 +76,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5FA4C71F1CDA7B5B004A728C"
-            BuildableName = "PaletteKnife.app"
-            BlueprintName = "PaletteKnife"
-            ReferencedContainer = "container:PaletteKnife.xcodeproj">
+            BuildableName = "DynamicBrushes.app"
+            BlueprintName = "DynamicBrushes"
+            ReferencedContainer = "container:DynamicBrushes.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -99,9 +99,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5FA4C71F1CDA7B5B004A728C"
-            BuildableName = "PaletteKnife.app"
-            BlueprintName = "PaletteKnife"
-            ReferencedContainer = "container:PaletteKnife.xcodeproj">
+            BuildableName = "DynamicBrushes.app"
+            BlueprintName = "DynamicBrushes"
+            ReferencedContainer = "container:DynamicBrushes.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

@@ -54,14 +54,14 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
     var brushes = [String:Brush]()
     var drawInterval:Timer!
-
+    
     
     required init?(coder: NSCoder) {
         let screenSize = UIScreen.main.bounds
         let sX = (screenSize.width-CGFloat(pX))/2.0
         let sY = (screenSize.height-CGFloat(pY))/2.0
         
-       
+        
         
         
         backView = UIImageView(frame: CGRect(x:sX, y:sY, width:CGFloat(pX), height:CGFloat(pY)))
@@ -79,15 +79,15 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         super.viewDidLoad()
         
         self.initCanvas()
-       
+        
         
         _ = RequestHandler.dataEvent.addHandler(target: self, handler: ViewController.processRequestHandler, key: dataEventKey)
         
         let configureRequest = Request(target: "storage", action: "configure", data:JSON([]), requester: self)
         
         RequestHandler.addRequest(requestData:configureRequest);
-
-       
+        
+        
         newLayer(sender: nil);
         
         eraseButton.addTarget(self, action: #selector(ViewController.onErase), for: .touchUpInside)
@@ -101,7 +101,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated);
         self.loginAlert();
-
+        
     }
     
     func addConnectionRequests(){
@@ -112,7 +112,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         templateJSON["filename"] = "templates/basic.json"
         let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: self)
         RequestHandler.addRequest(requestData:behaviorDownloadRequest);
-
+        
     }
     
     
@@ -143,10 +143,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     }
     
     func recconnectAlert(){
-         let alertController = UIAlertController(title:"Connection Issue", message: "You were disconnected from the server. Try to reconnect?", preferredStyle: .alert)
+        let alertController = UIAlertController(title:"Connection Issue", message: "You were disconnected from the server. Try to reconnect?", preferredStyle: .alert)
         
         let confirmAction = UIAlertAction(title: "Confirm", style: .default) { (_) in
-                self.addConnectionRequests();
+            self.addConnectionRequests();
         }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in }
@@ -155,18 +155,29 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         alertController.addAction(cancelAction)
         
         self.present(alertController, animated: true, completion: nil)
-
+        
     }
+    
+    func exportImage() {
+        
+        let contentToShare = self.activeLayer!.exportPNG();
+        if(contentToShare != nil){
+            let activityViewController = UIActivityViewController(activityItems: [contentToShare], applicationActivities: nil)
+            // let activityViewController = UIActivityViewController(activityItems: [shareContent as NSString], applicationActivities: nil)
+            present(activityViewController, animated: true, completion: {})
+        }
+    }
+    
     
     @objc func drawIntervalCallback(){
         if(activeLayer != nil && currentCanvas!.dirty){
-           let context = activeLayer?.pushContext();
-             currentCanvas?.drawSegment(context:context!)
-             activeLayer?.popContext();
-            //print("timer callback");
+            let context = activeLayer?.pushContext();
+            currentCanvas?.drawSegment(context:context!)
+            activeLayer?.popContext();
+            print("timer callback");
         }
     }
-
+    
     
     func newLayer(sender: UIButton!){
         print("new layer created")
@@ -175,7 +186,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         activeLayer = ModifiedCanvasView(frame: CGRect(x:origin.x, y:origin.y, width:screenSize.width, height:screenSize.height))
         self.layers.append(activeLayer!)
         layerContainerView.addSubview(activeLayer!);
-       // print("screenSize",screenSize);
+        // print("screenSize",screenSize);
     }
     
     func onErase(sender: UIButton!) {
@@ -192,7 +203,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
     //from Requester protocol. Handles result of request
     internal func processRequest(data: (String, JSON?)) {
-       // print("process request called for \(self,data)");
+        // print("process request called for \(self,data)");
         
         switch(data.0){
         case "disconnected":
@@ -354,45 +365,45 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         currentCanvas = Canvas();
         behaviorManager = BehaviorManager(canvas: currentCanvas!);
         currentCanvas!.initDrawing();
-       // _ = currentCanvas!.geometryModified.addHandler(target: self,handler: ViewController.canvasDrawHandler, key:drawKey)
+        // _ = currentCanvas!.geometryModified.addHandler(target: self,handler: ViewController.canvasDrawHandler, key:drawKey)
     }
     
     /*func canvasDrawHandler(data:(Geometry,String,String), key:String){
-        if(activeLayer != nil){
-            switch data.2{
-                
-            case "DRAW":
-                switch data.1{
-                case "SEGMENT":
-                    let seg = data.0 as! Segment
-                    
-                    let prevSeg = seg.getPreviousSegment()
-                    
-                    if(prevSeg != nil){
-                        
-                        let bounds = activeLayer!.bounds
-                        var previousLocation = prevSeg!.point.toCGPoint();
-                        var location = seg.point.toCGPoint()
-                        //location.y = bounds.size.height - location.y
-                        //previousLocation.y = bounds.size.height - previousLocation.y
-                        
-                        var color = seg.color;
-                        let alpha = seg.alpha;
-                        color.alpha = alpha;
-                        let diameter = CGFloat(seg.diameter);
-                        
-                        activeLayer!.drawStroke(from: previousLocation, to: location, lineWidth: diameter, color: color.toUIColor())
-                        
-                        
-                    }
-                    break
-                default : break
-                }
-            default:
-                break
-            }
-        }
-    }*/
+     if(activeLayer != nil){
+     switch data.2{
+     
+     case "DRAW":
+     switch data.1{
+     case "SEGMENT":
+     let seg = data.0 as! Segment
+     
+     let prevSeg = seg.getPreviousSegment()
+     
+     if(prevSeg != nil){
+     
+     let bounds = activeLayer!.bounds
+     var previousLocation = prevSeg!.point.toCGPoint();
+     var location = seg.point.toCGPoint()
+     //location.y = bounds.size.height - location.y
+     //previousLocation.y = bounds.size.height - previousLocation.y
+     
+     var color = seg.color;
+     let alpha = seg.alpha;
+     color.alpha = alpha;
+     let diameter = CGFloat(seg.diameter);
+     
+     activeLayer!.drawStroke(from: previousLocation, to: location, lineWidth: diameter, color: color.toUIColor())
+     
+     
+     }
+     break
+     default : break
+     }
+     default:
+     break
+     }
+     }
+     }*/
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -403,20 +414,20 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         if(activeLayer != nil){
             activeLayer?.touchesEnded(touches, with: event)
         }
-      
+        
     }
     
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-            if(activeLayer != nil){
-                activeLayer?.touchesBegan(touches, with: event)
-            }
+        if(activeLayer != nil){
+            activeLayer?.touchesBegan(touches, with: event)
+        }
     }
     
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         if(activeLayer != nil){
-
+            
             self.activeLayer?.touchesMoved(touches, with: event)
         }
     }
@@ -429,11 +440,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         
     }
     
-
+    
     
     
     @IBAction func handlePinch(recognizer : UIPinchGestureRecognizer) {
-      //  print("pinch")
+        //  print("pinch")
         if let view = recognizer.view {
             view.transform = view.transform.scaledBy(x: recognizer.scale, y: recognizer.scale)
             recognizer.scale = 1
@@ -441,8 +452,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     }
     
     @IBAction func handleRotate(recognizer : UIRotationGestureRecognizer) {
-       // print("rotate")
-
+        // print("rotate")
+        
         if let view = recognizer.view {
             view.transform = view.transform.rotated(by: recognizer.rotation)
             recognizer.rotation = 0

@@ -29,6 +29,11 @@ class ModifiedCanvasView: UIImageView {
         
     }
     
+    func exportPNG()->Data?{
+         let data = UIImagePNGRepresentation(self.image!)
+        return data
+    }
+    
     func pushContext()->CGContext{
          //print("push context");
         UIGraphicsBeginImageContextWithOptions(self.bounds.size, false, 0.0)
