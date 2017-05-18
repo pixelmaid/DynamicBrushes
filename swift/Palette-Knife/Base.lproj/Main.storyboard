@@ -12,7 +12,7 @@
         <!--mainView-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController title="mainView" id="BYZ-38-t0r" customClass="ViewController" customModule="PaletteKnife" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="mainView" id="BYZ-38-t0r" customClass="ViewController" customModule="DynamicBrushes" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -22,7 +22,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="u7l-ht-6lz">
-                                <rect key="frame" x="20" y="54" width="1326" height="918"/>
+                                <rect key="frame" x="246" y="106" width="795" height="844"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <gestureRecognizers/>
@@ -32,20 +32,13 @@
                                     <outletCollection property="gestureRecognizers" destination="jvM-jU-Dy0" appends="YES" id="YwA-nx-bHZ"/>
                                 </connections>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="b9f-FX-vgT">
-                                <rect key="frame" x="134" y="20" width="100" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="add layer">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wVB-jc-VVZ">
-                                <rect key="frame" x="20" y="20" width="100" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="erase all">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                            </button>
+                            <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qus-XL-8dQ" userLabel="toolbar_container_view">
+                                <rect key="frame" x="0.0" y="41" width="1366" height="57"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <connections>
+                                    <segue destination="pkZ-4g-ASv" kind="embed" identifier="toolbarSegue" id="caa-Rq-pHd"/>
+                                </connections>
+                            </containerView>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
@@ -55,8 +48,6 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
-                        <outlet property="addLayerButton" destination="b9f-FX-vgT" id="2TL-QX-eD4"/>
-                        <outlet property="eraseButton" destination="wVB-jc-VVZ" id="TBH-To-a3b"/>
                         <outlet property="layerContainerView" destination="u7l-ht-6lz" id="3Jw-1H-y5z"/>
                     </connections>
                 </viewController>
@@ -81,6 +72,48 @@
                 </panGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="280.67349926793554" y="489.84374999999994"/>
+        </scene>
+        <!--Toolbar View Controller-->
+        <scene sceneID="KeE-9Q-Jvn">
+            <objects>
+                <viewController id="pkZ-4g-ASv" customClass="ToolbarViewController" customModule="DynamicBrushes" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="G3o-hJ-GeL">
+                        <rect key="frame" x="0.0" y="0.0" width="1366" height="57"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="b9f-FX-vgT">
+                                <rect key="frame" x="100" y="15" width="100" height="27"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="add layer">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wVB-jc-VVZ">
+                                <rect key="frame" x="8" y="5" width="100" height="46"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="erase all">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="92H-Ne-X3p">
+                                <rect key="frame" x="180" y="13" width="100" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="export">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <connections>
+                        <outlet property="addLayerButton" destination="b9f-FX-vgT" id="58C-xh-PN8"/>
+                        <outlet property="eraseButton" destination="wVB-jc-VVZ" id="8aK-qf-9yb"/>
+                        <outlet property="exportButton" destination="92H-Ne-X3p" id="pY2-xa-rh7"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="cO4-mP-nr5" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="293.41142020497801" y="944.82421874999989"/>
         </scene>
     </scenes>
     <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>

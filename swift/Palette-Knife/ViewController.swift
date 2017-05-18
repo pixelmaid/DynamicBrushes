@@ -49,12 +49,15 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     var currentCanvas: Canvas?
     
     let drawKey = NSUUID().uuidString
+    let toolbarKey = NSUUID().uuidString
+
     let brushEventKey = NSUUID().uuidString
     let dataEventKey = NSUUID().uuidString
     
     var brushes = [String:Brush]()
     var drawInterval:Timer!
     
+    var toolbarController: ToolbarViewController?
     
     required init?(coder: NSCoder) {
         let screenSize = UIScreen.main.bounds
@@ -71,6 +74,27 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         
     }
     
+   
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        print("segue \(segue.identifier)");
+        if(segue.identifier == "toolbarSegue"){
+           toolbarController = segue.destination as? ToolbarViewController;
+           _ = toolbarController?.toolEvent.addHandler(target: self, handler: ViewController.toolEventHandler, key: toolbarKey)
+        }
+    }
+    
+    func toolEventHandler(data: (String), key: String){
+        switch(data){
+            case "VIEW_LOADED":
+                toolbarController?.eraseButton.addTarget(self, action: #selector(ViewController.onErase), for: .touchUpInside)
+                toolbarController?.addLayerButton.addTarget(self, action: #selector(ViewController.newLayer), for: .touchUpInside)
+                 toolbarController?.exportButton.addTarget(self, action: #selector(ViewController.exportImage), for: .touchUpInside)
+
+                break;
+        default:
+            break;
+        }
+    }
     
     override func viewDidLoad() {
         
@@ -90,8 +114,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         
         newLayer(sender: nil);
         
-        eraseButton.addTarget(self, action: #selector(ViewController.onErase), for: .touchUpInside)
-        addLayerButton.addTarget(self, action: #selector(ViewController.newLayer), for: .touchUpInside)
+      
+      
         
         drawInterval  = Timer.scheduledTimer(timeInterval:0.016 , target: self, selector: #selector(ViewController.drawIntervalCallback), userInfo: nil, repeats: true)
         
@@ -160,13 +184,26 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
     func exportImage() {
         
-        let contentToShare = self.activeLayer!.exportPNG();
+        //let contentToShare = self.activeLayer!.exportPNG();
+        UIGraphicsBeginImageContext(layerContainerView.bounds.size);
+        layerContainerView.layer.render(in: UIGraphicsGetCurrentContext()!);
+        let viewImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        let contentToShare = UIImagePNGRepresentation(viewImage!)
+        
+        print("content to share",contentToShare);
         if(contentToShare != nil){
-            let activityViewController = UIActivityViewController(activityItems: [contentToShare], applicationActivities: nil)
+            let nsContent = NSData(data: contentToShare!)
+            let activityViewController = UIActivityViewController(activityItems: [nsContent], applicationActivities: nil)
             // let activityViewController = UIActivityViewController(activityItems: [shareContent as NSString], applicationActivities: nil)
+                activityViewController.popoverPresentationController?.sourceView =
+                self.view;
+            
             present(activityViewController, animated: true, completion: {})
         }
+        
     }
+    
     
     
     @objc func drawIntervalCallback(){

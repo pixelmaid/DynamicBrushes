@@ -15,7 +15,7 @@ class ModifiedCanvasView: UIImageView {
     
     // temp image for predicted strokes
     fileprivate var drawingImage: UIImage?
-     
+    let id = NSUUID().uuidString;
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 
         if let touch = touches.first  {
@@ -62,14 +62,14 @@ class ModifiedCanvasView: UIImageView {
         }
         //print("touches count",touches.count)
         for touch in touches {
-            if touch.type == .stylus {
+           // if touch.type == .stylus {
               let location = touch.location(in: self)
                 let x = Float(location.x);
                 let y = Float(location.y);
                 let force = Float(touch.force);
                 let angle = Float(touch.azimuthAngle(in: self))
                 stylus.onStylusMove(x: x, y:y, force:force, angle:angle)
-            }
+         //   }
 
         }
         

@@ -74,6 +74,8 @@
 		5FA4C7441CDA7B5B004A728C /* Palette_KnifeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7431CDA7B5B004A728C /* Palette_KnifeUITests.swift */; };
 		5FC91D2D1EA00C2F00A19206 /* RequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC91D2C1EA00C2F00A19206 /* RequestHandler.swift */; };
 		5FD6CD121DE0EE0E007D94AA /* sm_pen_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FD6CD111DE0EE0E007D94AA /* sm_pen_blue.png */; };
+		5FE32F611ECE2EBB00ADC01E /* ToolbarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE32F601ECE2EBB00ADC01E /* ToolbarViewController.swift */; };
+		5FE32F631ECE535100ADC01E /* LayerContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE32F621ECE535100ADC01E /* LayerContainerView.swift */; };
 		5FEE2AC91DE127D800080095 /* dual_pen.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FEE2AC71DE127D800080095 /* dual_pen.png */; };
 		5FEE2ACA1DE127D800080095 /* lg_pen_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FEE2AC81DE127D800080095 /* lg_pen_blue.png */; };
 		5FFAC4D71E9D84040009DC5E /* SaveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFAC4D61E9D84040009DC5E /* SaveManager.swift */; };
@@ -189,6 +191,8 @@
 		5FA4C7451CDA7B5B004A728C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5FC91D2C1EA00C2F00A19206 /* RequestHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestHandler.swift; sourceTree = "<group>"; };
 		5FD6CD111DE0EE0E007D94AA /* sm_pen_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sm_pen_blue.png; sourceTree = "<group>"; };
+		5FE32F601ECE2EBB00ADC01E /* ToolbarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarViewController.swift; sourceTree = "<group>"; };
+		5FE32F621ECE535100ADC01E /* LayerContainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LayerContainerView.swift; sourceTree = "<group>"; };
 		5FEE2AC71DE127D800080095 /* dual_pen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dual_pen.png; sourceTree = "<group>"; };
 		5FEE2AC81DE127D800080095 /* lg_pen_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lg_pen_blue.png; sourceTree = "<group>"; };
 		5FFAC4D61E9D84040009DC5E /* SaveManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SaveManager.swift; sourceTree = "<group>"; };
@@ -421,6 +425,7 @@
 				5FA4C7551CDB9E9A004A728C /* models */,
 				5FA4C7231CDA7B5B004A728C /* AppDelegate.swift */,
 				5FA4C7251CDA7B5B004A728C /* ViewController.swift */,
+				5FE32F601ECE2EBB00ADC01E /* ToolbarViewController.swift */,
 				5FA4C7271CDA7B5B004A728C /* Main.storyboard */,
 				5FA4C72A1CDA7B5B004A728C /* Assets.xcassets */,
 				5FA4C72C1CDA7B5B004A728C /* LaunchScreen.storyboard */,
@@ -469,6 +474,7 @@
 				5F90F5341E9D588F006BB9FE /* CanvasView.swift */,
 				5F5037141EA94D2C004ABAC1 /* BitmapCanvasView.swift */,
 				5F0EB6611EB5775100225A6E /* ModifiedCanvasView.swift */,
+				5FE32F621ECE535100ADC01E /* LayerContainerView.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -933,6 +939,7 @@
 				5F90F56E1E9D5BE3006BB9FE /* Stylus.swift in Sources */,
 				5F90F55C1E9D5A5C006BB9FE /* Brush.swift in Sources */,
 				5F90F56A1E9D5BCC006BB9FE /* Generator.swift in Sources */,
+				5FE32F631ECE535100ADC01E /* LayerContainerView.swift in Sources */,
 				5F50371D1EA957F5004ABAC1 /* debug.swift in Sources */,
 				5FA4C7261CDA7B5B004A728C /* ViewController.swift in Sources */,
 				5F90F5681E9D5BCC006BB9FE /* Condition.swift in Sources */,
@@ -942,6 +949,7 @@
 				5F90F5671E9D5BCC006BB9FE /* BehaviorMapper.swift in Sources */,
 				5FFDAB091D21B5C400632A26 /* SocketManager.swift in Sources */,
 				5F90F54E1E9D5A16006BB9FE /* Point.swift in Sources */,
+				5FE32F611ECE2EBB00ADC01E /* ToolbarViewController.swift in Sources */,
 				5F90F5451E9D59D4006BB9FE /* Numerical.swift in Sources */,
 				5F90F5361E9D588F006BB9FE /* CanvasView.swift in Sources */,
 				5FC91D2D1EA00C2F00A19206 /* RequestHandler.swift in Sources */,
