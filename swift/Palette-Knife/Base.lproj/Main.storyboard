@@ -21,17 +21,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="1366" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="u7l-ht-6lz">
-                                <rect key="frame" x="246" y="106" width="795" height="844"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <gestureRecognizers/>
-                                <connections>
-                                    <outletCollection property="gestureRecognizers" destination="tj7-0I-PlI" appends="YES" id="t1O-S4-Ie7"/>
-                                    <outletCollection property="gestureRecognizers" destination="nZU-zz-h1H" appends="YES" id="HHk-6R-U0J"/>
-                                    <outletCollection property="gestureRecognizers" destination="jvM-jU-Dy0" appends="YES" id="YwA-nx-bHZ"/>
-                                </connections>
-                            </view>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qus-XL-8dQ" userLabel="toolbar_container_view">
                                 <rect key="frame" x="0.0" y="41" width="1366" height="57"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
@@ -47,9 +36,6 @@
                     <nil key="simulatedStatusBarMetrics"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
-                    <connections>
-                        <outlet property="layerContainerView" destination="u7l-ht-6lz" id="3Jw-1H-y5z"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
                 <pinchGestureRecognizer id="tj7-0I-PlI">

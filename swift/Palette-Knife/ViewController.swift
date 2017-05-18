@@ -34,16 +34,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
     // MARK: Properties
     
-    //@IBOutlet weak var bitmapView: BitmapCanvasView!
-    @IBOutlet weak var eraseButton: UIButton!
-    @IBOutlet weak var addLayerButton: UIButton!
-    @IBOutlet weak var layerContainerView: UIView!
+
+  
+    var layerContainerView:LayerContainerView!
     
-    var layers = [ModifiedCanvasView]();
-    var activeLayer:ModifiedCanvasView?
-    
-    
-    var backView:UIImageView
     
     var behaviorManager: BehaviorManager?
     var currentCanvas: Canvas?
@@ -64,10 +58,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         let sX = (screenSize.width-CGFloat(pX))/2.0
         let sY = (screenSize.height-CGFloat(pY))/2.0
         
+        layerContainerView = LayerContainerView(width:1000,height:768);
         
         
-        
-        backView = UIImageView(frame: CGRect(x:sX, y:sY, width:CGFloat(pX), height:CGFloat(pY)))
+       // backView = UIImageView(frame: CGRect(x:sX, y:sY, width:CGFloat(pX), height:CGFloat(pY)))
         
         
         super.init(coder: coder);
@@ -119,6 +113,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         
         drawInterval  = Timer.scheduledTimer(timeInterval:0.016 , target: self, selector: #selector(ViewController.drawIntervalCallback), userInfo: nil, repeats: true)
         
+        layerContainerView.center = CGPoint(x:self.view.frame.size.width/2,y:self.view.frame.size.height/2);
+        self.view.addSubview(layerContainerView);
+
     }
     
     
@@ -191,7 +188,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         UIGraphicsEndImageContext();
         let contentToShare = UIImagePNGRepresentation(viewImage!)
         
-        print("content to share",contentToShare);
         if(contentToShare != nil){
             let nsContent = NSData(data: contentToShare!)
             let activityViewController = UIActivityViewController(activityItems: [nsContent], applicationActivities: nil)
@@ -207,29 +203,20 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
     
     @objc func drawIntervalCallback(){
-        if(activeLayer != nil && currentCanvas!.dirty){
-            let context = activeLayer?.pushContext();
-            currentCanvas?.drawSegment(context:context!)
-            activeLayer?.popContext();
-            print("timer callback");
+        if(currentCanvas!.dirty){
+            layerContainerView.drawIntoCurrentLayer(currentCanvas:currentCanvas!);
+        
         }
     }
     
     
     func newLayer(sender: UIButton!){
         print("new layer created")
-        let screenSize = layerContainerView.bounds
-        let origin = layerContainerView.frame.origin
-        activeLayer = ModifiedCanvasView(frame: CGRect(x:origin.x, y:origin.y, width:screenSize.width, height:screenSize.height))
-        self.layers.append(activeLayer!)
-        layerContainerView.addSubview(activeLayer!);
-        // print("screenSize",screenSize);
+        layerContainerView.newLayer();
     }
     
     func onErase(sender: UIButton!) {
-        if(activeLayer != nil){
-            activeLayer!.erase();
-        }
+        layerContainerView.eraseCurrentLayer();
     }
     
     internal func processRequestHandler(data: (String, JSON?), key: String) {
@@ -448,31 +435,31 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if(activeLayer != nil){
-            activeLayer?.touchesEnded(touches, with: event)
+        if(layerContainerView.activeLayer != nil){
+            layerContainerView.activeLayer?.touchesEnded(touches, with: event)
         }
         
     }
     
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if(activeLayer != nil){
-            activeLayer?.touchesBegan(touches, with: event)
+        if(layerContainerView.activeLayer != nil){
+            layerContainerView.activeLayer?.touchesBegan(touches, with: event)
         }
     }
     
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if(activeLayer != nil){
+        if(layerContainerView.activeLayer != nil){
             
-            self.activeLayer?.touchesMoved(touches, with: event)
+           layerContainerView.activeLayer?.touchesMoved(touches, with: event)
         }
     }
     
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if(activeLayer != nil){
-            activeLayer?.touchesCancelled(touches, with: event)
+        if(layerContainerView.activeLayer != nil){
+            layerContainerView.activeLayer?.touchesCancelled(touches, with: event)
         }
         
     }
