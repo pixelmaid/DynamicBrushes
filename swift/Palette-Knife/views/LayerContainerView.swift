@@ -35,14 +35,24 @@ class LayerContainerView: UIView{
     
     }
     
-    func newLayer(){
+    func newLayer()->String{
             let screenSize = self.bounds
             let origin = self.frame.origin
             activeLayer = ModifiedCanvasView(frame: CGRect(x:origin.x, y:origin.y, width:screenSize.width, height:screenSize.height))
             self.layers.append(activeLayer!)
            self.addSubview(activeLayer!);
+        return activeLayer!.id
         
-        
+    }
+    
+    func setActiveLayer(id:String){
+        for l in layers{
+            if l.id == id {
+                self.activeLayer = l;
+                return;
+            }
+        }
+        print("no active layer by that id found!")
     }
     
     func eraseCurrentLayer(){

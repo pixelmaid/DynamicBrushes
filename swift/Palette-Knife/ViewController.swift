@@ -44,6 +44,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
     let drawKey = NSUUID().uuidString
     let toolbarKey = NSUUID().uuidString
+    let layerEventKey = NSUUID().uuidString
 
     let brushEventKey = NSUUID().uuidString
     let dataEventKey = NSUUID().uuidString
@@ -52,6 +53,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     var drawInterval:Timer!
     
     var toolbarController: ToolbarViewController?
+    var layerPanelController: LayerPanelViewController?
+    
+    @IBOutlet weak var layerPanelContainerView: UIView!
     
     required init?(coder: NSCoder) {
         let screenSize = UIScreen.main.bounds
@@ -75,8 +79,16 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
            toolbarController = segue.destination as? ToolbarViewController;
            _ = toolbarController?.toolEvent.addHandler(target: self, handler: ViewController.toolEventHandler, key: toolbarKey)
         }
+        else if(segue.identifier == "layerPanelSegue"){
+            layerPanelController = segue.destination as? LayerPanelViewController;
+           _ = layerPanelController?.layerEvent.addHandler(target: self, handler: ViewController.layerEventHandler, key: layerEventKey)
+            
+        }
+        
     }
     
+    
+
     func toolEventHandler(data: (String), key: String){
         switch(data){
             case "VIEW_LOADED":
@@ -89,6 +101,18 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
             break;
         }
     }
+    
+    
+    func layerEventHandler(data: (String,String), key: String){
+        switch(data.0){
+        case "LAYER_SELECTED":
+            layerContainerView.setActiveLayer(id:data.1);
+            break;
+        default:
+            break;
+        }
+    }
+
     
     override func viewDidLoad() {
         
@@ -115,6 +139,24 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         
         layerContainerView.center = CGPoint(x:self.view.frame.size.width/2,y:self.view.frame.size.height/2);
         self.view.addSubview(layerContainerView);
+        self.view.sendSubview(toBack: layerContainerView);
+        
+        let pinchRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(ViewController.handlePinch))
+        pinchRecognizer.delegate = self
+        layerContainerView.addGestureRecognizer(pinchRecognizer)
+        
+        let rotateRecognizer = UIRotationGestureRecognizer(target: self, action: #selector(ViewController.handleRotate))
+        rotateRecognizer.delegate = self
+        layerContainerView.addGestureRecognizer(rotateRecognizer)
+        
+        let panRecognizer = UIPanGestureRecognizer(target: self, action: #selector(ViewController.handlePan))
+        panRecognizer.delegate = self
+        panRecognizer.minimumNumberOfTouches = 2;
+        layerContainerView.addGestureRecognizer(panRecognizer)
+        
+        layerPanelContainerView.layer.cornerRadius = 8.0
+        layerPanelContainerView.clipsToBounds = true
+
 
     }
     
@@ -212,7 +254,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
     func newLayer(sender: UIButton!){
         print("new layer created")
-        layerContainerView.newLayer();
+        let id = layerContainerView.newLayer();
+        layerPanelController?.addLayer(layerId: id);
     }
     
     func onErase(sender: UIButton!) {
@@ -467,15 +510,15 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
     
     
-    @IBAction func handlePinch(recognizer : UIPinchGestureRecognizer) {
-        //  print("pinch")
+    func handlePinch(recognizer : UIPinchGestureRecognizer) {
+        print("pinch")
         if let view = recognizer.view {
             view.transform = view.transform.scaledBy(x: recognizer.scale, y: recognizer.scale)
             recognizer.scale = 1
         }
     }
     
-    @IBAction func handleRotate(recognizer : UIRotationGestureRecognizer) {
+     func handleRotate(recognizer : UIRotationGestureRecognizer) {
         // print("rotate")
         
         if let view = recognizer.view {
@@ -484,7 +527,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         }
     }
     
-    @IBAction func handlePan(recognizer:UIPanGestureRecognizer) {
+  func handlePan(recognizer:UIPanGestureRecognizer) {
         let translation = recognizer.translation(in: self.view)
         if let view = recognizer.view {
             view.center = CGPoint(x:view.center.x + translation.x,
