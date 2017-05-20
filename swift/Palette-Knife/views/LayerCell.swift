@@ -14,8 +14,6 @@ class LayerCell: UITableViewCell {
     //MARK: properties
     
 
-    @IBOutlet weak var moveDownButton: UIButton!
-    @IBOutlet weak var moveUpButton: UIButton!
     @IBOutlet weak var layerLabel: UILabel!
 
 

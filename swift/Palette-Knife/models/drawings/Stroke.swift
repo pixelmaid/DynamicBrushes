@@ -92,7 +92,6 @@ struct Segment:Geometry, Equatable {
          if(self.getPreviousSegment() != nil){
         
         self.color.toUIColor().setStroke();
-            print("color:\(self.color, self.color.toUIColor())")
         context?.setLineWidth(CGFloat(self.diameter))
         context?.setLineCap(.round)
         context?.setAlpha(CGFloat(self.alpha));

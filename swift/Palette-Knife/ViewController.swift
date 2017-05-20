@@ -92,11 +92,20 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     func toolEventHandler(data: (String), key: String){
         switch(data){
             case "VIEW_LOADED":
-                toolbarController?.eraseButton.addTarget(self, action: #selector(ViewController.onErase), for: .touchUpInside)
-                toolbarController?.addLayerButton.addTarget(self, action: #selector(ViewController.newLayer), for: .touchUpInside)
+                //toolbarController?.eraseButton.addTarget(self, action: #selector(ViewController.onErase), for: .touchUpInside)
+               //toolbarController?.addLayerButton.addTarget(self, action: #selector(ViewController.newLayer), for: .touchUpInside)
                  toolbarController?.exportButton.addTarget(self, action: #selector(ViewController.exportImage), for: .touchUpInside)
 
                 break;
+            case "ERASE_MODE":
+                layerContainerView.setDrawActive(val: false);
+                break;
+        case "BRUSH_MODE":
+            layerContainerView.setDrawActive(val: true);
+            break;
+
+            
+            
         default:
             break;
         }
@@ -234,9 +243,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
             let nsContent = NSData(data: contentToShare!)
             let activityViewController = UIActivityViewController(activityItems: [nsContent], applicationActivities: nil)
             // let activityViewController = UIActivityViewController(activityItems: [shareContent as NSString], applicationActivities: nil)
-                activityViewController.popoverPresentationController?.sourceView =
-                self.view;
-            
+                activityViewController.popoverPresentationController?.sourceView = toolbarController?.exportButton            
             present(activityViewController, animated: true, completion: {})
         }
         
@@ -508,8 +515,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     }
     
     
-    
-    
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
+
     func handlePinch(recognizer : UIPinchGestureRecognizer) {
         print("pinch")
         if let view = recognizer.view {

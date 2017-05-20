@@ -13,9 +13,11 @@ let pi = CGFloat(M_PI)
 
 class ModifiedCanvasView: UIImageView {
     
-    // temp image for predicted strokes
-    fileprivate var drawingImage: UIImage?
+   
     let id = NSUUID().uuidString;
+    var drawActive = true;
+    
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 
         if let touch = touches.first  {
@@ -62,6 +64,7 @@ class ModifiedCanvasView: UIImageView {
         }
         //print("touches count",touches.count)
         for touch in touches {
+            if(drawActive){
            // if touch.type == .stylus {
               let location = touch.location(in: self)
                 let x = Float(location.x);
@@ -70,25 +73,46 @@ class ModifiedCanvasView: UIImageView {
                 let angle = Float(touch.azimuthAngle(in: self))
                 stylus.onStylusMove(x: x, y:y, force:force, angle:angle)
          //   }
+            }
+            else {
+                UIGraphicsBeginImageContextWithOptions(bounds.size, false, 0.0)
+                let location = touch.location(in: self)
+                let previousLocation = touch.previousLocation(in: self)
+
+               
+                eraseCanvas(start:previousLocation,end:location);
+                
+                image = UIGraphicsGetImageFromCurrentImageContext()
+                UIGraphicsEndImageContext()
+            }
 
         }
         
-        //self.drawingImage = UIGraphicsGetImageFromCurrentImageContext()
-
-        /*if let predictedTouches = event?.predictedTouches(for: touch) {
-            print("predicted touches exist \(predictedTouches.count)")
-            for touch in predictedTouches {
-               // if touch.type == .stylus {
-                    let location = touch.location(in: self)
-                    let x = Float(location.x);
-                    let y = Float(location.y);
-                    let force = Float(touch.force);
-                    let angle = Float(touch.azimuthAngle(in: self))
-                    stylus.onStylusMove(x: x, y:y, force:force, angle:angle)
-                    //}
-            }
-        }*/
+       
     }
+    
+    func eraseCanvas(start:CGPoint,end:CGPoint){
+        print("erase canvas",start,end);
+        let context = UIGraphicsGetCurrentContext()
+        context!.beginTransparencyLayer(auxiliaryInfo: nil)
+
+        image?.draw(in: bounds)
+        context?.setBlendMode(CGBlendMode.clear)
+        context?.setStrokeColor(UIColor.clear.cgColor)
+        context?.setLineWidth(CGFloat(20))
+        context?.setLineCap(.round)
+        context?.setAlpha(1);
+        
+        context?.move(to: start)
+        
+        context?.addLine(to:end);
+        
+        context?.strokePath()
+        context!.endTransparencyLayer();
+
+      
+    }
+    
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
        // image = drawingImage
@@ -100,9 +124,8 @@ class ModifiedCanvasView: UIImageView {
         //image = drawingImage
     }
     
-    func erase() {
+    func eraseAll() {
         self.image = nil
-        self.drawingImage = nil
         
     }
 }

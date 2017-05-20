@@ -26,6 +26,7 @@ class LayerPanelViewController: UITableViewController{
     var layers = [LayerCellData]()
     var layerEvent = Event<(String,String)>();
     
+    @IBOutlet weak var layerAddButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -151,8 +152,8 @@ class LayerPanelViewController: UITableViewController{
         //cell.strokeImage.clear();
         // cell.strokeImage.drawSingleStroke(stroke, i: indexPath.row)
         cell.id = layer.id;
-        cell.moveUpButton.addTarget(self, action: #selector(LayerPanelViewController.moveCellUp), for: .touchUpInside)
-        cell.moveDownButton.addTarget(self, action: #selector(LayerPanelViewController.moveCellDown), for: .touchUpInside)
+        //cell.moveUpButton.addTarget(self, action: #selector(LayerPanelViewController.moveCellUp), for: .touchUpInside)
+        //cell.moveDownButton.addTarget(self, action: #selector(LayerPanelViewController.moveCellDown), for: .touchUpInside)
         
         print("tableView \(cell)");
         
