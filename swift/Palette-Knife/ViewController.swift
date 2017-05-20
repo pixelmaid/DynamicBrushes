@@ -55,6 +55,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     var toolbarController: ToolbarViewController?
     var layerPanelController: LayerPanelViewController?
     
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
+    
     @IBOutlet weak var layerPanelContainerView: UIView!
     
     required init?(coder: NSCoder) {
@@ -112,10 +116,23 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     }
     
     
-    func layerEventHandler(data: (String,String), key: String){
+    func layerEventHandler(data: (String,String,String?), key: String){
         switch(data.0){
         case "LAYER_SELECTED":
             layerContainerView.setActiveLayer(id:data.1);
+            break;
+        case "LAYER_ADDED":
+            let id = layerContainerView.newLayer();
+            layerPanelController?.addLayer(layerId:id);
+            break;
+        case "SHOW_LAYER":
+            layerContainerView.showLayer(id: data.1);
+            break;
+        case "HIDE_LAYER":
+            layerContainerView.hideLayer(id: data.1);
+            break;
+        case "DELETE_LAYER":
+            self.deleteAlert(layerName: data.2!, layerId: data.1)
             break;
         default:
             break;
@@ -228,6 +245,25 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         
         self.present(alertController, animated: true, completion: nil)
         
+    }
+    
+    func deleteAlert(layerName:String, layerId:String){
+        let alertController = UIAlertController(title:"Delete Layer", message: "Delete the layer \""+layerName+"\"?", preferredStyle: .alert)
+        
+        let confirmAction = UIAlertAction(title: "Confirm", style: .default) { (_) in
+            let activeId = self.layerContainerView.deleteLayer(id: layerId)
+            self.layerPanelController?.removeLayer(layerId: layerId)
+            if(activeId != nil){
+                self.layerPanelController?.setActive(layerId:activeId!);
+            }
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in }
+        
+        alertController.addAction(confirmAction)
+        alertController.addAction(cancelAction)
+        
+        self.present(alertController, animated: true, completion: nil)
     }
     
     func exportImage() {
@@ -515,9 +551,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     }
     
     
-    override var prefersStatusBarHidden: Bool {
-        return true
-    }
+    
 
     func handlePinch(recognizer : UIPinchGestureRecognizer) {
         print("pinch")

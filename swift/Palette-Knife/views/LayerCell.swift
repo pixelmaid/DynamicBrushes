@@ -15,10 +15,17 @@ class LayerCell: UITableViewCell {
     
 
     @IBOutlet weak var layerLabel: UILabel!
-
-
-    var id: String!
+    @IBOutlet weak var layerVisibleButton: UIButton!
+    @IBOutlet weak var layerThumbnail: UIImageView!
+    @IBOutlet weak var deleteLayerButton: UIButton!
     
+    var visible = true;
+    
+    var id: String!
+    var name: String!
+
+    let brushStandard = UIImage(named: "brush_button2x")
+
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         // strokeImage = CanvasView(frame: CGRectMake(0,0,90,90));

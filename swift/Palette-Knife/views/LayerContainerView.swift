@@ -40,6 +40,7 @@ class LayerContainerView: UIView{
         self.activeLayer?.drawActive = drawActive;
     }
     
+    
     func newLayer()->String{
             let screenSize = self.bounds
             let origin = self.frame.origin
@@ -59,7 +60,57 @@ class LayerContainerView: UIView{
                 return;
             }
         }
-        print("no active layer by that id found!")
+    }
+    
+    func showLayer(id:String){
+        for l in layers{
+            if l.id == id {
+                l.isHidden = false;
+                return;
+            }
+        }
+    }
+    
+    func hideLayer(id:String){
+        for l in layers{
+            if l.id == id {
+                l.isHidden = true;
+                return;
+            }
+        }
+    }
+    
+    
+    func deleteLayer(id:String)->String?{
+        var toRemove:ModifiedCanvasView? = nil;
+        var targetIndex:Int? = nil
+        for i in 0..<layers.count{
+            print("checking layer ",i,layers[i].id,id)
+            if layers[i].id == id {
+                toRemove = layers[i];
+                targetIndex = i;
+                layers.remove(at: i)
+                break
+            }
+        }
+        if(toRemove != nil){
+        toRemove?.removeFromSuperview();
+                
+        if(toRemove == activeLayer){
+            if layers.count>0{
+                if targetIndex == 0 {
+                    activeLayer = layers[0]
+                    }
+                else{
+                    activeLayer = layers[targetIndex! - 1]
+                }
+                
+                return activeLayer?.id;
+   
+            }
+        }
+        }
+        return nil
     }
     
     func eraseCurrentLayer(){

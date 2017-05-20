@@ -24,8 +24,10 @@ class LayerPanelViewController: UITableViewController{
     
     //MARK: Properties
     var layers = [LayerCellData]()
-    var layerEvent = Event<(String,String)>();
-    
+    var layerEvent = Event<(String,String,String?)>();
+    let hideIcon = UIImage(named: "layerVisible_button2x")
+    let showIcon = UIImage(named: "layerVisible_button_active2x")
+    var layerNameCounter = 1;
     @IBOutlet weak var layerAddButton: UIButton!
     
     override func viewDidLoad() {
@@ -35,6 +37,8 @@ class LayerPanelViewController: UITableViewController{
         
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        
+        layerAddButton.addTarget(self, action:#selector(LayerPanelViewController.layerAddPressed), for: .touchUpInside)
     }
     
     //MARK: Public Methods
@@ -54,15 +58,19 @@ class LayerPanelViewController: UITableViewController{
         
     }
     
+    func layerAddPressed(){
+        self.layerEvent.raise(data: ("LAYER_ADDED","",nil));
+    }
+    
     func addLayer(layerId:String){
-        for var l in layers {
+        for l in layers {
             l.selected = false;
         }
-        let newLayer = LayerCellData(id: layerId, name: "Layer " + String(layers.count+1), selected: true)
+        let newLayer = LayerCellData(id: layerId, name: "Layer " + String(layerNameCounter), selected: true)
         layers.append(newLayer);
+        layerNameCounter += 1
         tableView.reloadData();
-        
-        
+    
     }
     
     func removeLayer(layerId:String){
@@ -77,6 +85,18 @@ class LayerPanelViewController: UITableViewController{
         
     }
     
+    func setActive(layerId:String){
+        for i in 0..<layers.count{
+            if(layers[i].id == layerId){
+                layers[i].selected = true;
+            }
+            else{
+                layers[i].selected = false;
+            }
+        }
+        tableView.reloadData();
+    }
+    
     //MARK: Private Methods
     
     @objc private func moveCellUp(sender: AnyObject){
@@ -88,7 +108,7 @@ class LayerPanelViewController: UITableViewController{
                     let t = layers.remove(at: i);
                     layers.insert(t, at: i-1)
                     tableView.reloadData();
-                    self.layerEvent.raise(data: ("MOVE_LAYER_UP",target_id!));
+                    self.layerEvent.raise(data: ("MOVE_LAYER_UP",target_id!,nil));
                     
                     break;
                 }
@@ -105,7 +125,7 @@ class LayerPanelViewController: UITableViewController{
                     let t = layers.remove(at: i);
                     layers.insert(t, at: i+1)
                     tableView.reloadData();
-                    self.layerEvent.raise(data: ("MOVE_LAYER_DOWN",target_id!));
+                    self.layerEvent.raise(data: ("MOVE_LAYER_DOWN",target_id!, nil));
                     
                     break;
                 }
@@ -113,6 +133,30 @@ class LayerPanelViewController: UITableViewController{
         }
     }
     
+    
+    @objc private func toggleLayerVisibility(sender: AnyObject){
+        let target = ((sender as! UIButton).superview!.superview) as! LayerCell
+        let target_id = target.id;
+        if(target.visible){
+            target.visible = false;
+            self.layerEvent.raise(data: ("HIDE_LAYER",target_id!,nil));
+            (sender as! UIButton).setImage(hideIcon, for: UIControlState.normal)
+        }
+        else{
+            target.visible = true;
+            self.layerEvent.raise(data: ("SHOW_LAYER",target_id!,nil));
+            (sender as! UIButton).setImage(showIcon, for: UIControlState.normal)
+        }
+    }
+    
+    @objc private func deleteLayer(sender: AnyObject){
+        let target = ((sender as! UIButton).superview!.superview) as! LayerCell
+        let target_id = target.id;
+        let target_name = target.name;
+        self.layerEvent.raise(data: ("DELETE_LAYER",target_id!,target_name));
+            
+        
+    }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -147,29 +191,25 @@ class LayerPanelViewController: UITableViewController{
         }
         else{
             cell.contentView.backgroundColor = UIColor.black;
- 
         }
-        //cell.strokeImage.clear();
-        // cell.strokeImage.drawSingleStroke(stroke, i: indexPath.row)
+        
         cell.id = layer.id;
-        //cell.moveUpButton.addTarget(self, action: #selector(LayerPanelViewController.moveCellUp), for: .touchUpInside)
-        //cell.moveDownButton.addTarget(self, action: #selector(LayerPanelViewController.moveCellDown), for: .touchUpInside)
-        
-        print("tableView \(cell)");
-        
-        
+        cell.name = layer.name;
+        cell.layerVisibleButton.addTarget(self,action:#selector(LayerPanelViewController.toggleLayerVisibility), for: .touchUpInside)
+        cell.deleteLayerButton.addTarget(self,action:#selector(LayerPanelViewController.deleteLayer), for: .touchUpInside)
+
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("You selected cell\(layers[indexPath.row],indexPath.row)!")
-        for var l in layers {
+        for l in layers {
             l.selected = false;
         }
 
         layers[indexPath.row].selected = true;
         tableView.reloadData();
-        layerEvent.raise(data:("LAYER_SELECTED",layers[indexPath.row].id))
+        layerEvent.raise(data:("LAYER_SELECTED",layers[indexPath.row].id,nil))
 
     }
     

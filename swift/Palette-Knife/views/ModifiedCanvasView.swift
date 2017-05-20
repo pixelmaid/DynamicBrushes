@@ -13,13 +13,12 @@ let pi = CGFloat(M_PI)
 
 class ModifiedCanvasView: UIImageView {
     
-   
+    
     let id = NSUUID().uuidString;
     var drawActive = true;
     
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-
         if let touch = touches.first  {
             let point = touch.location(in: self)
             let x = Float(point.x)
@@ -28,16 +27,15 @@ class ModifiedCanvasView: UIImageView {
             let angle = Float(touch.azimuthAngle(in: self))
             stylus.onStylusDown(x: x, y:y, force:force, angle:angle)
         }
-        
     }
     
     func exportPNG()->Data?{
-         let data = UIImagePNGRepresentation(self.image!)
+        let data = UIImagePNGRepresentation(self.image!)
         return data
     }
     
     func pushContext()->CGContext{
-         //print("push context");
+        //print("push context");
         UIGraphicsBeginImageContextWithOptions(self.bounds.size, false, 0.0)
         self.image?.draw(in: self.bounds)
         let context = UIGraphicsGetCurrentContext()
@@ -45,16 +43,14 @@ class ModifiedCanvasView: UIImageView {
     }
     
     func popContext(){
-       // print("pop context");
+        // print("pop context");
         self.image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
     }
-
+    
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
         guard let touch = touches.first else { return }
-        
         var touches = [UITouch]()
         
         if let coalescedTouches = event?.coalescedTouches(for: touch) {
@@ -62,44 +58,45 @@ class ModifiedCanvasView: UIImageView {
         } else {
             touches.append(touch)
         }
-        //print("touches count",touches.count)
-        for touch in touches {
+        //if touch.type == .stylus {
             if(drawActive){
-           // if touch.type == .stylus {
-              let location = touch.location(in: self)
-                let x = Float(location.x);
-                let y = Float(location.y);
-                let force = Float(touch.force);
-                let angle = Float(touch.azimuthAngle(in: self))
-                stylus.onStylusMove(x: x, y:y, force:force, angle:angle)
-         //   }
+                for touch in touches {
+                    
+                    let location = touch.location(in: self)
+                    let x = Float(location.x);
+                    let y = Float(location.y);
+                    let force = Float(touch.force);
+                    let angle = Float(touch.azimuthAngle(in: self))
+                    stylus.onStylusMove(x: x, y:y, force:force, angle:angle)
+                }
             }
             else {
-                UIGraphicsBeginImageContextWithOptions(bounds.size, false, 0.0)
-                let location = touch.location(in: self)
-                let previousLocation = touch.previousLocation(in: self)
-
-               
-                eraseCanvas(start:previousLocation,end:location);
                 
-                image = UIGraphicsGetImageFromCurrentImageContext()
+                UIGraphicsBeginImageContextWithOptions(bounds.size, false, 0.0)
+                for touch in touches {
+                    let location = touch.location(in: self)
+                    let previousLocation = touch.previousLocation(in: self)
+                    let force = touch.force
+                    eraseCanvas(start:previousLocation,end:location,force:force);
+                    image = UIGraphicsGetImageFromCurrentImageContext()
+                }
                 UIGraphicsEndImageContext()
             }
-
-        }
+       // }
         
-       
+        
+        
     }
     
-    func eraseCanvas(start:CGPoint,end:CGPoint){
+    func eraseCanvas(start:CGPoint,end:CGPoint,force:CGFloat){
         print("erase canvas",start,end);
         let context = UIGraphicsGetCurrentContext()
         context!.beginTransparencyLayer(auxiliaryInfo: nil)
-
         image?.draw(in: bounds)
         context?.setBlendMode(CGBlendMode.clear)
         context?.setStrokeColor(UIColor.clear.cgColor)
-        context?.setLineWidth(CGFloat(20))
+        //TODO: will need to fine tune this
+        context?.setLineWidth(2*force+5)
         context?.setLineCap(.round)
         context?.setAlpha(1);
         
@@ -109,15 +106,13 @@ class ModifiedCanvasView: UIImageView {
         
         context?.strokePath()
         context!.endTransparencyLayer();
-
-      
     }
     
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-       // image = drawingImage
+        // image = drawingImage
         stylus.onStylusUp()
-
+        
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
