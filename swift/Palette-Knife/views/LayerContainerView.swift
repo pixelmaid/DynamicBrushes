@@ -45,6 +45,7 @@ class LayerContainerView: UIView{
             let screenSize = self.bounds
             let origin = self.frame.origin
             activeLayer = ModifiedCanvasView(frame: CGRect(x:origin.x, y:origin.y, width:screenSize.width, height:screenSize.height))
+        activeLayer?.center = self.center;
             self.layers.append(activeLayer!)
            self.addSubview(activeLayer!);
         activeLayer?.drawActive = self.drawActive;

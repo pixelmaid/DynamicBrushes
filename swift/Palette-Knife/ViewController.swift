@@ -49,15 +49,13 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     let brushEventKey = NSUUID().uuidString
     let dataEventKey = NSUUID().uuidString
     
-    var brushes = [String:Brush]()
-    var drawInterval:Timer!
-    
     var toolbarController: ToolbarViewController?
     var layerPanelController: LayerPanelViewController?
     
     override var prefersStatusBarHidden: Bool {
         return true
     }
+    var drawInterval:Timer!
     
     @IBOutlet weak var layerPanelContainerView: UIView!
     
@@ -107,9 +105,21 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         case "BRUSH_MODE":
             layerContainerView.setDrawActive(val: true);
             break;
-
             
+        case "TOGGLE_LAYER_PANEL":
+            if(layerPanelContainerView?.isHidden == true){
+                layerPanelContainerView?.isHidden = false
+            }
+            else{
+                layerPanelContainerView?.isHidden = true
+            }
+            break;
+        case "TOGGLE_BEHAVIOR_PANEL":
             
+            break;
+        case "TOGGLE_COLOR_PANEL":
+            
+            break
         default:
             break;
         }
@@ -183,7 +193,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         layerPanelContainerView.layer.cornerRadius = 8.0
         layerPanelContainerView.clipsToBounds = true
 
-
+        layerPanelContainerView.isHidden = true;
     }
     
     

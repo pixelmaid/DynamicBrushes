@@ -56,7 +56,25 @@ class ToolbarViewController: UIViewController {
         
         brushButton.addTarget(self, action: #selector(ToolbarViewController.brushToggled), for: .touchUpInside)
         
+        layerPanelButton.addTarget(self, action: #selector(ToolbarViewController.panelToggled), for: .touchUpInside)
+        colorPickerButton.addTarget(self, action: #selector(ToolbarViewController.panelToggled), for: .touchUpInside)
+        behaviorPanelButton.addTarget(self, action: #selector(ToolbarViewController.panelToggled), for: .touchUpInside)
+
+        
         brushToggled();
+    }
+    
+    func panelToggled(sender: AnyObject){
+        let target = (sender as! UIButton);
+        if(target == layerPanelButton){
+          toolEvent.raise(data: ("TOGGLE_LAYER_PANEL"));
+        }
+        else if(target == behaviorPanelButton){
+            toolEvent.raise(data: ("TOGGLE_BEHAVIOR_PANEL"));
+        }
+        else if(target == colorPickerButton){
+            toolEvent.raise(data: ("TOGGLE_COLOR_PANEL"));
+        }
     }
     
     func eraseToggled(){
