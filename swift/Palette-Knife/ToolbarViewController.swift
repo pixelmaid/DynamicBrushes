@@ -21,6 +21,11 @@ class ToolbarViewController: UIViewController {
     @IBOutlet weak var eraseButton: UIButton!
     @IBOutlet weak var brushButton: UIButton!
     
+    @IBOutlet weak var diameterSlider: UISlider!
+    
+    @IBOutlet weak var alphaSlider: UISlider!
+    
+    
     var toolEvent = Event<(String)>();
     var activePanel:String?
     var activeMode:String = "erase";
@@ -60,12 +65,24 @@ class ToolbarViewController: UIViewController {
         colorPickerButton.addTarget(self, action: #selector(ToolbarViewController.panelToggled), for: .touchUpInside)
         behaviorPanelButton.addTarget(self, action: #selector(ToolbarViewController.panelToggled), for: .touchUpInside)
 
+        diameterSlider.addTarget(self, action: #selector(ToolbarViewController.diameterSliderChanged), for: .valueChanged)
+          alphaSlider.addTarget(self, action: #selector(ToolbarViewController.alphaSliderChanged), for: .valueChanged)
         
         brushToggled();
     }
     
     func setColor(color:UIColor){
         shapeLayer?.fillColor = color.cgColor;
+    }
+    
+    func diameterSliderChanged(sender:UISlider!){
+        toolEvent.raise(data:("DIAMETER_CHANGED"))
+        
+    }
+    
+    func alphaSliderChanged(sender:UISlider!){
+        toolEvent.raise(data:("ALPHA_CHANGED"))
+        
     }
     
     func panelToggled(sender: AnyObject){

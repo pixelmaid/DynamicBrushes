@@ -19,11 +19,15 @@ class UIInput: TimeSeries, WebTransmitter {
     let hue:Observable<Float>
     let lightness:Observable<Float>
     let saturation:Observable<Float>
-    
+    let alpha:Observable<Float>
+    let diameter:Observable<Float>
+
     override init(){
         self.hue = Observable<Float>(0.5)
         self.lightness = Observable<Float>(0.25)
         self.saturation = Observable<Float>(1)
+        self.diameter = Observable<Float>(20)
+        self.alpha = Observable<Float>(1)
         
         super.init();
         
@@ -48,6 +52,13 @@ class UIInput: TimeSeries, WebTransmitter {
     }
     
     
+    func setDiameter(val:Float){
+        self.diameter.set(newValue: val);
+    }
+    
+    func setAlpha(val:Float){
+        self.alpha.set(newValue: val);
+    }
     
     func transmitData(){
         //TODO: implement transmit data

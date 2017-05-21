@@ -98,15 +98,37 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gVA-ZT-zoR" userLabel="Erase Button">
-                                <rect key="frame" x="1172" y="4" width="40" height="40"/>
+                                <rect key="frame" x="374" y="4" width="40" height="40"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="erase_button2x.png"/>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QPW-J3-rUs" userLabel="Brush Button">
-                                <rect key="frame" x="1124" y="4" width="40" height="40"/>
+                                <rect key="frame" x="326" y="4" width="40" height="40"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="brush_button2x.png"/>
                             </button>
+                            <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="20" minValue="1" maxValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="tsh-Qc-EHp" userLabel="diameter slider">
+                                <rect key="frame" x="511" y="9" width="222" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </slider>
+                            <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="soS-Q4-Hj5" userLabel="alpha slider">
+                                <rect key="frame" x="820" y="8" width="222" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </slider>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="alpha" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hou-hb-Rwi">
+                                <rect key="frame" x="765" y="12" width="42" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="diameter" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lab-M6-7WK">
+                                <rect key="frame" x="430" y="14" width="68" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -115,9 +137,11 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="addLayerButton" destination="b9f-FX-vgT" id="58C-xh-PN8"/>
+                        <outlet property="alphaSlider" destination="soS-Q4-Hj5" id="9R3-dT-Orn"/>
                         <outlet property="behaviorPanelButton" destination="tLC-Sz-Orh" id="YD4-w8-a3e"/>
                         <outlet property="brushButton" destination="QPW-J3-rUs" id="KBn-Bq-Mff"/>
                         <outlet property="colorPickerButton" destination="p2B-Eq-Wjm" id="avw-ml-nWM"/>
+                        <outlet property="diameterSlider" destination="tsh-Qc-EHp" id="1me-Xa-kg1"/>
                         <outlet property="eraseButton" destination="gVA-ZT-zoR" id="MNA-sp-N1q"/>
                         <outlet property="exportButton" destination="raq-oY-wRn" id="xMl-nY-4EZ"/>
                         <outlet property="layerPanelButton" destination="civ-vQ-wsY" id="2tW-cw-hVQ"/>
@@ -126,7 +150,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cO4-mP-nr5" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="297" y="939"/>
+            <point key="canvasLocation" x="296.92532942898976" y="938.67187499999989"/>
         </scene>
         <!--Layer Panel View Controller-->
         <scene sceneID="cZd-Nb-Aah">

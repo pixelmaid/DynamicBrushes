@@ -64,6 +64,19 @@ define(['emitter', 'app/id', 'app/Emitter'],
               item_name: "ui_lightness",
               name: "lightness",
               type:"ui_prop"
+            },{
+              item_class: " block property palette ui",
+              item_name: "ui_diameter",
+              name: "diameter",
+              type:"ui_prop"
+
+            },
+            {
+              item_class: " block property palette ui",
+              item_name: "ui_alpha",
+              name: "alpha",
+              type:"ui_prop"
+
             }]
           },
 

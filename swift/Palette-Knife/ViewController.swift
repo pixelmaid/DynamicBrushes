@@ -84,6 +84,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         if(segue.identifier == "toolbarSegue"){
            toolbarController = segue.destination as? ToolbarViewController;
            _ = toolbarController?.toolEvent.addHandler(target: self, handler: ViewController.toolEventHandler, key: toolbarKey)
+            
         }
         else if(segue.identifier == "layerPanelSegue"){
             layerPanelController = segue.destination as? LayerPanelViewController;
@@ -141,6 +142,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
             layerPanelContainerView?.isHidden = true
 
             break
+        case "DIAMETER_CHANGED":
+            uiInput.setDiameter(val: (toolbarController?.diameterSlider.value)!);
+            break;
+        case "ALPHA_CHANGED":
+            uiInput.setDiameter(val: (toolbarController?.alphaSlider.value)!);
+            break;
         default:
             break;
         }
@@ -214,6 +221,13 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         colorPickerContainerView.clipsToBounds = true
         
        colorPickerContainerView.isHidden = true;
+        
+        uiInput.setDiameter(val: (toolbarController?.diameterSlider.value)!);
+        print("diameter val",toolbarController?.diameterSlider.value);
+        uiInput.setAlpha(val: (toolbarController?.alphaSlider.value)!);
+        uiInput.setColor(color: (colorPickerView?.color)!)
+
+
         
     }
     
