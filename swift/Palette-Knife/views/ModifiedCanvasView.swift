@@ -19,6 +19,7 @@ class ModifiedCanvasView: UIImageView {
     
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if(drawActive){
         if let touch = touches.first  {
             let point = touch.location(in: self)
             let x = Float(point.x)
@@ -26,6 +27,7 @@ class ModifiedCanvasView: UIImageView {
             let force = Float(touch.force);
             let angle = Float(touch.azimuthAngle(in: self))
             stylus.onStylusDown(x: x, y:y, force:force, angle:angle)
+        }
         }
     }
     
@@ -59,53 +61,55 @@ class ModifiedCanvasView: UIImageView {
             touches.append(touch)
         }
         //if touch.type == .stylus {
-            if(drawActive){
-                for touch in touches {
-                    
-                    let location = touch.location(in: self)
-                    let x = Float(location.x);
-                    let y = Float(location.y);
-                    let force = Float(touch.force);
-                    let angle = Float(touch.azimuthAngle(in: self))
-                    stylus.onStylusMove(x: x, y:y, force:force, angle:angle)
-                }
-            }
-            else {
+        if(drawActive){
+            print("draw active is true")
+            
+            for touch in touches {
                 
-                UIGraphicsBeginImageContextWithOptions(bounds.size, false, 0.0)
-                for touch in touches {
-                    let location = touch.location(in: self)
-                    let previousLocation = touch.previousLocation(in: self)
-                    let force = touch.force
-                    eraseCanvas(start:previousLocation,end:location,force:force);
-                    image = UIGraphicsGetImageFromCurrentImageContext()
-                }
-                UIGraphicsEndImageContext()
+                let location = touch.location(in: self)
+                let x = Float(location.x);
+                let y = Float(location.y);
+                let force = Float(touch.force);
+                let angle = Float(touch.azimuthAngle(in: self))
+                stylus.onStylusMove(x: x, y:y, force:force, angle:angle)
             }
-       // }
+        }
+        else {
+            print("draw active is false")
+            UIGraphicsBeginImageContextWithOptions(bounds.size, false, 0.0)
+            self.image?.draw(in: self.bounds)
+            let context = UIGraphicsGetCurrentContext()
+
+            for touch in touches {
+                let location = touch.location(in: self)
+                let previousLocation = touch.previousLocation(in: self)
+                let force = touch.force
+                eraseCanvas(context:context!, start:previousLocation,end:location,force:force);
+            }
+            self.image = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+        }
+        // }
         
         
         
     }
     
-    func eraseCanvas(start:CGPoint,end:CGPoint,force:CGFloat){
-        print("erase canvas",start,end);
-        let context = UIGraphicsGetCurrentContext()
-        context!.beginTransparencyLayer(auxiliaryInfo: nil)
-        image?.draw(in: bounds)
-        context?.setBlendMode(CGBlendMode.clear)
-        context?.setStrokeColor(UIColor.clear.cgColor)
+    func eraseCanvas(context:CGContext, start:CGPoint,end:CGPoint,force:CGFloat){
+ 
+        
+        
+        context.setStrokeColor(UIColor.red.cgColor)
         //TODO: will need to fine tune this
-        context?.setLineWidth(2*force+5)
-        context?.setLineCap(.round)
-        context?.setAlpha(1);
+        context.setLineWidth(CGFloat(10))
+        context.setLineCap(.round)
+        context.setAlpha(CGFloat(1));
+        context.setBlendMode(CGBlendMode.clear)
+
+        context.move(to: start)
         
-        context?.move(to: start)
-        
-        context?.addLine(to:end);
-        
-        context?.strokePath()
-        context!.endTransparencyLayer();
+        context.addLine(to:end)
+        context.strokePath()
     }
     
     

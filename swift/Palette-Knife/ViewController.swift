@@ -108,8 +108,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     func toolEventHandler(data: (String), key: String){
         switch(data){
             case "VIEW_LOADED":
-                //toolbarController?.eraseButton.addTarget(self, action: #selector(ViewController.onErase), for: .touchUpInside)
-               //toolbarController?.addLayerButton.addTarget(self, action: #selector(ViewController.newLayer), for: .touchUpInside)
                  toolbarController?.exportButton.addTarget(self, action: #selector(ViewController.exportImage), for: .touchUpInside)
 
                 break;
@@ -155,8 +153,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
             layerContainerView.setActiveLayer(id:data.1);
             break;
         case "LAYER_ADDED":
-            let id = layerContainerView.newLayer();
-            layerPanelController?.addLayer(layerId:id);
+            self.newLayer();
             break;
         case "SHOW_LAYER":
             layerContainerView.showLayer(id: data.1);
@@ -188,18 +185,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         
         RequestHandler.addRequest(requestData:configureRequest);
         
-        
-        newLayer(sender: nil);
-        
-      
-      
-        
         drawInterval  = Timer.scheduledTimer(timeInterval:0.016 , target: self, selector: #selector(ViewController.drawIntervalCallback), userInfo: nil, repeats: true)
         
         layerContainerView.center = CGPoint(x:self.view.frame.size.width/2,y:self.view.frame.size.height/2);
         self.view.addSubview(layerContainerView);
         self.view.sendSubview(toBack: layerContainerView);
-        
+    
         let pinchRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(ViewController.handlePinch))
         pinchRecognizer.delegate = self
         layerContainerView.addGestureRecognizer(pinchRecognizer)
@@ -215,6 +206,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         
         layerPanelContainerView.layer.cornerRadius = 8.0
         layerPanelContainerView.clipsToBounds = true
+        self.newLayer();
 
         layerPanelContainerView.isHidden = true;
         
@@ -334,7 +326,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     }
     
     
-    func newLayer(sender: UIButton!){
+    func newLayer(){
         print("new layer created")
         let id = layerContainerView.newLayer();
         layerPanelController?.addLayer(layerId: id);
