@@ -151,7 +151,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         //==END OBSERVABLES==//
 
 
-        delta.parentName = "brush"
         self.currentState = "start";
 
        super.init()

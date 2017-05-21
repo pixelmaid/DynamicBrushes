@@ -21,7 +21,7 @@ class Point:Observable<(Float,Float)>,Geometry{
     let xKey = NSUUID().uuidString;
     let yKey = NSUUID().uuidString;
     var storedValue = Float(0);
-    var parentName = "stylus"
+
     init(x:Float,y:Float) {
         //==BEGIN OBSERVABLES==//
         self.x = Observable<Float>(0);

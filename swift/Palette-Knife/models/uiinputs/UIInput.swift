@@ -37,6 +37,10 @@ class UIInput: TimeSeries, WebTransmitter {
 
     }
     
+    func invalidateAllProperties(){
+        self.diameter.invalidate(oldValue: self.diameter.get(id: nil), newValue: self.diameter.get(id: nil));
+    }
+    
     func setColor(color:UIColor){
         var _hue = CGFloat(0)
         var _saturation = CGFloat(0)

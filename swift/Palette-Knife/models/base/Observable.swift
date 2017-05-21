@@ -28,6 +28,11 @@ class Observable<T>:Object, DisposableObservable {
     func set(newValue: T) {
         let oldValue = value
         value = newValue
+        self.invalidate(oldValue: oldValue, newValue: newValue)
+       
+    }
+    
+    func invalidate(oldValue: T, newValue: T){
         invalidated = true;
         didChange.raise(data: (name, oldValue, newValue))
 

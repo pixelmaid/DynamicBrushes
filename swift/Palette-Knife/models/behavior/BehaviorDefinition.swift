@@ -316,7 +316,6 @@ class BehaviorDefinition {
                 case "ui":
                     emitter = uiInput;
                     break;
-
                 default:
                     emitter = nil;
                     break;
@@ -943,7 +942,7 @@ class BehaviorDefinition {
     //TODO: add in cases for other generators
     func generateGenerator(name:String, data:(String,[Any?]),targetBrush:Brush){
         let id = targetBrush.id;
-        
+        print("generating generator",data.0);
         switch(data.0){
         case "interval":
             let interval = Interval(inc:data.1[0] as! Float,times:data.1[1] as? Int)
@@ -976,13 +975,12 @@ class BehaviorDefinition {
         default:
             break;
         }
-       // print("generate generator\(storedGenerators,id)")
+       print("generate generator\(storedGenerators,id)")
     }
     
     func generateSingleOperand(targetBrush:Brush, emitter:Any?,propList:[String]?)->Observable<Float>{
         var targetEmitter:Any;
         var id = targetBrush.id;
-        print("stored generators: \(storedGenerators,id)");
 
         var operand:Observable<Float>
         if(emitter == nil){
@@ -1231,6 +1229,8 @@ class BehaviorDefinition {
                 self.initBrushBehavior(targetBrush:targetBrush);
             }
         }
+        
+        uiInput.invalidateAllProperties();
         
         
     }
