@@ -146,7 +146,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
             uiInput.setDiameter(val: (toolbarController?.diameterSlider.value)!);
             break;
         case "ALPHA_CHANGED":
-            uiInput.setDiameter(val: (toolbarController?.alphaSlider.value)!);
+            print("alpha slider = ",toolbarController?.alphaSlider.value);
+            uiInput.setAlpha(val: (toolbarController?.alphaSlider.value)!);
             break;
         default:
             break;
@@ -223,7 +224,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
        colorPickerContainerView.isHidden = true;
         
         uiInput.setDiameter(val: (toolbarController?.diameterSlider.value)!);
-        print("diameter val",toolbarController?.diameterSlider.value);
+        print("alpha val",toolbarController?.alphaSlider.value);
         uiInput.setAlpha(val: (toolbarController?.alphaSlider.value)!);
         uiInput.setColor(color: (colorPickerView?.color)!)
 
@@ -523,42 +524,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         // _ = currentCanvas!.geometryModified.addHandler(target: self,handler: ViewController.canvasDrawHandler, key:drawKey)
     }
     
-    /*func canvasDrawHandler(data:(Geometry,String,String), key:String){
-     if(activeLayer != nil){
-     switch data.2{
-     
-     case "DRAW":
-     switch data.1{
-     case "SEGMENT":
-     let seg = data.0 as! Segment
-     
-     let prevSeg = seg.getPreviousSegment()
-     
-     if(prevSeg != nil){
-     
-     let bounds = activeLayer!.bounds
-     var previousLocation = prevSeg!.point.toCGPoint();
-     var location = seg.point.toCGPoint()
-     //location.y = bounds.size.height - location.y
-     //previousLocation.y = bounds.size.height - previousLocation.y
-     
-     var color = seg.color;
-     let alpha = seg.alpha;
-     color.alpha = alpha;
-     let diameter = CGFloat(seg.diameter);
-     
-     activeLayer!.drawStroke(from: previousLocation, to: location, lineWidth: diameter, color: color.toUIColor())
-     
-     
-     }
-     break
-     default : break
-     }
-     default:
-     break
-     }
-     }
-     }*/
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
