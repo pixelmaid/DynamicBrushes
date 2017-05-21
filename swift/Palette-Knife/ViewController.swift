@@ -11,7 +11,7 @@ import SwiftyJSON
 
 let behaviorMapper = BehaviorMapper()
 var stylus = Stylus(x: 0,y:0,angle:0,force:0)
-let colorPickerInput = ColorPickerInput();
+let uiInput = UIInput();
 
 //CONSTANTS:
 
@@ -102,7 +102,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
     func colorPickerEventHandler(data:(UIColor), key: String){
         toolbarController?.setColor(color:data);
-        colorPickerInput.setColor(color:data);
+        uiInput.setColor(color:data);
     }
 
     func toolEventHandler(data: (String), key: String){

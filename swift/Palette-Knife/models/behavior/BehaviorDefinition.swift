@@ -314,7 +314,7 @@ class BehaviorDefinition {
                     emitter = stylus;
                     break;
                 case "ui":
-                    emitter = colorPickerInput;
+                    emitter = uiInput;
                     break;
 
                 default:
@@ -669,7 +669,7 @@ class BehaviorDefinition {
                 if (emitter as? Stylus) != nil{
                     propEmitter.append(JSON("stylus"));
                 }
-                else if (emitter as? ColorPickerInput) != nil{
+                else if (emitter as? UIInput) != nil{
                     propEmitter.append(JSON("ui"));
                 }
                 else{

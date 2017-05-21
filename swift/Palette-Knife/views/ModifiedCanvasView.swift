@@ -62,8 +62,7 @@ class ModifiedCanvasView: UIImageView {
         }
         //if touch.type == .stylus {
         if(drawActive){
-            print("draw active is true")
-            
+
             for touch in touches {
                 
                 let location = touch.location(in: self)
@@ -75,7 +74,6 @@ class ModifiedCanvasView: UIImageView {
             }
         }
         else {
-            print("draw active is false")
             UIGraphicsBeginImageContextWithOptions(bounds.size, false, 0.0)
             self.image?.draw(in: self.bounds)
             let context = UIGraphicsGetCurrentContext()
