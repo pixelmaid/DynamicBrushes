@@ -45,19 +45,22 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     let drawKey = NSUUID().uuidString
     let toolbarKey = NSUUID().uuidString
     let layerEventKey = NSUUID().uuidString
+    let colorPickerKey = NSUUID().uuidString
 
     let brushEventKey = NSUUID().uuidString
     let dataEventKey = NSUUID().uuidString
     
     var toolbarController: ToolbarViewController?
     var layerPanelController: LayerPanelViewController?
-    
+    var colorPickerView: SwiftHSVColorPicker?
     override var prefersStatusBarHidden: Bool {
         return true
     }
     var drawInterval:Timer!
     
     @IBOutlet weak var layerPanelContainerView: UIView!
+    
+    @IBOutlet weak var colorPickerContainerView: UIView!
     
     required init?(coder: NSCoder) {
         let screenSize = UIScreen.main.bounds
@@ -86,10 +89,19 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
            _ = layerPanelController?.layerEvent.addHandler(target: self, handler: ViewController.layerEventHandler, key: layerEventKey)
             
         }
+        else if(segue.identifier == "colorPickerSegue"){
+            print("color picker segue")
+           colorPickerView = SwiftHSVColorPicker(frame: CGRect(x:10, y:20, width:300, height:400))
+           segue.destination.view.addSubview(colorPickerView!)
+           colorPickerView?.setViewColor(UIColor.red)
+            colorPickerView?.colorEvent.addHandler(target: self, handler: ViewController.colorPickerEventHandler, key: colorPickerKey)
+        }
         
     }
     
-    
+    func colorPickerEventHandler(data:(UIColor), key: String){
+        toolbarController?.setColor(color:data);
+    }
 
     func toolEventHandler(data: (String), key: String){
         switch(data){
@@ -113,12 +125,21 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
             else{
                 layerPanelContainerView?.isHidden = true
             }
+            colorPickerContainerView?.isHidden = true
+
             break;
         case "TOGGLE_BEHAVIOR_PANEL":
             
             break;
         case "TOGGLE_COLOR_PANEL":
-            
+            if(colorPickerContainerView?.isHidden == true){
+                colorPickerContainerView?.isHidden = false
+            }
+            else{
+                colorPickerContainerView?.isHidden = true
+            }
+            layerPanelContainerView?.isHidden = true
+
             break
         default:
             break;
@@ -194,6 +215,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         layerPanelContainerView.clipsToBounds = true
 
         layerPanelContainerView.isHidden = true;
+        
+        colorPickerContainerView.layer.cornerRadius = 8.0
+        colorPickerContainerView.clipsToBounds = true
+        
+       colorPickerContainerView.isHidden = true;
+        
     }
     
     

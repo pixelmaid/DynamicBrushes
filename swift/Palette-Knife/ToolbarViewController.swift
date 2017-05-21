@@ -24,7 +24,7 @@ class ToolbarViewController: UIViewController {
     var toolEvent = Event<(String)>();
     var activePanel:String?
     var activeMode:String = "erase";
-    
+    var shapeLayer: CAShapeLayer?
     let eraseHighlight = UIImage(named: "erase_button_active2x")
     let eraseStandard = UIImage(named: "erase_button2x")
     
@@ -40,17 +40,17 @@ class ToolbarViewController: UIViewController {
         
         let circlePath = UIBezierPath(arcCenter: CGPoint(x: 20,y: 20), radius: CGFloat(12), startAngle: CGFloat(0), endAngle:CGFloat(M_PI * 2), clockwise: true)
         
-        let shapeLayer = CAShapeLayer()
-        shapeLayer.path = circlePath.cgPath
+        shapeLayer = CAShapeLayer()
+        shapeLayer?.path = circlePath.cgPath
         
         //change the fill color
-        shapeLayer.fillColor = UIColor.blue.cgColor
+        shapeLayer?.fillColor = UIColor.red.cgColor
         //you can change the stroke color
-        shapeLayer.strokeColor = UIColor(colorLiteralRed: 0.85, green: 0.85, blue: 0.85, alpha: 1).cgColor
+        shapeLayer?.strokeColor = UIColor(colorLiteralRed: 0.85, green: 0.85, blue: 0.85, alpha: 1).cgColor
         //you can change the line width
-        shapeLayer.lineWidth = 1.0
+        shapeLayer?.lineWidth = 1.0
 
-        colorPickerButton.layer.addSublayer(shapeLayer)
+        colorPickerButton.layer.addSublayer(shapeLayer!)
         
         eraseButton.addTarget(self, action: #selector(ToolbarViewController.eraseToggled), for: .touchUpInside)
         
@@ -62,6 +62,10 @@ class ToolbarViewController: UIViewController {
 
         
         brushToggled();
+    }
+    
+    func setColor(color:UIColor){
+        shapeLayer?.fillColor = color.cgColor;
     }
     
     func panelToggled(sender: AnyObject){
