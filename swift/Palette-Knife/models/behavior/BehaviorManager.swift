@@ -257,9 +257,14 @@ class BehaviorManager{
             
         case "mapping_reference_removed":
             let behaviorId = data["behaviorId"].stringValue;
+            let mappingId = data["mappingId"].stringValue;
+            let containsActive = data["containsActive"].boolValue;
+            if(containsActive == false){
+                BehaviorManager.behaviors[behaviorId]!.setMappingPassive(mappingId:mappingId);
+            }
             
-            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseExpressionJSON(data:data)
-            
+            BehaviorManager.behaviors[behaviorId]!.parseExpressionJSON(data:data)
+            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)
             resultJSON["result"] = "success";
             return resultJSON;
             

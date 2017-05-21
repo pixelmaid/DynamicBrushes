@@ -888,6 +888,19 @@ class BehaviorDefinition {
         
     }
     
+    func setMappingPassive(mappingId:String){
+        
+        mappings[mappingId]!.4 = "passive";
+    
+    }
+    
+    func setMappingActive(mappingId:String){
+        
+        mappings[mappingId]!.4 = "active";
+        
+    }
+    
+    
     func removeMappingsForState(stateId:String){
         for(key,mapping) in mappings{
             if mapping.3 == stateId{

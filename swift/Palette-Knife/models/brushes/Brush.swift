@@ -552,7 +552,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
      //or generators and buffers which will return a new value each time they are accessed
      */
     func addConstraint(id:String,reference:Observable<Float>, relative:Observable<Float>, stateId:String, type:String){
-        //print("adding constraint \(type,reference,relative,stateId)")
+        print("adding constraint \(type,reference,relative,stateId)")
         if(type == "active"){
             reference.subscribe(id: self.id);
            _ = reference.didChange.addHandler(target: self, handler:  Brush.setHandler, key:id)

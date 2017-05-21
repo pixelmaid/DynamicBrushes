@@ -51,6 +51,7 @@ class TextExpression:Observable<Float>{
     var eventHandlers = [Disposable]();
 
     init(id:String,operandList:[String:Observable<Float>],text:String){
+        print("creating text expression",id,text)
         self.id = id;
         self.text = text;
         self.operandList = operandList;
@@ -102,7 +103,7 @@ class TextExpression:Observable<Float>{
            result  = exp.expressionValue(with: nil, context: nil) as! Float// 25.0
         
         }
-        //print("exception: \(exception)")
+        print("exception: \(id,text,exception,result)")
 
         return result;
 

@@ -58,7 +58,20 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
                 //does not trigger if change is the result of adding a reference
                 if (!this.addReferenceCheck) {
                     console.log("code mirror", this.mappingId, "changed", this.mirror.getValue());
-                    this.trigger("ON_TEXT_CHANGED", [this]);
+                     var removedReferences = [];
+                     var text = this.getText();
+                     for(var p in this.references){
+                        if(this.references.hasOwnProperty(p)){
+                            var inText = text.search(p);
+                            if(inText == -1){
+                                removedReferences.push(p);
+                            }
+                        }
+
+                    }
+
+                    console.log("changed",removedReferences,text);
+                    this.trigger("ON_TEXT_CHANGED", [this,removedReferences]);
                 }
             }
 
@@ -72,6 +85,17 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
 
             getPropertyList() {
                 return this.references;
+            }
+
+            containsActive(){
+                for(var p in this.references){
+                    if(this.references.hasOwnProperty(p)){
+                        if(this.references[p][0] == "stylus" || this.references[p][0] == "ui" ){
+                            return true;
+                        }
+                    }
+                }
+                return false;
             }
 
             removeReference(referenceId) {

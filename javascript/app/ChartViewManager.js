@@ -287,8 +287,8 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                     this.onMappingReferenceUpdate(mappingId, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList, constraint_type);
                 }.bind(this));
 
-                chartView.addListener("ON_MAPPING_REFERENCE_REMOVED", function(behaviorId, expressionId, expressionPropertyList, expressionText) {
-                    this.onMappingReferenceRemoved(behaviorId, expressionId, expressionPropertyList, expressionText);
+                chartView.addListener("ON_MAPPING_REFERENCE_REMOVED", function(behaviorId, mappingId, expressionId, expressionPropertyList, expressionText, containsActive) {
+                    this.onMappingReferenceRemoved(behaviorId, mappingId, expressionId, expressionPropertyList, expressionText, containsActive);
                 }.bind(this));
 
 
@@ -702,14 +702,16 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
             }
 
             //TODO: will need to re-enabled passive constraint here?
-            onMappingReferenceRemoved(behaviorId, expressionId, expressionPropertyList, expressionText) {
+            onMappingReferenceRemoved(behaviorId, mappingId, expressionId, expressionPropertyList, expressionText, containsActive) {
                 console.log("mapping reference removed", expressionId, expressionPropertyList);
 
                 var transmit_data = {
                     behaviorId: behaviorId,
+                    mappingId: mappingId,
                     expressionId: expressionId,
                     expressionText: expressionText,
                     expressionPropertyList: expressionPropertyList,
+                    containsActive: containsActive,
                     type: "mapping_reference_removed"
                 };
 
