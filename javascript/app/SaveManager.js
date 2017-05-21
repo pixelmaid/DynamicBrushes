@@ -14,27 +14,42 @@ define(["app/Emitter"],
 				this.backup_files = {};
 				this.currentFile = null;
 				this.currentName = "my_project";
+				this.codename = null;
 			}
 
 
 			save(filename) {
+				if(this.codename !== null){
 				this.currentname = filename;
 				var data = {
 					type: "save_request",
-					filename: filename
+					filename: filename,
+					artistName:this.codename
 
 				};
 				this.emitter.emit("ON_SAVE_EVENT", data);
+			}
+			else{
+				alert("cannot save, no artistname");
+			}
 
 			}
 
 			loadRequest(filename) {
+
+				if(this.codename !== null){
+
 				var data = {
 					type: "load_request",
-					filename: filename
+					filename: filename,
+					artistName:this.codename
 
 				};
 				this.emitter.emit("ON_SAVE_EVENT", data);
+				}
+				else{
+				alert("cannot load, no artistname");
+			}
 
 			}
 

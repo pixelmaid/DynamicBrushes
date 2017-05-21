@@ -424,13 +424,14 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
             let storage_data = data.1!["data"];
             let type = storage_data["type"].stringValue;
             let filename = storage_data["filename"].stringValue;
+            let artistName = storage_data["artistName"].stringValue;
             switch(type){
             case "save_request":
-                self.saveBehavior(filename: filename);
+                self.saveBehavior(filename: filename, artistName: artistName);
                 
                 break;
             case "load_request":
-                self.loadBehavior(filename: filename);
+                self.loadBehavior(filename: filename, artistName: artistName);
                 
                 break;
             case "filelist_request":
@@ -457,12 +458,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         RequestHandler.addRequest(requestData: request)
     }
     
-    func backupBehavior(){
+    func backupBehavior(artistName:String){
         var behavior_json:JSON = [:]
         for (key,val) in BehaviorManager.behaviors{
             behavior_json[key] = val.toJSON();
         }
-        let filename = "backups/backup_"+String(Int((NSDate().timeIntervalSince1970)*100000));
+        let filename = "saved_files/"+artistName+"/behavior_backups/"+String(Int((NSDate().timeIntervalSince1970)*100000));
         var backupJSON:JSON = [:]
         backupJSON["filename"] = JSON(filename);
         backupJSON["data"] = behavior_json
@@ -473,29 +474,29 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         RequestHandler.addRequest(requestData: request);
     }
     
-    func loadBehavior(filename:String){
-        let filename = "saved_files/"+filename
+    func loadBehavior(filename:String, artistName:String){
+        let filename = "saved_files/"+artistName+"/behaviors/"+filename
         var loadJSON:JSON = [:]
         loadJSON["filename"] = JSON(filename);
         loadJSON["type"] = JSON("load")
         
-        loadJSON["targetFolder"] = JSON("saved_files")
+        loadJSON["targetFolder"] = JSON("saved_files/"+artistName+"/behaviors/")
         let request = Request(target: "storage", action: "download", data: loadJSON, requester: self)
         RequestHandler.addRequest(requestData: request);
     }
     
     
-    func saveBehavior(filename:String){
+    func saveBehavior(filename:String,artistName:String){
         var behavior_json:JSON = [:]
         for (key,val) in BehaviorManager.behaviors{
             behavior_json[key] = val.toJSON();
         }
-        let filename = "saved_files/"+filename
+        let filename = "saved_files/"+artistName+"/behaviors/"+filename
         var saveJSON:JSON = [:]
         saveJSON["filename"] = JSON(filename);
         saveJSON["data"] = behavior_json
         saveJSON["type"] = JSON("save")
-        saveJSON["targetFolder"] = JSON("saved_files")
+        saveJSON["targetFolder"] = JSON("saved_files/"+artistName+"/behaviors/")
         let request = Request(target: "storage", action: "upload", data: saveJSON, requester: self)
         RequestHandler.addRequest(requestData: request);
     }

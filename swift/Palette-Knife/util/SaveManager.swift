@@ -32,19 +32,22 @@ class SaveManager{
         
     }
     
-    func accessFileList(targetFolder:String, uploadData:JSON?){
+    func accessBehaviorFileList(targetFolder:String, uploadData:JSON?){
+        print("target folder",targetFolder)
              let listRequest: AWSS3ListObjectsRequest = AWSS3ListObjectsRequest()
         listRequest.bucket = bucketName
-        listRequest.prefix = targetFolder+"/"
+        listRequest.prefix = targetFolder;
         let s3 = AWSS3.s3(forKey: "defaultKey")
         s3.listObjects(listRequest).continueWith { (task) -> AnyObject? in
             var listArray = [String:String]()
 
             let listObjectsOutput = task.result;
+            print("list objects output",listObjectsOutput);
             for object in (listObjectsOutput?.contents)! {
                 let key = object.key
                 let nameArray = key!.components(separatedBy: "/")
-                let name = nameArray[1]
+                print("name key",nameArray,key);
+                let name = nameArray[3]
                 print("list=\(object.key,object.eTag)");
                 listArray[key!] = name
             }
@@ -105,7 +108,8 @@ class SaveManager{
             }
             
             let uploadOutput = task.result
-            self.accessFileList(targetFolder: uploadData["targetFolder"].stringValue, uploadData: uploadData)
+            print("upload data",uploadData);
+            self.accessBehaviorFileList(targetFolder: uploadData["targetFolder"].stringValue, uploadData: uploadData)
                         return nil
         })
         

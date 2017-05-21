@@ -44,7 +44,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
 
         var onConnection = function() {
             console.log("connection made");
-            requestFileList();
+            requestFileList(codename);
         };
 
         var onConnectionError = function() {
@@ -71,7 +71,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
 
             };
             socketController.sendMessage(transmit_data);
-            requestFileList();
+            requestFileList(codename);
             hideOverlay();
 
         };
@@ -118,12 +118,12 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
             socketController.sendMessage(transmit_data);
         };
 
-        var requestFileList = function() {
+        var requestFileList = function(artistName) {
             var file_request_data = {
                 type: "storage_request",
                 requester: "authoring",
                 data: {
-                    targetFolder: "saved_files",
+                    targetFolder: "saved_files/"+artistName+"/behaviors/",
                     type: "filelist_request"
                 }
 
@@ -137,6 +137,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
             if (codename !== null) {
 
                 socketController.connect(codename);
+                saveManager.codename = codename;
             }
 
         };
