@@ -66,6 +66,7 @@ class BehaviorManager{
         resultJSON["type"] = JSON("authoring_response");
         resultJSON["authoring_type"] = JSON(type);
 
+        print("authoring request type: \(type), data:\(data)")
         switch(type){
         case "set_behavior_active":
             let behaviorId = data["behaviorId"].stringValue;
@@ -264,7 +265,7 @@ class BehaviorManager{
             
             
         case "generator_added":
-          
+            print("generator added",data)
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseGeneratorJSON(data:data)
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)
             

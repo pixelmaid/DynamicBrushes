@@ -740,7 +740,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
             }
 
             onGeneratorAdded(mappingId, generatorId, generator_type, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList) {
-                console.log("generator added", generatorId, generator_type, stateId);
+                console.log("generator added called", generatorId, generator_type, stateId);
 
                 var transmit_data = {
                     mappingId: mappingId,

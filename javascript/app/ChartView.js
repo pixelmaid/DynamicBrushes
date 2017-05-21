@@ -469,7 +469,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                         }
 
-                        if (type == 'ui_prop') {
+                        else if (type == 'ui_prop') {
                             referenceName = 'ui';
                             console.log("ui prop dropped on mapping", displayName);
                             $(ui.helper).remove(); //destroy cloneit'
@@ -484,7 +484,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                         }
 
-                        if (type == 'generator') {
+                        else if (type == 'generator') {
 
                             console.log("generator dropped on mapping");
                             $(ui.helper).remove(); //destroy clone
@@ -495,7 +495,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                             referenceProperties = [generatorId];
                             referencePropertiesDisplayNames = [displayName];
                             expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, referencePropertiesDisplayNames, generatorId, displayName, name);
-
+                            console.log("triggering generator event")
                             self.trigger("ON_GENERATOR_ADDED", [mapping_data.mappingId, generatorId, generatorType, self.id, target_state, relativePropertyName, relativePropertyItemName, expression.id, expression.getText(), expression.getPropertyList()]);
 
                         }
