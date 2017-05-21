@@ -145,6 +145,9 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
                         var type;
                         if (propList[0] == "stylus") {
                             type = "sensor_prop";
+                        } 
+                        else if (propList[0] == "ui") {
+                            type = "ui_prop";
                         } else {
                             type = "generator";
                         }

@@ -32,6 +32,8 @@
 		5F5CED2B1ED10AED00A253A0 /* ColorWheel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5CED261ED10AED00A253A0 /* ColorWheel.swift */; };
 		5F5CED2C1ED10AED00A253A0 /* SelectedColorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5CED271ED10AED00A253A0 /* SelectedColorView.swift */; };
 		5F5CED2D1ED10AED00A253A0 /* SwiftHSVColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5CED281ED10AED00A253A0 /* SwiftHSVColorPicker.swift */; };
+		5F5CED301ED1132600A253A0 /* UIInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5CED2F1ED1132600A253A0 /* UIInput.swift */; };
+		5F5CED321ED12BCF00A253A0 /* ColorPickerInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5CED311ED12BCF00A253A0 /* ColorPickerInput.swift */; };
 		5F90F5361E9D588F006BB9FE /* CanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5341E9D588F006BB9FE /* CanvasView.swift */; };
 		5F90F5411E9D59D4006BB9FE /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5381E9D59D4006BB9FE /* Emitter.swift */; };
 		5F90F5421E9D59D4006BB9FE /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5391E9D59D4006BB9FE /* Event.swift */; };
@@ -168,6 +170,8 @@
 		5F5CED261ED10AED00A253A0 /* ColorWheel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorWheel.swift; sourceTree = "<group>"; };
 		5F5CED271ED10AED00A253A0 /* SelectedColorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectedColorView.swift; sourceTree = "<group>"; };
 		5F5CED281ED10AED00A253A0 /* SwiftHSVColorPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftHSVColorPicker.swift; sourceTree = "<group>"; };
+		5F5CED2F1ED1132600A253A0 /* UIInput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIInput.swift; sourceTree = "<group>"; };
+		5F5CED311ED12BCF00A253A0 /* ColorPickerInput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPickerInput.swift; sourceTree = "<group>"; };
 		5F90F5341E9D588F006BB9FE /* CanvasView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CanvasView.swift; sourceTree = "<group>"; };
 		5F90F5381E9D59D4006BB9FE /* Emitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Emitter.swift; sourceTree = "<group>"; };
 		5F90F5391E9D59D4006BB9FE /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
@@ -354,6 +358,15 @@
 			path = ColorPicker;
 			sourceTree = "<group>";
 		};
+		5F5CED2E1ED1131800A253A0 /* uiinputs */ = {
+			isa = PBXGroup;
+			children = (
+				5F5CED2F1ED1132600A253A0 /* UIInput.swift */,
+				5F5CED311ED12BCF00A253A0 /* ColorPickerInput.swift */,
+			);
+			path = uiinputs;
+			sourceTree = "<group>";
+		};
 		5F90F5371E9D59D4006BB9FE /* base */ = {
 			isa = PBXGroup;
 			children = (
@@ -499,6 +512,7 @@
 		5FA4C7551CDB9E9A004A728C /* models */ = {
 			isa = PBXGroup;
 			children = (
+				5F5CED2E1ED1131800A253A0 /* uiinputs */,
 				5F90F56C1E9D5BE3006BB9FE /* sensors */,
 				5F90F55D1E9D5BCC006BB9FE /* behavior */,
 				5F90F55A1E9D5A5C006BB9FE /* brushes */,
@@ -1032,6 +1046,7 @@
 				5F90F5561E9D5A41006BB9FE /* Drawing.swift in Sources */,
 				5F50372E1EAD48BB004ABAC1 /* MathUtil.swift in Sources */,
 				5F90F5551E9D5A41006BB9FE /* Canvas.swift in Sources */,
+				5F5CED301ED1132600A253A0 /* UIInput.swift in Sources */,
 				5F90F5691E9D5BCC006BB9FE /* Expression.swift in Sources */,
 				5F90F5491E9D59D4006BB9FE /* WebTransmitter.swift in Sources */,
 				5F50371B1EA9533A004ABAC1 /* shaderUtil.swift in Sources */,
@@ -1072,6 +1087,7 @@
 				5FA4C7241CDA7B5B004A728C /* AppDelegate.swift in Sources */,
 				5F90F5461E9D59D4006BB9FE /* Observable.swift in Sources */,
 				5F90F5421E9D59D4006BB9FE /* Event.swift in Sources */,
+				5F5CED321ED12BCF00A253A0 /* ColorPickerInput.swift in Sources */,
 				5F90F5591E9D5A41006BB9FE /* Stroke.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

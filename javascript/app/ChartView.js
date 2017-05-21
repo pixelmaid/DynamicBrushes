@@ -469,6 +469,21 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                         }
 
+                        if (type == 'ui_prop') {
+                            referenceName = 'ui';
+                            console.log("ui prop dropped on mapping", displayName);
+                            $(ui.helper).remove(); //destroy cloneit'
+                            referenceProperties = [name.split("_")[1]];
+                            referencePropertiesDisplayNames = [displayName];
+
+                            console.log("reference properties =", referenceProperties, name.split("_"));
+                            expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, referencePropertiesDisplayNames, drop_id, displayName, name);
+
+                            console.log('reference properties set', expression.getPropertyList());
+                            self.trigger("ON_MAPPING_REFERENCE_UPDATE", [mapping_data.mappingId, self.id, target_state, relativePropertyName, relativePropertyItemName, expression.id, expression.getText(), expression.getPropertyList(), "active"]);
+
+                        }
+
                         if (type == 'generator') {
 
                             console.log("generator dropped on mapping");
@@ -721,6 +736,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     switch (target.attr('type')) {
                         case "sensor_prop":
                         case "generator":
+                        case "ui_prop":
                             console.log("sensor prop or generator dropped");
                             var referenceId = target.attr("id");
                             var expressionId = target.attr("parent_id");

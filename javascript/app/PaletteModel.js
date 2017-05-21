@@ -48,6 +48,25 @@ define(['emitter', 'app/id', 'app/Emitter'],
               type:"sensor_prop"
             }]
           },
+          "ui_properties": {
+            items: [{
+              item_class: "palette block property ui",
+              item_name: "ui_hue",
+              name: "hue",
+              type:"ui_prop"
+            }, {
+              item_class: "block property palette ui",
+              item_name: "ui_saturation",
+              name: "saturation",
+              type:"ui_prop"
+            }, {
+              item_class: "block property palette ui",
+              item_name: "ui_lightness",
+              name: "lightness",
+              type:"ui_prop"
+            }]
+          },
+
 
           "brush_properties": {
             items: [{

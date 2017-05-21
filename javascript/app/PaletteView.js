@@ -4,7 +4,7 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", 'app/i
 
     function($, jqueryui, Handlebars, paletteTemplate, ID) {
 
-        var  states_btn, generator_btn, brush_properties_btn, sensor_properties_btn, brush_actions_btn, transitions_btn;
+        var  states_btn, generator_btn, brush_properties_btn, sensor_properties_btn, ui_properties_btn, brush_actions_btn, transitions_btn;
         var btn_list;
 
         var PaletteView = class {
@@ -19,9 +19,10 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", 'app/i
                 generator_btn = this.el.find('#generators');
                 brush_properties_btn = this.el.find('#brush_properties');
                 sensor_properties_btn = this.el.find('#sensor_properties');
+                ui_properties_btn = this.el.find('#ui_properties');
                 brush_actions_btn = this.el.find('#brush_actions');
                 transitions_btn = this.el.find('#transitions');
-                btn_list = [states_btn, generator_btn, brush_properties_btn, sensor_properties_btn, brush_actions_btn, transitions_btn];
+                btn_list = [states_btn, generator_btn, brush_properties_btn, sensor_properties_btn, ui_properties_btn, brush_actions_btn, transitions_btn];
 
                 
                 this.el.droppable({

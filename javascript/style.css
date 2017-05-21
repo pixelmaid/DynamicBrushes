@@ -801,6 +801,10 @@ span.trash{
 .sensor, .sensor_prop{
   background-color: #7D4FAE;
 }
+
+.ui, .ui_prop{
+  background-color: #7fc605;
+}
 .drag-n-drop{
   position: absolute;
   z-index: 101;

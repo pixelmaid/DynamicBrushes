@@ -313,6 +313,10 @@ class BehaviorDefinition {
                 case "stylus":
                     emitter = stylus;
                     break;
+                case "ui":
+                    emitter = colorPickerInput;
+                    break;
+
                 default:
                     emitter = nil;
                     break;
@@ -664,6 +668,9 @@ class BehaviorDefinition {
                 var propEmitter = [JSON]();
                 if (emitter as? Stylus) != nil{
                     propEmitter.append(JSON("stylus"));
+                }
+                else if (emitter as? ColorPickerInput) != nil{
+                    propEmitter.append(JSON("ui"));
                 }
                 else{
                     propEmitter.append(JSON("null"));
@@ -1113,7 +1120,7 @@ class BehaviorDefinition {
     func generateExpression(targetBrush:Brush, name:String, data:([String:(Any?,[String]?,[String]?)],String)){
         let id = targetBrush.id
         var operands = [String:Observable<Float>]();
-        //print("expression operand data\(data.0)");
+        print("expression operand data\(data)");
         for (key,value) in data.0 {
             let emitter = value.0;
             let propList = value.1;
