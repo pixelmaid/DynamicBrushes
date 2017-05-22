@@ -71,6 +71,43 @@ class SaveManager{
         }
     }
     
+    
+    func uploadImage(uploadData:JSON){
+        
+        
+                let path = uploadData["path"].stringValue
+                let filename = uploadData["filename"].stringValue
+                print("filename:",filename)
+                let fileUrl = NSURL(fileURLWithPath: path)
+                let uploadRequest = AWSS3TransferManagerUploadRequest()
+                uploadRequest?.bucket = bucketName
+                uploadRequest?.key = filename
+                uploadRequest?.contentType = "image/png"
+                uploadRequest?.body = fileUrl as URL!
+                uploadRequest?.serverSideEncryption = AWSS3ServerSideEncryption.awsKms
+                uploadRequest?.uploadProgress = { (bytesSent, totalBytesSent, totalBytesExpectedToSend) -> Void in
+                    DispatchQueue.main.async(execute: {
+                        //self.amountUploaded = totalBytesSent // To show the updating data status in label.
+                        //self.fileSize = totalBytesExpectedToSend
+                    })
+                }
+                
+                let transferManager = AWSS3TransferManager.default()
+                transferManager.upload(uploadRequest!).continueOnSuccessWith(executor: AWSExecutor.mainThread(), block: { (taskk: AWSTask) -> Any? in
+                    if taskk.error != nil {
+                        print("Error uploading image: \(String(describing: uploadRequest?.key)) Error: \(String(describing: taskk.error))")
+
+                    } else {
+                        self.requestEvent.raise(data:("upload__image_complete",nil));
+
+                    }
+                    return nil
+                })
+        
+        
+    }
+    
+   
     func uploadFile(uploadData:JSON){
         let filename = uploadData["filename"].stringValue;
         let filedata = uploadData["data"];
@@ -120,6 +157,8 @@ class SaveManager{
         
         let filename = downloadData["filename"].stringValue;
         print("filename = \(filename)")
+        print("projectName = \(downloadData["projectName"])")
+
         let transferManager = AWSS3TransferManager.default()
         
         let downloadingFileURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("tempfile.json")
@@ -149,9 +188,23 @@ class SaveManager{
             var downloadJSON:JSON = [:]
             do{
                 downloadJSON["data"] = try self.convertFileToJSON(url: downloadingFileURL)!;
-                self.requestEvent.raise(data:("download_complete",downloadJSON))
+                if(downloadData["type"] == "load"){
+                    print("load download complete");
+                    self.dataEvent.raise(data:("download_complete",downloadJSON))
+
+                    self.requestEvent.raise(data:("download_complete",downloadJSON))
+                }
+                else if(downloadData["type"] == "project_data_load"){
+                    downloadJSON["projectName"] = downloadData["projectName"]
+                    self.dataEvent.raise(data: ("project_data_download_complete",downloadJSON))
+
+                    self.requestEvent.raise(data:("project_data_download_complete",downloadJSON))
+ 
+                }
             }
             catch{
+                self.dataEvent.raise(data: ("download_failed",JSON([])))
+
                 self.requestEvent.raise(data:("download_failed",JSON([])))
                 
             }
@@ -161,6 +214,140 @@ class SaveManager{
         })
         
     }
+    
+    
+    /*func downloadImage(downloadData:JSON){
+        let filename = downloadData["filename"].stringValue;
+        let id = downloadData["id"].stringValue;
+
+        var completionHandler: AWSS3TransferUtilityDownloadCompletionHandlerBlock?
+        
+        //downloading image
+        
+        
+        let S3BucketName: String =  bucketName
+        let S3DownloadKeyName: String = filename
+        
+        let expression = AWSS3TransferUtilityDownloadExpression()
+
+        expression.downloadProgress = {(task: AWSS3TransferUtilityTask, bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) in
+            dispatch_async(dispatch_get_main_queue(), {
+                let progress = Float(totalBytesSent) / Float(totalBytesExpectedToSend)
+                //self.progressView.progress = progress
+                //   self.statusLabel.text = "Downloading..."
+                NSLog("Progress is: %f",progress)
+            })
+        }
+        
+        
+        
+        completionHandler = { (task, location, data, error) -> Void in
+            DispatchQueue.main.async(execute: {
+                if ((error) != nil){
+                    print("Failed with error")
+                   print("Error: %@",error!);
+                    //   self.statusLabel.text = "Failed"
+                }
+                    /*
+                     else if(self.progressView.progress != 1.0) {
+                     //    self.statusLabel.text = "Failed"
+                     NSLog("Error: Failed - Likely due to invalid region / filename")
+                     }   */
+                else{
+                    //    self.statusLabel.text = "Success"
+                    let image = UIImage(data: data!)
+                   print("image download success", image)
+                }
+            })
+        }
+        
+        let transferUtility = AWSS3TransferUtility.default()
+        
+        transferUtility.downloadToURL(nil, bucket: S3BucketName, key: S3DownloadKeyName, expression: expression, completionHandler: completionHandler).continueWithBlock { (task) -> AnyObject! in
+            if let error = task.error {
+                NSLog("Error: %@",error.localizedDescription);
+                //  self.statusLabel.text = "Failed"
+            }
+            if let exception = task.exception {
+                NSLog("Exception: %@",exception.description);
+                //  self.statusLabel.text = "Failed"
+            }
+            if let _ = task.result {
+                //    self.statusLabel.text = "Starting Download"
+                //NSLog("Download Starting!")
+                // Do something with uploadTask.
+                /*
+                 dispatch_async(dispatch_get_main_queue(), {
+                 self.colView.reloadData()
+                 })
+                 */
+                
+            }
+            return nil;
+        }
+        
+    }*/
+    
+    
+    func downloadImage(downloadData:JSON){
+        
+        let filename = downloadData["filename"].stringValue;
+        let id = downloadData["id"].stringValue;
+        print("filename, id = \(filename,id)")
+        let transferManager = AWSS3TransferManager.default()
+        
+        let url = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(id+".png")
+        
+        let downloadRequest = AWSS3TransferManagerDownloadRequest()
+        downloadRequest?.bucket = bucketName
+        downloadRequest?.key = filename
+        downloadRequest?.downloadingFileURL = url
+        downloadRequest?.downloadProgress = {(bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) -> Void in
+            DispatchQueue.main.async(execute: {() -> Void in
+                let progress = Float(totalBytesSent) / Float(totalBytesExpectedToSend)
+                //self.progressView.progress = progress
+                //   self.statusLabel.text = "Downloading..."
+                print("Progress is: %f",progress)
+            })
+        }
+        transferManager.download(downloadRequest!).continueWith(executor: AWSExecutor.mainThread(), block: { (task:AWSTask<AnyObject>) -> Any? in
+            
+            if let error = task.error as NSError? {
+                if error.domain == AWSS3TransferManagerErrorDomain, let code = AWSS3TransferManagerErrorType(rawValue: error.code) {
+                    switch code {
+                    case .cancelled, .paused:
+                        break
+                    default:
+                        print("Error downloading: \(String(describing: downloadRequest?.key)) Error: \(error)")
+                    }
+                } else {
+                    print("Error downloading: \(String(describing: downloadRequest?.key)) Error: \(error)")
+                }
+            }
+            
+            print("Download complete for: \(String(describing: downloadRequest?.key))")
+            _ = task.result
+            var downloadJSON:JSON = [:]
+            do{
+                downloadJSON["path"] = JSON(url.path);
+                downloadJSON["id"] = JSON(id);
+                
+                let image = UIImage(contentsOfFile: url.path)
+                self.dataEvent.raise(data: ("download_image_complete",downloadJSON))
+                self.requestEvent.raise(data:("download_image_complete",downloadJSON))
+            }
+            catch{
+                print("download failed")
+                self.requestEvent.raise(data:("download_failed",JSON([])))
+                
+            }
+            return nil
+            
+            
+        })
+        
+    }
+    
     
     func convertFileToJSON(url:URL) throws-> JSON?{
         do {

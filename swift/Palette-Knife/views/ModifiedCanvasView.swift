@@ -14,9 +14,20 @@ let pi = CGFloat(M_PI)
 class ModifiedCanvasView: UIImageView {
     
     
-    let id = NSUUID().uuidString;
+    var id = NSUUID().uuidString;
+    let name:String?
     var drawActive = true;
     
+    
+    init(name:String,frame:CGRect){
+        self.name = name
+        super.init(frame:frame)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        self.name = "noname";
+       super.init(coder: aDecoder)
+    }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if(drawActive){
@@ -31,9 +42,24 @@ class ModifiedCanvasView: UIImageView {
         }
     }
     
-    func exportPNG()->Data?{
-        let data = UIImagePNGRepresentation(self.image!)
-        return data
+    func exportPNG()->String?{
+        let image = self.image
+        let fileManager = FileManager.default
+        let path = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent("\(id).png")
+        let imageData = UIImagePNGRepresentation(image!)
+        fileManager.createFile(atPath: path as String, contents: imageData, attributes: nil)
+        
+        return path;
+    }
+    
+    func loadImage(path:String){
+       
+        let image = UIImage(contentsOfFile: path)
+        print("load image",image,path)
+
+        self.contentMode = .scaleAspectFit
+        self.image = image
+        
     }
     
     func pushContext()->CGContext{

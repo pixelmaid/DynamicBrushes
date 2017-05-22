@@ -110,6 +110,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         switch(data){
             case "VIEW_LOADED":
                  toolbarController?.exportButton.addTarget(self, action: #selector(ViewController.exportImage), for: .touchUpInside)
+                 toolbarController?.saveButton.addTarget(self, action: #selector(ViewController.saveProject), for: .touchUpInside)
 
                 break;
             case "ERASE_MODE":
@@ -224,7 +225,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
        colorPickerContainerView.isHidden = true;
         
         uiInput.setDiameter(val: (toolbarController?.diameterSlider.value)!);
-        print("alpha val",toolbarController?.alphaSlider.value);
         uiInput.setAlpha(val: (toolbarController?.alphaSlider.value)!);
         uiInput.setColor(color: (colorPickerView?.color)!)
 
@@ -240,13 +240,18 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     }
     
     func addConnectionRequests(){
-        print("adding connection request")
         let connectRequest = Request(target: "socket", action: "connect", data:JSON([]), requester: self)
         RequestHandler.addRequest(requestData:connectRequest);
+        
+        self.loadProject(projectName: "test4", artistName:  UserDefaults.standard.string(forKey: "userkey")!);
+
+        
         var templateJSON:JSON = [:]
         templateJSON["filename"] = "templates/basic.json"
+        templateJSON["type"] = "load"
         let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: self)
         RequestHandler.addRequest(requestData:behaviorDownloadRequest);
+        
         
     }
     
@@ -332,6 +337,59 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     }
     
     
+    func saveProject(){
+       
+
+        let alertController = UIAlertController(title: "Save", message: "Enter a name for your project", preferredStyle: .alert)
+        //print("present alert",alertController);
+        let confirmAction = UIAlertAction(title: "Save", style: .default) { (_) in
+            if let field = alertController.textFields?[0] {
+                let save_data = self.layerContainerView.save();
+                let save_json = save_data.0;
+                let save_images = save_data.1;
+                let artistName = UserDefaults.standard.string(forKey:"userkey");
+
+                var uploadJSON:JSON = [:]
+                uploadJSON["filename"] = JSON("saved_files/"+artistName!+"/drawings/"+field.text!+"/"+"data.json")
+                uploadJSON["data"] = save_json
+                uploadJSON["targetFolder"] = JSON("saved_files/"+artistName!+"/drawings/"+field.text!+"/")
+
+                let uploadRequest = Request(target: "storage", action: "upload", data:uploadJSON, requester: self)
+                
+                RequestHandler.addRequest(requestData:uploadRequest);
+
+                for (key,val) in save_images{
+                    
+                    var uploadData:JSON = [:]
+                    uploadData["filename"] = JSON("saved_files/"+artistName!+"/drawings/"+field.text!+"/"+key+".png")
+                    uploadData["path"] = JSON(val)
+                    uploadData["targetFolder"] = JSON("saved_files/"+artistName!+"/drawings/")
+                     let uploadRequest = Request(target: "storage", action: "upload_image", data:uploadData, requester: self)
+                    RequestHandler.addRequest(requestData:uploadRequest);
+
+                }
+                
+                print("save data",save_json,save_images)
+            
+            } else {
+                print("no name key provided");
+            }
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in }
+        
+        alertController.addTextField { (textField) in
+            textField.placeholder = ""
+        }
+        
+        alertController.addAction(confirmAction)
+        alertController.addAction(cancelAction)
+        
+        self.present(alertController, animated: true, completion: nil)
+        
+        
+    }
+    
     
     @objc func drawIntervalCallback(){
         if(currentCanvas!.dirty){
@@ -343,7 +401,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
     func newLayer(){
         print("new layer created")
-        let id = layerContainerView.newLayer();
+        let id = layerContainerView.newLayer(name: (layerPanelController?.getNextName())!,id:nil);
         layerPanelController?.addLayer(layerId: id);
     }
     
@@ -375,6 +433,33 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
             print("download complete");
             behaviorManager?.loadBehavior(json: data.1!["data"])
             self.synchronizeWithAuthoringClient();
+            break;
+        case "download_image_complete":
+            let id = data.1!["id"].stringValue;
+            let path = data.1!["path"].stringValue;
+            layerContainerView.loadImageIntoLayer(id:id,path:path);
+            
+            break;
+        case "project_data_download_complete":
+            let fileData = data.1!["data"];
+            let newLayers = layerContainerView.loadFromData(fileData: fileData)
+            layerPanelController?.loadLayers(newLayers:newLayers);
+            
+            var jsonLayerArray = fileData["layers"].arrayValue;
+            for i in 0..<jsonLayerArray.count{
+                let layerData = jsonLayerArray[i];
+                let id = layerData["id"].stringValue;
+                let artistName = UserDefaults.standard.string(forKey: "userkey")!
+                let projectName = data.1!["projectName"].stringValue
+                var downloadData:JSON = [:]
+                downloadData["id"] = JSON(id)
+                let filename = "saved_files/"+artistName+"/drawings/"+projectName+"/"+id+".png"
+                downloadData["filename"] = JSON(filename);
+                let image_load_request = Request(target:"storage",action:"download_image",data:downloadData,requester:self)
+                RequestHandler.addRequest(requestData: image_load_request)
+            }
+
+            
             break;
         case "upload_complete":
             print("upload complete\(data.1)");
@@ -481,6 +566,19 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         loadJSON["type"] = JSON("load")
         
         loadJSON["targetFolder"] = JSON("saved_files/"+artistName+"/behaviors/")
+        let request = Request(target: "storage", action: "download", data: loadJSON, requester: self)
+        RequestHandler.addRequest(requestData: request);
+    }
+    
+    
+    func loadProject(projectName:String, artistName:String){
+        print("load project called")
+        let project_filename = "saved_files/"+artistName+"/drawings/"+projectName+"/data.json"
+        var loadJSON:JSON = [:]
+        loadJSON["filename"] = JSON(project_filename);
+        loadJSON["type"] = JSON("project_data_load")
+        loadJSON["projectName"] = JSON(projectName)
+        loadJSON["targetFolder"] = JSON("saved_files/"+artistName+"/drawings/"+projectName+"/")
         let request = Request(target: "storage", action: "download", data: loadJSON, requester: self)
         RequestHandler.addRequest(requestData: request);
     }

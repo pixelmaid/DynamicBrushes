@@ -24,6 +24,7 @@ class RequestHandler{
     static var activeItem:Request?
     
     static func addRequest(requestData:Request){
+        print("adding request",requestData)
         requestQueue.append(requestData);
         if(activeItem == nil){
             print("active item is nil, checking request")
@@ -35,7 +36,7 @@ class RequestHandler{
     init(){
         
         _ = RequestHandler.socketManager.dataEvent.addHandler(target:self,handler: RequestHandler.socketDataHandler, key:RequestHandler.socketKey)
-        _ = RequestHandler.saveManager.dataEvent.addHandler(target:self,handler: RequestHandler.saveDataHandler, key:RequestHandler.socketKey)
+        _ = RequestHandler.saveManager.dataEvent.addHandler(target:self,handler: RequestHandler.saveDataHandler, key:RequestHandler.storageKey)
     }
     
     static func checkRequest(){
@@ -105,8 +106,14 @@ class RequestHandler{
                     RequestHandler.saveManager.uploadFile(uploadData:RequestHandler.activeItem!.data!)
                     break;
                     
+                case "upload_image":
+                    RequestHandler.saveManager.uploadImage(uploadData:RequestHandler.activeItem!.data!)
+                    break;
                 case "download":
                     RequestHandler.saveManager.downloadFile(downloadData:RequestHandler.activeItem!.data!)
+                    break;
+                case "download_image":
+                    RequestHandler.saveManager.downloadImage(downloadData:RequestHandler.activeItem!.data!)
                     break;
                     
                 case "filelist":
@@ -184,7 +191,7 @@ class RequestHandler{
     private func saveDataHandler(data:(String,JSON?), key:String){
         print("save data handler called \(data.0,data.1?["type"].stringValue,RequestHandler.activeItem == nil )")
 
-        RequestHandler.dataQueue.append(data);
+        //RequestHandler.dataQueue.append(data);
         RequestHandler.checkRequest();
     }
     

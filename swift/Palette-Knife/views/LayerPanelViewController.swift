@@ -12,11 +12,13 @@ class LayerCellData{
     let id:String
     let name:String
     var selected:Bool
+    var hidden:Bool
     
-    init(id:String,name:String,selected:Bool){
+    init(id:String,name:String,selected:Bool, hidden:Bool){
         self.id = id
         self.name = name
         self.selected = selected
+        self.hidden = hidden
     }
 }
 
@@ -28,6 +30,7 @@ class LayerPanelViewController: UITableViewController{
     let hideIcon = UIImage(named: "layerVisible_button2x")
     let showIcon = UIImage(named: "layerVisible_button_active2x")
     var layerNameCounter = 1;
+    var currentName = "noname"
     @IBOutlet weak var layerAddButton: UIButton!
     
     override func viewDidLoad() {
@@ -37,7 +40,6 @@ class LayerPanelViewController: UITableViewController{
         
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
-        
         layerAddButton.addTarget(self, action:#selector(LayerPanelViewController.layerAddPressed), for: .touchUpInside)
     }
     
@@ -62,15 +64,31 @@ class LayerPanelViewController: UITableViewController{
         self.layerEvent.raise(data: ("LAYER_ADDED","",nil));
     }
     
+    func getNextName()->String{
+        currentName = "Layer " + String(layerNameCounter);
+        layerNameCounter += 1
+        return currentName
+
+    }
+    
     func addLayer(layerId:String){
         for l in layers {
             l.selected = false;
         }
-        let newLayer = LayerCellData(id: layerId, name: "Layer " + String(layerNameCounter), selected: true)
+        let newLayer = LayerCellData(id: layerId, name: currentName, selected: true, hidden:false)
         layers.append(newLayer);
-        layerNameCounter += 1
         tableView.reloadData();
     
+    }
+    
+    func loadLayers(newLayers:[(String,String, Bool, Bool)]){
+        print("load layers",newLayers);
+        layers.removeAll();
+        for i in 0..<newLayers.count{
+            let newLayer = LayerCellData(id: newLayers[i].0, name: newLayers[i].1, selected: newLayers[i].2, hidden:newLayers[i].3)
+            layers.append(newLayer);
+        }
+        tableView.reloadData();
     }
     
     func removeLayer(layerId:String){
@@ -195,7 +213,15 @@ class LayerPanelViewController: UITableViewController{
         
         cell.id = layer.id;
         cell.name = layer.name;
+        cell.visible = !layer.hidden;
         cell.layerVisibleButton.addTarget(self,action:#selector(LayerPanelViewController.toggleLayerVisibility), for: .touchUpInside)
+        if(cell.visible){
+           cell.layerVisibleButton.setImage(showIcon, for: UIControlState.normal)
+        }
+        else{
+             cell.layerVisibleButton.setImage(hideIcon, for: UIControlState.normal)
+        }
+
         cell.deleteLayerButton.addTarget(self,action:#selector(LayerPanelViewController.deleteLayer), for: .touchUpInside)
 
         return cell
