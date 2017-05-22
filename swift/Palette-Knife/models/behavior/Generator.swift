@@ -192,7 +192,18 @@ class Increment:Generator{
     
 }
 
+//TODO: need to remove these eventually when system is refactored so that these are brush props, not generators
 class Index:Generator{
+    var val:Observable<Float>
+    init (val:Observable<Float>){
+        self.val = val;
+    }
+    override func get(id:String?) -> Float {
+        return self.val.get(id: nil);
+    }
+}
+
+class SiblingCount:Generator{
     var val:Observable<Float>
     init (val:Observable<Float>){
         self.val = val;

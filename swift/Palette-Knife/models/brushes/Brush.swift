@@ -67,6 +67,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     var time:Observable<Float>
     let index:Observable<Float>
+    let siblingcount:Observable<Float>
     
     let diameter:Observable<Float>
     let alpha:Observable<Float>
@@ -134,6 +135,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.yDistance = Observable<Float>(0)
         
         self.index = Observable<Float>(0)
+        self.siblingcount = Observable<Float>(0)
+
         self.time = Observable<Float>(0)
         
         self.diameter = Observable<Float>(1)
@@ -172,6 +175,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         observables.append(yDistance)
         
         observables.append(index)
+        observables.append(siblingcount)
+
         
         observables.append(diameter)
         observables.append(alpha)
@@ -683,6 +688,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             _ = child.dieEvent.addHandler(target: self, handler: Brush.childDieHandler, key: childDieHandlerKey)
         }
         
+        for c in children{
+            c.siblingcount.set(newValue: Float(self.children.count))
+        }
         
         //notify listeners of spawn event
         for key in keyStorage["SPAWN"]!  {

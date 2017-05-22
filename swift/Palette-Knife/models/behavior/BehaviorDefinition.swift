@@ -284,6 +284,11 @@ class BehaviorDefinition {
             self.addIndex(name: data["generatorId"].stringValue);
             
             break;
+            
+        case "siblingcount":
+            self.addSiblingCount(name: data["generatorId"].stringValue);
+            
+            break;
 
             // case "random_walk":
             
@@ -744,6 +749,11 @@ class BehaviorDefinition {
         generators[name] = ("index",[]);
     }
     
+    func addSiblingCount(name:String){
+        generators[name] = ("siblingcount",[]);
+    }
+    
+    
     func addRandomGenerator(name:String,min:Float,max:Float){
         generators[name] = ("random",[min,max]);
     }
@@ -984,7 +994,10 @@ class BehaviorDefinition {
         case "index":
             let index = Index(val:targetBrush.index);
             storedGenerators[id]![name] = index;
-        
+        case "siblingcount":
+            let siblingCount = SiblingCount(val:targetBrush.siblingcount);
+            storedGenerators[id]![name] = siblingCount;
+ 
         default:
             break;
         }
