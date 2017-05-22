@@ -13,6 +13,7 @@ class ToolbarViewController: UIViewController {
     
     @IBOutlet weak var saveButton: UIButton!
     @IBOutlet weak var exportButton: UIButton!
+    @IBOutlet weak var fileListButton: UIButton!
     
     @IBOutlet weak var colorPickerButton: UIButton!
     @IBOutlet weak var layerPanelButton: UIButton!
@@ -37,6 +38,8 @@ class ToolbarViewController: UIViewController {
     let brushStandard = UIImage(named: "brush_button2x")
 
 
+    
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
@@ -62,6 +65,7 @@ class ToolbarViewController: UIViewController {
         brushButton.addTarget(self, action: #selector(ToolbarViewController.brushToggled), for: .touchUpInside)
         
         layerPanelButton.addTarget(self, action: #selector(ToolbarViewController.panelToggled), for: .touchUpInside)
+         fileListButton.addTarget(self, action: #selector(ToolbarViewController.panelToggled), for: .touchUpInside)
         colorPickerButton.addTarget(self, action: #selector(ToolbarViewController.panelToggled), for: .touchUpInside)
         behaviorPanelButton.addTarget(self, action: #selector(ToolbarViewController.panelToggled), for: .touchUpInside)
 
@@ -95,6 +99,9 @@ class ToolbarViewController: UIViewController {
         }
         else if(target == colorPickerButton){
             toolEvent.raise(data: ("TOGGLE_COLOR_PANEL"));
+        }
+        else if(target == fileListButton){
+            toolEvent.raise(data: ("TOGGLE_FILE_PANEL"));
         }
     }
     

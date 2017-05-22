@@ -41,10 +41,19 @@ class LayerContainerView: UIView{
             json["isHidden"] = JSON(isHidden);
             let isActive = (activeLayer == layers[i])
             json["isActive"] = JSON(isActive);
-            jsonLayerArray.append(json)
             
             let imageData = layers[i].exportPNG();
-            imageList[id] = imageData
+            if(imageData != nil){
+                imageList[id] = imageData
+                json["hasImageData"] = JSON(true)
+            }
+            else{
+                 imageList[id] = "no_image";
+                json["hasImageData"] = JSON(false)
+
+            }
+            jsonLayerArray.append(json)
+
             
         }
         drawingJSON["layers"] = JSON(jsonLayerArray);
@@ -136,8 +145,8 @@ class LayerContainerView: UIView{
     
     
     func deleteAllLayers(){
-        for i in 0..<layers.count{
-            _ = self.deleteLayer(id: layers[i].id)
+        for l in layers.reversed(){
+            _ = self.deleteLayer(id: l.id)
         }
     }
     

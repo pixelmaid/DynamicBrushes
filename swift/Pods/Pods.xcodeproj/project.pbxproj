@@ -1562,6 +1562,9 @@
 					9DBF8287EF2517A9C5BB6D681ABF38D2 = {
 						LastSwiftMigration = 0820;
 					};
+					BAA396C4D689A02A15029B49E076FAF0 = {
+						LastSwiftMigration = 0830;
+					};
 					C99F1E001A30E520BD36C551F50E892A = {
 						LastSwiftMigration = 0820;
 					};
@@ -1977,6 +1980,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2E68E237A56546F2422BE9B79B4BD58B /* AWSCognito.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -1996,6 +2000,8 @@
 				PRODUCT_NAME = AWSCognito;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -2067,6 +2073,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2E68E237A56546F2422BE9B79B4BD58B /* AWSCognito.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -2086,6 +2093,7 @@
 				PRODUCT_NAME = AWSCognito;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";

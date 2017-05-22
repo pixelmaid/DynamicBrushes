@@ -44,6 +44,13 @@
                                     <segue destination="CKi-vh-0fK" kind="embed" identifier="colorPickerSegue" id="6oB-FP-GnI"/>
                                 </connections>
                             </containerView>
+                            <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HKn-rf-Zo8" userLabel="filelist_container_view">
+                                <rect key="frame" x="0.0" y="56" width="240" height="486"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <connections>
+                                    <segue destination="jTm-Tz-1uO" kind="embed" identifier="fileListSegue" id="Hj1-pq-3u9"/>
+                                </connections>
+                            </containerView>
                         </subviews>
                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -54,6 +61,7 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="colorPickerContainerView" destination="UvX-z4-bEI" id="JrC-Un-iNs"/>
+                        <outlet property="fileListContainerView" destination="HKn-rf-Zo8" id="qPq-59-Crb"/>
                         <outlet property="layerPanelContainerView" destination="Q7O-f9-au8" id="8jF-Do-vKb"/>
                     </connections>
                 </viewController>
@@ -73,10 +81,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="1366" height="48"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="raq-oY-wRn">
-                                <rect key="frame" x="60" y="4" width="40" height="40"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SLf-eG-2ZY" userLabel="FileList Button">
+                                <rect key="frame" x="62" y="4" width="40" height="40"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" image="export_button2x.png"/>
+                                <state key="normal" image="fileList_button2x.png"/>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8gS-nz-efH" userLabel="Save Button">
                                 <rect key="frame" x="20" y="4" width="40" height="40"/>
@@ -129,6 +137,11 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="raq-oY-wRn">
+                                <rect key="frame" x="100" y="4" width="40" height="40"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="export_button2x.png"/>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -144,6 +157,7 @@
                         <outlet property="diameterSlider" destination="tsh-Qc-EHp" id="1me-Xa-kg1"/>
                         <outlet property="eraseButton" destination="gVA-ZT-zoR" id="MNA-sp-N1q"/>
                         <outlet property="exportButton" destination="raq-oY-wRn" id="xMl-nY-4EZ"/>
+                        <outlet property="fileListButton" destination="SLf-eG-2ZY" id="b55-NL-sCF"/>
                         <outlet property="layerPanelButton" destination="civ-vQ-wsY" id="2tW-cw-hVQ"/>
                         <outlet property="saveButton" destination="8gS-nz-efH" id="Hzl-b5-jO9"/>
                     </connections>
@@ -198,14 +212,14 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hHc-4X-soH">
-                                            <rect key="frame" x="202" y="19.5" width="30" height="30"/>
+                                            <rect key="frame" x="202" y="18" width="30" height="31"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                             <state key="normal" image="trash_button.png">
                                                 <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             </state>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RF0-yb-dcE">
-                                            <rect key="frame" x="8" y="24" width="30" height="19.5"/>
+                                            <rect key="frame" x="8" y="22" width="30" height="20"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                             <state key="normal" image="layerVisible_button_active2x.png">
                                                 <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -246,10 +260,76 @@
             </objects>
             <point key="canvasLocation" x="911" y="333"/>
         </scene>
+        <!--File Panel View Controller-->
+        <scene sceneID="A4f-Rb-TOI">
+            <objects>
+                <tableViewController id="jTm-Tz-1uO" userLabel="File Panel View Controller" customClass="SavedFilesPanelViewController" customModule="DynamicBrushes" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="50" sectionHeaderHeight="28" sectionFooterHeight="28" id="nYL-Tf-6CB">
+                        <rect key="frame" x="0.0" y="0.0" width="240" height="486"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        <view key="tableHeaderView" contentMode="scaleToFill" id="mJk-0r-UuI">
+                            <rect key="frame" x="0.0" y="0.0" width="240" height="46"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Files" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="U2O-Y9-ZpQ">
+                                    <rect key="frame" x="91" y="8" width="58" height="31"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        </view>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="FileTableCell" id="Yqg-rA-mIA" userLabel="FileTableCell" customClass="FileCell" customModule="DynamicBrushes" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="74" width="240" height="50"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Yqg-rA-mIA" id="3co-GL-OVt">
+                                    <rect key="frame" x="0.0" y="0.0" width="240" height="50"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0wb-hJ-JT7">
+                                            <rect key="frame" x="28" y="15" width="82" height="21"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="tintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                </tableViewCellContentView>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <connections>
+                                    <outlet property="label" destination="0wb-hJ-JT7" id="BMg-ji-az7"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="jTm-Tz-1uO" id="Y2H-6i-ETD"/>
+                            <outlet property="delegate" destination="jTm-Tz-1uO" id="Rb5-80-f8Y"/>
+                        </connections>
+                    </tableView>
+                    <toolbarItems/>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <nil key="simulatedBottomBarMetrics"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="DG8-if-8M9" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-138" y="994"/>
+        </scene>
         <!--View Controller-->
         <scene sceneID="c3s-SM-Oja">
             <objects>
                 <viewController id="CKi-vh-0fK" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="6w6-OA-7SU"/>
+                        <viewControllerLayoutGuide type="bottom" id="Ofy-S8-k8H"/>
+                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="5Aw-8Y-Qcd" customClass="SwiftHSVColorPicker" customModule="DynamicBrushes" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="420"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -266,6 +346,7 @@
         <image name="brush_button2x.png" width="121" height="121"/>
         <image name="erase_button2x.png" width="121" height="121"/>
         <image name="export_button2x.png" width="121" height="121"/>
+        <image name="fileList_button2x.png" width="121" height="121"/>
         <image name="layerVisible_button_active2x.png" width="105" height="62"/>
         <image name="layer_button2x.png" width="121" height="120"/>
         <image name="layeradd_button.png" width="33" height="33"/>

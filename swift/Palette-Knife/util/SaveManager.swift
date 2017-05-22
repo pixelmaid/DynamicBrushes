@@ -27,13 +27,14 @@ class SaveManager{
         
         AWSServiceManager.default().defaultServiceConfiguration = configuration
         AWSS3.register(with: configuration!, forKey: "defaultKey")
-        
+        self.dataEvent.raise(data: ("configure_complete",nil))
         self.requestEvent.raise(data:("configure_complete",nil))
+
         
     }
     
-    func accessBehaviorFileList(targetFolder:String, uploadData:JSON?){
-        print("target folder",targetFolder)
+    func accessFileList(targetFolder:String, list_type:String, uploadData:JSON?){
+        print("target folder",targetFolder, list_type)
              let listRequest: AWSS3ListObjectsRequest = AWSS3ListObjectsRequest()
         listRequest.bucket = bucketName
         listRequest.prefix = targetFolder;
@@ -42,8 +43,9 @@ class SaveManager{
             var listArray = [String:String]()
 
             let listObjectsOutput = task.result;
-            print("list objects output",listObjectsOutput);
+            print("list objects output",listObjectsOutput?.contents);
             for object in (listObjectsOutput?.contents)! {
+                print("key = ",object.key)
                 let key = object.key
                 let nameArray = key!.components(separatedBy: "/")
                 print("name key",nameArray,key);
@@ -57,6 +59,9 @@ class SaveManager{
             if(uploadData != nil){
             var revisedUploadData = uploadData;
             revisedUploadData!["filelist"] = listJSON;
+            revisedUploadData!["list_type"] = JSON(list_type)
+           
+            self.dataEvent.raise(data: ("upload_complete",revisedUploadData))
             self.requestEvent.raise(data:("upload_complete",revisedUploadData))
             }
             else{
@@ -64,7 +69,10 @@ class SaveManager{
                 filelist_data["filelist"] = listJSON;
                 filelist_data["targetFolder"] = JSON(targetFolder)
                 filelist_data["type"] = "filelist"
+                filelist_data["list_type"] = JSON(list_type)
+                self.dataEvent.raise(data: ("filelist_complete",filelist_data))
                 self.requestEvent.raise(data:("filelist_complete",filelist_data))
+
             }
 
             return nil
@@ -98,7 +106,8 @@ class SaveManager{
                         print("Error uploading image: \(String(describing: uploadRequest?.key)) Error: \(String(describing: taskk.error))")
 
                     } else {
-                        self.requestEvent.raise(data:("upload__image_complete",nil));
+                        self.dataEvent.raise(data: ("upload_image_complete",nil))
+                        self.requestEvent.raise(data:("upload_image_complete",nil));
 
                     }
                     return nil
@@ -146,7 +155,7 @@ class SaveManager{
             
             let uploadOutput = task.result
             print("upload data",uploadData);
-            self.accessBehaviorFileList(targetFolder: uploadData["targetFolder"].stringValue, uploadData: uploadData)
+            self.accessFileList(targetFolder: uploadData["targetFolder"].stringValue, list_type:"behavior_list", uploadData: uploadData)
                         return nil
         })
         
@@ -191,20 +200,17 @@ class SaveManager{
                 if(downloadData["type"] == "load"){
                     print("load download complete");
                     self.dataEvent.raise(data:("download_complete",downloadJSON))
-
                     self.requestEvent.raise(data:("download_complete",downloadJSON))
                 }
                 else if(downloadData["type"] == "project_data_load"){
                     downloadJSON["projectName"] = downloadData["projectName"]
                     self.dataEvent.raise(data: ("project_data_download_complete",downloadJSON))
-
                     self.requestEvent.raise(data:("project_data_download_complete",downloadJSON))
  
                 }
             }
             catch{
                 self.dataEvent.raise(data: ("download_failed",JSON([])))
-
                 self.requestEvent.raise(data:("download_failed",JSON([])))
                 
             }
@@ -214,79 +220,6 @@ class SaveManager{
         })
         
     }
-    
-    
-    /*func downloadImage(downloadData:JSON){
-        let filename = downloadData["filename"].stringValue;
-        let id = downloadData["id"].stringValue;
-
-        var completionHandler: AWSS3TransferUtilityDownloadCompletionHandlerBlock?
-        
-        //downloading image
-        
-        
-        let S3BucketName: String =  bucketName
-        let S3DownloadKeyName: String = filename
-        
-        let expression = AWSS3TransferUtilityDownloadExpression()
-
-        expression.downloadProgress = {(task: AWSS3TransferUtilityTask, bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) in
-            dispatch_async(dispatch_get_main_queue(), {
-                let progress = Float(totalBytesSent) / Float(totalBytesExpectedToSend)
-                //self.progressView.progress = progress
-                //   self.statusLabel.text = "Downloading..."
-                NSLog("Progress is: %f",progress)
-            })
-        }
-        
-        
-        
-        completionHandler = { (task, location, data, error) -> Void in
-            DispatchQueue.main.async(execute: {
-                if ((error) != nil){
-                    print("Failed with error")
-                   print("Error: %@",error!);
-                    //   self.statusLabel.text = "Failed"
-                }
-                    /*
-                     else if(self.progressView.progress != 1.0) {
-                     //    self.statusLabel.text = "Failed"
-                     NSLog("Error: Failed - Likely due to invalid region / filename")
-                     }   */
-                else{
-                    //    self.statusLabel.text = "Success"
-                    let image = UIImage(data: data!)
-                   print("image download success", image)
-                }
-            })
-        }
-        
-        let transferUtility = AWSS3TransferUtility.default()
-        
-        transferUtility.downloadToURL(nil, bucket: S3BucketName, key: S3DownloadKeyName, expression: expression, completionHandler: completionHandler).continueWithBlock { (task) -> AnyObject! in
-            if let error = task.error {
-                NSLog("Error: %@",error.localizedDescription);
-                //  self.statusLabel.text = "Failed"
-            }
-            if let exception = task.exception {
-                NSLog("Exception: %@",exception.description);
-                //  self.statusLabel.text = "Failed"
-            }
-            if let _ = task.result {
-                //    self.statusLabel.text = "Starting Download"
-                //NSLog("Download Starting!")
-                // Do something with uploadTask.
-                /*
-                 dispatch_async(dispatch_get_main_queue(), {
-                 self.colView.reloadData()
-                 })
-                 */
-                
-            }
-            return nil;
-        }
-        
-    }*/
     
     
     func downloadImage(downloadData:JSON){
@@ -338,6 +271,7 @@ class SaveManager{
             }
             catch{
                 print("download failed")
+                self.dataEvent.raise(data: ("download_image_failed",JSON([])))
                 self.requestEvent.raise(data:("download_failed",JSON([])))
                 
             }

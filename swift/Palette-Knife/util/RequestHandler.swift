@@ -118,7 +118,8 @@ class RequestHandler{
                     
                 case "filelist":
                     let targetFolder = RequestHandler.activeItem!.data!["targetFolder"].stringValue
-                    RequestHandler.saveManager.accessBehaviorFileList(targetFolder: targetFolder,uploadData: nil)
+                    let list_type = RequestHandler.activeItem!.data!["list_type"].stringValue
+                    RequestHandler.saveManager.accessFileList(targetFolder: targetFolder,list_type:list_type, uploadData: nil)
                     break;
                 default:
                     break;

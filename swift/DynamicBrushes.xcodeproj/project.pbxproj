@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		5F0EB6621EB5775100225A6E /* ModifiedCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F0EB6611EB5775100225A6E /* ModifiedCanvasView.swift */; };
+		5F2CF3D51ED32D0B0066AC8E /* SavedFilesPanelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2CF3D41ED32D0B0066AC8E /* SavedFilesPanelViewController.swift */; };
+		5F2CF3D71ED32EC00066AC8E /* FileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2CF3D61ED32EC00066AC8E /* FileCell.swift */; };
+		5F2CF3DA1ED333AD0066AC8E /* fileList_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F2CF3D81ED333AD0066AC8E /* fileList_button.png */; };
+		5F2CF3DB1ED333AD0066AC8E /* fileList_button2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F2CF3D91ED333AD0066AC8E /* fileList_button2x.png */; };
 		5F4D8CEC1DEE072A008042FE /* shopbot_position_active.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F4D8CEA1DEE072A008042FE /* shopbot_position_active.png */; };
 		5F4D8CED1DEE072A008042FE /* shopbot_position_inactive.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F4D8CEB1DEE072A008042FE /* shopbot_position_inactive.png */; };
 		5F50370A1EA94C26004ABAC1 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F5037081EA94C26004ABAC1 /* GLKit.framework */; };
@@ -145,6 +149,10 @@
 		5F1109381ECE248E000FBF24 /* DynamicBrushes_devTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DynamicBrushes_devTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F1109431ECE248E000FBF24 /* DynamicBrushes_devUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DynamicBrushes_devUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F1E15891F199E478AB56B38 /* Pods-PaletteKnife.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnife.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnife/Pods-PaletteKnife.debug.xcconfig"; sourceTree = "<group>"; };
+		5F2CF3D41ED32D0B0066AC8E /* SavedFilesPanelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SavedFilesPanelViewController.swift; sourceTree = "<group>"; };
+		5F2CF3D61ED32EC00066AC8E /* FileCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileCell.swift; sourceTree = "<group>"; };
+		5F2CF3D81ED333AD0066AC8E /* fileList_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fileList_button.png; sourceTree = "<group>"; };
+		5F2CF3D91ED333AD0066AC8E /* fileList_button2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fileList_button2x.png; sourceTree = "<group>"; };
 		5F4D8CEA1DEE072A008042FE /* shopbot_position_active.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shopbot_position_active.png; sourceTree = "<group>"; };
 		5F4D8CEB1DEE072A008042FE /* shopbot_position_inactive.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shopbot_position_inactive.png; sourceTree = "<group>"; };
 		5F5037081EA94C26004ABAC1 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
@@ -481,6 +489,7 @@
 				5FA4C72A1CDA7B5B004A728C /* Assets.xcassets */,
 				5FA4C72C1CDA7B5B004A728C /* LaunchScreen.storyboard */,
 				5FA4C72F1CDA7B5B004A728C /* Info.plist */,
+				5F2CF3D41ED32D0B0066AC8E /* SavedFilesPanelViewController.swift */,
 			);
 			name = PaletteKnife;
 			path = "Palette-Knife";
@@ -529,6 +538,7 @@
 				5F0EB6611EB5775100225A6E /* ModifiedCanvasView.swift */,
 				5FE32F621ECE535100ADC01E /* LayerContainerView.swift */,
 				5FE32F661ECE66AE00ADC01E /* LayerCell.swift */,
+				5F2CF3D61ED32EC00066AC8E /* FileCell.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -544,6 +554,8 @@
 		5FD6CD101DE0EE0E007D94AA /* image_assets */ = {
 			isa = PBXGroup;
 			children = (
+				5F2CF3D81ED333AD0066AC8E /* fileList_button.png */,
+				5F2CF3D91ED333AD0066AC8E /* fileList_button2x.png */,
 				5FE32F9C1ECF70BE00ADC01E /* layerVisible_button_active.png */,
 				5FE32F9D1ECF70BE00ADC01E /* layerVisible_button_active2x.png */,
 				5FE32F9E1ECF70BE00ADC01E /* layerVisible_button.png */,
@@ -856,8 +868,10 @@
 				5FE32F981ECF6DC900ADC01E /* save_button.png in Resources */,
 				5F9F25A21DEFE38B005CB5D8 /* radial2x.png in Resources */,
 				5FA4C7291CDA7B5B004A728C /* Main.storyboard in Resources */,
+				5F2CF3DB1ED333AD0066AC8E /* fileList_button2x.png in Resources */,
 				5FE32F841ECF6D5300ADC01E /* brush_button.png in Resources */,
 				5FE32F951ECF6DC900ADC01E /* layeradd_button2x.png in Resources */,
+				5F2CF3DA1ED333AD0066AC8E /* fileList_button.png in Resources */,
 				5F4D8CED1DEE072A008042FE /* shopbot_position_inactive.png in Resources */,
 				5FE32F691ECF61A500ADC01E /* layer_button.png in Resources */,
 				5FE32F891ECF6D5300ADC01E /* erase_button2x.png in Resources */,
@@ -1065,6 +1079,7 @@
 				5F5037201EA95833004ABAC1 /* NumTypes+Conversion.swift in Sources */,
 				5F90F5671E9D5BCC006BB9FE /* BehaviorMapper.swift in Sources */,
 				5FFDAB091D21B5C400632A26 /* SocketManager.swift in Sources */,
+				5F2CF3D51ED32D0B0066AC8E /* SavedFilesPanelViewController.swift in Sources */,
 				5FE32F671ECE66AE00ADC01E /* LayerCell.swift in Sources */,
 				5F90F54E1E9D5A16006BB9FE /* Point.swift in Sources */,
 				5FE32F611ECE2EBB00ADC01E /* ToolbarViewController.swift in Sources */,
@@ -1081,6 +1096,7 @@
 				5F90F5581E9D5A41006BB9FE /* Line.swift in Sources */,
 				5F90F5571E9D5A41006BB9FE /* Fabricator.swift in Sources */,
 				5F90F5441E9D59D4006BB9FE /* Matrix.swift in Sources */,
+				5F2CF3D71ED32EC00066AC8E /* FileCell.swift in Sources */,
 				5FA4C7241CDA7B5B004A728C /* AppDelegate.swift in Sources */,
 				5F90F5461E9D59D4006BB9FE /* Observable.swift in Sources */,
 				5F90F5421E9D59D4006BB9FE /* Event.swift in Sources */,

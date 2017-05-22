@@ -44,12 +44,18 @@ class ModifiedCanvasView: UIImageView {
     
     func exportPNG()->String?{
         let image = self.image
-        let fileManager = FileManager.default
-        let path = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent("\(id).png")
-        let imageData = UIImagePNGRepresentation(image!)
-        fileManager.createFile(atPath: path as String, contents: imageData, attributes: nil)
         
-        return path;
+        if(image != nil){
+        let fileManager = FileManager.default
+            let path = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent("\(id).png")
+            let imageData = UIImagePNGRepresentation(image!)
+            UIImagePNGRepresentation(UIImage())
+            fileManager.createFile(atPath: path as String, contents: imageData, attributes: nil)
+            
+            return path;
+        }
+        return nil
+        
     }
     
     func loadImage(path:String){
@@ -96,7 +102,9 @@ class ModifiedCanvasView: UIImageView {
                 let y = Float(location.y);
                 let force = Float(touch.force);
                 let angle = Float(touch.azimuthAngle(in: self))
-                stylus.onStylusMove(x: x, y:y, force:force, angle:angle)
+                let mappedAngle = MathUtil.map(value: angle, low1: 0, high1: 2*Float.pi
+                    , low2: 0, high2: 1);
+                stylus.onStylusMove(x: x, y:y, force:force, angle:angle);
             }
         }
         else {

@@ -35,8 +35,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
     // MARK: Properties
     
-
-  
+    
+    
     var layerContainerView:LayerContainerView!
     
     
@@ -47,12 +47,16 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     let toolbarKey = NSUUID().uuidString
     let layerEventKey = NSUUID().uuidString
     let colorPickerKey = NSUUID().uuidString
-
+    let fileEventKey = NSUUID().uuidString
+    
     let brushEventKey = NSUUID().uuidString
     let dataEventKey = NSUUID().uuidString
     
     var toolbarController: ToolbarViewController?
     var layerPanelController: LayerPanelViewController?
+    var fileListController: SavedFilesPanelViewController?
+    
+    
     var colorPickerView: SwiftHSVColorPicker?
     override var prefersStatusBarHidden: Bool {
         return true
@@ -62,6 +66,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     @IBOutlet weak var layerPanelContainerView: UIView!
     
     @IBOutlet weak var colorPickerContainerView: UIView!
+    @IBOutlet weak var fileListContainerView: UIView!
     
     required init?(coder: NSCoder) {
         let screenSize = UIScreen.main.bounds
@@ -71,32 +76,37 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         layerContainerView = LayerContainerView(width:1000,height:768);
         
         
-       // backView = UIImageView(frame: CGRect(x:sX, y:sY, width:CGFloat(pX), height:CGFloat(pY)))
+        // backView = UIImageView(frame: CGRect(x:sX, y:sY, width:CGFloat(pX), height:CGFloat(pY)))
         
         
         super.init(coder: coder);
         
     }
     
-   
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         print("segue \(segue.identifier)");
         if(segue.identifier == "toolbarSegue"){
-           toolbarController = segue.destination as? ToolbarViewController;
-           _ = toolbarController?.toolEvent.addHandler(target: self, handler: ViewController.toolEventHandler, key: toolbarKey)
+            toolbarController = segue.destination as? ToolbarViewController;
+            _ = toolbarController?.toolEvent.addHandler(target: self, handler: ViewController.toolEventHandler, key: toolbarKey)
             
         }
         else if(segue.identifier == "layerPanelSegue"){
             layerPanelController = segue.destination as? LayerPanelViewController;
-           _ = layerPanelController?.layerEvent.addHandler(target: self, handler: ViewController.layerEventHandler, key: layerEventKey)
+            _ = layerPanelController?.layerEvent.addHandler(target: self, handler: ViewController.layerEventHandler, key: layerEventKey)
             
         }
         else if(segue.identifier == "colorPickerSegue"){
             print("color picker segue")
-           colorPickerView = SwiftHSVColorPicker(frame: CGRect(x:10, y:20, width:300, height:400))
-           segue.destination.view.addSubview(colorPickerView!)
-           colorPickerView?.setViewColor(UIColor.red)
+            colorPickerView = SwiftHSVColorPicker(frame: CGRect(x:10, y:20, width:300, height:400))
+            segue.destination.view.addSubview(colorPickerView!)
+            colorPickerView?.setViewColor(UIColor.red)
             colorPickerView?.colorEvent.addHandler(target: self, handler: ViewController.colorPickerEventHandler, key: colorPickerKey)
+        }
+            
+        else if(segue.identifier == "fileListSegue"){
+            fileListController = segue.destination as? SavedFilesPanelViewController;
+            _ = fileListController?.fileEvent.addHandler(target: self, handler: ViewController.fileEventHandler, key: fileEventKey)
         }
         
     }
@@ -105,17 +115,17 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         toolbarController?.setColor(color:data);
         uiInput.setColor(color:data);
     }
-
+    
     func toolEventHandler(data: (String), key: String){
         switch(data){
-            case "VIEW_LOADED":
-                 toolbarController?.exportButton.addTarget(self, action: #selector(ViewController.exportImage), for: .touchUpInside)
-                 toolbarController?.saveButton.addTarget(self, action: #selector(ViewController.saveProject), for: .touchUpInside)
-
-                break;
-            case "ERASE_MODE":
-                layerContainerView.setDrawActive(val: false);
-                break;
+        case "VIEW_LOADED":
+            toolbarController?.exportButton.addTarget(self, action: #selector(ViewController.exportImage), for: .touchUpInside)
+            toolbarController?.saveButton.addTarget(self, action: #selector(ViewController.saveProject), for: .touchUpInside)
+            
+            break;
+        case "ERASE_MODE":
+            layerContainerView.setDrawActive(val: false);
+            break;
         case "BRUSH_MODE":
             layerContainerView.setDrawActive(val: true);
             break;
@@ -128,9 +138,18 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
                 layerPanelContainerView?.isHidden = true
             }
             colorPickerContainerView?.isHidden = true
-
+            
             break;
         case "TOGGLE_BEHAVIOR_PANEL":
+            
+            break;
+        case "TOGGLE_FILE_PANEL":
+            if(fileListContainerView?.isHidden == true){
+                fileListContainerView?.isHidden = false
+            }
+            else{
+                fileListContainerView?.isHidden = true
+            }
             
             break;
         case "TOGGLE_COLOR_PANEL":
@@ -141,7 +160,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
                 colorPickerContainerView?.isHidden = true
             }
             layerPanelContainerView?.isHidden = true
-
+            
             break
         case "DIAMETER_CHANGED":
             uiInput.setDiameter(val: (toolbarController?.diameterSlider.value)!);
@@ -177,7 +196,18 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
             break;
         }
     }
-
+    
+    func fileEventHandler(data: (String,String,String?), key: String){
+        switch(data.0){
+        case "FILE_SELECTED":
+            let artistName = UserDefaults.standard.string(forKey: "userkey")
+            self.loadProject(projectName: data.2!, artistName: artistName!);
+            break;
+        default:
+            break;
+        }
+    }
+    
     
     override func viewDidLoad() {
         
@@ -199,7 +229,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         layerContainerView.center = CGPoint(x:self.view.frame.size.width/2,y:self.view.frame.size.height/2);
         self.view.addSubview(layerContainerView);
         self.view.sendSubview(toBack: layerContainerView);
-    
+        
         let pinchRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(ViewController.handlePinch))
         pinchRecognizer.delegate = self
         layerContainerView.addGestureRecognizer(pinchRecognizer)
@@ -216,19 +246,22 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         layerPanelContainerView.layer.cornerRadius = 8.0
         layerPanelContainerView.clipsToBounds = true
         self.newLayer();
-
+        
         layerPanelContainerView.isHidden = true;
         
         colorPickerContainerView.layer.cornerRadius = 8.0
         colorPickerContainerView.clipsToBounds = true
         
-       colorPickerContainerView.isHidden = true;
+        colorPickerContainerView.isHidden = true;
         
         uiInput.setDiameter(val: (toolbarController?.diameterSlider.value)!);
         uiInput.setAlpha(val: (toolbarController?.alphaSlider.value)!);
         uiInput.setColor(color: (colorPickerView?.color)!)
-
-
+        
+        fileListContainerView.layer.cornerRadius = 8.0
+        fileListContainerView.clipsToBounds = true
+        fileListContainerView.isHidden = true;
+        
         
     }
     
@@ -243,18 +276,40 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         let connectRequest = Request(target: "socket", action: "connect", data:JSON([]), requester: self)
         RequestHandler.addRequest(requestData:connectRequest);
         
-        self.loadProject(projectName: "test4", artistName:  UserDefaults.standard.string(forKey: "userkey")!);
-
         
         var templateJSON:JSON = [:]
         templateJSON["filename"] = "templates/basic.json"
-        templateJSON["type"] = "load"
+        templateJSON["type"] = JSON("load")
         let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: self)
         RequestHandler.addRequest(requestData:behaviorDownloadRequest);
         
+        requestProjectList()
+    }
+    
+    
+    func requestProjectList(){
+        let artistName = UserDefaults.standard.string(forKey: "userkey")
+        var projectListJSON:JSON = [:]
+        projectListJSON["list_type"] = JSON("project_list")
+        projectListJSON["targetFolder"] = JSON("saved_files/"+artistName!+"/drawings/")
+        let projectListRequest = Request(target: "storage", action:"filelist", data:projectListJSON, requester: self);
+        RequestHandler.addRequest(requestData:projectListRequest);
         
     }
     
+    func processProjectList(list:JSON){
+        let list_dict = list.dictionaryValue
+        var newFiles = [String:String]()
+        for(key,value) in list_dict{
+            if key.range(of: "data.json") != nil{
+                newFiles[key] = value.stringValue;
+            }
+        }
+        
+        print("processed list",newFiles);
+        fileListController?.loadFiles(newFiles: newFiles)
+        
+    }
     
     func loginAlert() {
         let alertController = UIAlertController(title: "Login", message: "Enter your login key", preferredStyle: .alert)
@@ -330,7 +385,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
             let nsContent = NSData(data: contentToShare!)
             let activityViewController = UIActivityViewController(activityItems: [nsContent], applicationActivities: nil)
             // let activityViewController = UIActivityViewController(activityItems: [shareContent as NSString], applicationActivities: nil)
-                activityViewController.popoverPresentationController?.sourceView = toolbarController?.exportButton            
+            activityViewController.popoverPresentationController?.sourceView = toolbarController?.exportButton
             present(activityViewController, animated: true, completion: {})
         }
         
@@ -338,8 +393,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
     
     func saveProject(){
-       
-
+        
+        
         let alertController = UIAlertController(title: "Save", message: "Enter a name for your project", preferredStyle: .alert)
         //print("present alert",alertController);
         let confirmAction = UIAlertAction(title: "Save", style: .default) { (_) in
@@ -348,29 +403,31 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
                 let save_json = save_data.0;
                 let save_images = save_data.1;
                 let artistName = UserDefaults.standard.string(forKey:"userkey");
-
+                
                 var uploadJSON:JSON = [:]
                 uploadJSON["filename"] = JSON("saved_files/"+artistName!+"/drawings/"+field.text!+"/"+"data.json")
                 uploadJSON["data"] = save_json
                 uploadJSON["targetFolder"] = JSON("saved_files/"+artistName!+"/drawings/"+field.text!+"/")
-
+                
                 let uploadRequest = Request(target: "storage", action: "upload", data:uploadJSON, requester: self)
                 
                 RequestHandler.addRequest(requestData:uploadRequest);
-
+                
                 for (key,val) in save_images{
+                    if(val != "no_image"){
+                        var uploadData:JSON = [:]
+                        uploadData["filename"] = JSON("saved_files/"+artistName!+"/drawings/"+field.text!+"/"+key+".png")
+                        uploadData["path"] = JSON(val)
+                        uploadData["targetFolder"] = JSON("saved_files/"+artistName!+"/drawings/")
+                        let uploadRequest = Request(target: "storage", action: "upload_image", data:uploadData, requester: self)
+                        RequestHandler.addRequest(requestData:uploadRequest);
+                    }
                     
-                    var uploadData:JSON = [:]
-                    uploadData["filename"] = JSON("saved_files/"+artistName!+"/drawings/"+field.text!+"/"+key+".png")
-                    uploadData["path"] = JSON(val)
-                    uploadData["targetFolder"] = JSON("saved_files/"+artistName!+"/drawings/")
-                     let uploadRequest = Request(target: "storage", action: "upload_image", data:uploadData, requester: self)
-                    RequestHandler.addRequest(requestData:uploadRequest);
-
                 }
+                self.requestProjectList()
                 
                 print("save data",save_json,save_images)
-            
+                
             } else {
                 print("no name key provided");
             }
@@ -394,7 +451,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     @objc func drawIntervalCallback(){
         if(currentCanvas!.dirty){
             layerContainerView.drawIntoCurrentLayer(currentCanvas:currentCanvas!);
-        
+            
         }
     }
     
@@ -425,9 +482,17 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
             recconnectAlert();
             break;
         case "filelist_complete":
-            print("adding filelist complete request")
-            let filelist_complete_request = Request(target:"socket",action:"send_storage_data",data:data.1,requester:self)
-            RequestHandler.addRequest(requestData: filelist_complete_request)
+            let listType = data.1?["list_type"].stringValue
+            print("adding filelist complete request: ",listType)
+            
+            if(listType == "project_list"){
+                print("project list complete",data.1?["filelist"].dictionaryValue);
+                processProjectList(list: (data.1?["filelist"])!);
+            }
+            else if(listType == "behavior_list"){
+                let filelist_complete_request = Request(target:"socket",action:"send_storage_data",data:data.1,requester:self)
+                RequestHandler.addRequest(requestData: filelist_complete_request)
+            }
             break;
         case "download_complete":
             print("download complete");
@@ -448,17 +513,20 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
             var jsonLayerArray = fileData["layers"].arrayValue;
             for i in 0..<jsonLayerArray.count{
                 let layerData = jsonLayerArray[i];
-                let id = layerData["id"].stringValue;
-                let artistName = UserDefaults.standard.string(forKey: "userkey")!
-                let projectName = data.1!["projectName"].stringValue
-                var downloadData:JSON = [:]
-                downloadData["id"] = JSON(id)
-                let filename = "saved_files/"+artistName+"/drawings/"+projectName+"/"+id+".png"
-                downloadData["filename"] = JSON(filename);
-                let image_load_request = Request(target:"storage",action:"download_image",data:downloadData,requester:self)
-                RequestHandler.addRequest(requestData: image_load_request)
+                let hasImageData = layerData["hasImageData"].boolValue
+                if(hasImageData){
+                    let id = layerData["id"].stringValue;
+                    let artistName = UserDefaults.standard.string(forKey: "userkey")!
+                    let projectName = data.1!["projectName"].stringValue
+                    var downloadData:JSON = [:]
+                    downloadData["id"] = JSON(id)
+                    let filename = "saved_files/"+artistName+"/drawings/"+projectName+"/"+id+".png"
+                    downloadData["filename"] = JSON(filename);
+                    let image_load_request = Request(target:"storage",action:"download_image",data:downloadData,requester:self)
+                    RequestHandler.addRequest(requestData: image_load_request)
+                }
             }
-
+            
             
             break;
         case "upload_complete":
@@ -522,6 +590,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
             case "filelist_request":
                 var filelist_json:JSON = [:]
                 filelist_json["targetFolder"] = storage_data["targetFolder"];
+                filelist_json["list_type"] = storage_data["list_type"]
+                
                 let request = Request(target: "storage", action: "filelist", data: filelist_json, requester: self)
                 RequestHandler.addRequest(requestData: request);
                 break;
@@ -647,7 +717,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         if(layerContainerView.activeLayer != nil){
             
-           layerContainerView.activeLayer?.touchesMoved(touches, with: event)
+            layerContainerView.activeLayer?.touchesMoved(touches, with: event)
         }
     }
     
@@ -661,7 +731,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
     
     
-
+    
     func handlePinch(recognizer : UIPinchGestureRecognizer) {
         print("pinch")
         if let view = recognizer.view {
@@ -670,7 +740,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         }
     }
     
-     func handleRotate(recognizer : UIRotationGestureRecognizer) {
+    func handleRotate(recognizer : UIRotationGestureRecognizer) {
         // print("rotate")
         
         if let view = recognizer.view {
@@ -679,7 +749,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         }
     }
     
-  func handlePan(recognizer:UIPanGestureRecognizer) {
+    func handlePan(recognizer:UIPanGestureRecognizer) {
         let translation = recognizer.translation(in: self.view)
         if let view = recognizer.view {
             view.center = CGPoint(x:view.center.x + translation.x,

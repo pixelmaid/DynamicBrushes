@@ -35,17 +35,30 @@ define(['emitter', 'app/id', 'app/Emitter'],
               item_class: "palette block property sensor",
               item_name: "stylus_dx",
               name: "dx",
-              type:"sensor_prop"
+              type:"sensor_prop",
+              help_text: "returns the change in stylus x position each time the stylus is moved"
             }, {
               item_class: "block property palette sensor",
               item_name: "stylus_dy",
               name: "dy",
-              type:"sensor_prop"
+              type:"sensor_prop",
+              help_text: "returns the change in stylus y position each time the stylus is moved"
+
             }, {
               item_class: "block property palette sensor",
               item_name: "stylus_force",
               name: "force",
-              type:"sensor_prop"
+              type:"sensor_prop",
+              help_text: "returns the current force (pressure) value of the stylus"
+
+            },
+            {
+              item_class: "block property palette sensor",
+              item_name: "stylus_angle",
+              name: "angle",
+              type:"sensor_prop",
+              help_text: "returns the current angle of the stylus"
+
             }]
           },
           "ui_properties": {

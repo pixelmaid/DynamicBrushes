@@ -124,7 +124,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
                 requester: "authoring",
                 data: {
                     targetFolder: "saved_files/"+artistName+"/behaviors/",
-                    type: "filelist_request"
+                    type: "filelist_request",
+                    list_type: "behavior_list"
                 }
 
             };
@@ -137,7 +138,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
             if (codename !== null) {
 
                 socketController.connect(codename);
-                saveManager.codename = codename;
+                saveManager.codenameON_SAVE_EVENT = codename;
             }
 
         };
