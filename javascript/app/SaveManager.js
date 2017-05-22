@@ -19,7 +19,7 @@ define(["app/Emitter"],
 
 
 			save(filename) {
-				if(this.codename !== null){
+			if(this.codename !== null){
 				this.currentname = filename;
 				var data = {
 					type: "save_request",
@@ -64,6 +64,11 @@ define(["app/Emitter"],
 				this.saved_files = storage_data.filelist;
 
 				this.trigger("ON_SAVED_FILES_UPDATED");
+			}
+
+		 	setCodeName(codename){
+				this.codename = codename;
+				console.log("set save manager codename to",codename);
 			}
 
 			savedFileExists(filename) {

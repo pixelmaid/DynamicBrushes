@@ -57,7 +57,7 @@ define(['emitter', 'app/id', 'app/Emitter'],
               item_name: "stylus_angle",
               name: "angle",
               type:"sensor_prop",
-              help_text: "returns the current angle of the stylus"
+              help_text: "returns the current angle of the stylus."
 
             }]
           },

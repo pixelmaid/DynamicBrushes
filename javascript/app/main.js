@@ -136,9 +136,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
 
             codename = prompt("please enter your login key");
             if (codename !== null) {
-
+                saveManager.setCodeName(codename);
                 socketController.connect(codename);
-                saveManager.codenameON_SAVE_EVENT = codename;
             }
 
         };
@@ -156,7 +155,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
         var onKeyNotRecognized = function(){
              codename = prompt("login key not recognized, please re-enter your key");
             if (codename !== null) {
-
+                saveManager.setCodeName(codename);
                 socketController.connect(codename);
             }
         };

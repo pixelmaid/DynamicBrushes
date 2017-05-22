@@ -90,7 +90,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var transmitEvent = Event<(String)>()
     var initEvent = Event<(WebTransmitter,String)>()
     var dieEvent = Event<(String)>()
-
+    
     let removeMappingEvent = Event<(Brush,String,Observable<Float>)>()
     let removeTransitionEvent = Event<(Brush,String,Emitter)>()
     //Events
@@ -103,7 +103,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var deltaKey = NSUUID().uuidString;
     var drawKey = NSUUID().uuidString;
     var bufferKey = NSUUID().uuidString;
-
+    let childDieHandlerKey = NSUUID().uuidString;
     var deltaChangeBuffer = [DeltaStorage]();
    
     init(name:String, behaviorDef:BehaviorDefinition?, parent:Brush?, canvas:Canvas){
@@ -585,6 +585,19 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
     }
     
+    func childDieHandler(data:(String),key:String){
+        let id = data;
+        for c in children.reversed(){
+            if c.id == id{
+               _ = self.removeChildAt(index: Int(c.index.get(id: nil)))
+            }
+        }
+        for i in 0..<children.count{
+            self.children[i].index.set(newValue: Float(i));
+        }
+    }
+
+    
     func setConstraint(constraint:Constraint){
         constraint.relativeProperty.set(newValue: constraint.reference.get(id: self.id));
         
@@ -667,6 +680,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             child.index.set(newValue: Float(self.children.count-1));
             self.initEvent.raise(data: (child,"brush_init"));
             behavior.initBrushBehavior(targetBrush: child);
+            _ = child.dieEvent.addHandler(target: self, handler: Brush.childDieHandler, key: childDieHandlerKey)
         }
         
         
@@ -677,6 +691,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     }
     
      //=============END METHODS AVAILABLE TO USER==================//
+    
+    
     
     
     //========= CLEANUP METHODS ==================//
