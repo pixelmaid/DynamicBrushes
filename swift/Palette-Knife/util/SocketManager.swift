@@ -88,7 +88,12 @@ class SocketManager: WebSocketDelegate{
             }
             objc_sync_exit(dataQueue);
         }
-            
+        else if( text == "key not recognized"){
+            dataEvent.raise(data:("incorrect_key",nil));
+        }
+        else if (text == "key recognized"){
+            dataEvent.raise(data:("correct_key",nil));
+        }
         else if (text == "authoring_client_connected"){
            dataEvent.raise(data: ("authoring_client_connected",JSON([])))
         }

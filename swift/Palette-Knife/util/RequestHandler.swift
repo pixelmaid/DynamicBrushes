@@ -200,6 +200,7 @@ class RequestHandler{
         if(data.1 != nil){
             print("socket data handler called \(data.0,data.1?["type"].stringValue,RequestHandler.activeItem == nil )")
         }
+        
         RequestHandler.dataQueue.append(data);
         RequestHandler.checkRequest();
     }

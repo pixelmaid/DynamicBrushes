@@ -27,6 +27,8 @@ wss.on('connection', (ws) => {
 		var connection = ws;
 
 	if(keys.find(function(e){return e == userkey;})){
+			connection.send("key recognized");
+
 	var protocol = ws.protocol;
 	
 	var clientName = ws.protocol.split("_")[0];

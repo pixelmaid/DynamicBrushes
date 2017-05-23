@@ -261,17 +261,20 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated);
-        self.loginAlert();
+        self.loginAlert(isIncorrect: false);
         
     }
     
     func addConnectionRequests(){
         let connectRequest = Request(target: "socket", action: "connect", data:JSON([]), requester: self)
         RequestHandler.addRequest(requestData:connectRequest);
-        
+    }
+    
+    func addProjectInitRequests(){
+    
         
         var templateJSON:JSON = [:]
-        templateJSON["filename"] = "templates/backup_load_test.json"
+        templateJSON["filename"] = "templates/basic.json"
         templateJSON["type"] = JSON("load")
         let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: self)
         RequestHandler.addRequest(requestData:behaviorDownloadRequest);
@@ -310,7 +313,19 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         
     }
     
-    func loginAlert() {
+    func keyRecognized(){
+        print("key is recognized")
+       self.addProjectInitRequests()
+    }
+    
+    func loginAlert(isIncorrect:Bool) {
+        let message:String
+        if(!isIncorrect){
+            message = "Enter your login key"
+        }
+        else{
+            message = "That key was not recognized, please try again"
+        }
         let alertController = UIAlertController(title: "Login", message: "Enter your login key", preferredStyle: .alert)
         //print("present alert",alertController);
         let confirmAction = UIAlertAction(title: "Confirm", style: .default) { (_) in
@@ -319,6 +334,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
                 UserDefaults.standard.set(field.text, forKey: "userkey")
                 UserDefaults.standard.synchronize()
                 self.addConnectionRequests();
+            
             } else {
                 print("no login key provided");
             }
@@ -534,12 +550,15 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
             print("disconnected from server");
             recconnectAlert();
             break;
+        case "incorrect_key":
+            self.loginAlert(isIncorrect: true)
+            break;
+        case "correct_key":
+            self.addProjectInitRequests()
+        break;
         case "filelist_complete":
             let listType = data.1?["list_type"].stringValue
-            print("adding filelist complete request: ",listType)
-            
             if(listType == "project_list"){
-                print("project list complete",data.1?["filelist"].dictionaryValue);
                 processProjectList(list: (data.1?["filelist"])!);
             }
             else if(listType == "behavior_list"){
