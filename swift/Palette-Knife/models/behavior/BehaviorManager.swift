@@ -149,6 +149,16 @@ class BehaviorManager{
             
             resultJSON["result"] = "success";
             return resultJSON;
+            
+        case "state_moved":
+             let behaviorId = data["behaviorId"].stringValue;
+              let stateId = data["stateId"].stringValue;
+             let x  = data["x"].floatValue
+             let y = data["y"].floatValue
+
+             BehaviorManager.behaviors[behaviorId]!.setStatePosition(stateId:stateId,x:x,y:y);
+            resultJSON["result"] = "success";
+            return resultJSON;
         case "state_removed":
             
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.removeState(stateId: data["stateId"].stringValue);

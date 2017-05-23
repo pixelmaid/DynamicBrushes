@@ -33,7 +33,6 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", 'app/i
                     }
                 });
 
-               
 
                 for (var i = 0; i < btn_list.length; i++) {
 

@@ -36,13 +36,13 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                     this.changeBehavior();
                 }.bind(this));
 
-                $("#zoom_select").change(function(){
+                $("#zoom_select").change(function() {
                     zoomAmount = parseFloat($("#zoom_select").val());
                     var pos = {
-                        clientX: $(document).width()/2,
-                        clientY: $(document).height()/2
+                        clientX: $(document).width() / 2,
+                        clientY: $(document).height() / 2
                     };
-                     self.currentView.zoom(zoomAmount, pos);
+                    self.currentView.zoom(zoomAmount, pos);
 
                 });
 
@@ -69,28 +69,28 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                     if (e.keyCode == 91) {
                         cmmd_down = true;
                     }
-                  
-                        if (e.keyCode == 32) {
 
-                            if (self.currentView && !spaceDown) {
-                                self.currentView.enablePan();
-                            }
-                            spaceDown = true;
-                        } else if (e.keyCode == 187) {
-                            if (self.currentView) {
-                                if (zoomAmount < 1) {
-                                    zoomAmount += 0.1;
-                                    self.currentView.zoom(zoomAmount, mousePosition);
-                                }
-                            }
-                        } else if (e.keyCode == 189) {
-                            if (self.currentView) {
+                    if (e.keyCode == 32) {
 
-                                zoomAmount -= 0.1;
+                        if (self.currentView && !spaceDown) {
+                            self.currentView.enablePan();
+                        }
+                        spaceDown = true;
+                    } else if (e.keyCode == 187) {
+                        if (self.currentView) {
+                            if (zoomAmount < 1) {
+                                zoomAmount += 0.1;
                                 self.currentView.zoom(zoomAmount, mousePosition);
                             }
                         }
-                    
+                    } else if (e.keyCode == 189) {
+                        if (self.currentView) {
+
+                            zoomAmount -= 0.1;
+                            self.currentView.zoom(zoomAmount, mousePosition);
+                        }
+                    }
+
                 };
 
 
@@ -172,7 +172,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                 });
                 var active_toggle = $("#" + id + " .active_toggle");
                 var trash_toggle = $("#" + id + " .trash");
-                 var refresh_button = $("#" + id + " .refresh");
+                var refresh_button = $("#" + id + " .refresh");
 
                 if (active_status) {
                     active_toggle.addClass("active");
@@ -201,9 +201,9 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                 });
 
                 refresh_button.click(function(event) {
-                    
-                        self.onRefreshBehavior(id);
-                    
+
+                    self.onRefreshBehavior(id);
+
 
                 });
             }
@@ -280,6 +280,10 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
 
                 chartView.addListener("ON_STATE_ADDED", function(x, y, data) {
                     this.onStateAdded(x, y, data);
+                }.bind(this));
+
+                chartView.addListener("ON_STATE_MOVED", function(behaviorId, stateId, x, y) {
+                    this.onStateMoved(behaviorId, stateId, x, y);
                 }.bind(this));
 
                 chartView.addListener("ON_STATE_REMOVED", function(behaviorId, stateId) {
@@ -533,8 +537,8 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                 this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
             }
 
-            onRefreshBehavior(behaviorId){
-                 var transmit_data = {
+            onRefreshBehavior(behaviorId) {
+                var transmit_data = {
                     behaviorId: behaviorId,
                     type: "refresh_behavior"
                 };
@@ -867,6 +871,22 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                 data.x = x - $("#" + data.behaviorId).offset().left;
                 data.y = y - $("#" + data.behaviorId).offset().top;
                 console.log("state created", transmit_data);
+                this.lastAuthoringRequest = {
+                    data: transmit_data
+                };
+                this.emitter.emit("ON_AUTHORING_EVENT", transmit_data);
+            }
+
+            onStateMoved(behaviorId, stateId, x, y) {
+                var transmit_data = {
+                    type: "state_moved",
+                    x: x,
+                    y: y,
+                    behaviorId: behaviorId,
+                    stateId: stateId
+                };
+
+                console.log("state moved", transmit_data);
                 this.lastAuthoringRequest = {
                     data: transmit_data
                 };

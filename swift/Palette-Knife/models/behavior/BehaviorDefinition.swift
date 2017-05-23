@@ -773,6 +773,12 @@ class BehaviorDefinition {
         states[stateId] = (stateName,stateX,stateY);
     }
     
+    func setStatePosition(stateId:String,x:Float,y:Float){
+        print("set state position",x,y)
+        let stateName = states[stateId]!.0
+        states[stateId] = (stateName,x,y);
+    }
+    
     func removeState(stateId:String){
         removeTransitionsForState(stateId: stateId);
         removeMappingsForState(stateId: stateId);

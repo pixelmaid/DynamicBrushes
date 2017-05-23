@@ -272,10 +272,21 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
             //
             // initialise element as connection targets and source.
             //
-            initNode(el, name) {
-
+            initNode(el, stateId, name) {
+                var self = this;
                 // initialise draggable elements.
-                this.instance.draggable(el);
+                this.instance.draggable(el, {
+                        stop: function(event, ui) {
+                            // Show dropped position.
+                            var x = $(el).position().left;
+                            var y = $(el).position().top;
+                            self.trigger("ON_STATE_MOVED", [self.id, stateId, x, y]);
+                            console.log("dragged to", x, y);
+
+                        }
+                    }
+
+                );
 
                 this.instance.makeSource(el, {
                     filter: ".ep",
@@ -347,7 +358,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 d.style.left = state_data.x + "px";
                 d.style.top = state_data.y + "px";
                 this.instance.getContainer().appendChild(d);
-                this.initNode(d, state_data.name);
+                this.initNode(d, state_data.id, state_data.name);
 
                 console.log("state", $('#' + id));
                 $("#" + id).attr("name", state_data.name);
@@ -389,18 +400,18 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 var expression = new Expression(ex_el, mappingId, expressionId);
 
                 this.expressions[mappingId] = expression;
-                expression.addListener("ON_TEXT_CHANGED", function(expression,removedReferences) {
-                    this.expressionModified(expression,removedReferences);
+                expression.addListener("ON_TEXT_CHANGED", function(expression, removedReferences) {
+                    this.expressionModified(expression, removedReferences);
                 }.bind(this));
 
                 return expression;
 
             }
 
-            expressionModified(expression,removedReferences) {
+            expressionModified(expression, removedReferences) {
                 var self = this;
-                if(removedReferences.length>0){
-                   removedReferences.forEach(function(r){
+                if (removedReferences.length > 0) {
+                    removedReferences.forEach(function(r) {
                         self.mappingReferenceRemoved(r, expression.id);
                     });
                 }
@@ -760,7 +771,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     var expressionPropertyList = expression.getPropertyList();
                     var expressionText = expression.getText();
                     var containsActive = expression.containsActive();
-                    this.trigger("ON_MAPPING_REFERENCE_REMOVED", [this.id, mappingId, expressionId, expressionPropertyList, expressionText,containsActive]);
+                    this.trigger("ON_MAPPING_REFERENCE_REMOVED", [this.id, mappingId, expressionId, expressionPropertyList, expressionText, containsActive]);
                 }
             }
 
