@@ -201,7 +201,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.name = name;
         
         //setup events and create listener storage
-        self.events =  ["SPAWN", "STATE_COMPLETE", "DELTA_BUFFER_LIMIT_REACHED"]
+        self.events =  ["SPAWN", "STATE_COMPLETE", "DELTA_BUFFER_LIMIT_REACHED", "DISTANCE_INTERVAL"]
         self.createKeyStorage();
         
         
@@ -357,9 +357,31 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.currentCanvas!.addSegmentToStroke(parentID: self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight:cweight , color: color,alpha:ds.a)
         
         self.position.set(x:_dx,y:_dy);
-
+        self.distanceIntervalCheck();
         // print("brush moved \(transformedCoords.0,transformedCoords.1,cweight)")
        // print("brush moved \(xDelt,yDelt,self.id)")
+    }
+    
+   func distanceIntervalCheck()
+    {
+        
+        let d = self.distance.getSilent();
+
+        for key in keyStorage["DISTANCE_INTERVAL"]!
+        {
+            if(key.1 != nil){
+                let condition = key.1;
+                let evaluation = condition?.evaluate();
+                if(evaluation == true){
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"DISTANCE_INTERVAL"])
+                }
+            }
+            else{
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"DISTANCE_INTERVAL"])
+            }
+            
+        }
+        
     }
     
     
@@ -667,6 +689,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             DispatchQueue.main.sync {
         self.currentCanvas!.currentDrawing!.retireCurrentStrokes(parentID: self.id)
         self.currentStroke = self.currentCanvas!.currentDrawing!.newStroke(parentID: self.id);
+                self.distance.set(newValue:0);
             }
         }
     }

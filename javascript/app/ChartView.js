@@ -7,7 +7,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
     function($, panzoom, contextmenu, ui, jsPlumb, EditableSelect, Expression, Emitter, ID, methodTemplate, eventTemplate, behaviorTemplate, stateTemplate, startTemplate, transitionTemplate, mappingTemplate) {
 
         var block_was_dragged = null;
-
+        var conditionalEvents = ["TIME_INTERVAL","DISTANCE_INTERVAL","STYLUS_X_MOVE_BY","STYLUS_Y_MOVE_BY","INTERSECTION"]
         console.log("start template", startTemplate);
         console.log("state template", stateTemplate);
         var state_counter = 0;
@@ -528,7 +528,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     displayName: data.displayName,
                 };
 
-                if (data.eventName == "TIME_INTERVAL" || data.eventName == "DISTANCE_INTERVAL") {
+                if (conditionalEvents.indexOf(eventName)>=0) {
                     eventTemplateData.transitionNumberId = data.transitionId + "_num";
                 }
 
@@ -558,7 +558,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
             transitionConditionChanged(behaviorId, transitionId, eventName, fromStateId, toStateId, displayName, name) {
                 var transitionHTML = $('#' + transitionId);
                 var conditions = [];
-                if (eventName == "TIME_INTERVAL" || eventName == "DISTANCE_INTERVAL") {
+                if (conditionalEvents.indexOf(eventName)>=0){
                     var num_condition = $('#' + transitionId + "_num").val();
                     conditions.push(num_condition);
                     console.log("transition condition  changed for ", eventName, num_condition);

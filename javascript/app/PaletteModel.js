@@ -114,11 +114,20 @@ define(['emitter', 'app/id', 'app/Emitter'],
 
             }, {
               item_class: " block property palette",
-              name: "scale",
-              item_name: "scale",
+              name: "scale x",
+              item_name: "sx",
               type:"brush_prop"
 
-            }, {
+            }, 
+            {
+              item_class: " block property palette",
+              name: "scale y",
+              item_name: "sy",
+              type:"brush_prop"
+
+            },
+
+            {
               item_class: " block property palette",
               name: "diameter",
               item_name: "diameter",

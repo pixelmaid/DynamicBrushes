@@ -416,6 +416,14 @@ class BehaviorDefinition {
             
             self.addCondition(name: conditionName!, reference: nil, referenceNames: ["time"], relative: nil, relativeNames: [interval_name], relational: "within")
             break;
+        case "DISTANCE_INTERVAL":
+            conditionName = "condition_" + NSUUID().uuidString
+            let interval_name = "interval_" + NSUUID().uuidString
+            let interval_value = condition_list[0].floatValue;
+            self.addInterval(name: interval_name, inc: interval_value, times: nil)
+            
+            self.addCondition(name: conditionName!, reference: nil, referenceNames: ["distance"], relative: nil, relativeNames: [interval_name], relational: "within")
+            break;
         default:
             conditionName = nil;
             break;
