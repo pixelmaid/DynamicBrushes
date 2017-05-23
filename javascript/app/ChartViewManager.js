@@ -172,6 +172,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                 });
                 var active_toggle = $("#" + id + " .active_toggle");
                 var trash_toggle = $("#" + id + " .trash");
+                 var refresh_button = $("#" + id + " .refresh");
 
                 if (active_status) {
                     active_toggle.addClass("active");
@@ -196,6 +197,13 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                     if (confirm("this will delete" + name)) {
                         self.onDeleteBehavior(id);
                     }
+
+                });
+
+                refresh_button.click(function(event) {
+                    
+                        self.onRefreshBehavior(id);
+                    
 
                 });
             }
@@ -521,6 +529,19 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                     data: transmit_data
                 };
                 console.log("active status set", active_status, behaviorId);
+
+                this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
+            }
+
+            onRefreshBehavior(behaviorId){
+                 var transmit_data = {
+                    behaviorId: behaviorId,
+                    type: "refresh_behavior"
+                };
+                this.lastAuthoringRequest = {
+                    data: transmit_data
+                };
+                console.log("refresh behavior", behaviorId);
 
                 this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
             }

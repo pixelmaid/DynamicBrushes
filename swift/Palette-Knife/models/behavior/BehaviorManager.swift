@@ -80,10 +80,15 @@ class BehaviorManager{
                 behavior.setAutoSpawnNum(num: 0)
   
             }
-            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)
+            BehaviorManager.behaviors[behaviorId]!.createBehavior(canvas:canvas)
             resultJSON["result"] = "success";
             return resultJSON;
-
+        case "refresh_behavior":
+            let behaviorId = data["behaviorId"].stringValue;
+            BehaviorManager.behaviors[behaviorId]!.createBehavior(canvas:canvas)
+            resultJSON["result"] = "success";
+            return resultJSON;
+            
         case "request_behavior_json":
             let behaviorId = data["behaviorId"].stringValue;
             let behavior = BehaviorManager.behaviors[behaviorId]!;

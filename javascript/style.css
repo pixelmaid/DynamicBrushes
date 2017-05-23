@@ -726,12 +726,12 @@ span.list_icon{
   width: 25px;
   height: 25px;
 }
-span.active_toggle, span.trash{
+span.behavior_button{
   background-image: url(images/behavior_list_image.svg);
   
   background-position-x: 0;
   background-position-y: -25px;
-  background-size: 25px 75px;
+  background-size: 25px 100px;
   background-repeat: no-repeat;
 
 }
@@ -746,6 +746,10 @@ span.trash{
   
   background-position-y: -50px;
 
+}
+
+span.refresh{
+    background-position-y: -75px;
 }
 
 #selected_palette{
