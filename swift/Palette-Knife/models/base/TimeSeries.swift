@@ -76,15 +76,13 @@ class TimeSeries: Emitter{
         //TODO: Fix how this is calucated to deal with lag..
         let t = Float(currentTime.timeIntervalSince(timer as Date))
         self._time.set(newValue: t)
-        print("keys in timer storage \(t,self,keyStorage.count)");
         for key in keyStorage["TIME_INTERVAL"]!
         {
  
             if(key.1 != nil){
                 let condition = key.1;
                 let evaluation = condition?.evaluate();
-
-                if(evaluation)!{
+                if(evaluation == true){
                     NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"TIME_INTERVAL"])
                 }
             }

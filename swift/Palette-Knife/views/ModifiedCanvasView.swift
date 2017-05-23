@@ -133,7 +133,7 @@ class ModifiedCanvasView: UIImageView {
         
         context.setStrokeColor(UIColor.red.cgColor)
         //TODO: will need to fine tune this
-        context.setLineWidth(CGFloat(10))
+        context.setLineWidth(CGFloat(uiInput.diameter.get(id: nil)))
         context.setLineCap(.round)
         context.setAlpha(CGFloat(1));
         context.setBlendMode(CGBlendMode.clear)

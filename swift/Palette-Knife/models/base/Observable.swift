@@ -52,8 +52,9 @@ class Observable<T>:Object, DisposableObservable {
     
     func get(id:String?) -> T {
         invalidated = false;
-        if(constraintTarget != nil){
-            return constraintTarget!.get(id: id);
+        if(constraintTarget != nil && self.constrained == true){
+            let newValue = constraintTarget!.get(id: id);
+            return  newValue
         }
         return value
     }

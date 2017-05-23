@@ -102,6 +102,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var behaviorDef:BehaviorDefinition?
     var matrix = Matrix();
     var deltaKey = NSUUID().uuidString;
+    
     var drawKey = NSUUID().uuidString;
     var bufferKey = NSUUID().uuidString;
     let childDieHandlerKey = NSUUID().uuidString;
@@ -208,7 +209,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         _ = self.delta.didChange.addHandler(target: self, handler:Brush.deltaChange, key:deltaKey)
         _ = self.xBuffer.bufferEvent.addHandler(target: self, handler: Brush.deltaBufferLimitReached, key: bufferKey)
         
-        
+      
         self.setCanvasTarget(canvas: canvas)
         self.parent = parent
         
@@ -221,7 +222,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     }
     
     
-    
     //creates states and transitions for global actions and mappings
     func createGlobals(){
         let _ = self.createState(id: "global",name: "global");
@@ -230,10 +230,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
 
     }
     
-    //  @objc func defaultCallback(){
-    //self.transitionToState(self.getTransitionByName("setup")!)
     
-    //}
     
     
     func setupTransition(){
@@ -302,7 +299,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             
         let ds = DeltaStorage(dX:dX,dY:dY,r:r,sX:sX,sY:sY,rX:rX,rY:rY,d:d,h:h,s:s,l:l,a:a,dist:dist,xDist:xDist,yDist:yDist)
         
-       
             
             DispatchQueue.main.sync {
                 self.processDeltaBuffer(ds:ds)
@@ -356,7 +352,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         let cweight = ds.d;
         weightBuffer.push(v: cweight);
        
-        print("brush alpha",ds.a);
         let color = Color(h: ds.h, s: ds.s, l: ds.l, a: 1)
        
         self.currentCanvas!.addSegmentToStroke(parentID: self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight:cweight , color: color,alpha:ds.a)
