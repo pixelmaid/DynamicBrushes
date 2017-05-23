@@ -50,7 +50,7 @@ struct Color {
         var _saturation = CGFloat(0)
         var _brightness = CGFloat(0)
         var _alpha = CGFloat(0)
-        let success = self.uiColor.getHue(&_hue, saturation: &_saturation, brightness: &_brightness, alpha: &_alpha)
+        _ = self.uiColor.getHue(&_hue, saturation: &_saturation, brightness: &_brightness, alpha: &_alpha)
         
             self.hue = Float(_hue)
             self.saturation = Float(_saturation)

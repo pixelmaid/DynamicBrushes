@@ -75,7 +75,7 @@ class Canvas: WebTransmitter, Hashable{
 
     
     func hitTest(point:Point, threshold:Float)->Stroke?{
-        let hit = currentDrawing!.hitTest(point: point,threshold:threshold)
+        let hit = currentDrawing!.hitTest(point: point,threshold:threshold, parentID: self.id)
         if(hit != nil){
             print("found stroke \(hit)");
             return hit;

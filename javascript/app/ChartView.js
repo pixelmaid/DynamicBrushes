@@ -7,7 +7,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
     function($, panzoom, contextmenu, ui, jsPlumb, EditableSelect, Expression, Emitter, ID, methodTemplate, eventTemplate, behaviorTemplate, stateTemplate, startTemplate, transitionTemplate, mappingTemplate) {
 
         var block_was_dragged = null;
-        var conditionalEvents = ["TIME_INTERVAL","DISTANCE_INTERVAL","STYLUS_X_MOVE_BY","STYLUS_Y_MOVE_BY","INTERSECTION"]
+        var conditionalEvents = ["TIME_INTERVAL","DISTANCE_INTERVAL","STYLUS_MOVE_BY","STYLUS_X_MOVE_BY","STYLUS_Y_MOVE_BY","INTERSECTION"];
         console.log("start template", startTemplate);
         console.log("state template", stateTemplate);
         var state_counter = 0;
@@ -528,7 +528,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     displayName: data.displayName,
                 };
 
-                if (conditionalEvents.indexOf(eventName)>=0) {
+                if (conditionalEvents.indexOf(data.eventName)>=0) {
                     eventTemplateData.transitionNumberId = data.transitionId + "_num";
                 }
 

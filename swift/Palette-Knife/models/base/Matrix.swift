@@ -46,7 +46,7 @@ class Matrix{
     }
     
     func rotate (_angle:Float, centerX:Float, centerY:Float) {
-        let angle =  _angle * Float(M_PI / 180);
+        let angle =  _angle * Float(Float.pi / 180);
         
         // Concatenate rotation matrix into this one
         let x = centerX;

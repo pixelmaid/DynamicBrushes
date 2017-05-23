@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-let pi = CGFloat(M_PI)
+let pi = Float.pi
 
 class ModifiedCanvasView: UIImageView {
     
@@ -61,8 +61,6 @@ class ModifiedCanvasView: UIImageView {
     func loadImage(path:String){
        
         let image = UIImage(contentsOfFile: path)
-        print("load image",image,path)
-
         self.contentMode = .scaleAspectFit
         self.image = image
         
@@ -102,8 +100,7 @@ class ModifiedCanvasView: UIImageView {
                 let y = Float(location.y);
                 let force = Float(touch.force);
                 let angle = Float(touch.azimuthAngle(in: self))
-                let mappedAngle = MathUtil.map(value: angle, low1: 0, high1: 2*Float.pi
-                    , low2: 0, high2: 1);
+                //let mappedAngle = MathUtil.map(value: angle, low1: 0, high1: 2*Float.pi, low2: 0, high2: 1);
                 stylus.onStylusMove(x: x, y:y, force:force, angle:angle);
             }
         }

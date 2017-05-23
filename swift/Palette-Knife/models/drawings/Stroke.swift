@@ -44,16 +44,17 @@ struct Segment:Geometry, Equatable {
     var diameter = Float(1);
     var color = Color(r:0,g:0,b:0,a:1);
     var alpha = Float(0.5);
+    let id = NSUUID().uuidString;
     
-    init(x:Float,y:Float) {
+     init(x:Float,y:Float) {
         self.init(x:x,y:y,hi_x:0,hi_y:0,ho_x:0,ho_y:0)
     }
     
-    init(point:Point){
+     init(point:Point){
         self.init(point:point,handleIn:Point(x: 0, y: 0),handleOut:Point(x: 0, y: 0))
     }
     
-    init(x:Float,y:Float,hi_x:Float,hi_y:Float,ho_x:Float,ho_y:Float){
+     init(x:Float,y:Float,hi_x:Float,hi_y:Float,ho_x:Float,ho_y:Float){
         let point = Point(x:x,y:y)
         let hI = Point(x: hi_x,y: hi_y)
         let hO = Point(x: ho_x,y: ho_y)
@@ -83,6 +84,7 @@ struct Segment:Geometry, Equatable {
     func hitTest(testPoint:Point,threshold:Float)->Bool{
         let dist = self.point.dist(point: testPoint);
         if dist <= threshold {
+            print("hit achieved",threshold,dist)
             return true
         }
         return false;
@@ -159,6 +161,16 @@ class Stroke:TimeSeries, Geometry {
     
     }
     
+    
+    func containsSegment(segment:Segment)->Bool{
+        for seg in self.segments{
+            if seg.id == segment.id{
+                return true
+            }
+        }
+        return false
+    }
+    
     func drawSegment(context:CGContext){
         self.toDrawSegments.append(contentsOf: self.dirtySegments)
         self.dirtySegments.removeAll();
@@ -180,7 +192,7 @@ class Stroke:TimeSeries, Geometry {
         
         if(segments.count>0){
             let prevSeg = segments[segments.count-1];
-            let dist = segment.point.dist(point: prevSeg.point)
+           // let dist = segment.point.dist(point: prevSeg.point)
             
             //if(dist < 10){
               //  return nil;
@@ -215,7 +227,7 @@ class Stroke:TimeSeries, Geometry {
     
     func addSegment(segments:[Segment])->[Segment]{
         for i in 0...segments.count-1{
-            self.addSegment(_segment:segments[i])
+            _ = self.addSegment(_segment:segments[i])
         }
         
         return segments
@@ -263,7 +275,7 @@ class Stroke:TimeSeries, Geometry {
    func lineTo(to:Point) {
         // Let's not be picky about calling moveTo() first:
         let seg = Segment(point:to)
-        self.addSegment(_segment:seg);
+       _ = self.addSegment(_segment:seg);
     }
     
     

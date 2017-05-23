@@ -41,7 +41,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var currentState:String
     
     //geometric/stylistic properties
-    let position:Point
+    let bPosition:Point
     let x:Observable<Float>
     let y:Observable<Float>
     
@@ -65,7 +65,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     let xDistance:Observable<Float>
     let yDistance:Observable<Float>
     
+    
     var time:Observable<Float>
+    let intersections:Observable<Float>
     let index:Observable<Float>
     let siblingcount:Observable<Float>
     
@@ -111,9 +113,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     init(name:String, behaviorDef:BehaviorDefinition?, parent:Brush?, canvas:Canvas){
        
         //==BEGIN OBSERVABLES==//
-        self.position = Point(x:0,y:0)
-        self.x = self.position.x;
-        self.y = self.position.y;
+        self.bPosition = Point(x:0,y:0)
+        self.x = self.bPosition.x;
+        self.y = self.bPosition.y;
         
         self.delta = Point(x:0,y:0)
         self.dx = delta.x;
@@ -137,7 +139,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
         self.index = Observable<Float>(0)
         self.siblingcount = Observable<Float>(0)
-
+        self.intersections = Observable<Float>(0)
         self.time = Observable<Float>(0)
         
         self.diameter = Observable<Float>(1)
@@ -162,7 +164,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         //TODO: this code is annoying because KVC assigment issues. Find a fix?
         self.time = _time
         //==BEGIN APPEND OBSERVABLES==//
-        observables.append(position)
+        observables.append(bPosition)
         observables.append(delta)
         observables.append(origin)
         observables.append(scaling)
@@ -201,7 +203,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.name = name;
         
         //setup events and create listener storage
-        self.events =  ["SPAWN", "STATE_COMPLETE", "DELTA_BUFFER_LIMIT_REACHED", "DISTANCE_INTERVAL"]
+        self.events =  ["SPAWN", "STATE_COMPLETE", "DELTA_BUFFER_LIMIT_REACHED", "DISTANCE_INTERVAL", "INTERSECTION"]
         self.createKeyStorage();
         
         
@@ -217,7 +219,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         if(behaviorDef != nil){
             behaviorDef?.addBrush(targetBrush: self)
         }
-        print("brush time \(self["time"],self["position"])");
         self.delta.name = "delta_"+self.id;
     }
     
@@ -333,9 +334,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         let xDelt = ds.dX
         let yDelt = ds.dY
         
-        let _dx = self.position.x.get(id:nil) + xDelt;
-        let _dy = self.position.y.get(id:nil) + yDelt;
-        
+        let _dx = self.bPosition.x.get(id:nil) + xDelt;
+        let _dy = self.bPosition.y.get(id:nil) + yDelt;
+        print("_dx, _dy",_dx,_dy)
         let transformedCoords = self.matrix.transformPoint(x: _dx, y: _dy)
         //print("pos\(_dx,_dy,delta.y.getSilent(),delta.y.getSilent())))")
 
@@ -356,17 +357,40 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
        
         self.currentCanvas!.addSegmentToStroke(parentID: self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight:cweight , color: color,alpha:ds.a)
         
-        self.position.set(x:_dx,y:_dy);
+        self.bPosition.set(x:_dx,y:_dy);
+
         self.distanceIntervalCheck();
-        // print("brush moved \(transformedCoords.0,transformedCoords.1,cweight)")
-       // print("brush moved \(xDelt,yDelt,self.id)")
+        self.intersectionCheck();
+    }
+    
+    func intersectionCheck(){
+        if((keyStorage["INTERSECTION"]!.count)>0){
+            let hit = self.currentCanvas!.hitTest(point: self.bPosition, threshold: 1);
+            print("hit=",hit,keyStorage["INTERSECTION"]);
+            if(hit != nil){
+                self.intersections.set(newValue: self.intersections.getSilent()+1);
+                for key in keyStorage["INTERSECTION"]!
+                {
+                    if(key.1 != nil){
+                        let condition = key.1;
+                        let evaluation = condition?.evaluate();
+                        print("intersection evaluation",evaluation);
+                        if(evaluation == true){
+                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"INTERSECTION"])
+                        }
+                    }
+                    else{
+                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"INTERSECTION"])
+                    }
+                    
+                }
+            }
+        }
     }
     
    func distanceIntervalCheck()
     {
         
-        let d = self.distance.getSilent();
-
         for key in keyStorage["DISTANCE_INTERVAL"]!
         {
             if(key.1 != nil){
@@ -389,7 +413,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
           DispatchQueue.global(qos: .userInitiated).async {
             DispatchQueue.main.sync {
             self.origin.set(val:p);
-                self.position.set(val:self.origin)
+                self.bPosition.set(val:self.origin)
            }
         }
         
@@ -491,7 +515,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 if  let arg_string = arg as? String {
                     if(arg_string  == "parent_position"){
                         if(self.parent != nil){
-                            self.setOrigin(p: self.parent!.position)
+                            self.setOrigin(p: self.parent!.bPosition)
                         }
                         else{
                             
@@ -525,7 +549,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 //print("set origin argument \(method.arguments![0])");
                 if  let arg_string = arg as? String {
                     if(arg_string  == "parent_position"){
-                        self.setOrigin(p: self.parent!.position)
+                        self.setOrigin(p: self.parent!.bPosition)
                     }
                     else if(arg_string  == "parent_origin"){
                         self.setOrigin(p: self.parent!.origin)
@@ -680,6 +704,21 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         }
     }
     
+    func resetDistance(){
+        self.distance.set(newValue: 0);
+        self.xDistance.set(newValue: 0);
+        self.yDistance.set(newValue: 0)
+        
+        for key in keyStorage["DISTANCE_INTERVAL"]!{
+            if(key.1 != nil){
+                let eventCondition = key.1;
+                eventCondition!.reset();
+            }
+        }
+    }
+    
+
+    
     //===============METHODS AVAILABLE TO USER===============//
     
     
@@ -689,7 +728,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             DispatchQueue.main.sync {
         self.currentCanvas!.currentDrawing!.retireCurrentStrokes(parentID: self.id)
         self.currentStroke = self.currentCanvas!.currentDrawing!.newStroke(parentID: self.id);
-                self.distance.set(newValue:0);
+                self.resetDistance();
             }
         }
     }

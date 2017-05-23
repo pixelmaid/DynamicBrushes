@@ -21,6 +21,14 @@ class Condition:Observable<Float> {
         super.init(0);
     }
     
+    func reset(){
+        if(relational == "within"){
+            let interval = self.referenceB as! Interval
+            interval.reset();
+ 
+        }
+    }
+    
     func evaluate()->Bool{
         switch (relational){
         case "<":

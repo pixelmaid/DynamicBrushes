@@ -52,12 +52,27 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         
     }
     
-    func hitTest(point:Point,threshold:Float)->Stroke?{
+    func hitTest(point:Point,threshold:Float,parentID:String)->Stroke?{
         for i in 0..<allStrokes.count{
             let stroke = allStrokes[i];
                 let seg = stroke.hitTest(testPoint: point,threshold:threshold);
+            
+            
                 if(seg != nil){
-                    return stroke;
+                    if(self.activeStrokes[parentID] != nil){
+                        let activeStrokes = self.activeStrokes[parentID]
+                        for s in activeStrokes!{
+                            if s.containsSegment(segment:seg!) == true {
+                                print("stroke contains segment");
+                                return nil
+                            }
+                        }
+                        return stroke;
+                    }
+                    else{
+                        return stroke;
+ 
+                    }
                 }
         }
         return nil

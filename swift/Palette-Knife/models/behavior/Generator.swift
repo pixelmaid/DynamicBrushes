@@ -44,6 +44,11 @@ class Interval:Generator{
         
     }
     
+    func reset(){
+        self.index = 0;
+        self.incrementIndex();
+    }
+    
     override func get(id:String?) -> Float {
         if(infinite){
             let inf = Float(self.index)*self.inc

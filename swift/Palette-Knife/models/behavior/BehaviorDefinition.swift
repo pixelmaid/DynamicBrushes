@@ -77,14 +77,14 @@ class BehaviorDefinition {
         }
         
         for i in 0..<methodJSON.count{
-            self.parseMethodJSON(data:methodJSON[i]);
+            _ = self.parseMethodJSON(data:methodJSON[i]);
         }
         
     }
     
     func parseMethodJSON(data:JSON)->JSON{
         let targetTransition:String?
-        if(data["targetTransition"] != nil){
+        if(data["targetTransition"] != JSON.null){
             targetTransition = data["targetTransition"].stringValue;
         }
         else{
@@ -96,7 +96,6 @@ class BehaviorDefinition {
         var methodJSON:JSON = [:]
         switch(targetMethod){
         case "spawn":
-            let name:String;
             let behavior:String;
             let num:Int;
             
@@ -117,8 +116,6 @@ class BehaviorDefinition {
             }
             var behavior_list = [String:String]()
             
-            print("target method current arguments",data["currentArguments"],arguments)
-
             behavior_list["self"] = "self";
             methodJSON["methodArguments"] = JSON(behavior_list);
             methodJSON["defaultArgument"] = JSON("self");
@@ -308,7 +305,7 @@ class BehaviorDefinition {
         let expressionText = data["expressionText"].stringValue;
         var emitterOperandList = [String:(Any?,[String]?,[String]?)]();
         
-        if(expressionPropertyList != nil){
+        if(expressionPropertyList != JSON.null){
             // print("expression list present\(expressionPropertyList.dictionaryValue)")
             let dataExpressionDictionary = expressionPropertyList.dictionaryValue;
             for (key,value) in dataExpressionDictionary{
@@ -327,7 +324,7 @@ class BehaviorDefinition {
                 }
                 var propertyList:[String]?;
                 
-                if ((value.arrayValue)[1] != nil) {
+                if ((value.arrayValue)[1] != JSON.null) {
                     let dataPropertyList = (value.arrayValue)[1].arrayValue;
                     propertyList = [String]();
                     
@@ -339,7 +336,7 @@ class BehaviorDefinition {
                 
                 var displayNameList:[String]?;
                 
-                if ((value.arrayValue)[2] != nil) {
+                if ((value.arrayValue)[2] != JSON.null) {
                     let dataPropertyList = (value.arrayValue)[2].arrayValue;
                     displayNameList = [String]();
                     
@@ -424,6 +421,34 @@ class BehaviorDefinition {
             
             self.addCondition(name: conditionName!, reference: nil, referenceNames: ["distance"], relative: nil, relativeNames: [interval_name], relational: "within")
             break;
+        case "INTERSECTION":
+            conditionName = "condition_" + NSUUID().uuidString
+            let interval_name = "interval_" + NSUUID().uuidString
+            let interval_value = condition_list[0].floatValue;
+            self.addInterval(name: interval_name, inc: interval_value, times: nil)
+            
+            self.addCondition(name: conditionName!, reference: nil, referenceNames: ["intersections"], relative: nil, relativeNames: [interval_name], relational: "within")
+            break;
+        case "STYLUS_MOVE_BY","STYLUS_X_MOVE_BY","STYLUS_Y_MOVE_BY":
+            let referenceName:String
+            if(event == "STYLUS_MOVE_BY"){
+                referenceName = "distance"
+            }
+            else if(event == "STYLUS_X_MOVE_BY"){
+                referenceName = "xDistance"
+            }
+            else{
+                referenceName = "yDistance"
+            }
+            conditionName = "condition_" + NSUUID().uuidString
+            let interval_name = "interval_" + NSUUID().uuidString
+            let interval_value = condition_list[0].floatValue;
+            self.addInterval(name: interval_name, inc: interval_value, times: nil)
+            
+            self.addCondition(name: conditionName!, reference: stylus, referenceNames: [referenceName], relative: nil, relativeNames: [interval_name], relational: "within")
+            break;
+            
+
         default:
             conditionName = nil;
             break;
@@ -1019,16 +1044,10 @@ class BehaviorDefinition {
     }
     
     func generateSingleOperand(targetBrush:Brush, emitter:Any?,propList:[String]?)->Observable<Float>{
-        var targetEmitter:Any;
-        var id = targetBrush.id;
+        let id = targetBrush.id;
 
         var operand:Observable<Float>
-        if(emitter == nil){
-            targetEmitter = targetBrush;
-        }
-        else{
-            targetEmitter = emitter!;
-        }
+       
         if(propList != nil){
             if(storedGenerators[id]![propList![0]]) != nil{
                 operand = storedGenerators[id]![propList![0]]!;
@@ -1059,7 +1078,7 @@ class BehaviorDefinition {
     }
     
     func generateOperands(targetBrush:Brush,data:(Any?,[String]?,Any?,[String]?,String))->(Observable<Float>,Observable<Float>){
-        var id = targetBrush.id
+        let id = targetBrush.id
         var emitter1:Any
         var emitter2:Any
         

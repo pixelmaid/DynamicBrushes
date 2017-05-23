@@ -105,6 +105,10 @@ class Point:Observable<(Float,Float)>,Geometry{
         return (self.x.get(id: nil),self.y.get(id: nil))
     }
 
+    //TODO: not clear why but this causes a segmentation fault
+    /*override func getSilent()->(Float,Float){
+        return (self.x.getSilent(),self.y.getSilent())
+    }*/
     
     func clone()->Point{
         return Point(x:self.x.get(id: nil),y:self.y.get(id: nil))

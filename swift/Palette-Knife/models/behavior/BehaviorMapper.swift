@@ -29,7 +29,7 @@ class BehaviorMapper{
         let selector = #selector(relative.stateTransitionHandler(notification:))
         NotificationCenter.default.addObserver(relative, selector:selector, name:NSNotification.Name(rawValue: id), object: reference)
         relative.addStateTransition(id: id, name:name,reference: reference, fromStateId:fromStateId, toStateId:toStateId)
-        relative.removeTransitionEvent.addHandler(target: relative, handler: Brush.removeStateTransition, key:id)
+        _ = relative.removeTransitionEvent.addHandler(target: relative, handler: Brush.removeStateTransition, key:id)
         
     }
     

@@ -25,16 +25,18 @@ class Stylus: TimeSeries, WebTransmitter {
     var y:Observable<Float>
     var dx:Observable<Float>
     var dy:Observable<Float>
+    var xDistance:Observable<Float>
+    var yDistance:Observable<Float>
+    var distance:Observable<Float>
     var prevTime = Float(0);
     var penDown = Observable<Float>(0);
-    var distance = Float(0);
     var forceSub = Float(1);
     var id = NSUUID().uuidString;
     var transmitEvent = Event<(String)>()
     var initEvent = Event<(WebTransmitter,String)>()
 
     var constraintTransmitComplete = true;
-    var moveDist = Float(0);
+    //var moveDist = Float(0);
     
     // var testCount = 4;
     init(x:Float,y:Float,angle:Float,force:Float){
@@ -47,6 +49,9 @@ class Stylus: TimeSeries, WebTransmitter {
         self.y = position.y
         self.dx = delta.x;
         self.dy = delta.y
+        self.distance = Observable<Float>(0);
+        self.xDistance = Observable<Float>(0);
+        self.yDistance = Observable<Float>(0);
         super.init()
         self.name = "stylus"
         
@@ -97,12 +102,36 @@ class Stylus: TimeSeries, WebTransmitter {
     }
     
     func resetDistance(){
-        self.distance=0;
+        self.distance.set(newValue: 0);
+        self.xDistance.set(newValue: 0);
+        self.yDistance.set(newValue: 0)
+        
+        for key in keyStorage["STYLUS_MOVE_BY"]!{
+            if(key.1 != nil){
+                let eventCondition = key.1;
+                eventCondition!.reset();
+            }
+
+        }
+        
+        
+        for key in keyStorage["STYLUS_X_MOVE_BY"]!{
+            if(key.1 != nil){
+                let eventCondition = key.1;
+                eventCondition!.reset();
+            }
+            
+        }
+        
+        for key in keyStorage["STYLUS_Y_MOVE_BY"]!{
+            if(key.1 != nil){
+                let eventCondition = key.1;
+                eventCondition!.reset();
+            }
+            
+        }
     }
     
-    func getDistance()->Float{
-        return self.distance
-    }
     
     func onStylusUp(){
         
@@ -118,6 +147,7 @@ class Stylus: TimeSeries, WebTransmitter {
         self.delta.set(x: 0,y:0)
         self.penDown.set(newValue: 0);
         self.speed = 0;
+        self.resetDistance();
         self.transmitData();
         
     }
@@ -146,6 +176,7 @@ class Stylus: TimeSeries, WebTransmitter {
     }
     
     func onStylusMove(x:Float,y:Float,force:Float,angle:Float){
+        print("stylus move by key storage",keyStorage["STYLUS_MOVE_BY"]);
         for key in keyStorage["STYLUS_MOVE_BY"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;
@@ -159,8 +190,7 @@ class Stylus: TimeSeries, WebTransmitter {
                 
             }
             else{
-                moveDist = 0;
-                       NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_MOVE_BY"])
+                NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_MOVE_BY"])
                 
             }
         }
@@ -177,8 +207,6 @@ class Stylus: TimeSeries, WebTransmitter {
                 
             }
             else{
-                
-                moveDist = 0;
                 NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_X_MOVE"])
                 
             }
@@ -196,8 +224,6 @@ class Stylus: TimeSeries, WebTransmitter {
                 
             }
             else{
-                
-                moveDist = 0;
                 NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_Y_MOVE_BY"])
                 
             }
@@ -217,8 +243,11 @@ class Stylus: TimeSeries, WebTransmitter {
         //self.delta.set(x: 0,y:0)
 
         deltaChangeBuffer.append(self.position.sub(point: self.prevPosition));
-        self.distance += prevPosition.dist(point:position)
-        moveDist += prevPosition.dist(point:position)
+        
+        self.distance.set(newValue: self.distance.getSilent() + sqrt(pow( d.x.getSilent(),2)+pow( d.y.getSilent(),2)));
+        self.xDistance.set(newValue: self.xDistance.getSilent() + abs(d.x.getSilent()));
+        self.yDistance.set(newValue: self.yDistance.getSilent() + abs(d.y.getSilent()));
+
         self.prevForce = self.force.get(id:nil)
         self.force.set(newValue: force*5)
         self.prevAngle = self.angle.get(id:nil);
