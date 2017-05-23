@@ -63,29 +63,25 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     }
     var drawInterval:Timer!
     
+    //variables for setting backups
+    var backupTimer:Timer!
+    var backupInterval = 60*5.0; //set to backup every 5 min
+    var backupNeeded:Bool = false;
+    
+    
     @IBOutlet weak var layerPanelContainerView: UIView!
     
     @IBOutlet weak var colorPickerContainerView: UIView!
     @IBOutlet weak var fileListContainerView: UIView!
     
     required init?(coder: NSCoder) {
-        let screenSize = UIScreen.main.bounds
-        let sX = (screenSize.width-CGFloat(pX))/2.0
-        let sY = (screenSize.height-CGFloat(pY))/2.0
-        
         layerContainerView = LayerContainerView(width:1000,height:768);
-        
-        
-        // backView = UIImageView(frame: CGRect(x:sX, y:sY, width:CGFloat(pX), height:CGFloat(pY)))
-        
-        
         super.init(coder: coder);
         
     }
     
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        print("segue \(segue.identifier)");
         if(segue.identifier == "toolbarSegue"){
             toolbarController = segue.destination as? ToolbarViewController;
             _ = toolbarController?.toolEvent.addHandler(target: self, handler: ViewController.toolEventHandler, key: toolbarKey)
@@ -101,7 +97,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
             colorPickerView = SwiftHSVColorPicker(frame: CGRect(x:10, y:20, width:300, height:400))
             segue.destination.view.addSubview(colorPickerView!)
             colorPickerView?.setViewColor(UIColor.red)
-            colorPickerView?.colorEvent.addHandler(target: self, handler: ViewController.colorPickerEventHandler, key: colorPickerKey)
+            _ = colorPickerView?.colorEvent.addHandler(target: self, handler: ViewController.colorPickerEventHandler, key: colorPickerKey)
         }
             
         else if(segue.identifier == "fileListSegue"){
@@ -166,7 +162,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
             uiInput.setDiameter(val: (toolbarController?.diameterSlider.value)!);
             break;
         case "ALPHA_CHANGED":
-            print("alpha slider = ",toolbarController?.alphaSlider.value);
             uiInput.setAlpha(val: (toolbarController?.alphaSlider.value)!);
             break;
         default:
@@ -224,9 +219,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         
         RequestHandler.addRequest(requestData:configureRequest);
         
-        drawInterval  = Timer.scheduledTimer(timeInterval:0.016 , target: self, selector: #selector(ViewController.drawIntervalCallback), userInfo: nil, repeats: true)
-        
-        layerContainerView.center = CGPoint(x:self.view.frame.size.width/2,y:self.view.frame.size.height/2);
+             layerContainerView.center = CGPoint(x:self.view.frame.size.width/2,y:self.view.frame.size.height/2);
         self.view.addSubview(layerContainerView);
         self.view.sendSubview(toBack: layerContainerView);
         
@@ -278,12 +271,18 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         
         
         var templateJSON:JSON = [:]
-        templateJSON["filename"] = "templates/basic.json"
+        templateJSON["filename"] = "templates/backup_load_test.json"
         templateJSON["type"] = JSON("load")
         let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: self)
         RequestHandler.addRequest(requestData:behaviorDownloadRequest);
         
         requestProjectList()
+        
+        drawInterval  = Timer.scheduledTimer(timeInterval:0.016 , target: self, selector: #selector(ViewController.drawIntervalCallback), userInfo: nil, repeats: true)
+        
+        backupTimer  = Timer.scheduledTimer(timeInterval:TimeInterval(backupInterval), target: self, selector: #selector(ViewController.backupCallback), userInfo: nil, repeats: true)
+        
+
     }
     
     
@@ -372,61 +371,62 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         self.present(alertController, animated: true, completion: nil)
     }
     
-    func exportImage() {
+    
+    
+    func uploadProject(type:String,filename:String){
+        let prefix:String
         
-        //let contentToShare = self.activeLayer!.exportPNG();
-        UIGraphicsBeginImageContext(layerContainerView.bounds.size);
-        layerContainerView.layer.render(in: UIGraphicsGetCurrentContext()!);
-        let viewImage = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-        let contentToShare = UIImagePNGRepresentation(viewImage!)
-        
-        if(contentToShare != nil){
-            let nsContent = NSData(data: contentToShare!)
-            let activityViewController = UIActivityViewController(activityItems: [nsContent], applicationActivities: nil)
-            // let activityViewController = UIActivityViewController(activityItems: [shareContent as NSString], applicationActivities: nil)
-            activityViewController.popoverPresentationController?.sourceView = toolbarController?.exportButton
-            present(activityViewController, animated: true, completion: {})
+        if(type == "backup"){
+            prefix = "/drawing_backups/"
+
+        }
+        else{
+            prefix = "/drawings/"
         }
         
+        let save_data = self.layerContainerView.save();
+        let save_json = save_data.0;
+        let save_images = save_data.1;
+        let artistName = UserDefaults.standard.string(forKey:"userkey");
+        
+        var uploadJSON:JSON = [:]
+        uploadJSON["filename"] = JSON("saved_files/"+artistName!+prefix+filename+"/"+"data.json")
+        uploadJSON["data"] = save_json
+        uploadJSON["type"] = JSON("project_save")
+        
+        uploadJSON["targetFolder"] = JSON("saved_files/"+artistName!+prefix+filename+"/")
+        
+        let uploadRequest = Request(target: "storage", action: "upload", data:uploadJSON, requester: self)
+        
+        RequestHandler.addRequest(requestData:uploadRequest);
+        
+        for (key,val) in save_images{
+            if(val != "no_image"){
+                var uploadData:JSON = [:]
+                uploadData["filename"] = JSON("saved_files/"+artistName!+prefix+filename+"/"+key+".png")
+                uploadData["path"] = JSON(val)
+                uploadData["targetFolder"] = JSON("saved_files/"+artistName!+prefix)
+                let uploadRequest = Request(target: "storage", action: "upload_image", data:uploadData, requester: self)
+                RequestHandler.addRequest(requestData:uploadRequest);
+            }
+            
+        }
+        print("save data",save_json,save_images)
     }
     
+    func backupProject(filename:String){
+        self.uploadProject(type: "backup", filename: filename)
+    }
     
     func saveProject(){
-        
         
         let alertController = UIAlertController(title: "Save", message: "Enter a name for your project", preferredStyle: .alert)
         //print("present alert",alertController);
         let confirmAction = UIAlertAction(title: "Save", style: .default) { (_) in
             if let field = alertController.textFields?[0] {
-                let save_data = self.layerContainerView.save();
-                let save_json = save_data.0;
-                let save_images = save_data.1;
-                let artistName = UserDefaults.standard.string(forKey:"userkey");
-                
-                var uploadJSON:JSON = [:]
-                uploadJSON["filename"] = JSON("saved_files/"+artistName!+"/drawings/"+field.text!+"/"+"data.json")
-                uploadJSON["data"] = save_json
-                uploadJSON["targetFolder"] = JSON("saved_files/"+artistName!+"/drawings/"+field.text!+"/")
-                
-                let uploadRequest = Request(target: "storage", action: "upload", data:uploadJSON, requester: self)
-                
-                RequestHandler.addRequest(requestData:uploadRequest);
-                
-                for (key,val) in save_images{
-                    if(val != "no_image"){
-                        var uploadData:JSON = [:]
-                        uploadData["filename"] = JSON("saved_files/"+artistName!+"/drawings/"+field.text!+"/"+key+".png")
-                        uploadData["path"] = JSON(val)
-                        uploadData["targetFolder"] = JSON("saved_files/"+artistName!+"/drawings/")
-                        let uploadRequest = Request(target: "storage", action: "upload_image", data:uploadData, requester: self)
-                        RequestHandler.addRequest(requestData:uploadRequest);
-                    }
-                    
-                }
+                self.uploadProject(type:"save", filename: field.text!)
                 self.requestProjectList()
                 
-                print("save data",save_json,save_images)
                 
             } else {
                 print("no name key provided");
@@ -446,14 +446,67 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         
         
     }
+    func backupImage(filename:String){
+       let path = layerContainerView.exportPNGAsFile();
+       let prefix = "/image_backups/";
+        let artistName = UserDefaults.standard.string(forKey:"userkey");
+
+        if(path != nil){
+            var uploadData:JSON = [:]
+            uploadData["filename"] = JSON("saved_files/"+artistName!+prefix+filename+".png")
+            uploadData["path"] = JSON(path)
+            uploadData["targetFolder"] = JSON("saved_files/"+artistName!+"/")
+            let uploadRequest = Request(target: "storage", action: "upload_image", data:uploadData, requester: self)
+            RequestHandler.addRequest(requestData:uploadRequest);
+        }
+        else{
+            print("cannot backup image because nothing is there")
+        }
+    }
     
+
+    
+    func exportImage() {
+        
+        //let contentToShare = self.activeLayer!.exportPNG();
+        let contentToShare = layerContainerView.exportPNG();
+        
+        if(contentToShare != nil){
+            let nsContent = NSData(data: contentToShare!)
+            let activityViewController = UIActivityViewController(activityItems: [nsContent], applicationActivities: nil)
+            // let activityViewController = UIActivityViewController(activityItems: [shareContent as NSString], applicationActivities: nil)
+            activityViewController.popoverPresentationController?.sourceView = toolbarController?.exportButton
+            present(activityViewController, animated: true, completion: {})
+        }
+        else{
+            print("cannot share image because nothing is there")
+        }
+
+        
+    }
+
     
     @objc func drawIntervalCallback(){
         if(currentCanvas!.dirty){
             layerContainerView.drawIntoCurrentLayer(currentCanvas:currentCanvas!);
+            backupNeeded = true;
             
         }
     }
+    
+    
+    @objc func backupCallback(){
+        if(backupNeeded){
+        let filename = String(Int((NSDate().timeIntervalSince1970)*100000));
+        self.backupBehavior(filename:filename)
+        self.backupProject(filename:filename)
+        self.backupImage(filename: filename)
+        backupNeeded = false;
+        }
+    }
+    
+   
+
     
     
     func newLayer(){
@@ -549,7 +602,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
             self.synchronizeWithAuthoringClient();
             break;
         case "authoring_request":
-            
             do{
                 let attempt = try behaviorManager?.handleAuthoringRequest(authoring_data: data.1! as JSON);
                 
@@ -559,6 +611,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
                 
                 RequestHandler.addRequest(requestData:socketRequest);
                 // self.backupBehavior();
+                
             }
             catch{
                 print("failed authoring request");
@@ -570,7 +623,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
                 
                 RequestHandler.addRequest(requestData:socketRequest);
             }
-            
+            backupNeeded = true
+
             break;
         case "storage_request":
             print("storage request recieved \(data.1)");
@@ -613,21 +667,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         RequestHandler.addRequest(requestData: request)
     }
     
-    func backupBehavior(artistName:String){
-        var behavior_json:JSON = [:]
-        for (key,val) in BehaviorManager.behaviors{
-            behavior_json[key] = val.toJSON();
-        }
-        let filename = "saved_files/"+artistName+"/behavior_backups/"+String(Int((NSDate().timeIntervalSince1970)*100000));
-        var backupJSON:JSON = [:]
-        backupJSON["filename"] = JSON(filename);
-        backupJSON["data"] = behavior_json
-        backupJSON["type"] = JSON("backup")
-        backupJSON["targetFolder"] = JSON("backups")
-        
-        let request = Request(target: "storage", action: "upload", data: backupJSON, requester: self)
-        RequestHandler.addRequest(requestData: request);
-    }
+   
     
     func loadBehavior(filename:String, artistName:String){
         let filename = "saved_files/"+artistName+"/behaviors/"+filename
@@ -668,6 +708,27 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         let request = Request(target: "storage", action: "upload", data: saveJSON, requester: self)
         RequestHandler.addRequest(requestData: request);
     }
+    
+    func backupBehavior(filename:String){
+        
+        print("backup behavior called")
+        let artistName = UserDefaults.standard.string(forKey: "userkey")
+        var behavior_json:JSON = [:]
+        for (key,val) in BehaviorManager.behaviors{
+            behavior_json[key] = val.toJSON();
+        }
+        let filename = "saved_files/"+artistName!+"/behavior_backups/"+filename;
+        var backupJSON:JSON = [:]
+        backupJSON["filename"] = JSON(filename);
+        backupJSON["data"] = behavior_json
+        backupJSON["type"] = JSON("backup")
+        backupJSON["targetFolder"] = JSON("saved_files/"+artistName!+"/backup_behaviors/")
+        
+        let request = Request(target: "storage", action: "upload", data: backupJSON, requester: self)
+        RequestHandler.addRequest(requestData: request);
+    }
+    
+
     
     
     //event handler for incoming data

@@ -27,6 +27,26 @@ class LayerContainerView: UIView{
         
     }
     
+    func exportPNG()->Data?{
+        UIGraphicsBeginImageContext(self.bounds.size);
+        self.layer.render(in: UIGraphicsGetCurrentContext()!);
+        let viewImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        let contentToShare = UIImagePNGRepresentation(viewImage!)
+        return contentToShare;
+    }
+    
+    func exportPNGAsFile()->String?{
+        let fileManager = FileManager.default
+       let path = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent("\"layer_container.png")
+            let imageData = self.exportPNG()
+        if(imageData != nil){
+            fileManager.createFile(atPath: path as String, contents: imageData, attributes: nil)
+            return path;
+        }
+        return nil
+    }
+    
     func save()->(JSON,[String:String]){
         var imageList = [String:String]();
         var drawingJSON:JSON = [:]
@@ -42,7 +62,7 @@ class LayerContainerView: UIView{
             let isActive = (activeLayer == layers[i])
             json["isActive"] = JSON(isActive);
             
-            let imageData = layers[i].exportPNG();
+            let imageData = layers[i].exportPNGAsFile();
             if(imageData != nil){
                 imageList[id] = imageData
                 json["hasImageData"] = JSON(true)

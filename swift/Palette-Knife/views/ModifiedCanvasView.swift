@@ -42,7 +42,7 @@ class ModifiedCanvasView: UIImageView {
         }
     }
     
-    func exportPNG()->String?{
+    func exportPNGAsFile()->String?{
         let image = self.image
         
         if(image != nil){
@@ -51,7 +51,7 @@ class ModifiedCanvasView: UIImageView {
             let imageData = UIImagePNGRepresentation(image!)
             UIImagePNGRepresentation(UIImage())
             fileManager.createFile(atPath: path as String, contents: imageData, attributes: nil)
-            
+            print("returning image",path);
             return path;
         }
         return nil

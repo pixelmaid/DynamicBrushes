@@ -155,8 +155,23 @@ class SaveManager{
             
             let uploadOutput = task.result
             print("upload data",uploadData);
-            self.accessFileList(targetFolder: uploadData["targetFolder"].stringValue, list_type:"behavior_list", uploadData: uploadData)
-                        return nil
+            let type = uploadData["type"].stringValue
+            if(type == "backup"){
+                self.dataEvent.raise(data: ("backup_complete",uploadData))
+                self.requestEvent.raise(data: ("backup_complete",nil))
+
+            }
+            else if(type == "project_save"){
+                self.dataEvent.raise(data: ("project_save_json_complete",uploadData))
+                self.requestEvent.raise(data: ("project_save_json_complete",nil))
+                
+                }
+            else if(type == "save"){
+                self.accessFileList(targetFolder: uploadData["targetFolder"].stringValue, list_type:"behavior_list", uploadData: uploadData)
+            }
+            
+            return nil
+            
         })
         
         
