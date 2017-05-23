@@ -326,7 +326,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         else{
             message = "That key was not recognized, please try again"
         }
-        let alertController = UIAlertController(title: "Login", message: "Enter your login key", preferredStyle: .alert)
+        let alertController = UIAlertController(title: "Login", message: message, preferredStyle: .alert)
         //print("present alert",alertController);
         let confirmAction = UIAlertAction(title: "Confirm", style: .default) { (_) in
             if let field = alertController.textFields?[0] {

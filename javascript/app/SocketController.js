@@ -61,6 +61,10 @@ define(['emitter', 'app/Emitter'],
             //TODO: client connected
             return;
           }
+          else if(message.data == "key recognized"){
+            self.emitter.trigger("ON_KEY_RECOGNIZED");
+
+          }
           else if(message.data == "key not recognized"){
             self.emitter.trigger("ON_KEY_NOT_RECOGNIZED");
             return;

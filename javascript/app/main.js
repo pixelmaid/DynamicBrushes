@@ -44,6 +44,9 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
 
         var onConnection = function() {
             console.log("connection made");
+        };
+
+        var onKeyRecognized = function() {
             requestFileList(codename);
         };
 
@@ -168,6 +171,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
         socketController.addListener("ON_CONNECTION", onConnection);
         socketController.addListener("ON_CONNECTION_ERROR", onConnectionError);
         socketController.addListener("ON_KEY_NOT_RECOGNIZED",onKeyNotRecognized);
+        socketController.addListener("ON_KEY_RECOGNIZED",onKeyRecognized);
+
         chartViewManager.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
         saveManager.addListener("ON_SAVE_EVENT", onStorageEvent);
         promptConnect();
