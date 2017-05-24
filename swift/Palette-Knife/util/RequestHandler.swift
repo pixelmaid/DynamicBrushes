@@ -84,8 +84,14 @@ class RequestHandler{
                     break;
                 case "synchronize":
                     let data = RequestHandler.activeItem!.data!
+                    let requester = RequestHandler.activeItem!.requester as! ViewController;
+                    let currentBehaviorName = requester.currentBehaviorName;
+                    let currentBehaviorFile = requester.currentBehaviorFile;
+
                     var send_data:JSON = [:]
                     send_data["data"] = data;
+                    send_data["currentBehaviorName"] = JSON(currentBehaviorName)
+                    send_data["currentFile"] = JSON(currentBehaviorFile)
                     send_data["type"] = JSON("synchronize")
                     RequestHandler.socketManager.sendData(data: send_data);
                     break

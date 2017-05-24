@@ -34,7 +34,11 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
 
             } else if (data.type == "synchronize") {
                 hideOverlay();
+                var currentBehaviorName = data["currentBehaviorName"];
+                var currentBehaviorFile = data["currentFile"];
+                console.log("currentBehaviorName=",currentBehaviorName,currentBehaviorFile);
                 chartViewManager.synchronize(data);
+                saveManager.setCurrentFilename(currentBehaviorName,currentBehaviorFile);
 
             } else if (data.type == "storage_data") {
                 saveManager.loadStorageData(data);

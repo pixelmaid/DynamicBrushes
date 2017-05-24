@@ -33,9 +33,7 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", 'app/i
                     }
                 });
 
-
                 for (var i = 0; i < btn_list.length; i++) {
-
                     btn_list[i].click(function(event) {
                         for (var j = 0; j < btn_list.length; j++) {
                             btn_list[j].removeClass("selected");

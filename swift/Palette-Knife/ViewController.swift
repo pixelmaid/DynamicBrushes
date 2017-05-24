@@ -9,10 +9,10 @@
 import UIKit
 import SwiftyJSON
 
+
 let behaviorMapper = BehaviorMapper()
 var stylus = Stylus(x: 0,y:0,angle:0,force:0)
 let uiInput = UIInput();
-
 //CONSTANTS:
 
 let kBrightness =       1.0
@@ -68,7 +68,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     var backupInterval = 60*5.0; //set to backup every 5 min
     var backupNeeded:Bool = false;
     
-    
+    var currentBehaviorName = ""
+    var currentBehaviorFile = ""
+
     @IBOutlet weak var layerPanelContainerView: UIView!
     
     @IBOutlet weak var colorPickerContainerView: UIView!
@@ -567,7 +569,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
             }
             break;
         case "download_complete":
-            print("download complete");
+            currentBehaviorName = (data.1?["short_filename"].stringValue)!
+            currentBehaviorFile = (data.1?["filename"].stringValue)!
+            print("download complete",currentBehaviorName,currentBehaviorFile);
+
             behaviorManager?.loadBehavior(json: data.1!["data"])
             self.synchronizeWithAuthoringClient();
             break;
@@ -681,7 +686,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     }
     
     func synchronizeWithAuthoringClient(){
-        let behavior = behaviorManager?.getAllBehaviorJSON();
+        var behavior:JSON = behaviorManager!.getAllBehaviorJSON();
         let request = Request(target: "socket", action: "synchronize", data: behavior, requester: self)
         RequestHandler.addRequest(requestData: request)
     }
@@ -689,9 +694,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
    
     
     func loadBehavior(filename:String, artistName:String){
-        let filename = "saved_files/"+artistName+"/behaviors/"+filename
+        let long_filename = "saved_files/"+artistName+"/behaviors/"+filename
         var loadJSON:JSON = [:]
-        loadJSON["filename"] = JSON(filename);
+        loadJSON["filename"] = JSON(long_filename);
+        loadJSON["short_filename"] = JSON(filename);
+
         loadJSON["type"] = JSON("load")
         
         loadJSON["targetFolder"] = JSON("saved_files/"+artistName+"/behaviors/")

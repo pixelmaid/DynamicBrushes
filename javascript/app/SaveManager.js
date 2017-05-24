@@ -19,38 +19,45 @@ define(["app/Emitter"],
 
 
 			save(filename) {
-			if(this.codename !== null){
-				this.currentname = filename;
-				var data = {
-					type: "save_request",
-					filename: filename,
-					artistName:this.codename
+				if (this.codename !== null) {
+					this.currentname = filename;
+					var data = {
+						type: "save_request",
+						filename: filename,
+						artistName: this.codename
 
-				};
-				this.emitter.emit("ON_SAVE_EVENT", data);
-			}
-			else{
-				alert("cannot save, no artistname");
-			}
+					};
+					this.emitter.emit("ON_SAVE_EVENT", data);
+				} else {
+					alert("cannot save, no artistname");
+				}
 
 			}
 
 			loadRequest(filename) {
 
-				if(this.codename !== null){
+				if (this.codename !== null) {
 
-				var data = {
-					type: "load_request",
-					filename: filename,
-					artistName:this.codename
+					var data = {
+						type: "load_request",
+						filename: filename,
+						artistName: this.codename
 
-				};
-				this.emitter.emit("ON_SAVE_EVENT", data);
+					};
+					this.emitter.emit("ON_SAVE_EVENT", data);
+				} else {
+					alert("cannot load, no artistname");
 				}
-				else{
-				alert("cannot load, no artistname");
+
+
+
 			}
 
+			setCurrentFilename(filename,fileval) {
+				this.currentName = filename;
+				this.currentFile = fileval;
+				console.log("current name =",this.currentName,this.currentFile)
+				this.emitter.emit("ON_NEW_FILE_SELECTED");
 			}
 
 			loadSavedFile(fileval) {
@@ -66,9 +73,9 @@ define(["app/Emitter"],
 				this.trigger("ON_SAVED_FILES_UPDATED");
 			}
 
-		 	setCodeName(codename){
+			setCodeName(codename) {
 				this.codename = codename;
-				console.log("set save manager codename to",codename);
+				console.log("set save manager codename to", codename);
 			}
 
 			savedFileExists(filename) {

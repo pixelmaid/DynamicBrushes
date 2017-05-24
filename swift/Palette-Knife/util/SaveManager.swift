@@ -212,6 +212,9 @@ class SaveManager{
             var downloadJSON:JSON = [:]
             do{
                 downloadJSON["data"] = try self.convertFileToJSON(url: downloadingFileURL)!;
+                downloadJSON["short_filename"] = downloadData["short_filename"];
+                downloadJSON["filename"] = downloadData["filename"];
+
                 if(downloadData["type"] == "load"){
                     print("load download complete");
                     self.dataEvent.raise(data:("download_complete",downloadJSON))

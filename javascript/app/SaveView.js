@@ -18,10 +18,15 @@ define(["jquery"],
                 this.model.addListener("ON_SAVED_FILES_UPDATED", function() {
                     this.onSavedFilesUpdated();
                 }.bind(this));
+                this.model.addListener("ON_NEW_FILE_SELECTED", function() {
+                    this.updateSelectedFile();
+                }.bind(this));
 
                 file_select.change(function(event) {
                     console.log("file select change", file_select.val());
-                    self.model.loadSavedFile(file_select.val());
+                    if(file_select.val()!== "empty"){
+                        self.model.loadSavedFile(file_select.val());
+                    }
                 });
 
                 $("#save").click(function(event) {
@@ -45,10 +50,22 @@ define(["jquery"],
 
             }
 
+            updateSelectedFile(){
+                console.log("update selected file",this.model.currentFile);
+                 if (this.model.currentFile) {
+                    file_select.val(this.model.currentFile);
+                    console.log("currentfile", this.model.currentFile, this.model.currentName);
+                }
+            }
+
             onSavedFilesUpdated() {
                 console.log("saved files updated called");
                 var filelist = this.model.saved_files;
                 file_select.find('option').remove();
+                 file_select.append($('<option>', {
+                                value: "empty",
+                                text: ""
+                            }));
                 for (var key in filelist) {
                     if (filelist.hasOwnProperty(key)) {
                         var name = filelist[key];
@@ -60,10 +77,7 @@ define(["jquery"],
                         }
                     }
                 }
-                if (this.model.currentFile) {
-                    file_select.val(this.model.currentFile);
-                    console.log("currentfile", this.model.currentFile, this.model.currentName);
-                }
+                this.updateSelectedFile();
             }
 
 
