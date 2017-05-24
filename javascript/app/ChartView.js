@@ -679,7 +679,9 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
             //TODO: I think remove unbinds events of child elements but need to confirm here
             removeMapping(data) {
                 console.log("mapping to remove", $("#" + data.mappingId), data.mappingId);
+                var br = $("#" + data.mappingId+"+ br");
                 var mapping = $("#" + data.mappingId);
+                br.remove();
                 mapping.remove();
                 this.instance.repaintEverything();
 
