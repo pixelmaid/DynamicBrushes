@@ -46,20 +46,20 @@ struct Segment:Geometry, Equatable {
     var alpha = Float(0.5);
     let id = NSUUID().uuidString;
     
-     init(x:Float,y:Float) {
+    init(x:Float,y:Float) {
         self.init(x:x,y:y,hi_x:0,hi_y:0,ho_x:0,ho_y:0)
     }
     
-     init(point:Point){
+    init(point:Point){
         self.init(point:point,handleIn:Point(x: 0, y: 0),handleOut:Point(x: 0, y: 0))
     }
     
-     init(x:Float,y:Float,hi_x:Float,hi_y:Float,ho_x:Float,ho_y:Float){
+    init(x:Float,y:Float,hi_x:Float,hi_y:Float,ho_x:Float,ho_y:Float){
         let point = Point(x:x,y:y)
         let hI = Point(x: hi_x,y: hi_y)
         let hO = Point(x: ho_x,y: ho_y)
         self.init(point:point,handleIn:hI,handleOut:hO)
-
+        
     }
     
     init(point:Point,handleIn:Point,handleOut:Point) {
@@ -69,42 +69,52 @@ struct Segment:Geometry, Equatable {
     }
     
     
-   /* func getTimeDelta()->Float{
-        let prevSeg = self.getPreviousSegment();
-        if(prevSeg == nil){
-            return 0;
-        }
-        
-        let currentTime = self.time;
-        let prevTime = prevSeg!.time;
-        return currentTime-prevTime;
-    }
-    */
-   
+    /* func getTimeDelta()->Float{
+     let prevSeg = self.getPreviousSegment();
+     if(prevSeg == nil){
+     return 0;
+     }
+     
+     let currentTime = self.time;
+     let prevTime = prevSeg!.time;
+     return currentTime-prevTime;
+     }
+     */
+    
     func hitTest(testPoint:Point,threshold:Float)->Bool{
         let dist = self.point.dist(point: testPoint);
+        /*let px = testPoint.x.get(id: nil);
+         let py = testPoint.y.get(id:nil)
+         let sx = self.point.x.get(id:nil)
+         let sy = self.point.x.get(id:nil)
+         
+         //print("checking hit",testPoint==self.point,px,py,sx,sy,threshold,dist)*/
+        
+        if testPoint == self.point{
+            return false
+        }
         if dist <= threshold {
-            print("hit achieved",threshold,dist)
+            print("hit achieved")
             return true
         }
         return false;
     }
     
     func drawIntoContext(context:CGContext?) {
-         if(self.getPreviousSegment() != nil){
-        
-        self.color.toUIColor().setStroke();
-        context?.setLineWidth(CGFloat(self.diameter))
-        context?.setLineCap(.round)
-        context?.setAlpha(CGFloat(self.alpha));
-        
-        context?.move(to: self.point.toCGPoint())
-       
-        context?.addLine(to:(self.getPreviousSegment()?.point.toCGPoint())!)
-        context?.strokePath()
+        if(self.getPreviousSegment() != nil){
+            
+            self.color.toUIColor().setStroke();
+            context?.setLineWidth(CGFloat(self.diameter))
+            context?.setLineCap(.round)
+            context?.setAlpha(CGFloat(self.alpha));
+            
+            context?.move(to: self.point.toCGPoint())
+            
+            context?.addLine(to:(self.getPreviousSegment()?.point.toCGPoint())!)
+            context?.strokePath()
         }
     }
-
+    
     
     func getPreviousSegment()->Segment?{
         if(self.parent != nil){
@@ -150,15 +160,28 @@ class Stroke:TimeSeries, Geometry {
         super.init();
     }
     
-    func hitTest(testPoint:Point,threshold:Float)->Segment?{
-        for seg in self.segments{
-            let hit = seg.hitTest(testPoint: testPoint, threshold: threshold);
-            if hit{
-                return seg
+    func hitTest(testPoint:Point,threshold:Float,sameStroke:Bool)->Segment?{
+        if(sameStroke){
+            if self.segments.count>15{
+                for i in 0..<self.segments.count-15{
+                    let seg = self.segments[i]
+                    let hit = seg.hitTest(testPoint: testPoint, threshold: threshold);
+                    if hit{
+                        return seg
+                    }
+                }
+            }
+        }
+        else{
+            for seg in self.segments{
+                let hit = seg.hitTest(testPoint: testPoint, threshold: threshold);
+                if hit{
+                    return seg
+                }
             }
         }
         return nil;
-    
+        
     }
     
     
@@ -175,7 +198,7 @@ class Stroke:TimeSeries, Geometry {
         self.toDrawSegments.append(contentsOf: self.dirtySegments)
         self.dirtySegments.removeAll();
         for i in 0..<toDrawSegments.count{
-           toDrawSegments[i].drawIntoContext(context: context);
+            toDrawSegments[i].drawIntoContext(context: context);
         }
         self.toDrawSegments.removeAll();
         self.dirty = false;
@@ -192,14 +215,14 @@ class Stroke:TimeSeries, Geometry {
         
         if(segments.count>0){
             let prevSeg = segments[segments.count-1];
-           // let dist = segment.point.dist(point: prevSeg.point)
+            // let dist = segment.point.dist(point: prevSeg.point)
             
             //if(dist < 10){
-              //  return nil;
+            //  return nil;
             //}
             xBuffer.push(v: segment.point.x.get(id: nil)-prevSeg.point.x.get(id: nil))
             yBuffer.push(v: segment.point.y.get(id: nil)-prevSeg.point.y.get(id: nil))
-
+            
         }
         else{
             xBuffer.push(v: 0);
@@ -237,9 +260,10 @@ class Stroke:TimeSeries, Geometry {
     func getLength()->Float{
         var l = Float(0.0);
         if(segments.count>1){
-        for i in 1...segments.count-1{
-            l +=  segments[i-1].point.dist(point: segments[i].point)
-            }}
+            for i in 1...segments.count-1{
+                l += segments[i-1].point.dist(point: segments[i].point)
+            }
+        }
         return l;
     }
     
@@ -256,34 +280,34 @@ class Stroke:TimeSeries, Geometry {
         }
         string += "],"
         return string
-
+        
     }
     
     /*init(fromPoint:Point,angle:Float,length:Float){
-        self.fromPoint = fromPoint;
-        self.toPoint = fromPoint.pointAtDistance(length,a:angle)
-    }
+     self.fromPoint = fromPoint;
+     self.toPoint = fromPoint.pointAtDistance(length,a:angle)
+     }
+     
+     init(center:Point,radius:Float,startAngle:Float,endAngle:Float,clockwise:Bool){
+     self.center = center
+     self.radius = radius
+     self.startAngle = startAngle
+     self.endAngle = endAngle
+     self.clockwise = clockwise
+     }*/
     
-    init(center:Point,radius:Float,startAngle:Float,endAngle:Float,clockwise:Bool){
-        self.center = center
-        self.radius = radius
-        self.startAngle = startAngle
-        self.endAngle = endAngle
-        self.clockwise = clockwise
-    }*/
-    
-   func lineTo(to:Point) {
+    func lineTo(to:Point) {
         // Let's not be picky about calling moveTo() first:
         let seg = Segment(point:to)
-       _ = self.addSegment(_segment:seg);
+        _ = self.addSegment(_segment:seg);
     }
     
     
-   
+    
     
     
 }
 
 
-        
+
 

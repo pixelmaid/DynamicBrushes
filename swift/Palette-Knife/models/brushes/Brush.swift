@@ -338,7 +338,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         let _dy = self.bPosition.y.get(id:nil) + yDelt;
         print("_dx, _dy",_dx,_dy)
         let transformedCoords = self.matrix.transformPoint(x: _dx, y: _dy)
-        //print("pos\(_dx,_dy,delta.y.getSilent(),delta.y.getSilent())))")
 
         self.distance.set(newValue: ds.dist + sqrt(pow(xDelt,2)+pow(yDelt,2)));
         self.xDistance.set(newValue: ds.xDist + abs(xDelt));
@@ -358,15 +357,21 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.currentCanvas!.addSegmentToStroke(parentID: self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight:cweight , color: color,alpha:ds.a)
         
         self.bPosition.set(x:_dx,y:_dy);
-
+        
+        
         self.distanceIntervalCheck();
         self.intersectionCheck();
     }
     
     func intersectionCheck(){
+        let bpx = bPosition.x.get(id: nil);
+        let bpy = bPosition.y.get(id: nil);
+        
+        print("current position",bpx,bpy);
+
         if((keyStorage["INTERSECTION"]!.count)>0){
-            let hit = self.currentCanvas!.hitTest(point: self.bPosition, threshold: 1);
-            print("hit=",hit,keyStorage["INTERSECTION"]);
+            let hit = self.currentCanvas!.hitTest(point: self.bPosition, threshold: 5, id:self.id);
+            //print("hit=",hit,keyStorage["INTERSECTION"]);
             if(hit != nil){
                 self.intersections.set(newValue: self.intersections.getSilent()+1);
                 for key in keyStorage["INTERSECTION"]!
@@ -374,7 +379,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                     if(key.1 != nil){
                         let condition = key.1;
                         let evaluation = condition?.evaluate();
-                        print("intersection evaluation",evaluation);
                         if(evaluation == true){
                             NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"INTERSECTION"])
                         }

@@ -31,7 +31,7 @@ class Point:Observable<(Float,Float)>,Geometry{
         super.init((x, y))
         self.x.set(newValue: x);
         self.y.set(newValue: y);
-        self.angle = atan2(y, x) * Float(180 / M_PI);
+        self.angle = atan2(y, x) * Float(180 / Float.pi);
 
         //==BEGIN APPEND OBSERVABLES==//
         observables.append(self.x);
@@ -105,10 +105,9 @@ class Point:Observable<(Float,Float)>,Geometry{
         return (self.x.get(id: nil),self.y.get(id: nil))
     }
 
-    //TODO: not clear why but this causes a segmentation fault
-    /*override func getSilent()->(Float,Float){
+    override func getSilent()->(Float,Float){
         return (self.x.getSilent(),self.y.getSilent())
-    }*/
+    }
     
     func clone()->Point{
         return Point(x:self.x.get(id: nil),y:self.y.get(id: nil))
@@ -197,13 +196,13 @@ class Point:Observable<(Float,Float)>,Geometry{
     
     func pointAtDistance(d:Float,a:Float)->Point{
         let x = self.x.get(id: nil) + (d * cos(a*Float(M_PI/180)))
-        let y = self.y.get(id: nil) + (d * sin(a*Float(M_PI/180)))
+        let y = self.y.get(id: nil) + (d * sin(a*Float.pi/180))
         return Point(x: x,y: y)
     }
     
     //returns new rotated point, original point is unaffected
     func rotate(angle:Float, origin:Point)->Point{
-        let a = angle * Float(M_PI)/180;
+        let a = angle * Float.pi/180;
         let centerX = origin.x.get(id: nil);
         let centerY = origin.y.get(id: nil);
         let x = self.x.get(id: nil);
@@ -219,7 +218,7 @@ class Point:Observable<(Float,Float)>,Geometry{
     
      
      func getDirectedAngle(point:Point)->Float {
-     return atan2(self.cross(point: point), self.dot(b: point)) * 180 / Float(M_PI);
+     return atan2(self.cross(point: point), self.dot(b: point)) * 180 / Float.pi;
      }
      
      

@@ -20,7 +20,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     var allStrokes = [Stroke]();
     var transmitEvent = Event<(String)>()
     var initEvent = Event<(WebTransmitter,String)>()
-
+    
     let svgGenerator = SVGGenerator();
     
     var geometryModified = Event<(Geometry,String,String)>()
@@ -31,11 +31,11 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     }
     
     func drawSegment(context:CGContext){
-       
-            for i in 0..<allStrokes.count{
-                // print("strokes \(i,strokes[i].dirty)");
-                if(allStrokes[i].dirty){
-                   allStrokes[i].drawSegment(context:context);
+        
+        for i in 0..<allStrokes.count{
+            // print("strokes \(i,strokes[i].dirty)");
+            if(allStrokes[i].dirty){
+                allStrokes[i].drawSegment(context:context);
                 
             }
         }
@@ -45,35 +45,38 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     func getSVG()->String{
         var orderedStrokes = [Stroke]()
         for i in 0..<allStrokes.count{
-                orderedStrokes.append(allStrokes[i])
+            orderedStrokes.append(allStrokes[i])
         }
         
         return svgGenerator.generate(strokes: orderedStrokes)
         
     }
     
-    func hitTest(point:Point,threshold:Float,parentID:String)->Stroke?{
+    func hitTest(point:Point,threshold:Float,id:String)->Stroke?{
+        var targetStroke:Stroke! = nil
+        let targetActiveStrokes = self.activeStrokes[id];
+        if(targetActiveStrokes != nil){
+            if(targetActiveStrokes!.count>0){
+                targetStroke = targetActiveStrokes!.last
+            }
+        }
         for i in 0..<allStrokes.count{
             let stroke = allStrokes[i];
-                let seg = stroke.hitTest(testPoint: point,threshold:threshold);
-            
-            
+            if(targetStroke != nil && targetStroke! == stroke){
+               // print("strokes match, no intersection calculated");
+                let seg = stroke.hitTest(testPoint: point,threshold:threshold,sameStroke: true);
                 if(seg != nil){
-                    if(self.activeStrokes[parentID] != nil){
-                        let activeStrokes = self.activeStrokes[parentID]
-                        for s in activeStrokes!{
-                            if s.containsSegment(segment:seg!) == true {
-                                print("stroke contains segment");
-                                return nil
-                            }
-                        }
-                        return stroke;
-                    }
-                    else{
-                        return stroke;
- 
-                    }
+                    return stroke;
                 }
+            }
+            else{
+                //print("strokes do not match checking intersection");
+
+                let seg = stroke.hitTest(testPoint: point,threshold:threshold,sameStroke: false);
+                if(seg != nil){
+                    return stroke;
+                }
+            }
         }
         return nil
     }
@@ -99,11 +102,11 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         }
         self.activeStrokes[parentID]!.append(stroke);
         
-       
-       
+        
+        
         
         self.allStrokes.append(stroke);
-       
+        
         return stroke;
     }
     
@@ -115,7 +118,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         for i in 0..<self.activeStrokes[parentID]!.count{
             let currentStroke = self.activeStrokes[parentID]![i]
             var seg = currentStroke.addSegment(point: point,d:weight,color:color,alpha:alpha)
-            }
+        }
     }
     
     
