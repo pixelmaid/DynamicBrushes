@@ -43,11 +43,11 @@
 
         <div id = "save-menu" class="horz-toolbar-section toolbar-container">
          <div class = "horz-group">
-         <label for="fileselect_div">load file</label>
+         <label for="fileselect_div">load behavior set</label>
           <div id="fileselect_div" class="selectel">
             <select id ="fileselect" class="form-control"></select>
           </div>
-            <button type="button" id="save">save file</button>
+            <button type="button" id="save">save behavior set</button>
           </div>
         </div>
 
@@ -104,13 +104,24 @@
 
       </header>
       <ul class="list_menu" id="palette_menu">
+        <hr>
         <li id="states" class = "selected">states</li>
-        <li id="brush_properties" >brush properties</li>
-        <li id="sensor_properties">sensor properties</li>
-        <li id="ui_properties">ui properties</li>
-        <li id="generators">generators</li>
-        <li id="brush_actions">brush actions</li>
+        
+       <hr>
+
+         <li id="brush_actions">actions</li>
+       <hr>
+
         <li id="transitions">transitions</li>
+<hr>
+
+        <li id="brush_properties" >brush properties</li>
+       <hr>
+        <li id="sensor_properties">sensor inputs</li>
+        <li id="ui_properties">ui inputs</li>
+        <li id="generators">generators</li>
+       <hr>
+
       </ul>
       <ul id = "selected_palette">
       </ul>

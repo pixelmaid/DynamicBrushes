@@ -4,7 +4,7 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", 'app/i
 
     function($, jqueryui, Handlebars, paletteTemplate, ID) {
 
-        var  states_btn, generator_btn, brush_properties_btn, sensor_properties_btn, ui_properties_btn, brush_actions_btn, transitions_btn;
+        var states_btn, generator_btn, brush_properties_btn, sensor_properties_btn, ui_properties_btn, brush_actions_btn, transitions_btn;
         var btn_list;
 
         var PaletteView = class {
@@ -24,10 +24,10 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", 'app/i
                 transitions_btn = this.el.find('#transitions');
                 btn_list = [states_btn, generator_btn, brush_properties_btn, sensor_properties_btn, ui_properties_btn, brush_actions_btn, transitions_btn];
 
-                
+
                 this.el.droppable({
                     drop: function(event, ui) {
-                        console.log("dropped on canvas",ui);
+                        console.log("dropped on canvas", ui);
                         $(ui.helper).remove(); //destroy clone
                         $(ui.draggable).remove(); //remove from list
                     }
@@ -52,22 +52,23 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", 'app/i
                 var html = paletteTemplate(data);
                 this.el.find('#selected_palette').html(html);
                 this.el.find(".palette").mousedown(function(event) {
-                    var clone = $("<div id=" + $(event.target).attr('id') + "></div>");
+                    if (!$(event.target).hasClass("tooltiptext")) {
+                        var clone = $("<div id=" + $(event.target).attr('id') + "></div>");
 
-                    
-                    clone.html($(event.target).attr('display_name'));
-                    clone.attr("type",$(event.target).attr('type'));
-                    clone.attr("name",$(event.target).attr('name'));
-                    clone.attr("class", $(event.target).attr('class'));
-                    
-                    clone.addClass("drag-n-drop");
-                    console.log("cloning", clone);
 
-                    clone.draggable();
-                    clone.offset($(event.target).offset());
-                    clone.prependTo("body").css('position', 'absolute');
-                    clone.trigger(event);
+                        clone.html($(event.target).attr('display_name'));
+                        clone.attr("type", $(event.target).attr('type'));
+                        clone.attr("name", $(event.target).attr('name'));
+                        clone.attr("class", $(event.target).attr('class'));
 
+                        clone.addClass("drag-n-drop");
+                        console.log("cloning", clone);
+
+                        clone.draggable();
+                        clone.offset($(event.target).offset());
+                        clone.prependTo("body").css('position', 'absolute');
+                        clone.trigger(event);
+                    }
 
 
                 });

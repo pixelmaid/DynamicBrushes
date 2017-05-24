@@ -213,12 +213,12 @@ define(['emitter', 'app/id', 'app/Emitter'],
               type:"generator",
               help_text: "returns the number of siblings of the brush instance"
             }, 
-            { item_class: " block property generator palette",
+            /*({ item_class: " block property generator palette",
               name: "ease",
               item_name: "ease",
               type:"generator",
               help_text: "generator that eases in and out"
-            }
+            }*/
             ]
           },
 
