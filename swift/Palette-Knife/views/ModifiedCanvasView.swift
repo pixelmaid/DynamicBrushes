@@ -90,7 +90,7 @@ class ModifiedCanvasView: UIImageView {
         } else {
             touches.append(touch)
         }
-        if touch.type == .stylus {
+       // if touch.type == .stylus {
         if(drawActive){
 
             for touch in touches {
@@ -118,7 +118,7 @@ class ModifiedCanvasView: UIImageView {
             self.image = UIGraphicsGetImageFromCurrentImageContext()
             UIGraphicsEndImageContext()
         }
-        }
+       // }
         
         
         

@@ -1,0 +1,223 @@
+{
+  "default" : {
+    "name" : "ui_defaults",
+    "methods" : [
+      {
+        "targetTransition" : "_jsplumb_c_1495732428373",
+        "hasArguments" : true,
+        "currentArguments" : [
+          "stylus_position"
+        ],
+        "targetMethod" : "newStroke",
+        "defaultArgument" : "stylus_position",
+        "methodArguments" : {
+          "parent_origin" : "parent_origin",
+          "stylus_position" : "stylus_position",
+          "parent_position" : "parent_position"
+        },
+        "methodId" : "_qfasrll2z"
+      }
+    ],
+    "generators" : [
+
+    ],
+    "id" : "_4p3cptdsx",
+    "states" : [
+      {
+        "name" : "state 1",
+        "x" : 356,
+        "id" : "_s865vlzry",
+        "y" : 187
+      },
+      {
+        "name" : "setup",
+        "x" : 20,
+        "id" : "_y5p6lqn2a",
+        "y" : 229
+      },
+      {
+        "name" : "die",
+        "x" : 1018,
+        "id" : "_jupcoyws8",
+        "y" : 221
+      }
+    ],
+    "auto_spawn_num" : 1,
+    "active_status" : true,
+    "transitions" : [
+      {
+        "name" : "setup",
+        "eventName" : "STATE_COMPLETE",
+        "transitionId" : "_jsplumb_c_1495732354038",
+        "fromStateId" : "_y5p6lqn2a",
+        "toStateId" : "_s865vlzry",
+        "parentFlag" : false,
+        "displayName" : "stateComplete"
+      },
+      {
+        "name" : "jen",
+        "emitter" : "stylus",
+        "eventName" : "STYLUS_DOWN",
+        "transitionId" : "_jsplumb_c_1495732428373",
+        "fromStateId" : "_s865vlzry",
+        "toStateId" : "_s865vlzry",
+        "parentFlag" : false,
+        "displayName" : "stylusDown"
+      }
+    ],
+    "mappings" : [
+      {
+        "stateId" : "_s865vlzry",
+        "constraintType" : "active",
+        "mappingId" : "_vg76tuwpf",
+        "expressionId" : "_cbx0dm6rs",
+        "expressionText" : "%_mx383xvjo%",
+        "relativePropertyName" : "hue",
+        "expressionPropertyList" : {
+          "_mx383xvjo" : [
+            "ui",
+            [
+              "hue"
+            ],
+            [
+              "hue"
+            ]
+          ]
+        },
+        "relativePropertyItemName" : "hue"
+      },
+      {
+        "stateId" : "_s865vlzry",
+        "constraintType" : "active",
+        "mappingId" : "_dcl5fgykq",
+        "expressionId" : "_od2ov3myz",
+        "expressionText" : "%_l49hx5693%",
+        "relativePropertyName" : "saturation",
+        "expressionPropertyList" : {
+          "_l49hx5693" : [
+            "ui",
+            [
+              "saturation"
+            ],
+            [
+              "saturation"
+            ]
+          ]
+        },
+        "relativePropertyItemName" : "saturation"
+      },
+      {
+        "stateId" : "_s865vlzry",
+        "constraintType" : "active",
+        "mappingId" : "_x0gss4h85",
+        "expressionId" : "_314fop8d3",
+        "expressionText" : "%_yjkvf7a5z%",
+        "relativePropertyName" : "lightness",
+        "expressionPropertyList" : {
+          "_yjkvf7a5z" : [
+            "ui",
+            [
+              "lightness"
+            ],
+            [
+              "lightness"
+            ]
+          ]
+        },
+        "relativePropertyItemName" : "lightness"
+      },
+      {
+        "stateId" : "_s865vlzry",
+        "constraintType" : "active",
+        "mappingId" : "_6t0kk5q07",
+        "expressionId" : "_iimuyggfg",
+        "expressionText" : "%_nc9xozcnx%",
+        "relativePropertyName" : "dx",
+        "expressionPropertyList" : {
+          "_nc9xozcnx" : [
+            "stylus",
+            [
+              "dx"
+            ],
+            [
+              "dx"
+            ]
+          ]
+        },
+        "relativePropertyItemName" : "delta x"
+      },
+      {
+        "stateId" : "_s865vlzry",
+        "constraintType" : "active",
+        "mappingId" : "_y85vzhv8y",
+        "expressionId" : "_nczvfar0z",
+        "expressionText" : "%_qqdax1q3z%*%_uuwrgd1ui%",
+        "relativePropertyName" : "diameter",
+        "expressionPropertyList" : {
+          "_uuwrgd1ui" : [
+            "stylus",
+            [
+              "force"
+            ],
+            [
+              "force"
+            ]
+          ],
+          "_qqdax1q3z" : [
+            "ui",
+            [
+              "diameter"
+            ],
+            [
+              "diameter"
+            ]
+          ]
+        },
+        "relativePropertyItemName" : "diameter"
+      },
+      {
+        "stateId" : "_s865vlzry",
+        "constraintType" : "active",
+        "mappingId" : "_gnpd0ku37",
+        "expressionId" : "_aanlrlr19",
+        "expressionText" : "%_dxmwliw8h%",
+        "relativePropertyName" : "alpha",
+        "expressionPropertyList" : {
+          "_dxmwliw8h" : [
+            "ui",
+            [
+              "alpha"
+            ],
+            [
+              "alpha"
+            ]
+          ]
+        },
+        "relativePropertyItemName" : "alpha"
+      },
+      {
+        "stateId" : "_s865vlzry",
+        "constraintType" : "active",
+        "mappingId" : "_jneiih44q",
+        "expressionId" : "_bwqpxia82",
+        "expressionText" : "%_mi3u0u57a%",
+        "relativePropertyName" : "dy",
+        "expressionPropertyList" : {
+          "_mi3u0u57a" : [
+            "stylus",
+            [
+              "dy"
+            ],
+            [
+              "dy"
+            ]
+          ]
+        },
+        "relativePropertyItemName" : "delta y"
+      }
+    ],
+    "conditions" : [
+
+    ]
+  }
+}

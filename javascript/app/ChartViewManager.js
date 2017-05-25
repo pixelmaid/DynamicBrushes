@@ -11,6 +11,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
             clientX: 0,
             clientY: 0
         };
+        var basic_template, empty_template, parent_template, child_template, ui_template;
         var ChartViewManager = class extends Emitter {
 
             constructor(model, element) {
@@ -27,9 +28,69 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                 var add_behavior_btn = $('body').find('#add_behavior_btn');
 
                 add_behavior_btn.click(function(event) {
+                    document.getElementById("behavior_template_menu").classList.toggle("show");
+                });
+
+                $.getJSON("app/behavior_templates/basic_template.json", function(data) {
+                    basic_template = data;
+                });
+                $.getJSON("app/behavior_templates/empty_template.json", function(data) {
+                    empty_template = data;
+                });
+                $.getJSON("app/behavior_templates/parent_template.json", function(data) {
+                    parent_template = data;
+                });
+                $.getJSON("app/behavior_templates/child_template.json", function(data) {
+                    child_template = data;
+                });
+                $.getJSON("app/behavior_templates/ui_template.json", function(data) {
+                    ui_template = data;
+                });
+
+                //let $("#behavior_items")
+
+                window.onclick = function(event) {
+                    if (!event.target.matches('.dropbtn')) {
+
+                        var dropdowns = document.getElementsByClassName("dropdown-content");
+                        var i;
+                        for (i = 0; i < dropdowns.length; i++) {
+                            var openDropdown = dropdowns[i];
+                            if (openDropdown.classList.contains('show')) {
+                                openDropdown.classList.remove('show');
+                            }
+                        }
+                    }
+                }
+                
+                $("#behavior_template_menu span").click(function(event) {
 
 
-                    self.onBehaviorAdded();
+                    var type = $(event.target).html();
+                    console.log("type = ", type, event.target);
+                    var data;
+                    switch (type) {
+                        case "basic":
+                            data = basic_template;
+                            break;
+                        case "empty":
+                            data = empty_template;
+                            break;
+                        case "parent":
+                            data = parent_template;
+                            break;
+                        case "child":
+                            data = child_template;
+                            break;
+                        case "ui defaults":
+                            data = ui_template;
+                            break;
+
+                    }
+                    var data_clone = {};
+                    Object.assign(data_clone, data);
+                    console.log("data", data, data_clone);
+                    self.onBehaviorAdded(data_clone);
                 });
 
                 $("#behaviorselect").change(function() {
@@ -443,7 +504,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
 
                             break;
                         case "behavior_added":
-                            this.addBehavior(this.lastAuthoringRequest.data);
+                            this.addBehavior(this.lastAuthoringRequest.data["data"]);
                             this.lastAuthoringRequest = null;
 
                             break;
@@ -476,40 +537,20 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
 
             }
 
-            onBehaviorAdded() {
+            onBehaviorAdded(template) {
                 var name = prompt("Give your behavior a name", "behavior_" + behavior_counter);
                 if (name !== null) {
 
                     var id = ID();
-                    var dieId = ID();
-                    var setupId = ID();
 
-                    var setupData = {
-                        name: "setup",
-                        id: setupId,
-                        mappings: [],
-                        x: 20,
-                        y: 200
-                    };
-
-                    var dieData = {
-                        name: "die",
-                        id: dieId,
-                        mappings: [],
-                        x: 1000,
-                        y: 200
-                    };
+                    template["default"]["id"] = id;
+                    template["default"]["name"] = name;
 
                     var data = {
                         type: "behavior_added",
-                        name: name,
                         id: id,
-                        states: [setupData, dieData],
-                        dieId: dieId,
-                        setupId: setupId,
-                        transitions: [],
-                        mappings: [],
-                        methods: []
+                        name: name,
+                        data: template["default"]
 
                     };
                     this.lastAuthoringRequest = {

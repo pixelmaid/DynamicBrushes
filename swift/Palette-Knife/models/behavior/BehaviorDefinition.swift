@@ -55,7 +55,7 @@ class BehaviorDefinition {
         let methodJSON = json["methods"].arrayValue;
         let generatorJSON = json["generators"].arrayValue;
         let conditionJSON = json["conditions"].arrayValue;
-
+        print("parse JSON",stateJSON)
         print("generator json",generatorJSON)
         for i in 0..<generatorJSON.count{
             self.parseGeneratorJSON(data:generatorJSON[i])

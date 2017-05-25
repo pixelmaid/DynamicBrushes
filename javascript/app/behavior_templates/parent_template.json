@@ -1,0 +1,76 @@
+{
+ 
+  "default" : {
+    "name" : "parent",
+    "methods" : [
+      {
+        "targetTransition" : "_jsplumb_c_1492035674156",
+        "hasArguments" : true,
+        "currentArguments" : [
+          "_4p3cptdsx",
+          0
+        ],
+        "targetMethod" : "spawn",
+        "defaultArgument" : "self",
+        "methodArguments" : {
+          "self" : "self",
+          "basicTemplate" : ""
+        },
+        "methodId" : "_sig56b5el"
+      }
+    ],
+    "generators" : [
+
+    ],
+    "id" : "_4p3cptdsx",
+    "states" : [
+      {
+        "name" : "setup",
+        "x" : 23,
+        "id" : "_y5p6lqn2a",
+        "y" : 215
+      },
+      {
+        "name" : "myState",
+        "x" : 426,
+        "id" : "_uerji92qt",
+        "y" : 201
+      },
+      {
+        "name" : "die",
+        "x" : 1006,
+        "id" : "_jupcoyws8",
+        "y" : 190
+      }
+    ],
+    "auto_spawn_num" : 1,
+    "active_status" : true,
+    "transitions" : [
+      {
+        "name" : "myState",
+        "emitter" : "stylus",
+        "eventName" : "STYLUS_DOWN",
+        "transitionId" : "_jsplumb_c_1492035674156",
+        "fromStateId" : "_uerji92qt",
+        "toStateId" : "_uerji92qt",
+        "parentFlag" : false,
+        "displayName" : "stylusDown"
+      },
+      {
+        "name" : "setup",
+        "eventName" : "STATE_COMPLETE",
+        "transitionId" : "_jsplumb_c_1492035672042",
+        "fromStateId" : "_y5p6lqn2a",
+        "toStateId" : "_uerji92qt",
+        "parentFlag" : false,
+        "displayName" : "stateComplete"
+      }
+    ],
+    "mappings" : [
+
+    ],
+    "conditions" : [
+
+    ]
+  }
+}

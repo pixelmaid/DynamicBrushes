@@ -32,8 +32,7 @@ class BehaviorManager{
     }
     
     func loadBehavior(json:JSON){
-            //print("json =\(json)")
-            self.loadBehaviorsFromJSON(json: json, rewriteAll: true)
+        self.loadBehaviorsFromJSON(json: json, rewriteAll: true)
     }
     
    
@@ -83,6 +82,8 @@ class BehaviorManager{
             BehaviorManager.behaviors[behaviorId]!.createBehavior(canvas:canvas)
             resultJSON["result"] = "success";
             return resultJSON;
+            
+            
         case "refresh_behavior":
             let behaviorId = data["behaviorId"].stringValue;
             BehaviorManager.behaviors[behaviorId]!.createBehavior(canvas:canvas)
@@ -100,19 +101,22 @@ class BehaviorManager{
         case "behavior_added":
             let name = data["name"].stringValue;
             let id = data["id"].stringValue;
-            let setupId = data["setupId"].stringValue;
-            let endId = data["dieId"].stringValue;
-            //print("behaviors with name\(name, BehaviorManager.behaviors[name])");
+            let data = data["data"]
+            print("behavior_added",data);
+            //let behavior = BehaviorDefinition(id:data["id"].stringValue, name: data["name"].stringValue);
+            let behavior = BehaviorDefinition(id:id,name:name);
+            behavior.parseJSON(json: data)
+
             
-            let behavior = BehaviorDefinition(id:data["id"].stringValue, name: data["name"].stringValue);
             if(BehaviorManager.behaviors[id] != nil){
+                print("throwing error")
                 throw BehaviorError.duplicateName;
             }
             else{
                 BehaviorManager.behaviors[id] = behavior;
-               
-                behavior.addState(stateId: setupId, stateName: "setup", stateX: 20.0, stateY:150.0);
-                behavior.addState(stateId: endId, stateName: "die", stateX: 1000.0, stateY: 150.0);
+
+               behavior.createBehavior(canvas:canvas)
+
                 resultJSON["result"] = "success";
                 return resultJSON;
             }

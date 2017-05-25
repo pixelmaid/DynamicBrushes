@@ -276,8 +276,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
         
         var templateJSON:JSON = [:]
-        templateJSON["filename"] = "templates/basic.json"
-        templateJSON["type"] = JSON("load")
+        templateJSON["filename"] = "templates/basic_template.json"
+       templateJSON["type"] = JSON("load")
         let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: self)
         RequestHandler.addRequest(requestData:behaviorDownloadRequest);
         
@@ -627,13 +627,17 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
             break;
         case "authoring_request":
             do{
-                let attempt = try behaviorManager?.handleAuthoringRequest(authoring_data: data.1! as JSON);
+                let authoring_data = data.1! as JSON
+                let attempt = try behaviorManager?.handleAuthoringRequest(authoring_data: authoring_data);
                 
-                //error is here!!!!
                 let socketRequest = Request(target: "socket", action: "authoring_response", data: attempt, requester: self)
-                print("behavior manager recieved authoring  process request \(attempt)");
+                print("behavior manager recieved authoring  process request \(attempt,authoring_data)");
                 
                 RequestHandler.addRequest(requestData:socketRequest);
+                /*if(authoring_data["data"]["type"].stringValue == "behavior_added"){
+                    print("behavior added")
+                    self.synchronizeWithAuthoringClient();
+                }*/
                 // self.backupBehavior();
                 
             }
