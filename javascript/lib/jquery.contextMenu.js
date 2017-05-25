@@ -1448,7 +1448,7 @@
                         width: $win.width(),
                         display: 'block',
                         position: 'fixed',
-                        'z-index': zIndex,
+                        /*'z-index': zIndex,*/
                         top: 0,
                         left: 0,
                         opacity: 0,

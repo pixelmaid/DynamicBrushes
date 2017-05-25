@@ -158,6 +158,25 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                 });
 
+                 $.contextMenu({
+                    selector: '#' + self.id + ' .method',
+                    callback: function(key, options) {
+                        if (key == "delete") {
+                           var methodId = $(options.$trigger[0]).attr("id");
+
+                        self.trigger("ON_METHOD_REMOVED", [self.id, methodId]);
+
+                        }
+                    },
+                    items: {
+                        "delete": {
+                            name: "Delete Action",
+                        }
+                    }
+
+                });
+
+
                 this.createHTML(behavior_data);
 
             }
@@ -227,7 +246,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                             }
 
-                        } else if (type == "action") {
+                        } /*else if (type == "action") {
                             var methodId = ID();
                             var targetMethod = $(ui.draggable).attr('name');
                             var defaultArgument = $(ui.draggable).attr('defaultArgument');
@@ -237,7 +256,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                             $(ui.draggable).remove(); //remove from list
 
 
-                        }
+                        }*/
 
 
                     }
@@ -518,7 +537,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
             }
 
-            addTransitionEvent(data) {
+            addTransitionEvent(data,generator_data,condition_data) {
                 console.log("adding transition event", data);
                 //var html = "<div parent_id='" + data.transitionId + "'name='" + data.eventName + "'type='transition' class='block transition'>" + data.displayName + "</div>";
                 var self = this;
@@ -530,6 +549,27 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                 if (conditionalEvents.indexOf(data.eventName)>=0) {
                     eventTemplateData.transitionNumberId = data.transitionId + "_num";
+                       eventTemplateData.value = 1;
+                }
+
+                if(data.conditionName){
+                    var conditionName = data.conditionName;
+                    var condition = condition_data.filter(function(c){
+                        return c.name == conditionName;
+                    });
+
+                    var relativeName = condition[0].relativeNames[0];
+                    var generator = generator_data.filter(function(g){
+                        return g.generatorId == relativeName ;
+                    });
+                    if(generator[0].generator_type == "interval"){
+                        var val = generator[0].inc;
+                        eventTemplateData.value = val;
+
+                    }
+
+                    console.log("transition has condition!",conditionName,condition,generator);
+
                 }
 
                 var html = eventTemplate(eventTemplateData);
@@ -628,14 +668,14 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 var html = methodTemplate(methodTemplateData);
                 console.log("target transition:", data.targetTransition, $('#' + data.targetTransition), $($('#' + data.targetTransition).find(".methods")));
                 if (data.targetTransition && data.targetTransition != "globalTransition") {
-                    $($('#' + data.targetTransition).find(".methods")[0]).prepend(html);
+                    $($('#' + data.targetTransition).find(".methods")[0]).append(html);
 
                 } else {
 
-                    $('#' + self.id).prepend(html);
+                    $('#' + self.id).append(html);
 
                 }
-                this.makeDraggable($("#" + data.methodId));
+               // this.makeDraggable($("#" + data.methodId));
                 if (data.hasArguments) {
                     console.log("get text box by id", document.getElementById(methodTemplateData.methodTextId), methodTemplateData.methodTextId);
                     EditableSelect.createEditableSelect(document.getElementById(methodTemplateData.methodTextId));
@@ -753,9 +793,6 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                         case "ui_prop":
                             this.mappingReferenceRemoved(target.attr("id"), target.attr("parent_id"));
                             break;
-                        case "method":
-                            this.trigger("ON_METHOD_REMOVED", [this.id, target.attr("id")]);
-                            break;
                         case "transition":
                             this.trigger("ON_TRANSITION_EVENT_REMOVED", [this.id, target.attr("parent_id")]);
                             break;
@@ -799,7 +836,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                     console.log("connection id", data.transitions[j], connection.id);
                     self.addOverlayToConnection(data.transitions[j]);
-                    self.addTransitionEvent(data.transitions[j]);
+                    self.addTransitionEvent(data.transitions[j],data.generators,data.conditions);
                 }
                 this.instance.bind("connection", function(info) {
                     console.log("state transition made", info);
@@ -932,6 +969,8 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                         }
                     }
                 });
+
+
 
                 connection.getOverlay("transition_" + id).hide();
 

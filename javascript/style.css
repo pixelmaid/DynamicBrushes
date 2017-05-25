@@ -160,8 +160,8 @@ h1{
   min-width: 40px;
   min-height: 40px;
   height: 40px;
-  border: solid 4px #efac1f;
-  border-radius: 12px;
+  border: solid 1px #efac1f;
+  /*border-radius: 12px;*/
 }
 .setup .state{
   background-color:#50a275;
@@ -171,9 +171,10 @@ h1{
   background-color:#eb4a63;
 }
 
-.setup .ep , .die .ep {
-  width:10;
-  opacity: 0;  
+.setup .ep.back , .die .ep.back, .setup .ep.front, .die .ep.front{
+ /*opacity: 0;*/ 
+/*border-radius: 0*/
+
 }
 
 .conditionals{
@@ -959,7 +960,7 @@ span.refresh{
     padding: 8px 10px;
     text-decoration: none;
     display: block;
-        cursor: pointer;
+    cursor: pointer;
 
 }
 
