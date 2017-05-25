@@ -70,7 +70,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
     var currentBehaviorName = ""
     var currentBehaviorFile = ""
-
+    var startup = true;
     @IBOutlet weak var layerPanelContainerView: UIView!
     
     @IBOutlet weak var colorPickerContainerView: UIView!
@@ -317,7 +317,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
     func keyRecognized(){
         print("key is recognized")
-       self.addProjectInitRequests()
+        if(startup == true){
+            self.addProjectInitRequests()
+            startup = false;
+        }
     }
     
     func loginAlert(isIncorrect:Bool) {
@@ -556,7 +559,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
             self.loginAlert(isIncorrect: true)
             break;
         case "correct_key":
-            self.addProjectInitRequests()
+            self.keyRecognized()
         break;
         case "filelist_complete":
             let listType = data.1?["list_type"].stringValue
