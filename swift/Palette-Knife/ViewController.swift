@@ -29,7 +29,7 @@ let kRightMargin =      10.0
 let pX = 1024
 let pY = 768
 
-class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester/*,JotViewDelegate*/{
+class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester,JotViewDelegate{
     
     
     
@@ -213,9 +213,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester/*,
         
         self.initCanvas()
         
-      let jotView = JotView(frame: CGRect(x: 0, y: 0, width: 1024, height: 768));
-        //jotView.delegate = self
-        
+     
         _ = RequestHandler.dataEvent.addHandler(target: self, handler: ViewController.processRequestHandler, key: dataEventKey)
         
         let configureRequest = Request(target: "storage", action: "configure", data:JSON([]), requester: self)
@@ -258,7 +256,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester/*,
         fileListContainerView.clipsToBounds = true
         fileListContainerView.isHidden = true;
         
-        
+        let jotView = JotView(frame: CGRect(x: 0, y: 0, width: 1024, height: 768));
+        jotView.delegate = self
+        jotView.backgroundColor = UIColor.red;
+        self.view.addSubview(jotView)
     }
     
     
@@ -859,7 +860,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester/*,
     
    // #pragma mark - JotViewDelegate
     
-  /*  func textureForStroke()->JotBrushTexture {
+    func textureForStroke()->JotBrushTexture {
         return JotDefaultBrushTexture.sharedInstance()
     }
     
@@ -929,7 +930,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester/*,
     func smoothness(forCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!) -> CGFloat {
         return 0.75;
 
-    }*/
+    }
 
     
 }

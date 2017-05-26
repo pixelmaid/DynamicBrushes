@@ -1355,6 +1355,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					/Users/jennifermaryjacobs/Documents/work/code/DynamicBrushes/swift/,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "Palette-Knife/Info.plist";
@@ -1403,6 +1404,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					/Users/jennifermaryjacobs/Documents/work/code/DynamicBrushes/swift/,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				INFOPLIST_FILE = "Palette-Knife/Info.plist";
