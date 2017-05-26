@@ -26,8 +26,6 @@
 		5F50371D1EA957F5004ABAC1 /* debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F50371C1EA957F5004ABAC1 /* debug.swift */; };
 		5F5037201EA95833004ABAC1 /* NumTypes+Conversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F50371F1EA95833004ABAC1 /* NumTypes+Conversion.swift */; };
 		5F5037221EA95D7B004ABAC1 /* Particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F5037211EA95D7B004ABAC1 /* Particle.png */; };
-		5F5037261EA95DD0004ABAC1 /* point.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 5F5037241EA95DD0004ABAC1 /* point.fsh */; };
-		5F5037271EA95DD0004ABAC1 /* point.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 5F5037251EA95DD0004ABAC1 /* point.vsh */; };
 		5F50372A1EA95E37004ABAC1 /* Recording.data in Resources */ = {isa = PBXBuildFile; fileRef = 5F5037291EA95E37004ABAC1 /* Recording.data */; };
 		5F50372C1EAC025E004ABAC1 /* particle_hard.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F50372B1EAC025E004ABAC1 /* particle_hard.png */; };
 		5F50372E1EAD48BB004ABAC1 /* MathUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F50372D1EAD48BB004ABAC1 /* MathUtil.swift */; };
@@ -80,6 +78,14 @@
 		5FA4C72E1CDA7B5B004A728C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5FA4C72C1CDA7B5B004A728C /* LaunchScreen.storyboard */; };
 		5FA4C7391CDA7B5B004A728C /* Palette_KnifeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7381CDA7B5B004A728C /* Palette_KnifeTests.swift */; };
 		5FA4C7441CDA7B5B004A728C /* Palette_KnifeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7431CDA7B5B004A728C /* Palette_KnifeUITests.swift */; };
+		5FBDF0B11ED8C4E300022B07 /* JotUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FBDF0B01ED8C4E300022B07 /* JotUI.framework */; };
+		5FBDF0B31ED8D14F00022B07 /* JotViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FBDF0B21ED8D14F00022B07 /* JotViewManager.m */; };
+		5FBDF0E71ED8D95300022B07 /* quad.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 5FBDF0E11ED8D95300022B07 /* quad.vsh */; };
+		5FBDF0E81ED8D95300022B07 /* coloredpoint.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 5FBDF0E21ED8D95300022B07 /* coloredpoint.vsh */; };
+		5FBDF0E91ED8D95300022B07 /* colorlesspoint.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 5FBDF0E31ED8D95300022B07 /* colorlesspoint.vsh */; };
+		5FBDF0EA1ED8D95300022B07 /* point.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 5FBDF0E41ED8D95300022B07 /* point.fsh */; };
+		5FBDF0EB1ED8D95300022B07 /* quad.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 5FBDF0E51ED8D95300022B07 /* quad.fsh */; };
+		5FBDF0EC1ED8D95300022B07 /* stencil.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 5FBDF0E61ED8D95300022B07 /* stencil.fsh */; };
 		5FC91D2D1EA00C2F00A19206 /* RequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC91D2C1EA00C2F00A19206 /* RequestHandler.swift */; };
 		5FD6CD121DE0EE0E007D94AA /* sm_pen_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FD6CD111DE0EE0E007D94AA /* sm_pen_blue.png */; };
 		5FE32F611ECE2EBB00ADC01E /* ToolbarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE32F601ECE2EBB00ADC01E /* ToolbarViewController.swift */; };
@@ -167,8 +173,6 @@
 		5F50371C1EA957F5004ABAC1 /* debug.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = debug.swift; sourceTree = "<group>"; };
 		5F50371F1EA95833004ABAC1 /* NumTypes+Conversion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NumTypes+Conversion.swift"; sourceTree = "<group>"; };
 		5F5037211EA95D7B004ABAC1 /* Particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Particle.png; sourceTree = "<group>"; };
-		5F5037241EA95DD0004ABAC1 /* point.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = point.fsh; sourceTree = "<group>"; };
-		5F5037251EA95DD0004ABAC1 /* point.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = point.vsh; sourceTree = "<group>"; };
 		5F5037291EA95E37004ABAC1 /* Recording.data */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Recording.data; sourceTree = "<group>"; };
 		5F50372B1EAC025E004ABAC1 /* particle_hard.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle_hard.png; sourceTree = "<group>"; };
 		5F50372D1EAD48BB004ABAC1 /* MathUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MathUtil.swift; path = ../models/base/MathUtil.swift; sourceTree = "<group>"; };
@@ -229,6 +233,15 @@
 		5FA4C73F1CDA7B5B004A728C /* DynamicBrushes.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DynamicBrushes.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FA4C7431CDA7B5B004A728C /* Palette_KnifeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette_KnifeUITests.swift; sourceTree = "<group>"; };
 		5FA4C7451CDA7B5B004A728C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5FBDF0B01ED8C4E300022B07 /* JotUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JotUI.framework; sourceTree = SOURCE_ROOT; };
+		5FBDF0B21ED8D14F00022B07 /* JotViewManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JotViewManager.m; path = objc_headers/JotViewManager.m; sourceTree = SOURCE_ROOT; };
+		5FBDF0B41ED8D1E500022B07 /* JotViewManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JotViewManager.h; sourceTree = "<group>"; };
+		5FBDF0E11ED8D95300022B07 /* quad.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = quad.vsh; sourceTree = "<group>"; };
+		5FBDF0E21ED8D95300022B07 /* coloredpoint.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = coloredpoint.vsh; sourceTree = "<group>"; };
+		5FBDF0E31ED8D95300022B07 /* colorlesspoint.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = colorlesspoint.vsh; sourceTree = "<group>"; };
+		5FBDF0E41ED8D95300022B07 /* point.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = point.fsh; sourceTree = "<group>"; };
+		5FBDF0E51ED8D95300022B07 /* quad.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = quad.fsh; sourceTree = "<group>"; };
+		5FBDF0E61ED8D95300022B07 /* stencil.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = stencil.fsh; sourceTree = "<group>"; };
 		5FC91D2C1EA00C2F00A19206 /* RequestHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestHandler.swift; sourceTree = "<group>"; };
 		5FD6CD111DE0EE0E007D94AA /* sm_pen_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sm_pen_blue.png; sourceTree = "<group>"; };
 		5FE32F601ECE2EBB00ADC01E /* ToolbarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarViewController.swift; sourceTree = "<group>"; };
@@ -296,6 +309,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5FBDF0B11ED8C4E300022B07 /* JotUI.framework in Frameworks */,
 				5F5037131EA94C67004ABAC1 /* Foundation.framework in Frameworks */,
 				5F5037111EA94C5F004ABAC1 /* CoreGraphics.framework in Frameworks */,
 				5F50370F1EA94C50004ABAC1 /* QuartzCore.framework in Frameworks */,
@@ -336,8 +350,12 @@
 		5F5037231EA95DD0004ABAC1 /* Shaders */ = {
 			isa = PBXGroup;
 			children = (
-				5F5037241EA95DD0004ABAC1 /* point.fsh */,
-				5F5037251EA95DD0004ABAC1 /* point.vsh */,
+				5FBDF0E11ED8D95300022B07 /* quad.vsh */,
+				5FBDF0E21ED8D95300022B07 /* coloredpoint.vsh */,
+				5FBDF0E31ED8D95300022B07 /* colorlesspoint.vsh */,
+				5FBDF0E41ED8D95300022B07 /* point.fsh */,
+				5FBDF0E51ED8D95300022B07 /* quad.fsh */,
+				5FBDF0E61ED8D95300022B07 /* stencil.fsh */,
 			);
 			name = Shaders;
 			path = ../Shaders;
@@ -441,8 +459,10 @@
 		5F90F5721E9D5CE8006BB9FE /* objc_headers */ = {
 			isa = PBXGroup;
 			children = (
+				5FBDF0B41ED8D1E500022B07 /* JotViewManager.h */,
 				5F90F5731E9D5CE8006BB9FE /* Bridging-Header.h */,
 				5F90F5741E9D5CE8006BB9FE /* ExceptionCatcher.h */,
+				5FBDF0B21ED8D14F00022B07 /* JotViewManager.m */,
 			);
 			path = objc_headers;
 			sourceTree = "<group>";
@@ -639,6 +659,7 @@
 		A8FB9B6AFF975A979A8CC39F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5FBDF0B01ED8C4E300022B07 /* JotUI.framework */,
 				5F5037121EA94C67004ABAC1 /* Foundation.framework */,
 				5F5037101EA94C5F004ABAC1 /* CoreGraphics.framework */,
 				5F50370E1EA94C50004ABAC1 /* QuartzCore.framework */,
@@ -836,27 +857,30 @@
 			buildActionMask = 2147483647;
 			files = (
 				5FA4C72E1CDA7B5B004A728C /* LaunchScreen.storyboard in Resources */,
+				5FBDF0E81ED8D95300022B07 /* coloredpoint.vsh in Resources */,
+				5FBDF0EA1ED8D95300022B07 /* point.fsh in Resources */,
 				5F50372A1EA95E37004ABAC1 /* Recording.data in Resources */,
 				5FE32F871ECF6D5300ADC01E /* erase_button_active2x.png in Resources */,
 				5FE32F7C1ECF6D5300ADC01E /* behavior_activate_button_active.png in Resources */,
 				5FE32FA31ECF70BE00ADC01E /* layerVisible_button2x.png in Resources */,
 				5F9118D91DEE345100A6B247 /* select_icon.png in Resources */,
-				5F5037271EA95DD0004ABAC1 /* point.vsh in Resources */,
 				5F9F25AA1DEFE3A0005CB5D8 /* shopbot_position_active@2x.png in Resources */,
 				5FE32F831ECF6D5300ADC01E /* brush_button_active2x.png in Resources */,
 				5FEE2AC91DE127D800080095 /* dual_pen.png in Resources */,
 				5F9F25AD1DEFE3A0005CB5D8 /* shopbot_position_inactive2x.png in Resources */,
-				5F5037261EA95DD0004ABAC1 /* point.fsh in Resources */,
 				5FE32F971ECF6DC900ADC01E /* refresh_button2x.png in Resources */,
 				5FE32F8A1ECF6D5300ADC01E /* export_button.png in Resources */,
 				5FE32F851ECF6D5300ADC01E /* brush_button2x.png in Resources */,
 				5F9118D81DEE345100A6B247 /* draw_icon.png in Resources */,
+				5FBDF0EC1ED8D95300022B07 /* stencil.fsh in Resources */,
 				5FA4C72B1CDA7B5B004A728C /* Assets.xcassets in Resources */,
 				5FE32F9A1ECF6DC900ADC01E /* trash_button.png in Resources */,
+				5FBDF0E91ED8D95300022B07 /* colorlesspoint.vsh in Resources */,
 				5F9F25AC1DEFE3A0005CB5D8 /* select_icon2x.png in Resources */,
 				5FE32F801ECF6D5300ADC01E /* behavior_button.png in Resources */,
 				5FE32F8B1ECF6D5300ADC01E /* export_button2x.png in Resources */,
 				5F9F25AF1DEFE3A0005CB5D8 /* lg_pen_blue2x.png in Resources */,
+				5FBDF0EB1ED8D95300022B07 /* quad.fsh in Resources */,
 				5F9F25B21DEFE490005CB5D8 /* radial.png in Resources */,
 				5F9F25AB1DEFE3A0005CB5D8 /* draw_icon2x.png in Resources */,
 				5FE32FA21ECF70BE00ADC01E /* layerVisible_button.png in Resources */,
@@ -883,6 +907,7 @@
 				5FE32F7E1ECF6D5300ADC01E /* behavior_activate_button.png in Resources */,
 				5FD6CD121DE0EE0E007D94AA /* sm_pen_blue.png in Resources */,
 				5FE32F881ECF6D5300ADC01E /* erase_button.png in Resources */,
+				5FBDF0E71ED8D95300022B07 /* quad.vsh in Resources */,
 				5FE32F991ECF6DC900ADC01E /* save_button2x.png in Resources */,
 				5FEE2ACA1DE127D800080095 /* lg_pen_blue.png in Resources */,
 				5FE32F7D1ECF6D5300ADC01E /* behavior_activate_button_active2x.png in Resources */,
@@ -1064,6 +1089,7 @@
 				5F90F56B1E9D5BCC006BB9FE /* State.swift in Sources */,
 				5F50371A1EA9533A004ABAC1 /* fileUtil.swift in Sources */,
 				5F90F56E1E9D5BE3006BB9FE /* Stylus.swift in Sources */,
+				5FBDF0B31ED8D14F00022B07 /* JotViewManager.m in Sources */,
 				5F90F55C1E9D5A5C006BB9FE /* Brush.swift in Sources */,
 				5F5CED2C1ED10AED00A253A0 /* SelectedColorView.swift in Sources */,
 				5F90F56A1E9D5BCC006BB9FE /* Generator.swift in Sources */,
@@ -1332,8 +1358,12 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution: JENNIFER MARY JACOBS (R3G633C4P2)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = "Palette-Knife/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jacobsj.dynamicbrushes;
 				PRODUCT_NAME = DynamicBrushes;
@@ -1356,8 +1386,12 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution: JENNIFER MARY JACOBS (R3G633C4P2)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = "Palette-Knife/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jacobsj.dynamicbrushes;
 				PRODUCT_NAME = DynamicBrushes;

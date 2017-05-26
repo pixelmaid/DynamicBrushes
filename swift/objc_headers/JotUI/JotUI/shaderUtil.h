@@ -1,7 +1,7 @@
 /*
- File: color.vsh
- Abstract: A vertex shader that draws points with assigned color.
- Version: 1.13
+     File: shaderUtil.h
+ Abstract: Functions that compile, link and validate shader programs.
+  Version: 1.13
  
  Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple
  Inc. ("Apple") in consideration of your agreement to the following
@@ -45,17 +45,27 @@
  
  */
 
-attribute vec4 inVertex;
+#ifndef SHADERUTIL_H
+#define SHADERUTIL_H
 
-uniform mat4 MVP;
-uniform float pointSize;
-uniform lowp vec4 vertexColor;
+#import <OpenGLES/ES2/gl.h>
 
-varying lowp vec4 color;
+/* Shader Utilities */
+GLint glueCompileShader(GLenum target, GLsizei count, const GLchar** sources, GLuint* shader);
+GLint glueLinkProgram(GLuint program);
+GLint glueValidateProgram(GLuint program);
+GLint glueGetUniformLocation(GLuint program, const GLchar* name);
 
-void main()
-{
-	gl_Position = MVP * inVertex;
-    gl_PointSize = pointSize;
-    color = vertexColor;
-}
+/* Shader Conveniences */
+GLint glueCreateProgram(const GLchar* vertSource, const GLchar* fragSource,
+                        GLsizei attribNameCt, const GLchar** attribNames,
+                        const GLint* attribLocations,
+                        GLsizei uniformNameCt, const GLchar** uniformNames,
+                        GLint* uniformLocations,
+                        GLuint* program);
+
+//#ifdef __cplusplus
+//}
+//#endif
+
+#endif /* SHADERUTIL_H */

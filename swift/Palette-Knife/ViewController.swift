@@ -29,7 +29,7 @@ let kRightMargin =      10.0
 let pX = 1024
 let pY = 768
 
-class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
+class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester,JotViewDelegate{
     
     
     
@@ -38,7 +38,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
     
     var layerContainerView:LayerContainerView!
-    
     
     var behaviorManager: BehaviorManager?
     var currentCanvas: Canvas?
@@ -214,6 +213,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         
         self.initCanvas()
         
+        let jotView = JotView(frame: CGRect(x: 0, y: 0, width: 1024, height: 768));
+        jotView.delegate = self
         
         _ = RequestHandler.dataEvent.addHandler(target: self, handler: ViewController.processRequestHandler, key: dataEventKey)
         
@@ -263,6 +264,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated);
+      
         self.loginAlert(isIncorrect: false);
         
     }
@@ -855,6 +857,80 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
         return true
     }
     
+   // #pragma mark - JotViewDelegate
+    
+    func textureForStroke()->JotBrushTexture {
+        return JotDefaultBrushTexture.sharedInstance()
+    }
+    
+   func stepWidthForStroke()->CGFloat {
+    return CGFloat(2);
+    }
+    
+    func supportsRotation()->Bool {
+        return false
+    }
+    
+    
+    func willAddElements(_ elements: [Any]!, to stroke: JotStroke!, fromPreviousElement previousElement: AbstractBezierPathElement!) -> [Any]! {
+        return elements
+    }
+    
+    func willBeginStroke(withCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!) -> Bool {
+        return true;
+    }
+    func willMoveStroke(withCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!) {
+        /*  numberOfTouches++;
+         if (numberOfTouches > 4){
+         numberOfTouches = 4;
+         }
+         
+         CGFloat dur = [[NSDate date] timeIntervalSinceDate:lastDate];
+         
+         if(dur > .01){
+         // require small duration, otherwise the pts/sec calculation can vary wildly
+         if ([self velocityForTouch:touch]) {
+         velocity = [self velocityForTouch:touch];
+         }
+         
+         lastDate = [NSDate date];
+         lastLoc = [touch preciseLocationInView:nil];
+         }
+         */
+ 
+    }
+    
+    
+    func willEndStroke(withCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!, shortStrokeEnding: Bool) {
+        
+    }
+   
+    func didEndStroke(withCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!) {
+        
+    }
+    func willCancel(_ stroke: JotStroke!, withCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!) {
+        
+    }
+    func didCancel(_ stroke: JotStroke!, withCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!) {
+        
+    }
+    
+    func color(forCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!) -> UIColor! {
+        return UIColor.red
+
+    }
+    
+ 
+    func width(forCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!) -> CGFloat {
+        return 10
+
+    }
+    
+    func smoothness(forCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!) -> CGFloat {
+        return 0.75;
+
+    }
+
     
 }
 
