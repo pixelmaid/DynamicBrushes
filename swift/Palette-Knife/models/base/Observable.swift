@@ -32,8 +32,26 @@ class Observable<T>:Object, DisposableObservable {
        
     }
     
+    func constrainedAndActive()->Bool{
+        if(self.constraintTarget == nil && self.constrained){
+            return true;
+        }
+        return false;
+    }
+    
+    func constrainedAndPassive()->Bool{
+        if(self.constraintTarget != nil && self.constrained){
+            return true;
+        }
+        return false;
+    }
+    
+    
     func invalidate(oldValue: T, newValue: T){
         invalidated = true;
+        if(self.name != ""){
+        print("invalidated",self.name)
+        }
         didChange.raise(data: (name, oldValue, newValue))
 
     }

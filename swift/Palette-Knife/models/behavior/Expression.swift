@@ -103,7 +103,7 @@ class TextExpression:Observable<Float>{
            result  = exp.expressionValue(with: nil, context: nil) as! Float// 25.0
         
         }
-        print("exception: \(id,text,exception,result)")
+       // print("exception: \(id,text,exception,result)")
 
         return result;
 

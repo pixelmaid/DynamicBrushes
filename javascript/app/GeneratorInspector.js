@@ -25,12 +25,12 @@ define(["jquery", "app/id", "app/Emitter"],
 					break;
 					case "random":
 					data.min = 0;
-					data.max = 1;
+					data.max = 100;
 					break;
 					case "sine":
-					data.freq = 0.05;
-					data.amp = 1;
-					data.phase = 0
+					data.freq = 0.032;
+					data.amp = 100;
+					data.phase = -1.6;
 					break;
 					case "index":
 					break;

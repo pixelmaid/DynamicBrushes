@@ -14,7 +14,7 @@ import Foundation
 class Emitter: Observable<Float>, Equatable  {
     
     var events =  [String]()
-    var keyStorage=[String:[(String,Condition!)]]()
+    var keyStorage=[String:[(String,Condition!,Brush)]]()
 
     init(){
         super.init(0);
@@ -23,7 +23,7 @@ class Emitter: Observable<Float>, Equatable  {
     
     func createKeyStorage(){
         for e in events{
-            self.keyStorage[e] = [(String,Condition!)]();
+            self.keyStorage[e] = [(String,Condition!,Brush)]();
         }
         
     }
@@ -38,8 +38,8 @@ class Emitter: Observable<Float>, Equatable  {
         
     }
     
-    func assignKey(eventType:String,key:String,condition:Condition!){
-        keyStorage[eventType]?.append((key,condition))
+    func assignKey(eventType:String,key:String,condition:Condition!,brush:Brush){
+        keyStorage[eventType]?.append((key,condition,brush))
     }
     
     func removeKey(key:String){

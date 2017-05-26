@@ -236,7 +236,8 @@ class Sine:Generator{
         
     }
     override func get(id:String?) -> Float {
-        let v =  sin(self.index.get(id: nil)*freq+phase)*amp+amp;
+        let v =  sin(self.index.get(id: nil)*freq+phase)*amp/2+amp/2;
+        print("sine value =",v);
         self.incrementIndex();
         return v;
     }

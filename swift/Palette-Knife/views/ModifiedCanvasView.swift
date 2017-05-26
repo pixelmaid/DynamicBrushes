@@ -93,7 +93,7 @@ class ModifiedCanvasView: UIImageView {
        // if touch.type == .stylus {
         if(drawActive){
 
-            for touch in touches {
+            for var i in 0..<touches.count {
                 
                 let location = touch.location(in: self)
                 let x = Float(location.x);

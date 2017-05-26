@@ -54,7 +54,7 @@ class Stylus: TimeSeries, WebTransmitter {
         self.yDistance = Observable<Float>(0);
         super.init()
         self.name = "stylus"
-        
+        self.position.name = "stylus_position"
         position.set(x: x, y:y)
         self.events =  ["STYLUS_UP","STYLUS_DOWN","STYLUS_MOVE_BY","STYLUS_X_MOVE_BY","STYLUS_Y_MOVE_BY"]
         self.createKeyStorage();
@@ -134,7 +134,9 @@ class Stylus: TimeSeries, WebTransmitter {
     
     
     func onStylusUp(){
-        
+        for key in keyStorage["STYLUS_UP"]!  {
+            key.2.undergoing_transition = true;
+        }
         for key in keyStorage["STYLUS_UP"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;
@@ -143,6 +145,8 @@ class Stylus: TimeSeries, WebTransmitter {
                   NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_UP"])
                 
             }
+            key.2.undergoing_transition = false;
+
         }
         self.delta.set(x: 0,y:0)
         self.penDown.set(newValue: 0);
@@ -156,6 +160,7 @@ class Stylus: TimeSeries, WebTransmitter {
         //TODO: silent set, need to make more robust/ readable
         self.position.x.setSilent(newValue: x)
         self.position.y.setSilent(newValue: y)
+        print("stylus down",x,y)
         //print("stylus down listeners\(self.keyStorage["STYLUS_DOWN"])");
         for key in self.keyStorage["STYLUS_DOWN"]!  {
             if(key.1 != nil){
@@ -167,7 +172,7 @@ class Stylus: TimeSeries, WebTransmitter {
             }
             
         }
-        self.delta.set(x: 0,y:0)
+        //self.delta.set(x: 0,y:0)
         self.penDown.set(newValue: 1);
         self.prevTime = self.getTimeElapsed();
         self.speed = 0;
@@ -231,8 +236,8 @@ class Stylus: TimeSeries, WebTransmitter {
 
 
         self.prevPosition.set(val:position);
-        
-        self.position.set(x: x,y:y)
+        let newP = Point(x:x,y:y);
+        self.position.set(val:newP)
         
         let d = self.position.sub(point: self.prevPosition)
        // print("stylus pos\(d.x.get(id: nil),d.y.get(id: nil))");

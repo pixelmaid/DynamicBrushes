@@ -41,7 +41,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var currentState:String
     
     //geometric/stylistic properties
-    let bPosition:Point
+    let bPosition:Point //actual position
+    
+    let position:Point //settable positon
     let x:Observable<Float>
     let y:Observable<Float>
     
@@ -109,13 +111,16 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var bufferKey = NSUUID().uuidString;
     let childDieHandlerKey = NSUUID().uuidString;
     var deltaChangeBuffer = [DeltaStorage]();
+    var undergoing_transition = false;
    
     init(name:String, behaviorDef:BehaviorDefinition?, parent:Brush?, canvas:Canvas){
        
         //==BEGIN OBSERVABLES==//
         self.bPosition = Point(x:0,y:0)
-        self.x = self.bPosition.x;
-        self.y = self.bPosition.y;
+         self.position = Point(x:0,y:0)
+        self.x = self.position.x;
+        self.y = self.position.y;
+        self.position.name = "brush_position";
         
         self.delta = Point(x:0,y:0)
         self.dx = delta.x;
@@ -166,6 +171,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         //==BEGIN APPEND OBSERVABLES==//
         observables.append(bPosition)
         observables.append(delta)
+        observables.append(position)
+
         observables.append(origin)
         observables.append(scaling)
         
@@ -209,6 +216,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
         //setup listener for delta observable
         _ = self.delta.didChange.addHandler(target: self, handler:Brush.deltaChange, key:deltaKey)
+        _ = self.position.didChange.addHandler(target: self, handler:Brush.positionChange, key:deltaKey)
+
         _ = self.xBuffer.bufferEvent.addHandler(target: self, handler: Brush.deltaBufferLimitReached, key: bufferKey)
         
       
@@ -269,11 +278,25 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         bufferLimitX.set(newValue: 1)
     }
     
+    func positionChange(data:(String,(Float,Float),(Float,Float)),key:String){
+      if(!undergoing_transition){
+        let delta = self.position.sub(point: self.bPosition)
+        print("position changed",stylus.x.get(id:nil),self.position.x.get(id: nil),self.position.y.get(id:nil),self.bPosition.x.get(id: nil),self.bPosition.y.get(id:nil));
+        //TODO: this is hacky- fix?
+        self.delta.x.setSilent(newValue:delta.x.get(id: nil));
+        self.delta.y.setSilent(newValue:delta.y.get(id: nil));
+        self.delta.invalidate(oldValue: (0,0), newValue: (0,0))
+        }
+        
+        
+    }
+    
     func deltaChange(data:(String,(Float,Float),(Float,Float)),key:String){
-        DispatchQueue.global(qos: .userInitiated).async {
+        if(!undergoing_transition){
         let dX = self.dx.get(id:nil)
         let dY = self.dy.get(id:nil)
-        
+        print("delta change",dX,dY)
+
         //let pX = self.position.x.get(id:nil);
         //let pY = self.position.y.get(id:nil);
         
@@ -300,15 +323,24 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             
         let ds = DeltaStorage(dX:dX,dY:dY,r:r,sX:sX,sY:sY,rX:rX,rY:rY,d:d,h:h,s:s,l:l,a:a,dist:dist,xDist:xDist,yDist:yDist)
         
-            
-            DispatchQueue.main.sync {
-                self.processDeltaBuffer(ds:ds)
-            }
+          objc_sync_enter(deltaChangeBuffer)
+                self.deltaChangeBuffer.append(ds);
+                self.processDeltaBuffer();
+          objc_sync_exit(deltaChangeBuffer)
         }
+        
     }
     
-    func processDeltaBuffer(ds:DeltaStorage){
-        
+    func processDeltaBuffer(){
+        objc_sync_enter(deltaChangeBuffer)
+        var ds:DeltaStorage! = nil
+        if(deltaChangeBuffer.count>0){
+            ds = deltaChangeBuffer.remove(at: 0);
+        }
+        objc_sync_exit(deltaChangeBuffer)
+        if(ds == nil){
+            return;
+        }
         //  print("angle\(self.angle.get(nil),self.index.get(nil)))")
         let centerX = self.origin.x.get(id:nil)
         let centerY =  self.origin.y.get(id:nil)
@@ -356,7 +388,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
        
         self.currentCanvas!.addSegmentToStroke(parentID: self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight:cweight , color: color,alpha:ds.a)
         
-        self.bPosition.set(x:_dx,y:_dy);
+        self.bPosition.x.setSilent(newValue: _dx)
+        self.bPosition.y.setSilent(newValue:_dy)
         
         
         self.distanceIntervalCheck();
@@ -414,13 +447,13 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     
     func setOrigin(p:Point){
-          DispatchQueue.global(qos: .userInitiated).async {
-            DispatchQueue.main.sync {
             self.origin.set(val:p);
-                self.bPosition.set(val:self.origin)
-           }
-        }
-        
+            self.position.x.setSilent(newValue: self.origin.x.get(id: nil))
+            self.position.y.setSilent(newValue: self.origin.y.get(id: nil))
+            self.bPosition.x.setSilent(newValue: self.origin.x.get(id: nil))
+            self.bPosition.y.setSilent(newValue: self.origin.y.get(id: nil))
+            print("origin set =",stylus.x.get(id:nil),p.x.get(id: nil),p.y.get(id:nil));
+
     }
     
     dynamic func stateTransitionHandler(notification: NSNotification){
@@ -567,7 +600,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             case "spawn":
                 //print("spawning brush")
                 let arg = method.arguments![0];
-                let behaviorDef:BehaviorDefinition!;
+                var behaviorDef:BehaviorDefinition! = nil;
                let arg_string = arg as? String
                     if(arg_string == "parent"){
                         behaviorDef = self.parent!.behaviorDef!;
@@ -578,8 +611,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                     else{
                         behaviorDef = BehaviorManager.getBehaviorById(id:arg_string!);
                     }
-                
-                self.spawn(behavior:behaviorDef,num:(method.arguments![1] as! Int));
+                if(behaviorDef != nil){
+                    self.spawn(behavior:behaviorDef,num:(method.arguments![1] as! Int));
+                }
                 break;
             default:
                 break;
@@ -649,6 +683,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
 
     
     func setConstraint(constraint:Constraint){
+        print("calling set constraint on",  constraint.relativeProperty.name,constraint.relativeProperty,constraint.reference.get(id: self.id))
         constraint.relativeProperty.set(newValue: constraint.reference.get(id: self.id));
         
         
@@ -728,18 +763,15 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     
     func newStroke(){
-        DispatchQueue.global(qos: .userInitiated).async {
-            DispatchQueue.main.sync {
         self.currentCanvas!.currentDrawing!.retireCurrentStrokes(parentID: self.id)
         self.currentStroke = self.currentCanvas!.currentDrawing!.newStroke(parentID: self.id);
-                self.resetDistance();
-            }
-        }
+        self.resetDistance();
     }
     
     //creates number of clones specified by num and adds them as children
     func spawn(behavior:BehaviorDefinition,num:Int) {
         print("spawn called")
+        if(num > 0){
         for _ in 0...num-1{
             let child = Brush(name:name, behaviorDef: behavior, parent:self, canvas:self.currentCanvas!)
             self.children.append(child);
@@ -756,6 +788,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         //notify listeners of spawn event
         for key in keyStorage["SPAWN"]!  {
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"SPAWN"])
+        }
         }
     }
     

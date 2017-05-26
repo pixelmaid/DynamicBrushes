@@ -549,7 +549,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester {
     //from Requester protocol. Handles result of request
     internal func processRequest(data: (String, JSON?)) {
         // print("process request called for \(self,data)");
-        
         switch(data.0){
         case "disconnected":
             print("disconnected from server");

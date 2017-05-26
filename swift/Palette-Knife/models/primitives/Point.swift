@@ -21,7 +21,7 @@ class Point:Observable<(Float,Float)>,Geometry{
     let xKey = NSUUID().uuidString;
     let yKey = NSUUID().uuidString;
     var storedValue = Float(0);
-
+    
     init(x:Float,y:Float) {
         //==BEGIN OBSERVABLES==//
         self.x = Observable<Float>(0);
@@ -60,28 +60,53 @@ class Point:Observable<(Float,Float)>,Geometry{
     //coordinateChange
     //handler that only triggers when both x and y have been updated (assuming they're both constrained)
     func coordinateChange(data:(String, Float,Float),key:String){
-        
-       // print("x constrained,yconstrained",x.constrained,y.constrained,self.name)
         let name = data.0;
+        print("change for \(self.name)",x.constrainedAndActive(),y.constrainedAndActive(),name);
+
         let oldValue = data.1;
         _ = data.2;
         if(!x.constrained && !y.constrained){
             return;
         }
-        else if(x.constrained && !y.constrained && name == "x"){
-              didChange.raise(data: (name, (oldValue,self.y.get(id: nil)), (self.x.get(id: nil),self.y.get(id: nil))))
+        else if(x.constrainedAndPassive() && y.constrainedAndPassive()){
+            if(self.x.invalidated && self.y.invalidated){
+                if(name == "x"){
+                    didChange.raise(data: (name, (oldValue,storedValue),(self.x.get(id: nil),self.y.get(id: nil))));
+                    print("raise change",self.name)
+                }
+                else if(name == "y"){
+                    didChange.raise(data: (name, (storedValue,oldValue),(self.x.get(id: nil),self.y.get(id: nil))));
+                    print("raise change",self.name)
+                    
+                }
+                
+            }
+            else{
+                storedValue = oldValue;
+            }
+
         }
-        else if(!x.constrained && y.constrained && name == "y"){
+        else if(x.constrainedAndActive() && !y.constrainedAndActive() && name == "x" || x.constrainedAndPassive() && !y.constrainedAndPassive() && name == "x"){
+              didChange.raise(data: (name, (oldValue,self.y.get(id: nil)), (self.x.get(id: nil),self.y.get(id: nil))))
+            print("raise change",self.name)
+
+        }
+        else if(!x.constrainedAndActive() && y.constrainedAndActive() && name == "y" || !x.constrainedAndPassive() && y.constrainedAndPassive() && name == "y"){
             didChange.raise(data: (name, (self.x.get(id: nil),oldValue), (self.x.get(id: nil),self.y.get(id: nil))))
+            print("raise change",self.name)
+
         }
         else{
        
             if(self.x.invalidated && self.y.invalidated){
                 if(name == "x"){
                     didChange.raise(data: (name, (oldValue,storedValue),(self.x.get(id: nil),self.y.get(id: nil))));
+                    print("raise change",self.name)
                 }
                 else if(name == "y"){
                     didChange.raise(data: (name, (storedValue,oldValue),(self.x.get(id: nil),self.y.get(id: nil))));
+                    print("raise change",self.name)
+
                 }
                 
             }
@@ -101,13 +126,19 @@ class Point:Observable<(Float,Float)>,Geometry{
         self.y.set(newValue: y);
     }
     
+    override func setSilent(newValue: (Float, Float)) {
+        self.x.setSilent(newValue: newValue.0);
+        self.y.setSilent(newValue: newValue.1);
+
+    }
+    
     override func get(id:String?)->(Float,Float){
         return (self.x.get(id: nil),self.y.get(id: nil))
     }
 
-    override func getSilent()->(Float,Float){
+    /*override func getSilent()->(Float,Float){
         return (self.x.getSilent(),self.y.getSilent())
-    }
+    }*/
     
     func clone()->Point{
         return Point(x:self.x.get(id: nil),y:self.y.get(id: nil))

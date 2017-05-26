@@ -25,7 +25,7 @@ class BehaviorMapper{
     }
     
     func createStateTransition(id:String,name:String,reference:Emitter,relative:Brush, eventName:String, fromStateId:String, toStateId:String, condition:Condition!){
-        reference.assignKey(eventType: eventName,key:id,condition: condition)
+        reference.assignKey(eventType: eventName,key:id,condition: condition,brush:relative)
         let selector = #selector(relative.stateTransitionHandler(notification:))
         NotificationCenter.default.addObserver(relative, selector:selector, name:NSNotification.Name(rawValue: id), object: reference)
         relative.addStateTransition(id: id, name:name,reference: reference, fromStateId:fromStateId, toStateId:toStateId)

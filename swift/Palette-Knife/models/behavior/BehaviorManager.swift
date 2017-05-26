@@ -27,8 +27,11 @@ class BehaviorManager{
     
   
     
-    static func getBehaviorById(id:String)->BehaviorDefinition{
-        return BehaviorManager.behaviors[id]!
+    static func getBehaviorById(id:String)->BehaviorDefinition?{
+        if(BehaviorManager.behaviors[id] != nil){
+            return BehaviorManager.behaviors[id]
+        }
+        return nil
     }
     
     func loadBehavior(json:JSON){
