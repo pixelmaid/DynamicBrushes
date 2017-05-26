@@ -11,5 +11,5 @@
 //#import "DeviceInfoData.h"
 #import "ExceptionCatcher.h"
 #import <JotUI/JotUI.h>
-#import "JotViewManager.h"
+//#import "JotViewManager.h"
 #endif /* Bridging_Header_h */

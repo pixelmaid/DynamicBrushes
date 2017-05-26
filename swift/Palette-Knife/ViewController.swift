@@ -29,7 +29,7 @@ let kRightMargin =      10.0
 let pX = 1024
 let pY = 768
 
-class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester,JotViewDelegate{
+class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester/*,JotViewDelegate*/{
     
     
     
@@ -213,8 +213,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester,Jo
         
         self.initCanvas()
         
-        let jotView = JotView(frame: CGRect(x: 0, y: 0, width: 1024, height: 768));
-        jotView.delegate = self
+      let jotView = JotView(frame: CGRect(x: 0, y: 0, width: 1024, height: 768));
+        //jotView.delegate = self
         
         _ = RequestHandler.dataEvent.addHandler(target: self, handler: ViewController.processRequestHandler, key: dataEventKey)
         
@@ -859,7 +859,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester,Jo
     
    // #pragma mark - JotViewDelegate
     
-    func textureForStroke()->JotBrushTexture {
+  /*  func textureForStroke()->JotBrushTexture {
         return JotDefaultBrushTexture.sharedInstance()
     }
     
@@ -929,7 +929,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester,Jo
     func smoothness(forCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!) -> CGFloat {
         return 0.75;
 
-    }
+    }*/
 
     
 }

@@ -1,1 +1,0 @@
-../JotUI.framework/Resources/quad.fsh

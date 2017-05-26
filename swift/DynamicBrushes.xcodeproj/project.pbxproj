@@ -78,14 +78,13 @@
 		5FA4C72E1CDA7B5B004A728C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5FA4C72C1CDA7B5B004A728C /* LaunchScreen.storyboard */; };
 		5FA4C7391CDA7B5B004A728C /* Palette_KnifeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7381CDA7B5B004A728C /* Palette_KnifeTests.swift */; };
 		5FA4C7441CDA7B5B004A728C /* Palette_KnifeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7431CDA7B5B004A728C /* Palette_KnifeUITests.swift */; };
-		5FBDF0B11ED8C4E300022B07 /* JotUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FBDF0B01ED8C4E300022B07 /* JotUI.framework */; };
-		5FBDF0B31ED8D14F00022B07 /* JotViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5FBDF0B21ED8D14F00022B07 /* JotViewManager.m */; };
 		5FBDF0E71ED8D95300022B07 /* quad.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 5FBDF0E11ED8D95300022B07 /* quad.vsh */; };
 		5FBDF0E81ED8D95300022B07 /* coloredpoint.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 5FBDF0E21ED8D95300022B07 /* coloredpoint.vsh */; };
 		5FBDF0E91ED8D95300022B07 /* colorlesspoint.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 5FBDF0E31ED8D95300022B07 /* colorlesspoint.vsh */; };
 		5FBDF0EA1ED8D95300022B07 /* point.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 5FBDF0E41ED8D95300022B07 /* point.fsh */; };
 		5FBDF0EB1ED8D95300022B07 /* quad.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 5FBDF0E51ED8D95300022B07 /* quad.fsh */; };
 		5FBDF0EC1ED8D95300022B07 /* stencil.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 5FBDF0E61ED8D95300022B07 /* stencil.fsh */; };
+		5FBDF1051ED8E6EE00022B07 /* JotUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FBDF1041ED8E6EE00022B07 /* JotUI.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		5FC91D2D1EA00C2F00A19206 /* RequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC91D2C1EA00C2F00A19206 /* RequestHandler.swift */; };
 		5FD6CD121DE0EE0E007D94AA /* sm_pen_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FD6CD111DE0EE0E007D94AA /* sm_pen_blue.png */; };
 		5FE32F611ECE2EBB00ADC01E /* ToolbarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE32F601ECE2EBB00ADC01E /* ToolbarViewController.swift */; };
@@ -233,15 +232,13 @@
 		5FA4C73F1CDA7B5B004A728C /* DynamicBrushes.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DynamicBrushes.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FA4C7431CDA7B5B004A728C /* Palette_KnifeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette_KnifeUITests.swift; sourceTree = "<group>"; };
 		5FA4C7451CDA7B5B004A728C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5FBDF0B01ED8C4E300022B07 /* JotUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JotUI.framework; sourceTree = SOURCE_ROOT; };
-		5FBDF0B21ED8D14F00022B07 /* JotViewManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JotViewManager.m; path = objc_headers/JotViewManager.m; sourceTree = SOURCE_ROOT; };
-		5FBDF0B41ED8D1E500022B07 /* JotViewManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JotViewManager.h; sourceTree = "<group>"; };
 		5FBDF0E11ED8D95300022B07 /* quad.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = quad.vsh; sourceTree = "<group>"; };
 		5FBDF0E21ED8D95300022B07 /* coloredpoint.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = coloredpoint.vsh; sourceTree = "<group>"; };
 		5FBDF0E31ED8D95300022B07 /* colorlesspoint.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = colorlesspoint.vsh; sourceTree = "<group>"; };
 		5FBDF0E41ED8D95300022B07 /* point.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = point.fsh; sourceTree = "<group>"; };
 		5FBDF0E51ED8D95300022B07 /* quad.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = quad.fsh; sourceTree = "<group>"; };
 		5FBDF0E61ED8D95300022B07 /* stencil.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = stencil.fsh; sourceTree = "<group>"; };
+		5FBDF1041ED8E6EE00022B07 /* JotUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JotUI.framework; sourceTree = "<group>"; };
 		5FC91D2C1EA00C2F00A19206 /* RequestHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestHandler.swift; sourceTree = "<group>"; };
 		5FD6CD111DE0EE0E007D94AA /* sm_pen_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sm_pen_blue.png; sourceTree = "<group>"; };
 		5FE32F601ECE2EBB00ADC01E /* ToolbarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarViewController.swift; sourceTree = "<group>"; };
@@ -309,7 +306,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5FBDF0B11ED8C4E300022B07 /* JotUI.framework in Frameworks */,
+				5FBDF1051ED8E6EE00022B07 /* JotUI.framework in Frameworks */,
 				5F5037131EA94C67004ABAC1 /* Foundation.framework in Frameworks */,
 				5F5037111EA94C5F004ABAC1 /* CoreGraphics.framework in Frameworks */,
 				5F50370F1EA94C50004ABAC1 /* QuartzCore.framework in Frameworks */,
@@ -459,10 +456,8 @@
 		5F90F5721E9D5CE8006BB9FE /* objc_headers */ = {
 			isa = PBXGroup;
 			children = (
-				5FBDF0B41ED8D1E500022B07 /* JotViewManager.h */,
 				5F90F5731E9D5CE8006BB9FE /* Bridging-Header.h */,
 				5F90F5741E9D5CE8006BB9FE /* ExceptionCatcher.h */,
-				5FBDF0B21ED8D14F00022B07 /* JotViewManager.m */,
 			);
 			path = objc_headers;
 			sourceTree = "<group>";
@@ -659,7 +654,7 @@
 		A8FB9B6AFF975A979A8CC39F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				5FBDF0B01ED8C4E300022B07 /* JotUI.framework */,
+				5FBDF1041ED8E6EE00022B07 /* JotUI.framework */,
 				5F5037121EA94C67004ABAC1 /* Foundation.framework */,
 				5F5037101EA94C5F004ABAC1 /* CoreGraphics.framework */,
 				5F50370E1EA94C50004ABAC1 /* QuartzCore.framework */,
@@ -1089,7 +1084,6 @@
 				5F90F56B1E9D5BCC006BB9FE /* State.swift in Sources */,
 				5F50371A1EA9533A004ABAC1 /* fileUtil.swift in Sources */,
 				5F90F56E1E9D5BE3006BB9FE /* Stylus.swift in Sources */,
-				5FBDF0B31ED8D14F00022B07 /* JotViewManager.m in Sources */,
 				5F90F55C1E9D5A5C006BB9FE /* Brush.swift in Sources */,
 				5F5CED2C1ED10AED00A253A0 /* SelectedColorView.swift in Sources */,
 				5F90F56A1E9D5BCC006BB9FE /* Generator.swift in Sources */,
@@ -1362,9 +1356,29 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "Palette-Knife/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					"\"AWSCognito\"",
+					"-framework",
+					"\"AWSCore\"",
+					"-framework",
+					"\"AWSS3\"",
+					"-framework",
+					"\"Reflection\"",
+					"-framework",
+					"\"Starscream\"",
+					"-framework",
+					"\"SwiftKVC\"",
+					"-framework",
+					"\"SwiftyJSON\"",
+					"-framework",
+					"\"JotUI\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.jacobsj.dynamicbrushes;
 				PRODUCT_NAME = DynamicBrushes;
 				PROVISIONING_PROFILE = "";
@@ -1390,9 +1404,29 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				INFOPLIST_FILE = "Palette-Knife/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					"\"AWSCognito\"",
+					"-framework",
+					"\"AWSCore\"",
+					"-framework",
+					"\"AWSS3\"",
+					"-framework",
+					"\"Reflection\"",
+					"-framework",
+					"\"Starscream\"",
+					"-framework",
+					"\"SwiftKVC\"",
+					"-framework",
+					"\"SwiftyJSON\"",
+					"-framework",
+					"\"JotUI\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.jacobsj.dynamicbrushes;
 				PRODUCT_NAME = DynamicBrushes;
 				PROVISIONING_PROFILE = "";
