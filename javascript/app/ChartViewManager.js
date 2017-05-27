@@ -11,7 +11,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
             clientX: 0,
             clientY: 0
         };
-        var basic_template, empty_template, parent_template, child_template, ui_template;
+        var basic_template, empty_template, parent_template, child_template, ui_template, timer_template;
         var ChartViewManager = class extends Emitter {
 
             constructor(model, element) {
@@ -47,6 +47,10 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                     ui_template = data;
                 });
 
+                 $.getJSON("app/behavior_templates/timer_template.json", function(data) {
+                    timer_template = data;
+                });
+
                 //let $("#behavior_items")
 
                 window.onclick = function(event) {
@@ -61,7 +65,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                             }
                         }
                     }
-                }
+                };
                 
                 $("#behavior_template_menu span").click(function(event) {
 
@@ -75,6 +79,9 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                             break;
                         case "empty":
                             data = empty_template;
+                            break;
+                        case "timer":
+                            data = timer_template;
                             break;
                         case "parent":
                             data = parent_template;

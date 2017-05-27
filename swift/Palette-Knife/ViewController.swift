@@ -29,13 +29,18 @@ let kRightMargin =      10.0
 let pX = 1024
 let pY = 768
 
-class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester,JotViewDelegate{
+class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester,JotViewDelegate,JotViewStateProxyDelegate{
     
     
     
     // MARK: Properties
     
-    
+    var jotViewStateInkPath: String!
+    var jotViewStatePlistPath: String!
+    var numberOfTouches:Int = 0
+    var lastLoc:CGPoint!
+    var lastDate:NSDate!
+    var velocity = 0;
     
     var layerContainerView:LayerContainerView!
     
@@ -259,6 +264,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester,Jo
         let jotView = JotView(frame: CGRect(x: 0, y: 0, width: 1024, height: 768));
         jotView.delegate = self
         jotView.backgroundColor = UIColor.red;
+        
+        let paperState = JotViewStateProxy(delegate: self)
+        paperState?.loadJotStateAsynchronously(false, with: jotView.bounds.size, andScale: jotView.scale, andContext: jotView.context, andBufferManager: JotBufferManager.sharedInstance())
+        jotView.loadState(paperState)
         self.view.addSubview(jotView)
     }
     
@@ -878,26 +887,30 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester,Jo
     }
     
     func willBeginStroke(withCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!) -> Bool {
+        velocity = 1;
+        lastDate = NSDate();
+        numberOfTouches = 1;
+        
         return true;
     }
     func willMoveStroke(withCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!) {
-        /*  numberOfTouches++;
+        print("move stroke");
+         numberOfTouches += 1;
          if (numberOfTouches > 4){
          numberOfTouches = 4;
          }
+         let dur = NSDate().timeIntervalSince(lastDate as Date)
          
-         CGFloat dur = [[NSDate date] timeIntervalSinceDate:lastDate];
-         
-         if(dur > .01){
+         if(dur > 00.01){
          // require small duration, otherwise the pts/sec calculation can vary wildly
-         if ([self velocityForTouch:touch]) {
-         velocity = [self velocityForTouch:touch];
-         }
-         
-         lastDate = [NSDate date];
-         lastLoc = [touch preciseLocationInView:nil];
+         /*if self.velocityForTouch(touch) {
+         velocity = self.velocityForTouch
          }
          */
+         lastDate = NSDate()
+            lastLoc = touch.preciseLocation(in:nil);
+        }
+        
  
     }
     
@@ -917,13 +930,13 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester,Jo
     }
     
     func color(forCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!) -> UIColor! {
-        return UIColor.red
+        return UIColor.black
 
     }
     
  
     func width(forCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!) -> CGFloat {
-        return 10
+        return 6
 
     }
     
@@ -931,6 +944,41 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester,Jo
         return 0.75;
 
     }
+    
+    //#pragma mark - JotViewStateProxyDelegate
+    
+    func didLoadState(_ state: JotViewStateProxy!) {
+        
+    }
+    
+    func didUnloadState(_ state: JotViewStateProxy!) {
+        
+    }
+    
+    /*- (NSString*)documentsDir {
+    NSArray<NSString*>* userDocumentsPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    return [userDocumentsPaths objectAtIndex:0];
+    }
+    
+    
+    - (NSString*)jotViewStateInkPath {
+    return [[self documentsDir] stringByAppendingPathComponent:@"ink.png"];
+    }
+    
+    - (NSString*)jotViewStateThumbPath {
+    return [[self documentsDir] stringByAppendingPathComponent:@"thumb.png"];
+    }
+    
+    - (NSString*)jotViewStatePlistPath {
+    return [[self documentsDir] stringByAppendingPathComponent:@"state.plist"];
+    }
+    
+    - (void)didLoadState:(JotViewStateProxy*)state {
+    }
+    
+    - (void)didUnloadState:(JotViewStateProxy*)state {
+    }*/
+
 
     
 }
