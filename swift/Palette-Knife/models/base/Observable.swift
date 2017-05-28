@@ -49,11 +49,7 @@ class Observable<T>:Object, DisposableObservable {
     
     func invalidate(oldValue: T, newValue: T){
         invalidated = true;
-        if(self.name != ""){
-        print("invalidated",self.name)
-        }
         didChange.raise(data: (name, oldValue, newValue))
-
     }
     
     //used for passiveConstraints

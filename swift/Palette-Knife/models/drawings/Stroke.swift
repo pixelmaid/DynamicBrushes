@@ -33,6 +33,13 @@ struct StoredDrawing:Geometry{
     }
 }
 
+class DeallocPrinter {
+    deinit {
+        print("dealocated")
+    }
+}
+
+
 // Segment: line segement described as two points
 struct Segment:Geometry, Equatable {
     
@@ -45,7 +52,7 @@ struct Segment:Geometry, Equatable {
     var color = Color(r:0,g:0,b:0,a:1);
     var alpha = Float(0.5);
     let id = NSUUID().uuidString;
-    
+    let printer = DeallocPrinter()
     init(x:Float,y:Float) {
         self.init(x:x,y:y,hi_x:0,hi_y:0,ho_x:0,ho_y:0)
     }
@@ -100,18 +107,13 @@ struct Segment:Geometry, Equatable {
         return false;
     }
     
-    func drawIntoContext(context:CGContext?) {
+    func drawIntoContext(id:String, context:ModifiedCanvasView) {
         if(self.getPreviousSegment() != nil){
             
-            self.color.toUIColor().setStroke();
-            context?.setLineWidth(CGFloat(self.diameter))
-            context?.setLineCap(.round)
-            context?.setAlpha(CGFloat(self.alpha));
+            var a_color = self.color;
+           a_color.alpha = self.alpha;
             
-            context?.move(to: self.point.toCGPoint())
-            
-            context?.addLine(to:(self.getPreviousSegment()?.point.toCGPoint())!)
-            context?.strokePath()
+            context.renderStroke(currentStrokeId: id, toPoint: self.point.toCGPoint(), toWidth: CGFloat(self.diameter), toColor: a_color.toUIColor())
         }
     }
     
@@ -148,9 +150,9 @@ class Stroke:TimeSeries, Geometry {
     var dirtySegments = [Segment]()
     var toDrawSegments = [Segment]()
     var segments = [Segment]();
-    var xBuffer = CircularBuffer();
+   /* var xBuffer = CircularBuffer();
     var yBuffer = CircularBuffer();
-    var weightBuffer = CircularBuffer();
+    var weightBuffer = CircularBuffer();*/
     let id = NSUUID().uuidString;
     var parentID: String;
     var selected = false;
@@ -158,6 +160,10 @@ class Stroke:TimeSeries, Geometry {
     init(parentID:String){
         self.parentID = parentID;
         super.init();
+    }
+    
+    deinit{
+        print ("stroke \(self.id) dealocated")
     }
     
     func hitTest(testPoint:Point,threshold:Float,sameStroke:Bool)->Segment?{
@@ -194,21 +200,26 @@ class Stroke:TimeSeries, Geometry {
         return false
     }
     
-    func drawSegment(context:CGContext){
+    func drawSegment(context:ModifiedCanvasView){
         self.toDrawSegments.append(contentsOf: self.dirtySegments)
         self.dirtySegments.removeAll();
         for i in 0..<toDrawSegments.count{
-            toDrawSegments[i].drawIntoContext(context: context);
+           //toDrawSegments[i].drawIntoContext(id:self.id, context: context);
         }
+        
         self.toDrawSegments.removeAll();
+        self.segments.removeAll();
         self.dirty = false;
     }
     
     
-    func addSegment(_segment:Segment)->Segment?{
+    func addSegment(point:Point, d:Float, color:Color, alpha:Float)->Segment?{
         self.dirty = true;
         
-        var segment = _segment;
+        var segment = Segment(point:point)
+        segment.diameter = d
+        segment.color = color;
+        segment.alpha = alpha;
         segment.parent = self
         segment.index = self.segments.count;
         //segment.time = Float(0-timer.timeIntervalSinceNow);
@@ -220,41 +231,19 @@ class Stroke:TimeSeries, Geometry {
             //if(dist < 10){
             //  return nil;
             //}
-            xBuffer.push(v: segment.point.x.get(id: nil)-prevSeg.point.x.get(id: nil))
-            yBuffer.push(v: segment.point.y.get(id: nil)-prevSeg.point.y.get(id: nil))
+           // xBuffer.push(v: segment.point.x.get(id: nil)-prevSeg.point.x.get(id: nil))
+            //yBuffer.push(v: segment.point.y.get(id: nil)-prevSeg.point.y.get(id: nil))
             
         }
         else{
-            xBuffer.push(v: 0);
-            yBuffer.push(v: 0)
+            //xBuffer.push(v: 0);
+            //yBuffer.push(v: 0)
         }
         segments.append(segment)
         dirtySegments.append(segment);
         return segment
     }
     
-    func addSegment(point:Point)->Segment?{
-        let segment = Segment(point:point)
-        return self.addSegment(_segment:segment)
-    }
-    
-    func addSegment(point:Point, d:Float, color:Color, alpha:Float)->Segment?{
-        var segment = Segment(point:point)
-        segment.diameter = d
-        segment.color = color;
-        segment.alpha = alpha;
-        weightBuffer.push(v: d);
-        return self.addSegment(_segment:segment)
-    }
-    
-    
-    func addSegment(segments:[Segment])->[Segment]{
-        for i in 0...segments.count-1{
-            _ = self.addSegment(_segment:segments[i])
-        }
-        
-        return segments
-    }
     
     
     func getLength()->Float{
@@ -295,13 +284,7 @@ class Stroke:TimeSeries, Geometry {
      self.endAngle = endAngle
      self.clockwise = clockwise
      }*/
-    
-    func lineTo(to:Point) {
-        // Let's not be picky about calling moveTo() first:
-        let seg = Segment(point:to)
-        _ = self.addSegment(_segment:seg);
-    }
-    
+        
     
     
     

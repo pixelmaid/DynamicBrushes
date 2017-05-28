@@ -29,19 +29,13 @@ let kRightMargin =      10.0
 let pX = 1024
 let pY = 768
 
-class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester,JotViewDelegate,JotViewStateProxyDelegate{
+class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     
     
     // MARK: Properties
     
-    var jotViewStateInkPath: String!
-    var jotViewStatePlistPath: String!
-    var numberOfTouches:Int = 0
-    var lastLoc:CGPoint!
-    var lastDate:NSDate!
-    var velocity = 0;
-    
+       
     var layerContainerView:LayerContainerView!
     
     var behaviorManager: BehaviorManager?
@@ -55,6 +49,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester,Jo
     
     let brushEventKey = NSUUID().uuidString
     let dataEventKey = NSUUID().uuidString
+    let strokeGeneratedKey = NSUUID().uuidString
+    let strokeRemovedKey = NSUUID().uuidString
+
     
     var toolbarController: ToolbarViewController?
     var layerPanelController: LayerPanelViewController?
@@ -209,6 +206,16 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester,Jo
         }
     }
     
+    func strokeGeneratedHandler(data:(String),key:String){
+        self.layerContainerView.addStroke(id:data);
+    }
+    
+    func strokeRemovedHandler(data:([String]),key:String){
+        print("remove stroke handler raised",data)
+        self.layerContainerView.removeStroke(idList:data);
+
+    }
+    
     
     override func viewDidLoad() {
         
@@ -261,15 +268,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester,Jo
         fileListContainerView.clipsToBounds = true
         fileListContainerView.isHidden = true;
         
-        let jotView = JotView(frame: CGRect(x: 0, y: 0, width: 1024, height: 768));
-        jotView.delegate = self
-        jotView.backgroundColor = UIColor.red;
-        
-        let paperState = JotViewStateProxy(delegate: self)
-        paperState?.loadJotStateAsynchronously(false, with: jotView.bounds.size, andScale: jotView.scale, andContext: jotView.context, andBufferManager: JotBufferManager.sharedInstance())
-        jotView.loadState(paperState)
-        self.view.addSubview(jotView)
-    }
+          }
     
     
     override func viewDidAppear(_ animated: Bool) {
@@ -795,12 +794,15 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester,Jo
         currentCanvas = Canvas();
         behaviorManager = BehaviorManager(canvas: currentCanvas!);
         currentCanvas!.initDrawing();
-        // _ = currentCanvas!.geometryModified.addHandler(target: self,handler: ViewController.canvasDrawHandler, key:drawKey)
+        _ = currentCanvas!.currentDrawing?.strokeGeneratedEvent.addHandler(target: self, handler: ViewController.strokeGeneratedHandler, key: strokeGeneratedKey)
+         _ = currentCanvas!.currentDrawing?.strokeRemovedEvent.addHandler(target: self, handler: ViewController.strokeRemovedHandler, key: strokeRemovedKey)
     }
     
+
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+        print("did receive memory warning")
         // Dispose of any resources that can be recreated.
     }
     
@@ -813,6 +815,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester,Jo
     
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        print("touches began",layerContainerView.activeLayer)
+
         if(layerContainerView.activeLayer != nil){
             layerContainerView.activeLayer?.touchesBegan(touches, with: event)
         }
@@ -820,6 +824,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester,Jo
     
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        print("touches moved",layerContainerView.activeLayer)
         if(layerContainerView.activeLayer != nil){
             
             layerContainerView.activeLayer?.touchesMoved(touches, with: event)
@@ -838,7 +843,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester,Jo
     
     
     func handlePinch(recognizer : UIPinchGestureRecognizer) {
-        print("pinch")
         if let view = recognizer.view {
             view.transform = view.transform.scaledBy(x: recognizer.scale, y: recognizer.scale)
             recognizer.scale = 1
@@ -866,118 +870,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester,Jo
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
-    
-   // #pragma mark - JotViewDelegate
-    
-    func textureForStroke()->JotBrushTexture {
-        return JotDefaultBrushTexture.sharedInstance()
-    }
-    
-   func stepWidthForStroke()->CGFloat {
-    return CGFloat(2);
-    }
-    
-    func supportsRotation()->Bool {
-        return false
-    }
-    
-    
-    func willAddElements(_ elements: [Any]!, to stroke: JotStroke!, fromPreviousElement previousElement: AbstractBezierPathElement!) -> [Any]! {
-        return elements
-    }
-    
-    func willBeginStroke(withCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!) -> Bool {
-        velocity = 1;
-        lastDate = NSDate();
-        numberOfTouches = 1;
-        
-        return true;
-    }
-    func willMoveStroke(withCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!) {
-        print("move stroke");
-         numberOfTouches += 1;
-         if (numberOfTouches > 4){
-         numberOfTouches = 4;
-         }
-         let dur = NSDate().timeIntervalSince(lastDate as Date)
-         
-         if(dur > 00.01){
-         // require small duration, otherwise the pts/sec calculation can vary wildly
-         /*if self.velocityForTouch(touch) {
-         velocity = self.velocityForTouch
-         }
-         */
-         lastDate = NSDate()
-            lastLoc = touch.preciseLocation(in:nil);
-        }
-        
- 
-    }
-    
-    
-    func willEndStroke(withCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!, shortStrokeEnding: Bool) {
-        
-    }
-   
-    func didEndStroke(withCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!) {
-        
-    }
-    func willCancel(_ stroke: JotStroke!, withCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!) {
-        
-    }
-    func didCancel(_ stroke: JotStroke!, withCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!) {
-        
-    }
-    
-    func color(forCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!) -> UIColor! {
-        return UIColor.black
-
-    }
-    
- 
-    func width(forCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!) -> CGFloat {
-        return 6
-
-    }
-    
-    func smoothness(forCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!) -> CGFloat {
-        return 0.75;
-
-    }
-    
-    //#pragma mark - JotViewStateProxyDelegate
-    
-    func didLoadState(_ state: JotViewStateProxy!) {
-        
-    }
-    
-    func didUnloadState(_ state: JotViewStateProxy!) {
-        
-    }
-    
-    /*- (NSString*)documentsDir {
-    NSArray<NSString*>* userDocumentsPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    return [userDocumentsPaths objectAtIndex:0];
-    }
-    
-    
-    - (NSString*)jotViewStateInkPath {
-    return [[self documentsDir] stringByAppendingPathComponent:@"ink.png"];
-    }
-    
-    - (NSString*)jotViewStateThumbPath {
-    return [[self documentsDir] stringByAppendingPathComponent:@"thumb.png"];
-    }
-    
-    - (NSString*)jotViewStatePlistPath {
-    return [[self documentsDir] stringByAppendingPathComponent:@"state.plist"];
-    }
-    
-    - (void)didLoadState:(JotViewStateProxy*)state {
-    }
-    
-    - (void)didUnloadState:(JotViewStateProxy*)state {
-    }*/
 
 
     

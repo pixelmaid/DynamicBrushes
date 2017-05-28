@@ -43,11 +43,11 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     //geometric/stylistic properties
     let bPosition:Point //actual position
     
-    let position:Point //settable positon
+    let position:LinkedPoint //settable positon
     let x:Observable<Float>
     let y:Observable<Float>
     
-    let delta:Point
+    let delta:LinkedPoint
     let dx:Observable<Float>
     let dy:Observable<Float>
 
@@ -117,12 +117,12 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
        
         //==BEGIN OBSERVABLES==//
         self.bPosition = Point(x:0,y:0)
-         self.position = Point(x:0,y:0)
+         self.position = LinkedPoint(x:0,y:0)
         self.x = self.position.x;
         self.y = self.position.y;
         self.position.name = "brush_position";
         
-        self.delta = Point(x:0,y:0)
+        self.delta = LinkedPoint(x:0,y:0)
         self.dx = delta.x;
         self.dy = delta.y
         
@@ -324,7 +324,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         let ds = DeltaStorage(dX:dX,dY:dY,r:r,sX:sX,sY:sY,rX:rX,rY:rY,d:d,h:h,s:s,l:l,a:a,dist:dist,xDist:xDist,yDist:yDist)
         
           objc_sync_enter(deltaChangeBuffer)
-                self.deltaChangeBuffer.append(ds);
+               self.deltaChangeBuffer.append(ds);
                 self.processDeltaBuffer();
           objc_sync_exit(deltaChangeBuffer)
         }
@@ -341,6 +341,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         if(ds == nil){
             return;
         }
+        
         //  print("angle\(self.angle.get(nil),self.index.get(nil)))")
         let centerX = self.origin.x.get(id:nil)
         let centerY =  self.origin.y.get(id:nil)
@@ -375,14 +376,14 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.xDistance.set(newValue: ds.xDist + abs(xDelt));
         self.yDistance.set(newValue: ds.yDist + abs(yDelt));
         
-        xBuffer.push(v: xDelt);
-        yBuffer.push(v: yDelt);
+       // xBuffer.push(v: xDelt);
+       // yBuffer.push(v: yDelt);
         
         bufferLimitX.set(newValue: 0)
         bufferLimitY.set(newValue: 0)
         
         let cweight = ds.d;
-        weightBuffer.push(v: cweight);
+        //weightBuffer.push(v: cweight);
        
         let color = Color(h: ds.h, s: ds.s, l: ds.l, a: 1)
        

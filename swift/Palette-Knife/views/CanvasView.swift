@@ -51,10 +51,8 @@ class CanvasView:  UIImageView {
             let c = seg.color;
             let d = seg.diameter
             
-            let normal = 
             
-            
-            self.drawPath(fP: (seg.getPreviousSegment()?.point)!,tP:seg.point,w:seg.diameter, c:c, alpha: seg.alpha,context:context)
+          //  self.drawPath(fP: (seg.getPreviousSegment()?.point)!,tP:seg.point,w:seg.diameter, c:c, alpha: seg.alpha,context:context)
         }
     }
     

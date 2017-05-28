@@ -10,12 +10,13 @@ import Foundation
 import UIKit
 import SwiftyJSON
 
-class LayerContainerView: UIView{
+class LayerContainerView: UIView {
     
     var activeLayer:ModifiedCanvasView?
     var layers = [ModifiedCanvasView]();
     var drawActive = true;
     
+   
     init(width:Float,height:Float){
         let frame = CGRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(height))
         super.init(frame: frame);
@@ -135,6 +136,18 @@ class LayerContainerView: UIView{
         
     }
     
+    func addStroke(id:String){
+        if(self.activeLayer != nil){
+            self.activeLayer?.beginStroke(id: id)
+        }
+    }
+    
+    func removeStroke(idList:[String]){
+        if(self.activeLayer != nil){
+            self.activeLayer?.endStrokes(idList:idList)
+        }
+    }
+    
     func setActiveLayer(id:String){
         for l in layers{
             if l.id == id {
@@ -210,12 +223,15 @@ class LayerContainerView: UIView{
     
     func drawIntoCurrentLayer(currentCanvas:Canvas){
         if(self.activeLayer != nil ){
-            let context = self.activeLayer?.pushContext();
+           let context = self.activeLayer?.pushContext();
             currentCanvas.drawSegment(context:context!)
-            self.activeLayer?.popContext();
+           
         }
         
     }
+    
+
+
     
     
 }

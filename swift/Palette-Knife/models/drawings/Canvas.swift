@@ -38,16 +38,11 @@ class Canvas: WebTransmitter, Hashable{
     }
     
     
-    func drawSegment(context:CGContext){
+    func drawSegment(context:ModifiedCanvasView){
         if(currentDrawing!.dirty){
             currentDrawing?.drawSegment(context: context)
         }
         self.dirty = false;
-        /*for i in 0..<drawings.count{
-            if(drawings[i].dirty){
-                drawings[i].drawSegment(context:context);
-            }
-        }*/
     }
     
     func initDrawing(){

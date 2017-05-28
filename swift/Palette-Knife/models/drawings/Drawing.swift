@@ -16,21 +16,21 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     var dirty = false
     
     var id = NSUUID().uuidString;
-    var activeStrokes = [String:[Stroke]]();
+    private var activeStrokes = [String:[Stroke]]();
     var allStrokes = [Stroke]();
     var transmitEvent = Event<(String)>()
     var initEvent = Event<(WebTransmitter,String)>()
-    
+    let strokeGeneratedEvent = Event<(String)>();
+    let strokeRemovedEvent = Event<([String])>();
     let svgGenerator = SVGGenerator();
     
     var geometryModified = Event<(Geometry,String,String)>()
-    
     override init(){
         super.init();
         self.name = "drawing"
     }
     
-    func drawSegment(context:CGContext){
+    func drawSegment(context:ModifiedCanvasView){
         
         for i in 0..<allStrokes.count{
             // print("strokes \(i,strokes[i].dirty)");
@@ -89,14 +89,32 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     }
     
     func retireCurrentStrokes(parentID:String){
+        print("retire current strokes",parentID,self.activeStrokes[parentID],self.activeStrokes)
         if (self.activeStrokes[parentID] != nil){
+            var toRemove = [String]();
+            for s in self.activeStrokes[parentID]!{
+                toRemove.append(s.id);
+            }
             self.activeStrokes[parentID]!.removeAll();
+
+            for (i, stroke) in allStrokes.reversed().enumerated() {
+                if (stroke.parentID == parentID){
+                    print("removing stroke at",i)
+                    stroke.segments.removeAll();
+                    
+                    stroke.dirtySegments.removeAll()
+                    stroke.destroy();
+                }
+            }
+            self.strokeRemovedEvent.raise(data: toRemove);
         }
+        allStrokes.removeAll();
+        print("current number of strokes",self.allStrokes.count,self.activeStrokes)
     }
     
     func newStroke(parentID:String)->Stroke{
+       
         let stroke = Stroke(parentID:parentID);
-        stroke.parentID = parentID;
         if (self.activeStrokes[parentID] == nil){
             self.activeStrokes[parentID] = [Stroke]()
         }
@@ -106,7 +124,9 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         
         
         self.allStrokes.append(stroke);
-        
+        self.strokeGeneratedEvent.raise(data: stroke.id)
+        print("new strokes",parentID,self.activeStrokes[parentID])
+
         return stroke;
     }
     

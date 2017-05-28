@@ -40,10 +40,7 @@ class Point:Observable<(Float,Float)>,Geometry{
 
         self.x.name = "x"
         self.y.name = "y"
-        self.name = "point"
-        _ = self.x.didChange.addHandler(target: self, handler: Point.coordinateChange,key:xKey)
-        _ = self.y.didChange.addHandler(target: self, handler: Point.coordinateChange,key:yKey)
-
+     
     }
     
     func toJSON()->String{
@@ -57,64 +54,6 @@ class Point:Observable<(Float,Float)>,Geometry{
         super.destroy();
     }
     
-    //coordinateChange
-    //handler that only triggers when both x and y have been updated (assuming they're both constrained)
-    func coordinateChange(data:(String, Float,Float),key:String){
-        let name = data.0;
-        print("change for \(self.name)",x.constrainedAndActive(),y.constrainedAndActive(),name);
-
-        let oldValue = data.1;
-        _ = data.2;
-        if(!x.constrained && !y.constrained){
-            return;
-        }
-        else if(x.constrainedAndPassive() && y.constrainedAndPassive()){
-            if(self.x.invalidated && self.y.invalidated){
-                if(name == "x"){
-                    didChange.raise(data: (name, (oldValue,storedValue),(self.x.get(id: nil),self.y.get(id: nil))));
-                    print("raise change",self.name)
-                }
-                else if(name == "y"){
-                    didChange.raise(data: (name, (storedValue,oldValue),(self.x.get(id: nil),self.y.get(id: nil))));
-                    print("raise change",self.name)
-                    
-                }
-                
-            }
-            else{
-                storedValue = oldValue;
-            }
-
-        }
-        else if(x.constrainedAndActive() && !y.constrainedAndActive() && name == "x" || x.constrainedAndPassive() && !y.constrainedAndPassive() && name == "x"){
-              didChange.raise(data: (name, (oldValue,self.y.get(id: nil)), (self.x.get(id: nil),self.y.get(id: nil))))
-            print("raise change",self.name)
-
-        }
-        else if(!x.constrainedAndActive() && y.constrainedAndActive() && name == "y" || !x.constrainedAndPassive() && y.constrainedAndPassive() && name == "y"){
-            didChange.raise(data: (name, (self.x.get(id: nil),oldValue), (self.x.get(id: nil),self.y.get(id: nil))))
-            print("raise change",self.name)
-
-        }
-        else{
-       
-            if(self.x.invalidated && self.y.invalidated){
-                if(name == "x"){
-                    didChange.raise(data: (name, (oldValue,storedValue),(self.x.get(id: nil),self.y.get(id: nil))));
-                    print("raise change",self.name)
-                }
-                else if(name == "y"){
-                    didChange.raise(data: (name, (storedValue,oldValue),(self.x.get(id: nil),self.y.get(id: nil))));
-                    print("raise change",self.name)
-
-                }
-                
-            }
-            else{
-                storedValue = oldValue;
-            }
-        }
-    }
     
      func set(val:Point){
         let point = val 
@@ -262,8 +201,85 @@ class Point:Observable<(Float,Float)>,Geometry{
     
     
 }
+
+//point with an internal listener
+//be careful when using. will cause memory leaks if not destroyed
+//should never be initialized inside a function.
+class LinkedPoint:Point{
+    override init(x: Float, y: Float) {
+        super.init(x: x, y: y);
+        self.name = "linked_point"
+         _ = self.x.didChange.addHandler(target: self, handler: LinkedPoint.coordinateChange,key:xKey)
+         _ = self.y.didChange.addHandler(target: self, handler: LinkedPoint.coordinateChange,key:yKey)
+
+    }
+    
+    //coordinateChange
+    //handler that only triggers when both x and y have been updated (assuming they're both constrained)
+    func coordinateChange(data:(String, Float,Float),key:String){
+        let name = data.0;
+        print("change for \(self.name)",x.constrainedAndActive(),y.constrainedAndActive(),name);
+        
+        let oldValue = data.1;
+        _ = data.2;
+        if(!x.constrained && !y.constrained){
+            return;
+        }
+        else if(x.constrainedAndPassive() && y.constrainedAndPassive()){
+            if(self.x.invalidated && self.y.invalidated){
+                if(name == "x"){
+                    didChange.raise(data: (name, (oldValue,storedValue),(self.x.get(id: nil),self.y.get(id: nil))));
+                    print("raise change",self.name)
+                }
+                else if(name == "y"){
+                    didChange.raise(data: (name, (storedValue,oldValue),(self.x.get(id: nil),self.y.get(id: nil))));
+                    print("raise change",self.name)
+                    
+                }
+                
+            }
+            else{
+                storedValue = oldValue;
+            }
+            
+        }
+        else if(x.constrainedAndActive() && !y.constrainedAndActive() && name == "x" || x.constrainedAndPassive() && !y.constrainedAndPassive() && name == "x"){
+            didChange.raise(data: (name, (oldValue,self.y.get(id: nil)), (self.x.get(id: nil),self.y.get(id: nil))))
+            print("raise change",self.name)
+            
+        }
+        else if(!x.constrainedAndActive() && y.constrainedAndActive() && name == "y" || !x.constrainedAndPassive() && y.constrainedAndPassive() && name == "y"){
+            didChange.raise(data: (name, (self.x.get(id: nil),oldValue), (self.x.get(id: nil),self.y.get(id: nil))))
+            print("raise change",self.name)
+            
+        }
+        else{
+            
+            if(self.x.invalidated && self.y.invalidated){
+                if(name == "x"){
+                    didChange.raise(data: (name, (oldValue,storedValue),(self.x.get(id: nil),self.y.get(id: nil))));
+                    print("raise change",self.name)
+                }
+                else if(name == "y"){
+                    didChange.raise(data: (name, (storedValue,oldValue),(self.x.get(id: nil),self.y.get(id: nil))));
+                    print("raise change",self.name)
+                    
+                }
+                
+            }
+            else{
+                storedValue = oldValue;
+            }
+        }
+    }
+
+}
+
 func ==(lhs: Point, rhs: Point) -> Bool {
     return lhs.x.get(id: nil) == rhs.x.get(id: nil) && lhs.y.get(id: nil) == rhs.y.get(id: nil)
 }
+
+
+
 
 
