@@ -32,7 +32,7 @@ class Emitter: Observable<Float>, Equatable  {
         self.invalidated = true;
         
         for key in keyStorage["INVALIDATED"]!  {
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0, "event":"INVALIDATED"])
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.2.id, "event":"INVALIDATED"])
             
         }
         

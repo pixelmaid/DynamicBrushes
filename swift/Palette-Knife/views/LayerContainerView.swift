@@ -83,7 +83,6 @@ class LayerContainerView: UIView {
     
     func loadFromData(fileData:JSON)->[(String,String,Bool,Bool)]{
         self.deleteAllLayers();
-        print("fileData =",fileData);
         var jsonLayerArray = fileData["layers"].arrayValue;
         var newLayers = [(String,String,Bool,Bool)]()
         for i in 0..<jsonLayerArray.count{
@@ -101,8 +100,6 @@ class LayerContainerView: UIView {
             newLayers.append((id,name,isActive,isHidden))
 
         }
-        
-        print("loaded layers=",self.layers)
         return newLayers
         
     }
@@ -119,6 +116,7 @@ class LayerContainerView: UIView {
     func setDrawActive(val:Bool){
         drawActive = val
         self.activeLayer?.drawActive = drawActive;
+        //self.activeLayer?.eraseAll();
     }
     
     
@@ -187,7 +185,6 @@ class LayerContainerView: UIView {
         var toRemove:ModifiedCanvasView? = nil;
         var targetIndex:Int? = nil
         for i in 0..<layers.count{
-            print("checking layer ",i,layers[i].id,id)
             if layers[i].id == id {
                 toRemove = layers[i];
                 targetIndex = i;

@@ -35,7 +35,6 @@ class SavedFilesPanelViewController: UITableViewController{
     
     
     func loadFiles(newFiles:[String:String]){
-        print("load files",newFiles);
         files.removeAll();
         for (key,value) in newFiles{
             let id = key
@@ -50,7 +49,6 @@ class SavedFilesPanelViewController: UITableViewController{
     
       // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
-        print("num of sections called");
         return 1;
     }
     

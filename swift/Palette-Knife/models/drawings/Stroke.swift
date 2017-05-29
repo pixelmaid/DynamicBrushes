@@ -35,7 +35,9 @@ struct StoredDrawing:Geometry{
 
 class DeallocPrinter {
     deinit {
+        #if DEBUG
         print("dealocated")
+        #endif
     }
 }
 
@@ -52,7 +54,7 @@ struct Segment:Geometry, Equatable {
     var color = Color(r:0,g:0,b:0,a:1);
     var alpha = Float(0.5);
     let id = NSUUID().uuidString;
-    let printer = DeallocPrinter()
+    //let printer = DeallocPrinter()
     init(x:Float,y:Float) {
         self.init(x:x,y:y,hi_x:0,hi_y:0,ho_x:0,ho_y:0)
     }
@@ -90,26 +92,22 @@ struct Segment:Geometry, Equatable {
     
     func hitTest(testPoint:Point,threshold:Float)->Bool{
         let dist = self.point.dist(point: testPoint);
-        /*let px = testPoint.x.get(id: nil);
-         let py = testPoint.y.get(id:nil)
-         let sx = self.point.x.get(id:nil)
-         let sy = self.point.x.get(id:nil)
-         
-         //print("checking hit",testPoint==self.point,px,py,sx,sy,threshold,dist)*/
         
         if testPoint == self.point{
             return false
         }
         if dist <= threshold {
+            #if DEBUG
             print("hit achieved")
+            #endif
             return true
         }
         return false;
     }
     
     func drawIntoContext(id:String, context:ModifiedCanvasView) {
+
         if(self.getPreviousSegment() != nil){
-            
             var a_color = self.color;
            a_color.alpha = self.alpha;
             
@@ -163,7 +161,9 @@ class Stroke:TimeSeries, Geometry {
     }
     
     deinit{
+        #if DEBUG
         print ("stroke \(self.id) dealocated")
+        #endif
     }
     
     func hitTest(testPoint:Point,threshold:Float,sameStroke:Bool)->Segment?{
@@ -201,10 +201,11 @@ class Stroke:TimeSeries, Geometry {
     }
     
     func drawSegment(context:ModifiedCanvasView){
+        
         self.toDrawSegments.append(contentsOf: self.dirtySegments)
         self.dirtySegments.removeAll();
         for i in 0..<toDrawSegments.count{
-           //toDrawSegments[i].drawIntoContext(id:self.id, context: context);
+           toDrawSegments[i].drawIntoContext(id:self.id, context: context);
         }
         
         self.toDrawSegments.removeAll();
@@ -213,9 +214,9 @@ class Stroke:TimeSeries, Geometry {
     }
     
     
-    func addSegment(point:Point, d:Float, color:Color, alpha:Float)->Segment?{
+    func addSegment(brushId:String, point:Point, d:Float, color:Color, alpha:Float)->Segment?{
         self.dirty = true;
-        
+
         var segment = Segment(point:point)
         segment.diameter = d
         segment.color = color;
@@ -225,7 +226,7 @@ class Stroke:TimeSeries, Geometry {
         //segment.time = Float(0-timer.timeIntervalSinceNow);
         
         if(segments.count>0){
-            let prevSeg = segments[segments.count-1];
+           // let prevSeg = segments[segments.count-1];
             // let dist = segment.point.dist(point: prevSeg.point)
             
             //if(dist < 10){
@@ -241,6 +242,7 @@ class Stroke:TimeSeries, Geometry {
         }
         segments.append(segment)
         dirtySegments.append(segment);
+
         return segment
     }
     

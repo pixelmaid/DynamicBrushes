@@ -45,7 +45,6 @@ public class Event<T> {
         let e = eventHandlers[i]
             let eW = e as! Disposable
             if eW.key == key{
-                print("found event handler for key to remove\(key)")
                 eW.dispose();
                 return;
             }

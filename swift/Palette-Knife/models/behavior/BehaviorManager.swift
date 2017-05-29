@@ -68,7 +68,6 @@ class BehaviorManager{
         resultJSON["type"] = JSON("authoring_response");
         resultJSON["authoring_type"] = JSON(type);
 
-        print("authoring request type: \(type), data:\(data)")
         switch(type){
         case "set_behavior_active":
             let behaviorId = data["behaviorId"].stringValue;
@@ -105,14 +104,12 @@ class BehaviorManager{
             let name = data["name"].stringValue;
             let id = data["id"].stringValue;
             let data = data["data"]
-            print("behavior_added",data);
             //let behavior = BehaviorDefinition(id:data["id"].stringValue, name: data["name"].stringValue);
             let behavior = BehaviorDefinition(id:id,name:name);
             behavior.parseJSON(json: data)
 
             
             if(BehaviorManager.behaviors[id] != nil){
-                print("throwing error")
                 throw BehaviorError.duplicateName;
             }
             else{
@@ -149,7 +146,7 @@ class BehaviorManager{
             return resultJSON
             
         case "state_added":
-           // print("state added behaviors\(BehaviorManager.behaviors.count,data["behaviorId"].stringValue,BehaviorManager.behaviors)");
+           
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseStateJSON(data:data);
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)
             
@@ -227,7 +224,6 @@ class BehaviorManager{
         case "method_removed":
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.removeMethod(methodId: data["methodId"].stringValue)
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas);
-            //print("removed method");
             resultJSON["result"] = "success";
             return resultJSON;
             
@@ -243,7 +239,6 @@ class BehaviorManager{
         case "mapping_updated":
             let behaviorId = data["behaviorId"].stringValue;
             
-            //print("behavior update mapping, target state:\(data["stateId"].stringValue)");
             
             BehaviorManager.behaviors[behaviorId]!.parseMappingJSON(data: data)
             BehaviorManager.behaviors[behaviorId]!.createBehavior(canvas:canvas)
@@ -272,7 +267,6 @@ class BehaviorManager{
                 return resultJSON;
             }
             catch{
-                print("mapping id does not exist, cannot remove");
                 resultJSON["result"] = "failure";
                 return resultJSON;
             }
@@ -292,7 +286,6 @@ class BehaviorManager{
             
             
         case "generator_added":
-            print("generator added",data)
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseGeneratorJSON(data:data)
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)
             

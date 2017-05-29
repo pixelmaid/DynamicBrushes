@@ -142,7 +142,7 @@ class Stylus: TimeSeries, WebTransmitter {
                 let eventCondition = key.1;
             }
             else{
-                  NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_UP"])
+                  NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_UP"])
                 
             }
             key.2.undergoing_transition = false;
@@ -160,15 +160,13 @@ class Stylus: TimeSeries, WebTransmitter {
         //TODO: silent set, need to make more robust/ readable
         self.position.x.setSilent(newValue: x)
         self.position.y.setSilent(newValue: y)
-        print("stylus down",x,y)
-        print("stylus down listeners\(self.keyStorage["STYLUS_DOWN"])");
         for key in self.keyStorage["STYLUS_DOWN"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;
                 eventCondition?.evaluate()
             }
             else{
-                //NotificationCenter.default.post(name:NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_DOWN"])
+                NotificationCenter.default.post(name:NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_DOWN"])
             }
             
         }
@@ -181,21 +179,22 @@ class Stylus: TimeSeries, WebTransmitter {
     }
     
     func onStylusMove(x:Float,y:Float,force:Float,angle:Float){
-        print("stylus move by key storage",keyStorage["STYLUS_MOVE_BY"]);
         for key in keyStorage["STYLUS_MOVE_BY"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;
                 if(eventCondition?.evaluate())!{
-                     NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_MOVE_BY"])
+                     NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_MOVE_BY"])
                     
                 }
                 else{
+                    #if DEBUG
                     //print("EVALUATION FOR CONDITION FAILED")
+                    #endif
                 }
                 
             }
             else{
-                NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_MOVE_BY"])
+                NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_MOVE_BY"])
                 
             }
         }
@@ -203,16 +202,18 @@ class Stylus: TimeSeries, WebTransmitter {
             if(key.1 != nil){
                 let eventCondition = key.1;
                 if(eventCondition?.evaluate())!{
-                    NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_X_MOVE_BY"])
+                    NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_X_MOVE_BY"])
                     
                 }
                 else{
-                    //print("EVALUATION FOR CONDITION FAILED")
+                    #if DEBUG
+                        //print("EVALUATION FOR CONDITION FAILED")
+                    #endif
                 }
                 
             }
             else{
-                NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_X_MOVE"])
+                NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_X_MOVE"])
                 
             }
         }
@@ -220,16 +221,18 @@ class Stylus: TimeSeries, WebTransmitter {
             if(key.1 != nil){
                 let eventCondition = key.1;
                 if(eventCondition?.evaluate())!{
-                    NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_Y_MOVE_BY"])
+                    NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_Y_MOVE_BY"])
                     
                 }
                 else{
-                    //print("EVALUATION FOR CONDITION FAILED")
+                    #if DEBUG
+                        //print("EVALUATION FOR CONDITION FAILED")
+                    #endif
                 }
                 
             }
             else{
-                NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STYLUS_Y_MOVE_BY"])
+                NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_Y_MOVE_BY"])
                 
             }
         }
@@ -241,7 +244,6 @@ class Stylus: TimeSeries, WebTransmitter {
        
     
       let d = self.position.sub(point: self.prevPosition)
-       // print("stylus pos\(d.x.get(id: nil),d.y.get(id: nil))");
 
       
         self.delta.set(val:d)

@@ -218,8 +218,10 @@ class LinkedPoint:Point{
     //handler that only triggers when both x and y have been updated (assuming they're both constrained)
     func coordinateChange(data:(String, Float,Float),key:String){
         let name = data.0;
+        #if DEBUG
         print("change for \(self.name)",x.constrainedAndActive(),y.constrainedAndActive(),name);
-        
+        #endif
+
         let oldValue = data.1;
         _ = data.2;
         if(!x.constrained && !y.constrained){
@@ -229,12 +231,15 @@ class LinkedPoint:Point{
             if(self.x.invalidated && self.y.invalidated){
                 if(name == "x"){
                     didChange.raise(data: (name, (oldValue,storedValue),(self.x.get(id: nil),self.y.get(id: nil))));
+                    #if DEBUG
                     print("raise change",self.name)
+                    #endif
                 }
                 else if(name == "y"){
                     didChange.raise(data: (name, (storedValue,oldValue),(self.x.get(id: nil),self.y.get(id: nil))));
-                    print("raise change",self.name)
-                    
+                    #if DEBUG
+                        print("raise change",self.name)
+                    #endif
                 }
                 
             }
@@ -245,25 +250,30 @@ class LinkedPoint:Point{
         }
         else if(x.constrainedAndActive() && !y.constrainedAndActive() && name == "x" || x.constrainedAndPassive() && !y.constrainedAndPassive() && name == "x"){
             didChange.raise(data: (name, (oldValue,self.y.get(id: nil)), (self.x.get(id: nil),self.y.get(id: nil))))
-            print("raise change",self.name)
-            
+            #if DEBUG
+                print("raise change",self.name)
+            #endif
         }
         else if(!x.constrainedAndActive() && y.constrainedAndActive() && name == "y" || !x.constrainedAndPassive() && y.constrainedAndPassive() && name == "y"){
             didChange.raise(data: (name, (self.x.get(id: nil),oldValue), (self.x.get(id: nil),self.y.get(id: nil))))
-            print("raise change",self.name)
-            
+            #if DEBUG
+                print("raise change",self.name)
+            #endif
         }
         else{
             
             if(self.x.invalidated && self.y.invalidated){
                 if(name == "x"){
                     didChange.raise(data: (name, (oldValue,storedValue),(self.x.get(id: nil),self.y.get(id: nil))));
-                    print("raise change",self.name)
+                    #if DEBUG
+                        print("raise change",self.name)
+                    #endif
                 }
                 else if(name == "y"){
                     didChange.raise(data: (name, (storedValue,oldValue),(self.x.get(id: nil),self.y.get(id: nil))));
-                    print("raise change",self.name)
-                    
+                    #if DEBUG
+                        print("raise change",self.name)
+                    #endif
                 }
                 
             }

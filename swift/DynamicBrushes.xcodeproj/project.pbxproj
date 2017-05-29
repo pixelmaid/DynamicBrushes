@@ -20,7 +20,6 @@
 		5F50370F1EA94C50004ABAC1 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F50370E1EA94C50004ABAC1 /* QuartzCore.framework */; };
 		5F5037111EA94C5F004ABAC1 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F5037101EA94C5F004ABAC1 /* CoreGraphics.framework */; };
 		5F5037131EA94C67004ABAC1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F5037121EA94C67004ABAC1 /* Foundation.framework */; };
-		5F5037151EA94D2C004ABAC1 /* BitmapCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5037141EA94D2C004ABAC1 /* BitmapCanvasView.swift */; };
 		5F50371A1EA9533A004ABAC1 /* fileUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5037171EA9533A004ABAC1 /* fileUtil.swift */; };
 		5F50371B1EA9533A004ABAC1 /* shaderUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5037181EA9533A004ABAC1 /* shaderUtil.swift */; };
 		5F50371D1EA957F5004ABAC1 /* debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F50371C1EA957F5004ABAC1 /* debug.swift */; };
@@ -35,7 +34,6 @@
 		5F5CED2C1ED10AED00A253A0 /* SelectedColorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5CED271ED10AED00A253A0 /* SelectedColorView.swift */; };
 		5F5CED2D1ED10AED00A253A0 /* SwiftHSVColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5CED281ED10AED00A253A0 /* SwiftHSVColorPicker.swift */; };
 		5F5CED301ED1132600A253A0 /* UIInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5CED2F1ED1132600A253A0 /* UIInput.swift */; };
-		5F90F5361E9D588F006BB9FE /* CanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5341E9D588F006BB9FE /* CanvasView.swift */; };
 		5F90F5411E9D59D4006BB9FE /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5381E9D59D4006BB9FE /* Emitter.swift */; };
 		5F90F5421E9D59D4006BB9FE /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5391E9D59D4006BB9FE /* Event.swift */; };
 		5F90F5441E9D59D4006BB9FE /* Matrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F53B1E9D59D4006BB9FE /* Matrix.swift */; };
@@ -166,7 +164,6 @@
 		5F50370E1EA94C50004ABAC1 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		5F5037101EA94C5F004ABAC1 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		5F5037121EA94C67004ABAC1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		5F5037141EA94D2C004ABAC1 /* BitmapCanvasView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BitmapCanvasView.swift; sourceTree = "<group>"; };
 		5F5037171EA9533A004ABAC1 /* fileUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = fileUtil.swift; sourceTree = "<group>"; };
 		5F5037181EA9533A004ABAC1 /* shaderUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = shaderUtil.swift; sourceTree = "<group>"; };
 		5F50371C1EA957F5004ABAC1 /* debug.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = debug.swift; sourceTree = "<group>"; };
@@ -181,7 +178,6 @@
 		5F5CED271ED10AED00A253A0 /* SelectedColorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectedColorView.swift; sourceTree = "<group>"; };
 		5F5CED281ED10AED00A253A0 /* SwiftHSVColorPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftHSVColorPicker.swift; sourceTree = "<group>"; };
 		5F5CED2F1ED1132600A253A0 /* UIInput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIInput.swift; sourceTree = "<group>"; };
-		5F90F5341E9D588F006BB9FE /* CanvasView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CanvasView.swift; sourceTree = "<group>"; };
 		5F90F5381E9D59D4006BB9FE /* Emitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Emitter.swift; sourceTree = "<group>"; };
 		5F90F5391E9D59D4006BB9FE /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		5F90F53B1E9D59D4006BB9FE /* Matrix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Matrix.swift; sourceTree = "<group>"; };
@@ -548,8 +544,6 @@
 			isa = PBXGroup;
 			children = (
 				5F5CED231ED10AED00A253A0 /* ColorPicker */,
-				5F90F5341E9D588F006BB9FE /* CanvasView.swift */,
-				5F5037141EA94D2C004ABAC1 /* BitmapCanvasView.swift */,
 				5F0EB6611EB5775100225A6E /* ModifiedCanvasView.swift */,
 				5FE32F621ECE535100ADC01E /* LayerContainerView.swift */,
 				5FE32F661ECE66AE00ADC01E /* LayerCell.swift */,
@@ -1105,14 +1099,12 @@
 				5FE32F611ECE2EBB00ADC01E /* ToolbarViewController.swift in Sources */,
 				5F5CED2D1ED10AED00A253A0 /* SwiftHSVColorPicker.swift in Sources */,
 				5F90F5451E9D59D4006BB9FE /* Numerical.swift in Sources */,
-				5F90F5361E9D588F006BB9FE /* CanvasView.swift in Sources */,
 				5FC91D2D1EA00C2F00A19206 /* RequestHandler.swift in Sources */,
 				5F5CED291ED10AED00A253A0 /* BrightnessView.swift in Sources */,
 				5F0EB6621EB5775100225A6E /* ModifiedCanvasView.swift in Sources */,
 				5F90F54D1E9D5A16006BB9FE /* Color.swift in Sources */,
 				5F90F5651E9D5BCC006BB9FE /* BehaviorDefinition.swift in Sources */,
 				5F90F5471E9D59D4006BB9FE /* SVGGenerator.swift in Sources */,
-				5F5037151EA94D2C004ABAC1 /* BitmapCanvasView.swift in Sources */,
 				5F90F5581E9D5A41006BB9FE /* Line.swift in Sources */,
 				5F90F5571E9D5A41006BB9FE /* Fabricator.swift in Sources */,
 				5F90F5441E9D59D4006BB9FE /* Matrix.swift in Sources */,
@@ -1380,6 +1372,7 @@
 					"-framework",
 					"\"JotUI\"",
 				);
+				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" \"-DDEBUG\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jacobsj.dynamicbrushes;
 				PRODUCT_NAME = DynamicBrushes;
 				PROVISIONING_PROFILE = "";

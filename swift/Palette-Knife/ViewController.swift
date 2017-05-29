@@ -79,7 +79,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     required init?(coder: NSCoder) {
         layerContainerView = LayerContainerView(width:1000,height:768);
-        super.init(coder: coder);
+            super.init(coder: coder);
         
     }
     
@@ -96,7 +96,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             
         }
         else if(segue.identifier == "colorPickerSegue"){
-            print("color picker segue")
             colorPickerView = SwiftHSVColorPicker(frame: CGRect(x:10, y:20, width:300, height:400))
             segue.destination.view.addSubview(colorPickerView!)
             colorPickerView?.setViewColor(UIColor.red)
@@ -211,7 +210,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     }
     
     func strokeRemovedHandler(data:([String]),key:String){
-        print("remove stroke handler raised",data)
         self.layerContainerView.removeStroke(idList:data);
 
     }
@@ -287,7 +285,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
         
         var templateJSON:JSON = [:]
-        templateJSON["filename"] = "templates/basic_template.json"
+        templateJSON["filename"] = "templates/dual_template.json"
        templateJSON["type"] = JSON("load")
         let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: self)
         RequestHandler.addRequest(requestData:behaviorDownloadRequest);
@@ -321,13 +319,14 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             }
         }
         
-        print("processed list",newFiles);
         fileListController?.loadFiles(newFiles: newFiles)
         
     }
     
     func keyRecognized(){
+        #if DEBUG
         print("key is recognized")
+        #endif
         if(startup == true){
             self.addProjectInitRequests()
             startup = false;
@@ -343,7 +342,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             message = "That key was not recognized, please try again"
         }
         let alertController = UIAlertController(title: "Login", message: message, preferredStyle: .alert)
-        //print("present alert",alertController);
         let confirmAction = UIAlertAction(title: "Confirm", style: .default) { (_) in
             if let field = alertController.textFields?[0] {
                 // store your data
@@ -352,7 +350,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
                 self.addConnectionRequests();
             
             } else {
+                #if DEBUG
                 print("no login key provided");
+                #endif
             }
         }
         
@@ -443,7 +443,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             }
             
         }
-        print("save data",save_json,save_images)
     }
     
     func backupProject(filename:String){
@@ -453,7 +452,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     func saveProject(){
         
         let alertController = UIAlertController(title: "Save", message: "Enter a name for your project", preferredStyle: .alert)
-        //print("present alert",alertController);
         let confirmAction = UIAlertAction(title: "Save", style: .default) { (_) in
             if let field = alertController.textFields?[0] {
                 self.uploadProject(type:"save", filename: field.text!)
@@ -461,7 +459,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
                 
                 
             } else {
+                #if DEBUG
                 print("no name key provided");
+                #endif
             }
         }
         
@@ -492,7 +492,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             RequestHandler.addRequest(requestData:uploadRequest);
         }
         else{
+             #if DEBUG
             print("cannot backup image because nothing is there")
+            #endif
         }
     }
     
@@ -511,7 +513,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             present(activityViewController, animated: true, completion: {})
         }
         else{
+             #if DEBUG
             print("cannot share image because nothing is there")
+            #endif
         }
 
         
@@ -542,7 +546,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     
     func newLayer(){
-        print("new layer created")
         let id = layerContainerView.newLayer(name: (layerPanelController?.getNextName())!,id:nil);
         layerPanelController?.addLayer(layerId: id);
     }
@@ -559,10 +562,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     //from Requester protocol. Handles result of request
     internal func processRequest(data: (String, JSON?)) {
-        // print("process request called for \(self,data)");
         switch(data.0){
         case "disconnected":
-            print("disconnected from server");
             recconnectAlert();
             break;
         case "incorrect_key":
@@ -584,7 +585,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         case "download_complete":
             currentBehaviorName = (data.1?["short_filename"].stringValue)!
             currentBehaviorFile = (data.1?["filename"].stringValue)!
-            print("download complete",currentBehaviorName,currentBehaviorFile);
 
             behaviorManager?.loadBehavior(json: data.1!["data"])
             self.synchronizeWithAuthoringClient();
@@ -620,14 +620,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             
             break;
         case "upload_complete":
-            print("upload complete\(data.1)");
             let uploadtype = data.1!["type"];
             switch(uploadtype){
             case "backup":
-                print("backup complete");
                 break;
             case "save":
-                print("save complete");
                 let saveCompleteRequest = Request(target:"socket",action:"send_storage_data",data:data.1,requester:self)
                 RequestHandler.addRequest(requestData: saveCompleteRequest)
                 break;
@@ -644,18 +641,14 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
                 let attempt = try behaviorManager?.handleAuthoringRequest(authoring_data: authoring_data);
                 
                 let socketRequest = Request(target: "socket", action: "authoring_response", data: attempt, requester: self)
-                print("behavior manager recieved authoring  process request \(attempt,authoring_data)");
                 
                 RequestHandler.addRequest(requestData:socketRequest);
-                /*if(authoring_data["data"]["type"].stringValue == "behavior_added"){
-                    print("behavior added")
-                    self.synchronizeWithAuthoringClient();
-                }*/
-                // self.backupBehavior();
                 
             }
             catch{
+                #if DEBUG
                 print("failed authoring request");
+                #endif
                 var jsonArg:JSON = [:]
                 jsonArg["type"] = "authoring_response"
                 jsonArg["result"] = "failed"
@@ -668,7 +661,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
 
             break;
         case "storage_request":
-            print("storage request recieved \(data.1)");
             let storage_data = data.1!["data"];
             let type = storage_data["type"].stringValue;
             let filename = storage_data["filename"].stringValue;
@@ -725,7 +717,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     
     func loadProject(projectName:String, artistName:String){
-        print("load project called")
         let project_filename = "saved_files/"+artistName+"/drawings/"+projectName+"/data.json"
         var loadJSON:JSON = [:]
         loadJSON["filename"] = JSON(project_filename);
@@ -753,8 +744,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     }
     
     func backupBehavior(filename:String){
-        
-        print("backup behavior called")
         let artistName = UserDefaults.standard.string(forKey: "userkey")
         var behavior_json:JSON = [:]
         for (key,val) in BehaviorManager.behaviors{
@@ -802,7 +791,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+        #if DEBUG
         print("did receive memory warning")
+        #endif
         // Dispose of any resources that can be recreated.
     }
     
@@ -815,7 +806,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print("touches began",layerContainerView.activeLayer)
 
         if(layerContainerView.activeLayer != nil){
             layerContainerView.activeLayer?.touchesBegan(touches, with: event)
@@ -824,7 +814,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print("touches moved",layerContainerView.activeLayer)
         if(layerContainerView.activeLayer != nil){
             
             layerContainerView.activeLayer?.touchesMoved(touches, with: event)
@@ -849,9 +838,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         }
     }
     
-    func handleRotate(recognizer : UIRotationGestureRecognizer) {
-        // print("rotate")
-        
+    func handleRotate(recognizer : UIRotationGestureRecognizer) {        
         if let view = recognizer.view {
             view.transform = view.transform.rotated(by: recognizer.rotation)
             recognizer.rotation = 0

@@ -51,46 +51,52 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
     func beginStroke(id:String){
         autoreleasepool {
         if(jotView.state == nil){
-            print("state is nil")
-
+            #if DEBUG
+                print("state is nil")
+            #endif
             return;
         }
         let newStroke = JotStroke(texture: self.textureForStroke(), andBufferManager: jotView.state.bufferManager());
         newStroke!.delegate = jotView as JotStrokeDelegate;
         strokes[id] = newStroke!;
-        print("added stroke",id)
         }
         JotGLContext.validateEmptyStack()
     }
     
-    func renderStroke(currentStrokeId:String,toPoint:CGPoint,toWidth:CGFloat,toColor:UIColor){
+    func renderStroke(currentStrokeId:String,toPoint:CGPoint,toWidth:CGFloat,toColor:UIColor!){
         let currentStroke = strokes[currentStrokeId]
         currentStroke?.lock();
         
-        jotView.state.currentStroke = currentStroke
+        //jotView.state.currentStroke = currentStroke
         autoreleasepool {
 
         //self.willMoveStroke(withCoalescedTouch: coalescedTouch, from: touch)
-        var shouldSkipSegment = false;
+        //var shouldSkipSegment = false;
        
-        if(currentStroke != nil && !shouldSkipSegment){
-            print("renderStroke",currentStroke)
-
-           jotView.addLine(toAndRenderStroke: currentStroke, to: toPoint, toWidth: toWidth, to: toColor, andSmoothness: self.getSmoothness(), withStepWidth: self.stepWidthForStroke())
+        if(currentStroke != nil){
+           jotView.addLine(toAndRenderStroke: currentStroke, to: toPoint, toWidth: toWidth*4, to: toColor, andSmoothness: self.getSmoothness(), withStepWidth: self.stepWidthForStroke())
+            
         }
         }
 
         currentStroke?.unlock();
+    }
+    
+    func validateEmptyStack(){
         JotGLContext.validateEmptyStack();
     }
+
     
     func endStrokes(idList:[String]){
         for id in idList{
             let stroke =  strokes.removeValue(forKey: id)
             endStroke(currentStroke: stroke!)
-            print("removed stroke",id)
         }
-        print("total number of strokes",strokes.count);        
+        #if DEBUG
+
+        print("total number of jot view strokes",strokes.count);
+        
+        #endif
     }
     
     func endStroke(currentStroke:JotStroke){
@@ -121,6 +127,9 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
             stylus.onStylusDown(x: x, y:y, force:force, angle:angle)
             }
         }
+        else {
+            self.beginStroke(id:"eraseStroke")
+        }
     }
     
     func exportPNGAsFile()->String?{
@@ -132,7 +141,6 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
             let imageData = UIImagePNGRepresentation(image!)
             UIImagePNGRepresentation(UIImage())
             fileManager.createFile(atPath: path as String, contents: imageData, attributes: nil)
-            print("returning image",path);
             return path;
         }*/
         return nil
@@ -155,16 +163,18 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
         var touches = [UITouch]()
-        print("touches moved")
         if let coalescedTouches = event?.coalescedTouches(for: touch) {
             touches = coalescedTouches
         } else {
             touches.append(touch)
         }
+        #if DEBUG
+            print("number of coalesced touches \(touches.count)");
+        #endif
        // if touch.type == .stylus {
         if(drawActive){
 
-            for var i in 0..<touches.count {
+            for touch in touches {
                 
                 let location = touch.location(in: self)
                 let x = Float(location.x);
@@ -178,18 +188,11 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
         }
             //Erase mode
         else {
-            /*UIGraphicsBeginImageContextWithOptions(bounds.size, false, 0.0)
-            self.image?.draw(in: self.bounds)
-            let context = UIGraphicsGetCurrentContext()
+             let location = touch.location(in: self)
+            let width = CGFloat(uiInput.diameter.get(id: nil));
+            
 
-            for touch in touches {
-                let location = touch.location(in: self)
-                let previousLocation = touch.previousLocation(in: self)
-                let force = touch.force
-                eraseCanvas(context:context!, start:previousLocation,end:location,force:force);
-            }
-            self.image = UIGraphicsGetImageFromCurrentImageContext()
-            UIGraphicsEndImageContext()*/
+           self.renderStroke(currentStrokeId: "eraseStroke", toPoint: location, toWidth: width, toColor: nil)
         }
        // }
         
@@ -217,6 +220,9 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         stylus.onStylusUp()
+        if drawActive == false {
+           self.endStrokes(idList: ["eraseStroke"])
+        }
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {

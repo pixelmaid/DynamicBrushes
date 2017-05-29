@@ -51,14 +51,12 @@ class TextExpression:Observable<Float>{
     var eventHandlers = [Disposable]();
 
     init(id:String,operandList:[String:Observable<Float>],text:String){
-        print("creating text expression",id,text)
         self.id = id;
         self.text = text;
         self.operandList = operandList;
         super.init(0);
         
         for (key,value) in self.operandList{
-            print("subscribing to \(key,value)");
            value.subscribe(id: self.id);
             let operandKey = NSUUID().uuidString;
             let handler = value.didChange.addHandler(target: self, handler: TextExpression.setHandler,key:operandKey)
@@ -103,7 +101,9 @@ class TextExpression:Observable<Float>{
            result  = exp.expressionValue(with: nil, context: nil) as! Float// 25.0
         
         }
-       // print("exception: \(id,text,exception,result)")
+        #if DEBUG
+            print("exception: \(exception,result)")
+        #endif
 
         return result;
 

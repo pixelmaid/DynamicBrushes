@@ -55,8 +55,6 @@ class BehaviorDefinition {
         let methodJSON = json["methods"].arrayValue;
         let generatorJSON = json["generators"].arrayValue;
         let conditionJSON = json["conditions"].arrayValue;
-        print("parse JSON",stateJSON)
-        print("generator json",generatorJSON)
         for i in 0..<generatorJSON.count{
             self.parseGeneratorJSON(data:generatorJSON[i])
         }
@@ -168,7 +166,6 @@ class BehaviorDefinition {
             break;
         }
         
-        // print("arguments= \(arguments)")
         self.addMethod(targetTransition: targetTransition, methodId: data["methodId"].stringValue, targetMethod: targetMethod, arguments: arguments)
         
         return methodJSON;
@@ -238,7 +235,6 @@ class BehaviorDefinition {
     
     func parseGeneratorJSON(data:JSON){
         let type = data["generator_type"].stringValue;
-        print("parsing type",type)
         switch(type){
         case "random":
             self.addRandomGenerator(name: data["generatorId"].stringValue, min: data["min"].floatValue, max: data["max"].floatValue)
@@ -264,7 +260,6 @@ class BehaviorDefinition {
             break;
             
         case "ease":
-            //print("adding ease\(data["k"])")
             self.addEaseGenerator(name: data["generatorId"].stringValue, a: data["a"].floatValue, b: data["b"].floatValue, k: data["k"].floatValue);
             
             break;
@@ -306,7 +301,6 @@ class BehaviorDefinition {
         var emitterOperandList = [String:(Any?,[String]?,[String]?)]();
         
         if(expressionPropertyList != JSON.null){
-            // print("expression list present\(expressionPropertyList.dictionaryValue)")
             let dataExpressionDictionary = expressionPropertyList.dictionaryValue;
             for (key,value) in dataExpressionDictionary{
                 let dataEmitterValue = (value.arrayValue)[0].stringValue;
@@ -351,7 +345,6 @@ class BehaviorDefinition {
             }
         }
         
-        //  print("emitter operand list \(emitterOperandList,expressionText)")
         self.addExpression(id: expressionId, emitterOperandList: emitterOperandList, expressionText: expressionText)
     }
     
@@ -365,7 +358,6 @@ class BehaviorDefinition {
     }
     
     func parseStateJSON(data:JSON){
-        //print("parsing state JSON \(data)");
         let stateId = data["id"].stringValue
         let stateName = data["name"].stringValue
         let stateX = data["x"].floatValue
@@ -375,7 +367,6 @@ class BehaviorDefinition {
     
     func parseTransitionJSON(data:JSON){
         let event = data["eventName"].stringValue;
-        //print("adding transition \(data)")
         let emitter:Emitter?
         if(data["emitter"] != JSON.null){
             switch(data["emitter"].stringValue){
@@ -624,7 +615,6 @@ class BehaviorDefinition {
                     if let methodArgs = method.2{
                         let targetBehavior = methodArgs[0]
                         let behaviorId: String
-                        // print("method args 1=\(methodArgs)");
                         let num = methodArgs[1] as! Int
                         if let def =  targetBehavior as? BehaviorDefinition {
                             behaviorId = def.id;
@@ -632,7 +622,6 @@ class BehaviorDefinition {
                             
                         }
                         else if let def =  targetBehavior as? String {
-                            //print("target behavior",targetBehavior)
 
                             behaviorId = def;
                             methodJSON["currentArguments"] = JSON([behaviorId,num]);
@@ -802,12 +791,10 @@ class BehaviorDefinition {
     }
     
     func addState(stateId:String, stateName:String, stateX:Float, stateY:Float){
-        //print("adding state\(stateId,stateName,stateX,stateY)");
         states[stateId] = (stateName,stateX,stateY);
     }
     
     func setStatePosition(stateId:String,x:Float,y:Float){
-        print("set state position",x,y)
         let stateName = states[stateId]!.0
         states[stateId] = (stateName,x,y);
     }
@@ -873,7 +860,6 @@ class BehaviorDefinition {
                 
             }
         }
-        //print("method with id \(methodId) not found");
     }
     
     func removeMethodsForTransition(transitionId:String){
@@ -883,13 +869,11 @@ class BehaviorDefinition {
             return;
         }
         
-        //print("no methods for transition \(transitionId)")
         
     }
     
     func addTransition(transitionId:String, name:String, eventEmitter:Emitter?,parentFlag:Bool, event:String?, fromStateId:String,toStateId:String, condition:String?, displayName:String){
         transitions[transitionId]=((name,eventEmitter, parentFlag, event, fromStateId,toStateId,condition, displayName));
-        // print("current transitions \(transitions.count)");
     }
     
     func setTransitionToDefaultEvent(transitionId:String) throws{
@@ -905,7 +889,6 @@ class BehaviorDefinition {
     
     
     func removeTransition(id:String) throws{
-        //print("removing transition \(transitions,id)")
         
         removeMethodsForTransition(transitionId: id);
         
@@ -924,7 +907,7 @@ class BehaviorDefinition {
                     try removeTransition(id: key);
                 }
                 catch{
-                    //print("no transition by that id for that state");
+                    print("no transition by that id for that state");
                 }
                 
             }
@@ -958,14 +941,13 @@ class BehaviorDefinition {
                     
                 }
                 catch{
-                    //print("no mapping by that state id")
+                    print("no mapping by that state id")
                 }
             }
         }
     }
     
     func removeMapping(id:String) throws{
-        //print("removing mappings \(mappings,id)")
         if(mappings[id] != nil){
             let mapping = mappings[id];
             if(mapping!.0 == nil){
@@ -984,7 +966,6 @@ class BehaviorDefinition {
     }
     
     func removeMappingReference(id:String) throws{
-        //print("removing mapping reference \(mappings,id)")
         if(mappings[id] != nil){
             mappings[id]!.0 = nil;
             mappings[id]!.1 = nil;
@@ -996,7 +977,6 @@ class BehaviorDefinition {
     
     func addExpression(id:String, emitterOperandList:[String:(Any?,[String]?,[String]?)], expressionText:String){
         expressions[id]=(emitterOperandList,expressionText);
-        //print("adding expression\(expressions)");
     }
     
     
@@ -1004,7 +984,6 @@ class BehaviorDefinition {
     //TODO: add in cases for other generators
     func generateGenerator(name:String, data:(String,[Any?]),targetBrush:Brush){
         let id = targetBrush.id;
-        print("generating generator",data.0);
         switch(data.0){
         case "interval":
             let interval = Interval(inc:data.1[0] as! Float,times:data.1[1] as? Int)
@@ -1040,7 +1019,6 @@ class BehaviorDefinition {
         default:
             break;
         }
-       print("generate generator\(storedGenerators,id)")
     }
     
     func generateSingleOperand(targetBrush:Brush, emitter:Any?,propList:[String]?)->Observable<Float>{
@@ -1164,7 +1142,6 @@ class BehaviorDefinition {
     func generateCondition(targetBrush:Brush, data:(String, Any?,[String]?,Any?,[String]?,String)){
         let name = data.0;
         let id = targetBrush.id;
-        print("condition:\(id,data)")
         let operands = generateOperands(targetBrush: targetBrush, data:(data.1,data.2,data.3,data.4,data.5))
         let operand1 = operands.0;
         let operand2 = operands.1;
@@ -1177,14 +1154,12 @@ class BehaviorDefinition {
     func generateExpression(targetBrush:Brush, name:String, data:([String:(Any?,[String]?,[String]?)],String)){
         let id = targetBrush.id
         var operands = [String:Observable<Float>]();
-        print("expression operand data\(data)");
         for (key,value) in data.0 {
             let emitter = value.0;
             let propList = value.1;
             let operand = self.generateSingleOperand(targetBrush: targetBrush, emitter: emitter, propList: propList)
             operands[key] = operand;
         }
-        //print("expression operands=\(operands)");
         let expression = TextExpression(id:name,operandList: operands, text: data.1);
         self.storedExpressions[id]![name] = expression;
     }
@@ -1213,7 +1188,6 @@ class BehaviorDefinition {
                 self.clearExpressionsForId(id: b.id)
                 self.clearGeneratorsForId(id: b.id)
                 self.clearConditionsForId(id: b.id)
-                print("brush death for ",b.id)
                 return
             }
         }
@@ -1283,7 +1257,6 @@ class BehaviorDefinition {
         
         if(self.active_status){
             for i in 0..<self.auto_spawn_num{
-                //print("create new brush",i);
                 let targetBrush = Brush(name: "brush_" + String(i) + "_" + self.id, behaviorDef: self, parent: nil, canvas: canvas)
                 self.initBrushBehavior(targetBrush:targetBrush);
             }
@@ -1315,13 +1288,11 @@ class BehaviorDefinition {
             
             
         }
-        //print("expressions after created \(self.storedExpressions)");
         
         for (id,state) in states{
             behaviorMapper.createState(target: targetBrush,stateId:id, stateName:state.0)
         }
         
-        //print("transitions:\(transitions)")
         for (key,transition) in transitions{
             if((transition.3?.isEmpty) == false){
                 var reference:Any
@@ -1345,14 +1316,13 @@ class BehaviorDefinition {
                 }
                 
                 
-                //print("generating transition \(key) because event is: \(transition.3)");
                 
                 behaviorMapper.createStateTransition(id: key,name: transition.0,reference:reference as! Emitter, relative: targetBrush, eventName: transition.3!, fromStateId:transition.4,toStateId:transition.5, condition: condition)
             }
                 
                 
             else{
-                //print("could not generate transition \(key) because event is empty")
+                print("could not generate transition \(key) because event is empty")
                 
             }
             
@@ -1360,7 +1330,6 @@ class BehaviorDefinition {
         
         for (key,method_list) in methods{
             for method in method_list {
-                //print("generating method:\(targetBrush,transitionName:key,methodId:method.0,methodName:method.1,arguments:method.2)");
                 behaviorMapper.addMethod(relative: targetBrush,transitionName:key,methodId:method.0,methodName:method.1,arguments:method.2);
             }
         }
@@ -1368,12 +1337,11 @@ class BehaviorDefinition {
         //referenceProperty!,referenceName!,relativePropertyName,stateId
         for (id, mapping_data) in mappings{
             if(mapping_data.0 != nil || mapping_data.1 != nil ){
-                //print("generating mapping \(id) because reference is not nil")
                 
                 self.generateMapping(targetBrush: targetBrush,id:id, data:mapping_data);
             }
             else{
-                //print("could not generate mapping \(id) because reference is nil")
+                print("could not generate mapping \(id) because reference is nil")
             }
             
         }

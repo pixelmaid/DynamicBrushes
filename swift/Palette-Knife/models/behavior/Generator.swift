@@ -52,7 +52,6 @@ class Interval:Generator{
     override func get(id:String?) -> Float {
         if(infinite){
             let inf = Float(self.index)*self.inc
-            print("interval val \(inf,inc)");
             return inf;
         }
         if(index < val.count){
@@ -163,8 +162,9 @@ class Ease: Generator{
         
     override func get(id:String?) -> Float {
         self.val = a/(1+pow(2.7182818284590451,(x-b)*k))
-        print("ease val: \(self.val,self.x,a,b,k)");
-
+        #if DEBUG
+            print("ease val: \(self.val,self.x,a,b,k)");
+        #endif
         self.x += 1;
         return self.val
     }
@@ -237,7 +237,6 @@ class Sine:Generator{
     }
     override func get(id:String?) -> Float {
         let v =  sin(self.index.get(id: nil)*freq+phase)*amp/2+amp/2;
-        print("sine value =",v);
         self.incrementIndex();
         return v;
     }

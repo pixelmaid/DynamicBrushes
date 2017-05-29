@@ -47,7 +47,9 @@ class SocketManager: WebSocketDelegate{
     // MARK: Websocket Delegate Methods.
     
     func websocketDidConnect(socket ws: WebSocket) {
+        #if DEBUG
         print("websocket is connected")
+        #endif
         //send name of client
         pingInterval = Timer.scheduledTimer(timeInterval: 15, target: self, selector: #selector(SocketManager.pingIntervalCallback), userInfo: nil, repeats: true)
           socket?.write(string:"{\"name\":\"drawing\"}")
@@ -61,9 +63,13 @@ class SocketManager: WebSocketDelegate{
     
     func websocketDidDisconnect(socket ws: WebSocket, error: NSError?) {
         if let e = error {
+            #if DEBUG
             print("websocket is disconnected: \(e.localizedDescription)")
+            #endif
         } else {
+            #if DEBUG
             print("websocket disconnected")
+            #endif
             
         }
         //TODO: might not be threadsafe?

@@ -24,10 +24,8 @@ class RequestHandler{
     static var activeItem:Request?
     
     static func addRequest(requestData:Request){
-        print("adding request",requestData)
         requestQueue.append(requestData);
         if(activeItem == nil){
-            print("active item is nil, checking request")
             checkRequest();
         }
     }
@@ -40,7 +38,10 @@ class RequestHandler{
     }
     
     static func checkRequest(){
-        print("checking request, activeitem: \(RequestHandler.activeItem == nil), requestQueue: \(requestQueue.count), dataQueue: \(dataQueue.count)")
+        #if DEBUG
+            print("checking request, activeitem: \(RequestHandler.activeItem == nil), requestQueue: \(requestQueue.count), dataQueue: \(dataQueue.count)")
+        #endif
+
         if(RequestHandler.activeItem == nil){
             if requestQueue.count>0 {
                 sharedInstance.handleRequest();
@@ -56,7 +57,6 @@ class RequestHandler{
         if(RequestHandler.requestQueue.count>0){
             let request = RequestHandler.requestQueue.removeFirst()
             RequestHandler.activeItem = request as Request
-            print("setting handler to nil active item \(RequestHandler.activeItem?.action)")
 
             switch(RequestHandler.activeItem!.target){
             case "socket":
@@ -78,7 +78,6 @@ class RequestHandler{
                     break;
                 case "authoring_response":
                     let data = RequestHandler.activeItem!.data!
-                    print("sending authoring response \(data)");
                     RequestHandler.socketManager.sendData(data: data);
 
                     break;
@@ -145,11 +144,9 @@ class RequestHandler{
     
     
     private func handleData(){
-        print("handle data \(RequestHandler.dataQueue.count)")
         
         if(RequestHandler.dataQueue.count>0){
             let data = RequestHandler.dataQueue.removeFirst();
-            print("handling data \(data)")
             
             RequestHandler.dataEvent.raise(data: data);
         }
@@ -160,30 +157,33 @@ class RequestHandler{
     
     
     private func socketRequestHandler(data:(String,JSON?), key:String) {
-        print("socket request handler called \(RequestHandler.activeItem)")
-        
+        #if DEBUG
+        print("socket request handler called \(String(describing: RequestHandler.activeItem))")
+        #endif
         if(RequestHandler.activeItem != nil){
             RequestHandler.socketManager.requestEvent.removeHandler(key: RequestHandler.socketKey)
             
             RequestHandler.activeItem?.requester.processRequest(data:data)
-            print("setting handler to nil \(RequestHandler.activeItem?.action)")
             RequestHandler.activeItem = nil;
 
             RequestHandler.checkRequest();
             
         }
         else {
+            #if DEBUG
             print("error, socket request does not exist");
+            #endif
         }
     }
     
     private func saveRequestHandler(data:(String,JSON?), key:String) {
-        print("save request handler called \(RequestHandler.activeItem)")
+        #if DEBUG
+        print("save request handler called \(String(describing: RequestHandler.activeItem))")
+        #endif
         if(RequestHandler.activeItem != nil){
             let activeItem = RequestHandler.activeItem;
             RequestHandler.saveManager.requestEvent.removeHandler(key: RequestHandler.storageKey)
             activeItem?.requester.processRequest(data:data)
-            print("setting handler to nil \(RequestHandler.activeItem?.action)")
 
             RequestHandler.activeItem = nil;
 
@@ -191,20 +191,26 @@ class RequestHandler{
             
         }
         else {
+            #if DEBUG
             print("error, save request does not exist");
+            #endif
         }
     }
     
     private func saveDataHandler(data:(String,JSON?), key:String){
+         #if DEBUG
         print("save data handler called \(data.0,data.1?["type"].stringValue,RequestHandler.activeItem == nil )")
-
+        #endif
         //RequestHandler.dataQueue.append(data);
         RequestHandler.checkRequest();
     }
     
     private func socketDataHandler(data:(String,JSON?), key:String){
         if(data.1 != nil){
+            #if DEBUG
             print("socket data handler called \(data.0,data.1?["type"].stringValue,RequestHandler.activeItem == nil )")
+            #endif
+
         }
         
         RequestHandler.dataQueue.append(data);

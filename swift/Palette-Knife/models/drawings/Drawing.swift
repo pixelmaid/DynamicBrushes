@@ -33,7 +33,6 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     func drawSegment(context:ModifiedCanvasView){
         
         for i in 0..<allStrokes.count{
-            // print("strokes \(i,strokes[i].dirty)");
             if(allStrokes[i].dirty){
                 allStrokes[i].drawSegment(context:context);
                 
@@ -63,14 +62,12 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         for i in 0..<allStrokes.count{
             let stroke = allStrokes[i];
             if(targetStroke != nil && targetStroke! == stroke){
-               // print("strokes match, no intersection calculated");
                 let seg = stroke.hitTest(testPoint: point,threshold:threshold,sameStroke: true);
                 if(seg != nil){
                     return stroke;
                 }
             }
             else{
-                //print("strokes do not match checking intersection");
 
                 let seg = stroke.hitTest(testPoint: point,threshold:threshold,sameStroke: false);
                 if(seg != nil){
@@ -89,27 +86,24 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     }
     
     func retireCurrentStrokes(parentID:String){
-        print("retire current strokes",parentID,self.activeStrokes[parentID],self.activeStrokes)
         if (self.activeStrokes[parentID] != nil){
             var toRemove = [String]();
             for s in self.activeStrokes[parentID]!{
                 toRemove.append(s.id);
+                s.segments.removeAll();
+                
+                s.dirtySegments.removeAll()
+                s.destroy();
             }
             self.activeStrokes[parentID]!.removeAll();
 
-            for (i, stroke) in allStrokes.reversed().enumerated() {
-                if (stroke.parentID == parentID){
-                    print("removing stroke at",i)
-                    stroke.segments.removeAll();
-                    
-                    stroke.dirtySegments.removeAll()
-                    stroke.destroy();
-                }
-            }
-            self.strokeRemovedEvent.raise(data: toRemove);
+            self.allStrokes = allStrokes.filter({ $0.parentID != parentID })
+            
+           self.strokeRemovedEvent.raise(data: toRemove);
         }
-        allStrokes.removeAll();
-        print("current number of strokes",self.allStrokes.count,self.activeStrokes)
+        #if DEBUG
+            print("current number of strokes",self.allStrokes.count)
+        #endif
     }
     
     func newStroke(parentID:String)->Stroke{
@@ -120,12 +114,8 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         }
         self.activeStrokes[parentID]!.append(stroke);
         
-        
-        
-        
         self.allStrokes.append(stroke);
         self.strokeGeneratedEvent.raise(data: stroke.id)
-        print("new strokes",parentID,self.activeStrokes[parentID])
 
         return stroke;
     }
@@ -135,9 +125,12 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
             return
         }
         self.dirty = true;
+
         for i in 0..<self.activeStrokes[parentID]!.count{
             let currentStroke = self.activeStrokes[parentID]![i]
-            var seg = currentStroke.addSegment(point: point,d:weight,color:color,alpha:alpha)
+
+            var seg = currentStroke.addSegment(brushId: parentID, point: point,d:weight,color:color,alpha:alpha)
+
         }
     }
     

@@ -50,7 +50,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     let delta:LinkedPoint
     let dx:Observable<Float>
     let dy:Observable<Float>
-
+    
     let origin:Point;
     let ox:Observable<Float>
     let oy:Observable<Float>
@@ -58,7 +58,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     let scaling:Point;
     let sx:Observable<Float>
     let sy:Observable<Float>
-
+    
     let reflectY:Observable<Float>
     let reflectX:Observable<Float>
     let rotation:Observable<Float>
@@ -89,7 +89,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     var currentCanvas:Canvas?
     var currentStroke:Stroke?
-   
+    
     //Events
     var geometryModified = Event<(Geometry,String,String)>()
     var transmitEvent = Event<(String)>()
@@ -112,12 +112,12 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     let childDieHandlerKey = NSUUID().uuidString;
     var deltaChangeBuffer = [DeltaStorage]();
     var undergoing_transition = false;
-   
+    
     init(name:String, behaviorDef:BehaviorDefinition?, parent:Brush?, canvas:Canvas){
-       
+        
         //==BEGIN OBSERVABLES==//
         self.bPosition = Point(x:0,y:0)
-         self.position = LinkedPoint(x:0,y:0)
+        self.position = LinkedPoint(x:0,y:0)
         self.x = self.position.x;
         self.y = self.position.y;
         self.position.name = "brush_position";
@@ -156,15 +156,15 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.xBuffer = CircularBuffer()
         self.yBuffer = CircularBuffer()
         self.weightBuffer = CircularBuffer()
-
+        
         self.bufferLimitX = Observable<Float>(0)
         self.bufferLimitY = Observable<Float>(0)
         //==END OBSERVABLES==//
-
-
+        
+        
         self.currentState = "start";
-
-       super.init()
+        
+        super.init()
         
         //TODO: this code is annoying because KVC assigment issues. Find a fix?
         self.time = _time
@@ -172,7 +172,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         observables.append(bPosition)
         observables.append(delta)
         observables.append(position)
-
+        
         observables.append(origin)
         observables.append(scaling)
         
@@ -186,14 +186,14 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
         observables.append(index)
         observables.append(siblingcount)
-
+        
         
         observables.append(diameter)
         observables.append(alpha)
         observables.append(hue)
         observables.append(lightness)
         observables.append(saturation)
-
+        
         observables.append(xBuffer);
         observables.append(yBuffer);
         observables.append(weightBuffer);
@@ -201,7 +201,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         observables.append(bufferLimitX)
         observables.append(bufferLimitY)
         //==END APPEND OBSERVABLES==//
-
+        
         
         self.behavior_id = behaviorDef!.id;
         self.behaviorDef = behaviorDef;
@@ -217,10 +217,10 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         //setup listener for delta observable
         _ = self.delta.didChange.addHandler(target: self, handler:Brush.deltaChange, key:deltaKey)
         _ = self.position.didChange.addHandler(target: self, handler:Brush.positionChange, key:deltaKey)
-
+        
         _ = self.xBuffer.bufferEvent.addHandler(target: self, handler: Brush.deltaBufferLimitReached, key: bufferKey)
         
-      
+        
         self.setCanvasTarget(canvas: canvas)
         self.parent = parent
         
@@ -237,7 +237,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         let _ = self.createState(id: "global",name: "global");
         let globalEmitter = Emitter();
         self.addStateTransition(id: "globalTransition", name: "globalTransition", reference: globalEmitter, fromStateId: "global", toStateId: "global")
-
+        
     }
     
     
@@ -247,12 +247,13 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
         let setupTransition = self.getTransitionByName(name: "setup");
         if(setupTransition != nil){
-            //print("setup transition called for \(self.id),\(self.index.get(id:nil))");
-
+            
             self.transitionToState(transition: setupTransition!)
         }
         else{
-            //print("no setup transition called for \(self.id),\(self.index.get(id:nil))");
+            #if DEBUG
+                print("setup transition does not exist for \(self.id)");
+            #endif
         }
     }
     
@@ -279,70 +280,62 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     }
     
     func positionChange(data:(String,(Float,Float),(Float,Float)),key:String){
-      if(!undergoing_transition){
-        let delta = self.position.sub(point: self.bPosition)
-        print("position changed",stylus.x.get(id:nil),self.position.x.get(id: nil),self.position.y.get(id:nil),self.bPosition.x.get(id: nil),self.bPosition.y.get(id:nil));
-        //TODO: this is hacky- fix?
-        self.delta.x.setSilent(newValue:delta.x.get(id: nil));
-        self.delta.y.setSilent(newValue:delta.y.get(id: nil));
-        self.delta.invalidate(oldValue: (0,0), newValue: (0,0))
+        if(!undergoing_transition){
+            let delta = self.position.sub(point: self.bPosition)
+            
+            #if DEBUG
+                print("position changed",stylus.x.get(id:nil),self.position.x.get(id: nil),self.position.y.get(id:nil),self.bPosition.x.get(id: nil),self.bPosition.y.get(id:nil));
+            #endif
+            
+            //TODO: this is hacky- fix?
+            self.delta.x.setSilent(newValue:delta.x.get(id: nil));
+            self.delta.y.setSilent(newValue:delta.y.get(id: nil));
+            self.delta.invalidate(oldValue: (0,0), newValue: (0,0))
         }
         
         
     }
     
     func deltaChange(data:(String,(Float,Float),(Float,Float)),key:String){
-        if(!undergoing_transition){
-        let dX = self.dx.get(id:nil)
-        let dY = self.dy.get(id:nil)
-        print("delta change",dX,dY)
-
-        //let pX = self.position.x.get(id:nil);
-        //let pY = self.position.y.get(id:nil);
-        
-        //let oX = self.origin.x.get(id:nil)
-        //let oY = self.origin.y.get(id:nil)
-        
-        let r = self.rotation.get(id:nil)
-        
-        let sX = self.scaling.x.get(id:nil)
-        let sY = self.scaling.y.get(id:nil)
-        
-        let rX = self.reflectX.get(id:nil)
-        let rY = self.reflectY.get(id:nil)
-        
-        let d = self.diameter.get(id:nil)
-        let h = self.hue.get(id:nil)
-        let s = self.saturation.get(id:nil)
-        let l = self.lightness.get(id:nil)
-        let a = self.alpha.get(id:nil)
-
-        let dist = self.distance.get(id:nil);
-        let xDist = self.xDistance.get(id:nil);
-        let yDist = self.yDistance.get(id:nil);
+        DispatchQueue.global(qos: .userInitiated).async {
             
-        let ds = DeltaStorage(dX:dX,dY:dY,r:r,sX:sX,sY:sY,rX:rX,rY:rY,d:d,h:h,s:s,l:l,a:a,dist:dist,xDist:xDist,yDist:yDist)
-        
-          objc_sync_enter(deltaChangeBuffer)
-               self.deltaChangeBuffer.append(ds);
-                self.processDeltaBuffer();
-          objc_sync_exit(deltaChangeBuffer)
+            if(!self.undergoing_transition){
+                
+                let dX = self.dx.get(id:nil)
+                let dY = self.dy.get(id:nil)
+                #if DEBUG
+                    print("delta change",dX,dY)
+                #endif
+                
+                let r = self.rotation.get(id:nil)
+                
+                let sX = self.scaling.x.get(id:nil)
+                let sY = self.scaling.y.get(id:nil)
+                
+                let rX = self.reflectX.get(id:nil)
+                let rY = self.reflectY.get(id:nil)
+                
+                let d = self.diameter.get(id:nil)
+                let h = self.hue.get(id:nil)
+                let s = self.saturation.get(id:nil)
+                let l = self.lightness.get(id:nil)
+                let a = self.alpha.get(id:nil)
+                
+                let dist = self.distance.get(id:nil);
+                let xDist = self.xDistance.get(id:nil);
+                let yDist = self.yDistance.get(id:nil);
+                
+                let ds = DeltaStorage(dX:dX,dY:dY,r:r,sX:sX,sY:sY,rX:rX,rY:rY,d:d,h:h,s:s,l:l,a:a,dist:dist,xDist:xDist,yDist:yDist)
+                DispatchQueue.main.sync {
+                    self.processDeltaBuffer(ds:ds)
+                }
+            }
         }
         
     }
     
-    func processDeltaBuffer(){
-        objc_sync_enter(deltaChangeBuffer)
-        var ds:DeltaStorage! = nil
-        if(deltaChangeBuffer.count>0){
-            ds = deltaChangeBuffer.remove(at: 0);
-        }
-        objc_sync_exit(deltaChangeBuffer)
-        if(ds == nil){
-            return;
-        }
+    func processDeltaBuffer(ds:DeltaStorage){
         
-        //  print("angle\(self.angle.get(nil),self.index.get(nil)))")
         let centerX = self.origin.x.get(id:nil)
         let centerY =  self.origin.y.get(id:nil)
         
@@ -363,30 +356,29 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         let r = ds.r
         self.matrix.scale(x: xScale, y: yScale, centerX: centerX, centerY: centerY);
         self.matrix.rotate(_angle: r, centerX: centerX, centerY: centerY)
-       
+        
         let xDelt = ds.dX
         let yDelt = ds.dY
         
         let _dx = self.bPosition.x.get(id:nil) + xDelt;
         let _dy = self.bPosition.y.get(id:nil) + yDelt;
-        print("_dx, _dy",_dx,_dy)
         let transformedCoords = self.matrix.transformPoint(x: _dx, y: _dy)
-
+        
         self.distance.set(newValue: ds.dist + sqrt(pow(xDelt,2)+pow(yDelt,2)));
         self.xDistance.set(newValue: ds.xDist + abs(xDelt));
         self.yDistance.set(newValue: ds.yDist + abs(yDelt));
         
-       // xBuffer.push(v: xDelt);
-       // yBuffer.push(v: yDelt);
+        // xBuffer.push(v: xDelt);
+        // yBuffer.push(v: yDelt);
         
         bufferLimitX.set(newValue: 0)
         bufferLimitY.set(newValue: 0)
         
         let cweight = ds.d;
         //weightBuffer.push(v: cweight);
-       
+        
         let color = Color(h: ds.h, s: ds.s, l: ds.l, a: 1)
-       
+        
         self.currentCanvas!.addSegmentToStroke(parentID: self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight:cweight , color: color,alpha:ds.a)
         
         self.bPosition.x.setSilent(newValue: _dx)
@@ -401,11 +393,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         let bpx = bPosition.x.get(id: nil);
         let bpy = bPosition.y.get(id: nil);
         
-        print("current position",bpx,bpy);
-
+        
         if((keyStorage["INTERSECTION"]!.count)>0){
             let hit = self.currentCanvas!.hitTest(point: self.bPosition, threshold: 5, id:self.id);
-            //print("hit=",hit,keyStorage["INTERSECTION"]);
             if(hit != nil){
                 self.intersections.set(newValue: self.intersections.getSilent()+1);
                 for key in keyStorage["INTERSECTION"]!
@@ -414,11 +404,11 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                         let condition = key.1;
                         let evaluation = condition?.evaluate();
                         if(evaluation == true){
-                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"INTERSECTION"])
+                            NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"INTERSECTION"])
                         }
                     }
                     else{
-                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"INTERSECTION"])
+                        NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"INTERSECTION"])
                     }
                     
                 }
@@ -426,7 +416,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         }
     }
     
-   func distanceIntervalCheck()
+    func distanceIntervalCheck()
     {
         
         for key in keyStorage["DISTANCE_INTERVAL"]!
@@ -435,11 +425,11 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 let condition = key.1;
                 let evaluation = condition?.evaluate();
                 if(evaluation == true){
-                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"DISTANCE_INTERVAL"])
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"DISTANCE_INTERVAL"])
                 }
             }
             else{
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"DISTANCE_INTERVAL"])
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"DISTANCE_INTERVAL"])
             }
             
         }
@@ -448,20 +438,23 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     
     func setOrigin(p:Point){
-            self.origin.set(val:p);
-            self.position.x.setSilent(newValue: self.origin.x.get(id: nil))
-            self.position.y.setSilent(newValue: self.origin.y.get(id: nil))
-            self.bPosition.x.setSilent(newValue: self.origin.x.get(id: nil))
-            self.bPosition.y.setSilent(newValue: self.origin.y.get(id: nil))
+        self.origin.set(val:p);
+        self.position.x.setSilent(newValue: self.origin.x.get(id: nil))
+        self.position.y.setSilent(newValue: self.origin.y.get(id: nil))
+        self.bPosition.x.setSilent(newValue: self.origin.x.get(id: nil))
+        self.bPosition.y.setSilent(newValue: self.origin.y.get(id: nil))
+        #if DEBUG
             print("origin set =",stylus.x.get(id:nil),p.x.get(id: nil),p.y.get(id:nil));
-
+        #endif
+        
     }
     
     dynamic func stateTransitionHandler(notification: NSNotification){
         
-       
-            let key = notification.userInfo?["key"] as! String
-            let mapping = states[currentState]?.getTransitionMapping(key: key)
+        
+        let key = notification.userInfo?["key"] as! String
+        if(key == self.id){
+            let mapping = states[currentState]?.getTransitionMapping(key: notification.name.rawValue)
             
             
             if(mapping != nil){
@@ -471,6 +464,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 self.transitionToState(transition: stateTransition!)
                 
             }
+        }
         
     }
     
@@ -488,7 +482,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         }
         self.currentState = transition.toStateId;
         self.raiseBehaviorEvent(d: states[currentState]!.toJSON(), event: "state")
-        //print("transitioning to state \(states[currentState]?.name, self.name)")
         self.executeTransitionMethods(methods: transition.methods)
         
         constraint_mappings =  states[currentState]!.constraint_mappings
@@ -503,7 +496,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         _  = Timer.scheduledTimer(timeInterval: 0.00001, target: self, selector: #selector(Brush.completeCallback), userInfo: nil, repeats: false)
         
         if(states[currentState]?.name == "die"){
-           // print("transitioning to die state!!!");
             self.die();
         }
     }
@@ -526,12 +518,11 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             if(key.1 != nil){
                 let condition = key.1;
                 if(condition?.evaluate())!{
-                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STATE_COMPLETE"])
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STATE_COMPLETE"])
                 }
             }
             else{
-                //print("key 0",key.0);
-                 NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"STATE_COMPLETE"])
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STATE_COMPLETE"])
             }
             
         }
@@ -544,36 +535,41 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         for i in 0..<methods.count{
             let method = methods[i];
             let methodName = method.name;
-            print("executing method:\(method.name,self.id,self.name)");
+            
+            #if DEBUG
+                print("executing method:\(method.name,self.id,self.name)");
+            #endif
+            
             switch (methodName){
             case "newStroke":
                 
                 let arg = method.arguments![0];
-                //print("set origin argument \(method.arguments![0])");
                 if  let arg_string = arg as? String {
                     if(arg_string  == "parent_position"){
                         if(self.parent != nil){
                             self.setOrigin(p: self.parent!.bPosition)
                         }
                         else{
-                            
-                            print("cannot set origin, no parent position")
+                            #if DEBUG
+                                print("cannot set origin, no parent position")
+                            #endif
                         }
                     }
                     else if(arg_string  == "parent_origin"){
                         if(self.parent != nil){
-
-                        self.setOrigin(p: self.parent!.origin)
+                            
+                            self.setOrigin(p: self.parent!.origin)
                         }
                         else{
-                            print("cannot set origin, no parent position")
-  
+                            #if DEBUG
+                                print("cannot set origin, no parent position")
+                            #endif
                         }
                     }
                 }else {
                     self.setOrigin(p: method.arguments![0] as! Point)
                 }
-
+                
                 self.newStroke();
                 break;
             case "startTimer":
@@ -584,7 +580,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 break;
             case "setOrigin":
                 let arg = method.arguments![0];
-                //print("set origin argument \(method.arguments![0])");
                 if  let arg_string = arg as? String {
                     if(arg_string  == "parent_position"){
                         self.setOrigin(p: self.parent!.bPosition)
@@ -599,19 +594,18 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 self.destroy();
                 break;
             case "spawn":
-                //print("spawning brush")
                 let arg = method.arguments![0];
                 var behaviorDef:BehaviorDefinition! = nil;
-               let arg_string = arg as? String
-                    if(arg_string == "parent"){
-                        behaviorDef = self.parent!.behaviorDef!;
-                    }
-                    else if(arg_string == "self"){
-                        behaviorDef = self.behaviorDef!;
-                    }
-                    else{
-                        behaviorDef = BehaviorManager.getBehaviorById(id:arg_string!);
-                    }
+                let arg_string = arg as? String
+                if(arg_string == "parent"){
+                    behaviorDef = self.parent!.behaviorDef!;
+                }
+                else if(arg_string == "self"){
+                    behaviorDef = self.behaviorDef!;
+                }
+                else{
+                    behaviorDef = BehaviorManager.getBehaviorById(id:arg_string!);
+                }
                 if(behaviorDef != nil){
                     self.spawn(behavior:behaviorDef,num:(method.arguments![1] as! Int));
                 }
@@ -638,16 +632,15 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
      //or generators and buffers which will return a new value each time they are accessed
      */
     func addConstraint(id:String,reference:Observable<Float>, relative:Observable<Float>, stateId:String, type:String){
-        print("adding constraint \(type,reference,relative,stateId)")
         if(type == "active"){
             reference.subscribe(id: self.id);
-           _ = reference.didChange.addHandler(target: self, handler:  Brush.setHandler, key:id)
+            _ = reference.didChange.addHandler(target: self, handler:  Brush.setHandler, key:id)
         }
             
         else if(type == "passive"){
             relative.passiveConstrain(target: reference);
         }
-        //print("target state = \(stateId)");
+        
         states[stateId]!.addConstraintMapping(key: id,reference:reference,relativeProperty: relative,type:type)
     }
     
@@ -660,13 +653,13 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         // let reference = notification.userInfo?["emitter"] as! Emitter
         
         
-            let mapping = states[currentState]?.getConstraintMapping(key: stateKey)
+        let mapping = states[currentState]?.getConstraintMapping(key: stateKey)
+        
+        if(mapping != nil){
             
-            if(mapping != nil){
-                
-                //let constraint = mapping as! Constraint
-                self.setConstraint(constraint: mapping!)
-            }
+            //let constraint = mapping as! Constraint
+            self.setConstraint(constraint: mapping!)
+        }
         
     }
     
@@ -674,17 +667,19 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         let id = data;
         for c in children.reversed(){
             if c.id == id{
-               _ = self.removeChildAt(index: Int(c.index.get(id: nil)))
+                _ = self.removeChildAt(index: Int(c.index.get(id: nil)))
             }
         }
         for i in 0..<children.count{
             self.children[i].index.set(newValue: Float(i));
         }
     }
-
+    
     
     func setConstraint(constraint:Constraint){
-        print("calling set constraint on",  constraint.relativeProperty.name,constraint.relativeProperty,constraint.reference.get(id: self.id))
+        #if DEBUG
+            print("calling set constraint on",  constraint.relativeProperty.name,constraint.relativeProperty,constraint.reference.get(id: self.id))
+        #endif
         constraint.relativeProperty.set(newValue: constraint.reference.get(id: self.id));
         
         
@@ -701,13 +696,11 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     }
     
     func removeStateTransition(data:(Brush, String, Emitter),key:String){
-        //print("removing state transition \(key)");
         NotificationCenter.default.removeObserver(data.0, name: NSNotification.Name(rawValue: data.1), object: data.2)
         data.2.removeKey(key: data.1)
     }
     
     func addMethod(transitionId:String, methodId:String, methodName:String, arguments:[Any]?){
-        //print("adding method \(methodId) for transition \(transitionId,transitions)");
         
         (transitions[transitionId]!).addMethod(id: methodId, name:methodName,arguments:arguments)
         
@@ -757,7 +750,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         }
     }
     
-
+    
     
     //===============METHODS AVAILABLE TO USER===============//
     
@@ -771,29 +764,28 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     //creates number of clones specified by num and adds them as children
     func spawn(behavior:BehaviorDefinition,num:Int) {
-        print("spawn called")
         if(num > 0){
-        for _ in 0...num-1{
-            let child = Brush(name:name, behaviorDef: behavior, parent:self, canvas:self.currentCanvas!)
-            self.children.append(child);
-            child.index.set(newValue: Float(self.children.count-1));
-            self.initEvent.raise(data: (child,"brush_init"));
-            behavior.initBrushBehavior(targetBrush: child);
-            _ = child.dieEvent.addHandler(target: self, handler: Brush.childDieHandler, key: childDieHandlerKey)
-        }
-        
-        for c in children{
-            c.siblingcount.set(newValue: Float(self.children.count))
-        }
-        
-        //notify listeners of spawn event
-        for key in keyStorage["SPAWN"]!  {
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"SPAWN"])
-        }
+            for _ in 0...num-1{
+                let child = Brush(name:name, behaviorDef: behavior, parent:self, canvas:self.currentCanvas!)
+                self.children.append(child);
+                child.index.set(newValue: Float(self.children.count-1));
+                self.initEvent.raise(data: (child,"brush_init"));
+                behavior.initBrushBehavior(targetBrush: child);
+                _ = child.dieEvent.addHandler(target: self, handler: Brush.childDieHandler, key: childDieHandlerKey)
+            }
+            
+            for c in children{
+                c.siblingcount.set(newValue: Float(self.children.count))
+            }
+            
+            //notify listeners of spawn event
+            for key in keyStorage["SPAWN"]!  {
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.2.id), object: self, userInfo: ["emitter":self,"key":key.0,"event":"SPAWN"])
+            }
         }
     }
     
-     //=============END METHODS AVAILABLE TO USER==================//
+    //=============END METHODS AVAILABLE TO USER==================//
     
     
     
@@ -837,12 +829,12 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     
     func clearAllEventHandlers(){
-    self.initEvent.removeAllHandlers()
-    self.geometryModified.removeAllHandlers()
-    self.transmitEvent.removeAllHandlers()
-    self.removeMappingEvent.removeAllHandlers()
-    self.removeTransitionEvent.removeAllHandlers()
-    self.dieEvent.removeAllHandlers()
+        self.initEvent.removeAllHandlers()
+        self.geometryModified.removeAllHandlers()
+        self.transmitEvent.removeAllHandlers()
+        self.removeMappingEvent.removeAllHandlers()
+        self.removeTransitionEvent.removeAllHandlers()
+        self.dieEvent.removeAllHandlers()
     }
     
     override func destroy() {
@@ -851,8 +843,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.clearAllEventHandlers();
         super.destroy();
     }
-      //========= END CLEANUP METHODS ==================//
-   
+    //========= END CLEANUP METHODS ==================//
+    
 }
 
 

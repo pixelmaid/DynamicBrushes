@@ -34,7 +34,6 @@ struct Color {
             green = Float(components![1]);
             blue = Float(components![2]);
         
-        //print("color init \(red,green,blue,hue,saturation,lightness)")
         
     }
     
@@ -55,10 +54,6 @@ struct Color {
             self.hue = Float(_hue)
             self.saturation = Float(_saturation)
             self.lightness = Float(_brightness)
-        
-        
-        //print("color init \(red,green,blue,hue,saturation,lightness)")
-        
     }
     
     func toCGColor()->CGColor{

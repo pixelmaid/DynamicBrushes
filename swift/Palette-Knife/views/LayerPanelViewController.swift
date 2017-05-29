@@ -82,7 +82,6 @@ class LayerPanelViewController: UITableViewController{
     }
     
     func loadLayers(newLayers:[(String,String, Bool, Bool)]){
-        print("load layers",newLayers);
         layers.removeAll();
         for i in 0..<newLayers.count{
             let newLayer = LayerCellData(id: newLayers[i].0, name: newLayers[i].1, selected: newLayers[i].2, hidden:newLayers[i].3)
@@ -186,12 +185,10 @@ class LayerPanelViewController: UITableViewController{
 
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        print("num of sections called");
         return 1;
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print("layers count \(layers.count)");
         
         return layers.count
     }
@@ -203,7 +200,6 @@ class LayerPanelViewController: UITableViewController{
         let layer = layers[indexPath.row]
         
         cell.layerLabel.text = layer.name
-        print("layer selected",layer.name,layer.selected,indexPath.row);
         if(layer.selected){
             cell.contentView.backgroundColor = UIColor.darkGray;
         }
@@ -228,7 +224,6 @@ class LayerPanelViewController: UITableViewController{
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("You selected cell\(layers[indexPath.row],indexPath.row)!")
         for l in layers {
             l.selected = false;
         }

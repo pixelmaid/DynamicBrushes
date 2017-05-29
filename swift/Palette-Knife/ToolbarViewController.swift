@@ -106,9 +106,7 @@ class ToolbarViewController: UIViewController {
     }
     
     func eraseToggled(){
-        print("erase toggled",activeMode)
         if activeMode == "brush"{
-            print("activemode is brush")
             eraseButton.setImage(eraseHighlight, for: UIControlState.normal)
             brushButton.setImage(brushStandard, for: UIControlState.normal)
             activeMode = "erase"
@@ -119,9 +117,7 @@ class ToolbarViewController: UIViewController {
     }
     
     func brushToggled(){
-        print("brush toggled",activeMode)
         if activeMode == "erase"{
-            print("activemode is erase")
             eraseButton.setImage(eraseStandard, for: UIControlState.normal)
             brushButton.setImage(brushHighlight, for: UIControlState.normal)
             activeMode = "brush"

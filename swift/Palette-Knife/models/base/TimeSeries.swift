@@ -44,20 +44,24 @@ class TimeSeries: Emitter{
     }
     
     func startInterval(){
-        print("start interval")
-       // if(intervalTimer == nil){
+        #if DEBUG
+            print("start interval")
+        #endif
         intervalTimer  = Timer.scheduledTimer(timeInterval: 0.0001, target: self, selector: #selector(TimeSeries.timerIntervalCallback), userInfo: nil, repeats: true)
-        //}
+        
         
         
     }
     
     func stopInterval(){
-        print("stop interval")
+        #if DEBUG
+            print("stop interval")
+        #endif
 
         if(intervalTimer != nil){
-            print("invalidate timer")
-
+            #if DEBUG
+                print("invalidate timer")
+            #endif
          intervalTimer.invalidate();
         }
         
@@ -83,12 +87,12 @@ class TimeSeries: Emitter{
                 let condition = key.1;
                 let evaluation = condition?.evaluate();
                 if(evaluation == true){
-                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"TIME_INTERVAL"])
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"TIME_INTERVAL"])
                 }
             }
             else{
                 
-               NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.0,"event":"TIME_INTERVAL"])
+               NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"TIME_INTERVAL"])
             }
             
             
