@@ -64,6 +64,9 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
     }
     
     func renderStroke(currentStrokeId:String,toPoint:CGPoint,toWidth:CGFloat,toColor:UIColor!){
+        #if DEBUG
+            print("draw interval render stroke",toPoint)
+        #endif
         let currentStroke = strokes[currentStrokeId]
         currentStroke?.lock();
         
@@ -104,9 +107,9 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
         currentStroke.lock();
         
         
-        if currentStroke.segments.count == 1 && (((currentStroke.segments.first as? MoveToPathElement) != nil)) {
+        //if currentStroke.segments.count == 1 && (((currentStroke.segments.first as? MoveToPathElement) != nil)) {
             currentStroke.empty()
-        }
+        //}
 
         
         jotView.state.finishCurrentStroke();
@@ -169,13 +172,12 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
             touches.append(touch)
         }
         #if DEBUG
-            print("number of coalesced touches \(touches.count)");
+            //print("number of coalesced touches \(touches.count)");
         #endif
        // if touch.type == .stylus {
         if(drawActive){
 
             for touch in touches {
-                
                 let location = touch.location(in: self)
                 let x = Float(location.x);
                 let y = Float(location.y);

@@ -30,6 +30,8 @@ struct DeltaStorage{
 }
 
 class Brush: TimeSeries, WebTransmitter, Hashable{
+    //timer for delta updates
+    var deltaUpdateInterval:Timer!
     
     //hierarcical data
     var children = [Brush]();
@@ -120,12 +122,17 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.position = LinkedPoint(x:0,y:0)
         self.x = self.position.x;
         self.y = self.position.y;
+        self.x.printname = "brush_position_x"
+        self.y.printname = "brush_position_y"
+
         self.position.name = "brush_position";
         
         self.delta = LinkedPoint(x:0,y:0)
         self.dx = delta.x;
         self.dy = delta.y
-        
+        self.dx.printname = "brush_delta_x"
+        self.dy.printname = "brush_delta_y"
+
         self.origin = Point(x:0,y:0)
         self.ox = origin.x;
         self.oy = origin.y;
@@ -229,6 +236,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             behaviorDef?.addBrush(targetBrush: self)
         }
         self.delta.name = "delta_"+self.id;
+        self.deltaUpdateInterval  = Timer.scheduledTimer(timeInterval:0.016 , target: self, selector: #selector(Brush.processDeltaBuffer), userInfo: nil, repeats: true)
+
     }
     
     
@@ -280,31 +289,51 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     }
     
     func positionChange(data:(String,(Float,Float),(Float,Float)),key:String){
-        if(!undergoing_transition){
-            let delta = self.position.sub(point: self.bPosition)
+        if(!self.undergoing_transition){
+            let _delta = self.position.sub(point: self.bPosition)
+            
+           
+            
+            let dX = _delta.x.get(id:nil);
+            let dY = _delta.y.get(id:nil);
             
             #if DEBUG
-                print("position changed",stylus.x.get(id:nil),self.position.x.get(id: nil),self.position.y.get(id:nil),self.bPosition.x.get(id: nil),self.bPosition.y.get(id:nil));
+                print("position changed delta, position: \(dX,dY,self.position.x.get(id:nil),self.position.y.get(id:))");
             #endif
+            let r = self.rotation.get(id:nil)
             
-            //TODO: this is hacky- fix?
-            self.delta.x.setSilent(newValue:delta.x.get(id: nil));
-            self.delta.y.setSilent(newValue:delta.y.get(id: nil));
-            self.delta.invalidate(oldValue: (0,0), newValue: (0,0))
+            let sX = self.scaling.x.get(id:nil)
+            let sY = self.scaling.y.get(id:nil)
+            
+            let rX = self.reflectX.get(id:nil)
+            let rY = self.reflectY.get(id:nil)
+            
+            let d = self.diameter.get(id:nil)
+            let h = self.hue.get(id:nil)
+            let s = self.saturation.get(id:nil)
+            let l = self.lightness.get(id:nil)
+            let a = self.alpha.get(id:nil)
+            
+            let dist = self.distance.get(id:nil);
+            let xDist = self.xDistance.get(id:nil);
+            let yDist = self.yDistance.get(id:nil);
+            
+            let ds = DeltaStorage(dX:dX,dY:dY,r:r,sX:sX,sY:sY,rX:rX,rY:rY,d:d,h:h,s:s,l:l,a:a,dist:dist,xDist:xDist,yDist:yDist)
+            self.deltaChangeBuffer.append(ds);
+        
         }
         
         
     }
     
     func deltaChange(data:(String,(Float,Float),(Float,Float)),key:String){
-        DispatchQueue.global(qos: .userInitiated).async {
-            
+        
             if(!self.undergoing_transition){
                 
                 let dX = self.dx.get(id:nil)
                 let dY = self.dy.get(id:nil)
                 #if DEBUG
-                    print("delta change",dX,dY)
+                   // print("delta change",dX,dY)
                 #endif
                 
                 let r = self.rotation.get(id:nil)
@@ -326,16 +355,25 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 let yDist = self.yDistance.get(id:nil);
                 
                 let ds = DeltaStorage(dX:dX,dY:dY,r:r,sX:sX,sY:sY,rX:rX,rY:rY,d:d,h:h,s:s,l:l,a:a,dist:dist,xDist:xDist,yDist:yDist)
-                DispatchQueue.main.sync {
-                    self.processDeltaBuffer(ds:ds)
-                }
-            }
-        }
+                objc_sync_enter(deltaChangeBuffer)
+                    self.deltaChangeBuffer.append(ds);
+                objc_sync_exit(deltaChangeBuffer)
+
+            
+       }
         
     }
     
-    func processDeltaBuffer(ds:DeltaStorage){
+     @objc func processDeltaBuffer(){
+        var ds:DeltaStorage! = nil
         
+        objc_sync_enter(deltaChangeBuffer)
+        if deltaChangeBuffer.count>0 {
+            ds = deltaChangeBuffer.remove(at: 0)
+        }
+        objc_sync_exit(deltaChangeBuffer)
+        print("process delta buffer",ds);
+        if(ds != nil){
         let centerX = self.origin.x.get(id:nil)
         let centerY =  self.origin.y.get(id:nil)
         
@@ -387,6 +425,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
         self.distanceIntervalCheck();
         self.intersectionCheck();
+        }
     }
     
     func intersectionCheck(){
@@ -632,6 +671,15 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
      //or generators and buffers which will return a new value each time they are accessed
      */
     func addConstraint(id:String,reference:Observable<Float>, relative:Observable<Float>, stateId:String, type:String){
+       
+        #if DEBUG
+            if let expref = reference as? TextExpression{
+                for (_, val) in expref.operandList{
+                print("reference,relative",val.name,relative.name)
+                }
+            }
+        #endif
+        
         if(type == "active"){
             reference.subscribe(id: self.id);
             _ = reference.didChange.addHandler(target: self, handler:  Brush.setHandler, key:id)
@@ -678,7 +726,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     func setConstraint(constraint:Constraint){
         #if DEBUG
-            print("calling set constraint on",  constraint.relativeProperty.name,constraint.relativeProperty,constraint.reference.get(id: self.id))
+           // print("calling set constraint on",  constraint.relativeProperty.name,constraint.relativeProperty,constraint.reference.get(id: self.id))
         #endif
         constraint.relativeProperty.set(newValue: constraint.reference.get(id: self.id));
         
@@ -839,6 +887,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     override func destroy() {
         currentCanvas!.currentDrawing!.retireCurrentStrokes(parentID: self.id)
+        self.deltaUpdateInterval.invalidate();
+        self.deltaUpdateInterval = nil
         self.clearBehavior();
         self.clearAllEventHandlers();
         super.destroy();

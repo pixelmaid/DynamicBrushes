@@ -102,7 +102,7 @@ class TextExpression:Observable<Float>{
         
         }
         #if DEBUG
-            print("exception: \(exception,result)")
+            //print("exception: \(exception,result)")
         #endif
 
         return result;

@@ -22,6 +22,7 @@ class Point:Observable<(Float,Float)>,Geometry{
     let yKey = NSUUID().uuidString;
     var storedValue = Float(0);
     
+    
     init(x:Float,y:Float) {
         //==BEGIN OBSERVABLES==//
         self.x = Observable<Float>(0);
@@ -219,7 +220,7 @@ class LinkedPoint:Point{
     func coordinateChange(data:(String, Float,Float),key:String){
         let name = data.0;
         #if DEBUG
-        print("change for \(self.name)",x.constrainedAndActive(),y.constrainedAndActive(),name);
+            // print("change for \(self.name)",x.constrainedAndActive(),y.constrainedAndActive(),name);
         #endif
 
         let oldValue = data.1;
@@ -232,13 +233,13 @@ class LinkedPoint:Point{
                 if(name == "x"){
                     didChange.raise(data: (name, (oldValue,storedValue),(self.x.get(id: nil),self.y.get(id: nil))));
                     #if DEBUG
-                    print("raise change",self.name)
+                       // print("raise change",self.name)
                     #endif
                 }
                 else if(name == "y"){
                     didChange.raise(data: (name, (storedValue,oldValue),(self.x.get(id: nil),self.y.get(id: nil))));
                     #if DEBUG
-                        print("raise change",self.name)
+                        //print("raise change",self.name)
                     #endif
                 }
                 
@@ -251,13 +252,13 @@ class LinkedPoint:Point{
         else if(x.constrainedAndActive() && !y.constrainedAndActive() && name == "x" || x.constrainedAndPassive() && !y.constrainedAndPassive() && name == "x"){
             didChange.raise(data: (name, (oldValue,self.y.get(id: nil)), (self.x.get(id: nil),self.y.get(id: nil))))
             #if DEBUG
-                print("raise change",self.name)
+               // print("raise change",self.name)
             #endif
         }
         else if(!x.constrainedAndActive() && y.constrainedAndActive() && name == "y" || !x.constrainedAndPassive() && y.constrainedAndPassive() && name == "y"){
             didChange.raise(data: (name, (self.x.get(id: nil),oldValue), (self.x.get(id: nil),self.y.get(id: nil))))
             #if DEBUG
-                print("raise change",self.name)
+                //print("raise change",self.name)
             #endif
         }
         else{
@@ -266,13 +267,13 @@ class LinkedPoint:Point{
                 if(name == "x"){
                     didChange.raise(data: (name, (oldValue,storedValue),(self.x.get(id: nil),self.y.get(id: nil))));
                     #if DEBUG
-                        print("raise change",self.name)
+                        //print("raise change",self.name)
                     #endif
                 }
                 else if(name == "y"){
                     didChange.raise(data: (name, (storedValue,oldValue),(self.x.get(id: nil),self.y.get(id: nil))));
                     #if DEBUG
-                        print("raise change",self.name)
+                        //print("raise change",self.name)
                     #endif
                 }
                 

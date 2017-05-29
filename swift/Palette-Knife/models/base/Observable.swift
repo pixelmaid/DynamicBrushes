@@ -12,6 +12,7 @@ import SwiftKVC
 class Observable<T>:Object, DisposableObservable {
     
     var name = "observable"
+    var printname = "observable"
     var isPassive = false;
     var invalidated = false;
     var constrained = false;

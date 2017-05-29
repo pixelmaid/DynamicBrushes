@@ -47,8 +47,13 @@ class Stylus: TimeSeries, WebTransmitter {
         self.prevAngle = angle;
         self.x = position.x;
         self.y = position.y
+        self.x.printname = "stylus_position_x"
+        self.y.printname = "stylus_position_y"
+
         self.dx = delta.x;
-        self.dy = delta.y
+        self.dy = delta.y;
+        self.dx.printname = "stylus_delta_x"
+        self.dy.printname = "stylus_delta_y"
         self.distance = Observable<Float>(0);
         self.xDistance = Observable<Float>(0);
         self.yDistance = Observable<Float>(0);
@@ -148,7 +153,7 @@ class Stylus: TimeSeries, WebTransmitter {
             key.2.undergoing_transition = false;
 
         }
-        self.delta.set(x: 0,y:0)
+        //self.delta.set(x: 0,y:0)
         self.penDown.set(newValue: 0);
         self.speed = 0;
         self.resetDistance();
@@ -170,7 +175,7 @@ class Stylus: TimeSeries, WebTransmitter {
             }
             
         }
-        //self.delta.set(x: 0,y:0)
+        self.delta.set(x: 0,y:0)
         self.penDown.set(newValue: 1);
         self.prevTime = self.getTimeElapsed();
         self.speed = 0;
@@ -246,7 +251,7 @@ class Stylus: TimeSeries, WebTransmitter {
       let d = self.position.sub(point: self.prevPosition)
 
       
-        self.delta.set(val:d)
+      self.delta.set(val:d)
 
         //self.delta.set(x: 0,y:0)
 
