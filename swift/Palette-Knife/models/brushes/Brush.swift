@@ -30,8 +30,6 @@ struct DeltaStorage{
 }
 
 class Brush: TimeSeries, WebTransmitter, Hashable{
-    //timer for delta updates
-    var deltaUpdateInterval:Timer!
     
     //hierarcical data
     var children = [Brush]();
@@ -236,8 +234,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             behaviorDef?.addBrush(targetBrush: self)
         }
         self.delta.name = "delta_"+self.id;
-        self.deltaUpdateInterval  = Timer.scheduledTimer(timeInterval:0.016 , target: self, selector: #selector(Brush.processDeltaBuffer), userInfo: nil, repeats: true)
-
     }
     
     
@@ -320,6 +316,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             
             let ds = DeltaStorage(dX:dX,dY:dY,r:r,sX:sX,sY:sY,rX:rX,rY:rY,d:d,h:h,s:s,l:l,a:a,dist:dist,xDist:xDist,yDist:yDist)
             self.deltaChangeBuffer.append(ds);
+            self.processDeltaBuffer();
         
         }
         
@@ -355,24 +352,19 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 let yDist = self.yDistance.get(id:nil);
                 
                 let ds = DeltaStorage(dX:dX,dY:dY,r:r,sX:sX,sY:sY,rX:rX,rY:rY,d:d,h:h,s:s,l:l,a:a,dist:dist,xDist:xDist,yDist:yDist)
-                objc_sync_enter(deltaChangeBuffer)
-                    self.deltaChangeBuffer.append(ds);
-                objc_sync_exit(deltaChangeBuffer)
-
-            
+               
+                self.deltaChangeBuffer.append(ds);
+                self.processDeltaBuffer();
        }
         
     }
     
-     @objc func processDeltaBuffer(){
+    func processDeltaBuffer(){
         var ds:DeltaStorage! = nil
         
-        objc_sync_enter(deltaChangeBuffer)
         if deltaChangeBuffer.count>0 {
             ds = deltaChangeBuffer.remove(at: 0)
         }
-        objc_sync_exit(deltaChangeBuffer)
-        print("process delta buffer",ds);
         if(ds != nil){
         let centerX = self.origin.x.get(id:nil)
         let centerY =  self.origin.y.get(id:nil)
@@ -887,8 +879,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     override func destroy() {
         currentCanvas!.currentDrawing!.retireCurrentStrokes(parentID: self.id)
-        self.deltaUpdateInterval.invalidate();
-        self.deltaUpdateInterval = nil
         self.clearBehavior();
         self.clearAllEventHandlers();
         super.destroy();
