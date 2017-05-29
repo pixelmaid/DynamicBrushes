@@ -523,13 +523,17 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
 
     
     @objc func drawIntervalCallback(){
+        DispatchQueue.global(qos: .userInteractive).async {
         #if DEBUG
-           print("draw interval callback called",currentCanvas!.dirty)
+           //print("draw interval callback called",self.currentCanvas!.dirty)
         #endif
-        if(currentCanvas!.dirty){
-            layerContainerView.drawIntoCurrentLayer(currentCanvas:currentCanvas!);
-            backupNeeded = true;
+        if(self.currentCanvas!.dirty){
+             DispatchQueue.main.async {
+                self.layerContainerView.drawIntoCurrentLayer(currentCanvas:self.currentCanvas!);
+            }
+            self.backupNeeded = true;
             
+        }
         }
     }
     

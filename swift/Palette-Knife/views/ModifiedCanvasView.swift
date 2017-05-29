@@ -65,7 +65,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
     
     func renderStroke(currentStrokeId:String,toPoint:CGPoint,toWidth:CGFloat,toColor:UIColor!){
         #if DEBUG
-            print("draw interval render stroke",toPoint)
+            //print("draw interval render stroke",toPoint)
         #endif
         let currentStroke = strokes[currentStrokeId]
         currentStroke?.lock();

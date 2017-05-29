@@ -177,6 +177,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 });
 
 
+
                 this.createHTML(behavior_data);
 
             }
@@ -883,6 +884,8 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     id: "transition_" + id
                 }]);
 
+                
+
                 connection.addOverlay(["Custom", {
                     create: function(component) {
 
@@ -901,7 +904,6 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                                     console.log("overlays =", overlays);
                                     for (var o in overlays) {
                                         if (overlays.hasOwnProperty(o)) {
-                                            console.log(o);
                                             if (o.split("_")[0] == "transition") {
                                                 overlays[o].hide();
                                             }
@@ -973,6 +975,25 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
 
                 connection.getOverlay("transition_" + id).hide();
+                var selector = $("#"+id).parent().closest('div').attr('id');
+                console.log("selector:",selector);
+                 $.contextMenu({
+                    selector: "#"+selector,
+                    callback: function(key, options) {
+                        if (key == "minimize") {
+                           connection.getOverlay("transition_" + id).hide();
+                             connection.getOverlay("toggle_" + id).show();
+
+
+                        }
+                    },
+                    items: {
+                        "minimize": {
+                            name: "minimize transition",
+                        }
+                    }
+
+                });
 
 
 

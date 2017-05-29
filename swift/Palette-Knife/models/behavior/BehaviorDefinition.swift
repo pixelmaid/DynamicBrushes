@@ -819,11 +819,8 @@ class BehaviorDefinition {
         if(methods[tt] == nil){
             methods [tt] = [];
         }
-        for i in 0..<methods[tt]!.count {
-            if methods[tt]?[i].0 == methodId{
-                    methods[tt]?.remove(at: i)
-            }
-        }
+        
+        methods[tt]? = (methods[tt]?.filter({ $0.0 != methodId }))!
         methods[tt]!.append((methodId,targetMethod,arguments))
     }
     
