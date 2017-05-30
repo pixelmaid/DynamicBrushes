@@ -36,7 +36,7 @@ struct StoredDrawing:Geometry{
 class DeallocPrinter {
     deinit {
         #if DEBUG
-        print("dealocated")
+        //print("dealocated")
         #endif
     }
 }
@@ -110,8 +110,14 @@ struct Segment:Geometry, Equatable {
         if(self.getPreviousSegment() != nil){
             var a_color = self.color;
            a_color.alpha = self.alpha;
-            
-            context.renderStroke(currentStrokeId: id, toPoint: self.point.toCGPoint(), toWidth: CGFloat(self.diameter), toColor: a_color.toUIColor())
+            if(a_color.alpha <= 0){
+                a_color.alpha = 0.0001
+            }
+            var d = self.diameter
+            if(d < 1){
+                d = 1
+            }
+            context.renderStroke(currentStrokeId: id, toPoint: self.point.toCGPoint(), toWidth: CGFloat(d), toColor: a_color.toUIColor())
         }
     }
     
@@ -162,7 +168,7 @@ class Stroke:TimeSeries, Geometry {
     
     deinit{
         #if DEBUG
-        print ("stroke \(self.id) dealocated")
+        //print ("stroke \(self.id) dealocated")
         #endif
     }
     

@@ -22,7 +22,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Q7O-f9-au8" userLabel="layer_container_view">
-                                <rect key="frame" x="1126" y="56" width="240" height="668"/>
+                                <rect key="frame" x="1126" y="56" width="766" height="668"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <connections>
@@ -37,7 +37,7 @@
                                 </connections>
                             </containerView>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UvX-z4-bEI" userLabel="colorpicker_container_view">
-                                <rect key="frame" x="1046" y="56" width="320" height="420"/>
+                                <rect key="frame" x="1046" y="56" width="766" height="420"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <connections>
@@ -45,7 +45,7 @@
                                 </connections>
                             </containerView>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HKn-rf-Zo8" userLabel="filelist_container_view">
-                                <rect key="frame" x="0.0" y="56" width="240" height="486"/>
+                                <rect key="frame" x="0.0" y="56" width="766" height="486"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <connections>
                                     <segue destination="jTm-Tz-1uO" kind="embed" identifier="fileListSegue" id="Hj1-pq-3u9"/>
@@ -171,11 +171,11 @@
             <objects>
                 <tableViewController id="T1X-5t-gog" customClass="LayerPanelViewController" customModule="DynamicBrushes" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="70" sectionHeaderHeight="28" sectionFooterHeight="28" id="xek-Ol-9Fp">
-                        <rect key="frame" x="0.0" y="0.0" width="240" height="668"/>
+                        <rect key="frame" x="0.0" y="0.0" width="766" height="668"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <view key="tableHeaderView" contentMode="scaleToFill" id="jeG-R1-4vp">
-                            <rect key="frame" x="0.0" y="0.0" width="240" height="46"/>
+                            <rect key="frame" x="0.0" y="0.0" width="766" height="46"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Layers" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="0Z7-SH-Fil">
@@ -197,10 +197,10 @@
                         </view>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="LayerTableCell" id="o3t-LT-Vkn" customClass="LayerCell" customModule="DynamicBrushes" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="74" width="240" height="70"/>
+                                <rect key="frame" x="0.0" y="74" width="766" height="70"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="o3t-LT-Vkn" id="l3m-4V-6nh">
-                                    <rect key="frame" x="0.0" y="0.0" width="240" height="70"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="766" height="70"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XsQ-H6-Mys">
@@ -265,11 +265,11 @@
             <objects>
                 <tableViewController id="jTm-Tz-1uO" userLabel="File Panel View Controller" customClass="SavedFilesPanelViewController" customModule="DynamicBrushes" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="50" sectionHeaderHeight="28" sectionFooterHeight="28" id="nYL-Tf-6CB">
-                        <rect key="frame" x="0.0" y="0.0" width="240" height="486"/>
+                        <rect key="frame" x="0.0" y="0.0" width="766" height="486"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <view key="tableHeaderView" contentMode="scaleToFill" id="mJk-0r-UuI">
-                            <rect key="frame" x="0.0" y="0.0" width="240" height="46"/>
+                            <rect key="frame" x="0.0" y="0.0" width="766" height="46"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Files" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="U2O-Y9-ZpQ">
@@ -284,10 +284,10 @@
                         </view>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="FileTableCell" id="Yqg-rA-mIA" userLabel="FileTableCell" customClass="FileCell" customModule="DynamicBrushes" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="74" width="240" height="50"/>
+                                <rect key="frame" x="0.0" y="74" width="766" height="50"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Yqg-rA-mIA" id="3co-GL-OVt">
-                                    <rect key="frame" x="0.0" y="0.0" width="240" height="50"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="766" height="50"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0wb-hJ-JT7">
@@ -331,7 +331,7 @@
                         <viewControllerLayoutGuide type="bottom" id="Ofy-S8-k8H"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="5Aw-8Y-Qcd" customClass="SwiftHSVColorPicker" customModule="DynamicBrushes" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="420"/>
+                        <rect key="frame" x="0.0" y="0.0" width="766" height="420"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>

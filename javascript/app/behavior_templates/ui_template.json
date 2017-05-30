@@ -68,7 +68,7 @@
     "mappings" : [
       {
         "stateId" : "_s865vlzry",
-        "constraintType" : "active",
+        "constraintType" : "passive",
         "mappingId" : "_vg76tuwpf",
         "expressionId" : "_cbx0dm6rs",
         "expressionText" : "%_mx383xvjo%",
@@ -88,7 +88,7 @@
       },
       {
         "stateId" : "_s865vlzry",
-        "constraintType" : "active",
+        "constraintType" : "passive",
         "mappingId" : "_dcl5fgykq",
         "expressionId" : "_od2ov3myz",
         "expressionText" : "%_l49hx5693%",
@@ -108,7 +108,7 @@
       },
       {
         "stateId" : "_s865vlzry",
-        "constraintType" : "active",
+        "constraintType" : "passive",
         "mappingId" : "_x0gss4h85",
         "expressionId" : "_314fop8d3",
         "expressionText" : "%_yjkvf7a5z%",
@@ -148,7 +148,7 @@
       },
       {
         "stateId" : "_s865vlzry",
-        "constraintType" : "active",
+        "constraintType" : "passive",
         "mappingId" : "_y85vzhv8y",
         "expressionId" : "_nczvfar0z",
         "expressionText" : "%_qqdax1q3z%*%_uuwrgd1ui%",
@@ -177,7 +177,7 @@
       },
       {
         "stateId" : "_s865vlzry",
-        "constraintType" : "active",
+        "constraintType" : "passive",
         "mappingId" : "_gnpd0ku37",
         "expressionId" : "_aanlrlr19",
         "expressionText" : "%_dxmwliw8h%",

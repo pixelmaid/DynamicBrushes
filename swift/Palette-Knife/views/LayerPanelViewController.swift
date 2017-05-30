@@ -154,16 +154,22 @@ class LayerPanelViewController: UITableViewController{
     @objc private func toggleLayerVisibility(sender: AnyObject){
         let target = ((sender as! UIButton).superview!.superview) as! LayerCell
         let target_id = target.id;
+        let layer_data = self.layers.filter( {$0.id == target_id} );
         if(target.visible){
             target.visible = false;
+            layer_data[0].hidden = true
+
             self.layerEvent.raise(data: ("HIDE_LAYER",target_id!,nil));
             (sender as! UIButton).setImage(hideIcon, for: UIControlState.normal)
         }
         else{
             target.visible = true;
+            layer_data[0].hidden = false
+
             self.layerEvent.raise(data: ("SHOW_LAYER",target_id!,nil));
             (sender as! UIButton).setImage(showIcon, for: UIControlState.normal)
         }
+        self.tableView.reloadData();
     }
     
     @objc private func deleteLayer(sender: AnyObject){

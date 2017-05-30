@@ -15,8 +15,11 @@ class LayerContainerView: UIView {
     var activeLayer:ModifiedCanvasView?
     var layers = [ModifiedCanvasView]();
     var drawActive = true;
-    
-   
+    let exportKey = NSUUID().uuidString;
+    let exportEvent = Event<(String,Data?)>()
+    var exportHandlers = [Disposable]();
+    var exportedImages = [UIImage]();
+    var exportTarget = 0;
     init(width:Float,height:Float){
         let frame = CGRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(height))
         super.init(frame: frame);
@@ -28,23 +31,72 @@ class LayerContainerView: UIView {
         
     }
     
-    func exportPNG()->Data?{
-        UIGraphicsBeginImageContext(self.bounds.size);
+    func exportPNG(){
+        exportedImages.removeAll();
+        exportTarget = layers.filter({ $0.isHidden == false }).count
+        #if DEBUG
+            print("export target =",exportTarget)
+        #endif
+        for l in layers{
+            if l.isHidden == false{
+               let handler = l.exportEvent.addHandler(target: self, handler: LayerContainerView.exportHandler, key: exportKey)
+                exportHandlers.append(handler);
+                l.exportUIImage();
+            }
+        }
+      /*  UIGraphicsBeginImageContext(self.bounds.size);
         self.layer.render(in: UIGraphicsGetCurrentContext()!);
         let viewImage = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
         let contentToShare = UIImagePNGRepresentation(viewImage!)
-        return contentToShare;
+        return contentToShare;*/
+    }
+    
+    func exportHandler(data:(String,UIImage?),key:String){
+        if(data.0 == "COMPLETE" && data.1 != nil){
+            #if DEBUG
+            print("export complete",data.1,data.1?.size)
+            #endif
+            exportedImages.append(data.1!);
+        }
+        
+        if(exportedImages.count == exportTarget){
+            let masterImage = UIView(frame: self.frame);
+            
+            for i in exportedImages{
+                let img = i
+                masterImage.addSubview(UIImageView(image:img));
+            }
+            UIGraphicsBeginImageContext(masterImage.bounds.size);
+            masterImage.layer.render(in: UIGraphicsGetCurrentContext()!);
+            let viewImage = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+            let contentToShare = UIImagePNGRepresentation(viewImage!)
+            #if DEBUG
+                print("export compilation complete",contentToShare,viewImage!.size)
+                print("export images count",exportedImages.count)
+            #endif
+            for d in self.exportHandlers{
+                d.dispose();
+            }
+            exportedImages.removeAll();
+            self.exportEvent.raise(data:("COMPLETE",contentToShare));
+            
+        }
+        
+        
+        
     }
     
     func exportPNGAsFile()->String?{
-        let fileManager = FileManager.default
+      /*  let fileManager = FileManager.default
        let path = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent("\"layer_container.png")
             let imageData = self.exportPNG()
         if(imageData != nil){
             fileManager.createFile(atPath: path as String, contents: imageData, attributes: nil)
             return path;
         }
+        return nil*/
         return nil
     }
     
@@ -122,15 +174,15 @@ class LayerContainerView: UIView {
     
     func newLayer(name:String,id:String?)->String{
         let size = self.frame.size;
-        activeLayer = ModifiedCanvasView(name:name,frame: CGRect(origin:CGPoint(x:0,y:0), size:size))
-        activeLayer?.center = CGPoint(x:size.width/2,y:size.height / 2);
-        self.layers.append(activeLayer!)
-        self.addSubview(activeLayer!);
-        activeLayer?.drawActive = self.drawActive;
+        let layer = ModifiedCanvasView(name:name,frame: CGRect(origin:CGPoint(x:0,y:0), size:size))
+       layer.center = CGPoint(x:size.width/2,y:size.height / 2);
+        self.layers.append(layer)
+        self.addSubview(layer);
         if(id != nil){
-            activeLayer!.id = id!;
+            layer.id = id!;
         }
-        return activeLayer!.id
+        self.enableLayer(layer: layer)
+        return layer.id
         
     }
     
@@ -146,14 +198,22 @@ class LayerContainerView: UIView {
         }
     }
     
-    func setActiveLayer(id:String){
+    func selectActiveLayer(id:String){
         for l in layers{
             if l.id == id {
-                self.activeLayer = l;
-                activeLayer?.drawActive = self.drawActive;
+                self.enableLayer(layer:l)
                 return;
             }
         }
+    }
+    
+    func enableLayer(layer:ModifiedCanvasView){
+        if(self.activeLayer != nil){
+            self.activeLayer?.endAllStrokes()
+            self.activeLayer?.drawActive = false;
+        }
+        self.activeLayer = layer;
+        activeLayer?.drawActive = self.drawActive;
     }
     
     func showLayer(id:String){

@@ -55,7 +55,7 @@ class TimeSeries: Emitter{
     
     func stopInterval(){
         #if DEBUG
-            print("stop interval")
+           // print("stop interval")
         #endif
 
         if(intervalTimer != nil){

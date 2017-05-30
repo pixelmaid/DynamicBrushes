@@ -26,8 +26,8 @@ let kMinEraseInterval =	0.5
 let kLeftMargin =	10.0
 let kTopMargin =	10.0
 let kRightMargin =      10.0
-let pX = 1024
-let pY = 768
+let pX = Float(1024)
+let pY = Float(768)
 
 class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
@@ -51,7 +51,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     let dataEventKey = NSUUID().uuidString
     let strokeGeneratedKey = NSUUID().uuidString
     let strokeRemovedKey = NSUUID().uuidString
-
+    let exportKey = NSUUID().uuidString
     
     var toolbarController: ToolbarViewController?
     var layerPanelController: LayerPanelViewController?
@@ -78,7 +78,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     @IBOutlet weak var fileListContainerView: UIView!
     
     required init?(coder: NSCoder) {
-        layerContainerView = LayerContainerView(width:1000,height:768);
+        layerContainerView = LayerContainerView(width:pX,height:pY);
             super.init(coder: coder);
         
     }
@@ -175,7 +175,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     func layerEventHandler(data: (String,String,String?), key: String){
         switch(data.0){
         case "LAYER_SELECTED":
-            layerContainerView.setActiveLayer(id:data.1);
+            layerContainerView.selectActiveLayer(id:data.1);
             break;
         case "LAYER_ADDED":
             self.newLayer();
@@ -285,7 +285,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
         
         var templateJSON:JSON = [:]
-        templateJSON["filename"] = "templates/dual_template.json"
+        templateJSON["filename"] = "templates/ui_debugging.json"
        templateJSON["type"] = JSON("load")
         let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: self)
         RequestHandler.addRequest(requestData:behaviorDownloadRequest);
@@ -499,12 +499,17 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     }
     
 
+    func exportImage(){
+        self.layerContainerView.exportEvent.addHandler(target: self, handler: ViewController.handleExportRequest, key: exportKey)
+        self.layerContainerView.exportPNG();
+    }
     
-    func exportImage() {
-        
-        //let contentToShare = self.activeLayer!.exportPNG();
-        let contentToShare = layerContainerView.exportPNG();
-        
+    func handleExportRequest(data:(String,Data?),key:String) {
+        let contentToShare = data.1;
+         #if DEBUG
+        print("handle export request",contentToShare)
+        #endif
+        layerContainerView.exportEvent.removeHandler(key: exportKey);
         if(contentToShare != nil){
             let nsContent = NSData(data: contentToShare!)
             let activityViewController = UIActivityViewController(activityItems: [nsContent], applicationActivities: nil)

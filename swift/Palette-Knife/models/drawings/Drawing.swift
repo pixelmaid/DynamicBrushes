@@ -102,7 +102,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
            self.strokeRemovedEvent.raise(data: toRemove);
         }
         #if DEBUG
-            print("current number of strokes",self.allStrokes.count)
+            //print("current number of strokes",self.allStrokes.count)
         #endif
     }
     

@@ -27,6 +27,7 @@ class UIInput: TimeSeries, WebTransmitter {
         self.lightness = Observable<Float>(0.25)
         self.saturation = Observable<Float>(1)
         self.diameter = Observable<Float>(20)
+        self.diameter.printname = "ui_diameter"
         self.alpha = Observable<Float>(1.0)
         
         super.init();

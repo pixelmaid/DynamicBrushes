@@ -153,6 +153,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.time = Observable<Float>(0)
         
         self.diameter = Observable<Float>(1)
+        self.diameter.printname = "brush_diameter"
         self.alpha = Observable<Float>(1)
         self.hue = Observable<Float>(0.5)
         self.lightness = Observable<Float>(0.25)
@@ -293,9 +294,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             let dX = _delta.x.get(id:nil);
             let dY = _delta.y.get(id:nil);
             
-            #if DEBUG
-                print("position changed delta, position: \(dX,dY,self.position.x.get(id:nil),self.position.y.get(id:))");
-            #endif
+           
             let r = self.rotation.get(id:nil)
             
             let sX = self.scaling.x.get(id:nil)
@@ -305,6 +304,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             let rY = self.reflectY.get(id:nil)
             
             let d = self.diameter.get(id:nil)
+           
             let h = self.hue.get(id:nil)
             let s = self.saturation.get(id:nil)
             let l = self.lightness.get(id:nil)
@@ -342,6 +342,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 let rY = self.reflectY.get(id:nil)
                 
                 let d = self.diameter.get(id:nil)
+               
                 let h = self.hue.get(id:nil)
                 let s = self.saturation.get(id:nil)
                 let l = self.lightness.get(id:nil)
@@ -405,6 +406,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         bufferLimitY.set(newValue: 0)
         
         let cweight = ds.d;
+          
         //weightBuffer.push(v: cweight);
         
         let color = Color(h: ds.h, s: ds.s, l: ds.l, a: 1)
@@ -475,7 +477,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.bPosition.x.setSilent(newValue: self.origin.x.get(id: nil))
         self.bPosition.y.setSilent(newValue: self.origin.y.get(id: nil))
         #if DEBUG
-            print("origin set =",stylus.x.get(id:nil),p.x.get(id: nil),p.y.get(id:nil));
+            //print("origin set =",stylus.x.get(id:nil),p.x.get(id: nil),p.y.get(id:nil));
         #endif
         
     }
@@ -568,7 +570,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             let methodName = method.name;
             
             #if DEBUG
-                print("executing method:\(method.name,self.id,self.name)");
+                //print("executing method:\(method.name,self.id,self.name)");
             #endif
             
             switch (methodName){
@@ -664,13 +666,13 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
      */
     func addConstraint(id:String,reference:Observable<Float>, relative:Observable<Float>, stateId:String, type:String){
        
-        #if DEBUG
+        /*#if DEBUG
             if let expref = reference as? TextExpression{
                 for (_, val) in expref.operandList{
-                print("reference,relative",val.name,relative.name)
+                print("reference,relative",val.printname,relative.printname)
                 }
             }
-        #endif
+        #endif*/
         
         if(type == "active"){
             reference.subscribe(id: self.id);
@@ -804,12 +806,16 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     //creates number of clones specified by num and adds them as children
     func spawn(behavior:BehaviorDefinition,num:Int) {
+
         if(num > 0){
             for _ in 0...num-1{
                 let child = Brush(name:name, behaviorDef: behavior, parent:self, canvas:self.currentCanvas!)
                 self.children.append(child);
                 child.index.set(newValue: Float(self.children.count-1));
                 self.initEvent.raise(data: (child,"brush_init"));
+               /* #if DEBUG
+                    print("spawn called")
+                #endif*/
                 behavior.initBrushBehavior(targetBrush: child);
                 _ = child.dieEvent.addHandler(target: self, handler: Brush.childDieHandler, key: childDieHandlerKey)
             }
