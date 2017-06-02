@@ -122,6 +122,8 @@
 		5FEE2AC91DE127D800080095 /* dual_pen.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FEE2AC71DE127D800080095 /* dual_pen.png */; };
 		5FEE2ACA1DE127D800080095 /* lg_pen_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FEE2AC81DE127D800080095 /* lg_pen_blue.png */; };
 		5FFAC4D71E9D84040009DC5E /* SaveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFAC4D61E9D84040009DC5E /* SaveManager.swift */; };
+		5FFC455A1EE1B133007B7597 /* Particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FFC45581EE1B133007B7597 /* Particle.png */; };
+		5FFC455B1EE1B133007B7597 /* point.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 5FFC45591EE1B133007B7597 /* point.vsh */; };
 		5FFDAB091D21B5C400632A26 /* SocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFDAB081D21B5C400632A26 /* SocketManager.swift */; };
 		86D9E5D4C68732BC03AD249A /* Pods_PaletteKnife.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76DB207CD163015E13C1998B /* Pods_PaletteKnife.framework */; };
 		AD28AABCDC9E1C7118844AC4 /* Pods_PaletteKnifeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC68E1A2193A02A54E663498 /* Pods_PaletteKnifeTests.framework */; };
@@ -274,6 +276,8 @@
 		5FEE2AC71DE127D800080095 /* dual_pen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dual_pen.png; sourceTree = "<group>"; };
 		5FEE2AC81DE127D800080095 /* lg_pen_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lg_pen_blue.png; sourceTree = "<group>"; };
 		5FFAC4D61E9D84040009DC5E /* SaveManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SaveManager.swift; sourceTree = "<group>"; };
+		5FFC45581EE1B133007B7597 /* Particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Particle.png; sourceTree = SOURCE_ROOT; };
+		5FFC45591EE1B133007B7597 /* point.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = point.vsh; sourceTree = SOURCE_ROOT; };
 		5FFDAB081D21B5C400632A26 /* SocketManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketManager.swift; sourceTree = "<group>"; };
 		76DB207CD163015E13C1998B /* Pods_PaletteKnife.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PaletteKnife.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7CCD589D0593142C66540CEB /* Pods-PaletteKnifeUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeUITests/Pods-PaletteKnifeUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -486,6 +490,8 @@
 		5FA4C7221CDA7B5B004A728C /* PaletteKnife */ = {
 			isa = PBXGroup;
 			children = (
+				5FFC45581EE1B133007B7597 /* Particle.png */,
+				5FFC45591EE1B133007B7597 /* point.vsh */,
 				5F5037281EA95E27004ABAC1 /* Resources */,
 				5F5037231EA95DD0004ABAC1 /* Shaders */,
 				5FFAC4D51E9D83C20009DC5E /* util */,
@@ -857,6 +863,7 @@
 				5FE32F831ECF6D5300ADC01E /* brush_button_active2x.png in Resources */,
 				5FEE2AC91DE127D800080095 /* dual_pen.png in Resources */,
 				5F9F25AD1DEFE3A0005CB5D8 /* shopbot_position_inactive2x.png in Resources */,
+				5FFC455B1EE1B133007B7597 /* point.vsh in Resources */,
 				5FE32F971ECF6DC900ADC01E /* refresh_button2x.png in Resources */,
 				5FE32F8A1ECF6D5300ADC01E /* export_button.png in Resources */,
 				5FE32F851ECF6D5300ADC01E /* brush_button2x.png in Resources */,
@@ -896,6 +903,7 @@
 				5FE32F7E1ECF6D5300ADC01E /* behavior_activate_button.png in Resources */,
 				5FD6CD121DE0EE0E007D94AA /* sm_pen_blue.png in Resources */,
 				5FE32F881ECF6D5300ADC01E /* erase_button.png in Resources */,
+				5FFC455A1EE1B133007B7597 /* Particle.png in Resources */,
 				5FBDF0E71ED8D95300022B07 /* quad.vsh in Resources */,
 				5FE32F991ECF6DC900ADC01E /* save_button2x.png in Resources */,
 				5FEE2ACA1DE127D800080095 /* lg_pen_blue.png in Resources */,

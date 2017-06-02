@@ -565,7 +565,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
        _ = self.layerContainerView.exportEvent.addHandler(target: self, handler: ViewController.handleExportRequest, key: exportKey)
         self.behaviorManager?.refreshAllBehaviors();
         //TODO: this is a hack. need to create a delay in case it's saving a stroke to the texture
-        let when = DispatchTime.now() + 2;         DispatchQueue.main.asyncAfter(deadline: when) {
+        let when = DispatchTime.now() + 2;
+        DispatchQueue.main.asyncAfter(deadline: when) {
             self.layerContainerView.exportPNG();
 
         }
@@ -616,10 +617,17 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             UserDefaults.standard.set(filename, forKey: "backup_filename")
             UserDefaults.standard.synchronize()
             
-            self.backupBehavior(filename:filename)
-            self.backupProject(filename:filename)
-            self.backupImage()
-            backupNeeded = false;
+            self.behaviorManager?.refreshAllBehaviors();
+            //TODO: this is a hack. need to create a delay in case it's saving a stroke to the texture
+            let when = DispatchTime.now() + 2;
+            DispatchQueue.main.asyncAfter(deadline: when) {
+
+                self.backupBehavior(filename:filename)
+                self.backupProject(filename:filename)
+                self.backupImage()
+                self.backupNeeded = false;
+
+            }
         }
     }
     
