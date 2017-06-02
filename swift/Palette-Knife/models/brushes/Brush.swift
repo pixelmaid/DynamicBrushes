@@ -423,8 +423,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     }
     
     func intersectionCheck(){
-        let bpx = bPosition.x.get(id: nil);
-        let bpy = bPosition.y.get(id: nil);
+       // let bpx = bPosition.x.get(id: nil);
+       // let bpy = bPosition.y.get(id: nil);
         
         
         if((keyStorage["INTERSECTION"]!.count)>0){
@@ -884,6 +884,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     }
     
     override func destroy() {
+        #if DEBUG
+            print("destroying brush: \(self.id)");
+        #endif
         currentCanvas!.currentDrawing!.retireCurrentStrokes(parentID: self.id)
         self.clearBehavior();
         self.clearAllEventHandlers();

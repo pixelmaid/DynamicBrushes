@@ -166,7 +166,7 @@ class Point:Observable<(Float,Float)>,Geometry{
     
     
     func pointAtDistance(d:Float,a:Float)->Point{
-        let x = self.x.get(id: nil) + (d * cos(a*Float(M_PI/180)))
+        let x = self.x.get(id: nil) + (d * cos(a*Float(Float.pi/180)))
         let y = self.y.get(id: nil) + (d * sin(a*Float.pi/180))
         return Point(x: x,y: y)
     }

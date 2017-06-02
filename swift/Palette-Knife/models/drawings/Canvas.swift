@@ -48,8 +48,8 @@ class Canvas: WebTransmitter, Hashable{
     func initDrawing(){
         currentDrawing = Drawing();
         drawings.append(currentDrawing!)
-        currentDrawing!.transmitEvent.addHandler(target: self,handler: Canvas.drawingDataGenerated, key:drawKey);
-        currentDrawing!.geometryModified.addHandler(target: self,handler: Canvas.drawHandler, key:dataKey);
+        _ = currentDrawing!.transmitEvent.addHandler(target: self,handler: Canvas.drawingDataGenerated, key:drawKey);
+        _ = currentDrawing!.geometryModified.addHandler(target: self,handler: Canvas.drawHandler, key:dataKey);
         
         var string = "{\"canvas_id\":\""+self.id+"\","
         string += "\"drawing_id\":\""+currentDrawing!.id+"\","

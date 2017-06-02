@@ -54,6 +54,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
 
         var onKeyRecognized = function() {
             requestFileList(codename);
+            requestExampleFileList();
         };
 
         var onConnectionError = function() {
@@ -81,6 +82,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
             };
             socketController.sendMessage(transmit_data);
             requestFileList(codename);
+            requestExampleFileList();
             hideOverlay();
 
         };
@@ -141,6 +143,19 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
             socketController.sendMessage(file_request_data);
         };
 
+ var requestExampleFileList = function(artistName) {
+            var file_request_data = {
+                type: "storage_request",
+                requester: "authoring",
+                data: {
+                    targetFolder: "examples/",
+                    type: "filelist_request",
+                    list_type: "behavior_list"
+                }
+
+            };
+            socketController.sendMessage(file_request_data);
+        };
         var promptConnect = function() {
 
             codename = prompt("please enter your login key");

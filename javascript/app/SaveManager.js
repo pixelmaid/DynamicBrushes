@@ -11,6 +11,7 @@ define(["app/Emitter"],
 			constructor() {
 				super();
 				this.saved_files = {};
+				this.example_files = {};
 				this.backup_files = {};
 				this.currentFile = null;
 				this.currentName = "my_project";
@@ -56,7 +57,7 @@ define(["app/Emitter"],
 			setCurrentFilename(filename,fileval) {
 				this.currentName = filename;
 				this.currentFile = fileval;
-				console.log("current name =",this.currentName,this.currentFile)
+				console.log("current name =",this.currentName,this.currentFile);
 				this.emitter.emit("ON_NEW_FILE_SELECTED");
 			}
 
@@ -64,13 +65,27 @@ define(["app/Emitter"],
 				var filename = this.saved_files[fileval];
 				this.currentFile = fileval;
 				this.currentName = filename;
-				this.loadRequest(filename);
+				this.loadRequest(fileval);
+			}
+
+			loadSavedExampleFile(fileval) {
+				var filename = this.example_files[fileval];
+				console.log("load saved example file",filename,fileval)
+				this.currentFile = fileval;
+				this.currentName = filename;
+				this.loadRequest(fileval);
 			}
 
 			updateFileList(storage_data) {
 				this.saved_files = storage_data.filelist;
 
 				this.trigger("ON_SAVED_FILES_UPDATED");
+			}
+
+			updateExampleList(storage_data) {
+				this.example_files = storage_data.filelist;
+
+				this.trigger("ON_EXAMPLE_FILES_UPDATED");
 			}
 
 			setCodeName(codename) {
@@ -103,7 +118,12 @@ define(["app/Emitter"],
 				} else if (type == "backup") {
 					this.backup_files = filelist;
 				} else if (type == "filelist") {
-					this.updateFileList(storage_data);
+					if(storage_data.targetFolder == "examples/"){
+						this.updateExampleList(storage_data);
+					}
+					else{
+						this.updateFileList(storage_data);
+					}
 				}
 			}
 

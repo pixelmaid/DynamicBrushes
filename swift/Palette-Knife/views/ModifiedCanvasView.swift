@@ -12,21 +12,24 @@ import UIKit
 let pi = Float.pi
 
 class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
-    
+    //TODO: these are extraneous, should remove them
+    var jotViewStateInkPath: String!
+    var jotViewStatePlistPath:String!
     
     var id = NSUUID().uuidString;
     let name:String?
     var drawActive = true;
     var jotView:JotView!
     //JotView params
-    var jotViewStateInkPath: String!
-    var jotViewStatePlistPath: String!
+   
     var numberOfTouches:Int = 0
     var lastLoc:CGPoint!
     var lastDate:NSDate!
     var velocity = 0;
-    var strokes = [String:JotStroke]();
-    var exportEvent = Event<(String,UIImage?)>();
+    var activeStrokes = [String:JotStroke]();
+    var allStrokes = [JotStroke]();
+    var eraseStroke:JotStroke!
+    var saveEvent = Event<(String,String,UIImage?,UIImage?,JotViewImmutableState?)>();
     //end JotView params
     
     init(name:String,frame:CGRect){
@@ -35,14 +38,27 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
         super.init(frame:frame)
         
         jotView.delegate = self
-        
+        _ = self.jotViewStateInkPathFunc();
+        _ = self.jotViewStatePlistPathFunc();
+        _ = self.jotViewStateThumbPathFunc();
+    
         let paperState = JotViewStateProxy(delegate: self)
         paperState?.loadJotStateAsynchronously(false, with: jotView.bounds.size, andScale: jotView.scale, andContext: jotView.context, andBufferManager: JotBufferManager.sharedInstance())
         jotView.loadState(paperState)
-        
         self.addSubview(jotView)
         
     }
+    
+    
+    deinit{
+        self.removeAllStrokes();
+        #if DEBUG
+        print("dealocated layer \(self.id)")
+        #endif
+
+    }
+    
+   
     
     required init?(coder aDecoder: NSCoder) {
         self.name = "noname";
@@ -54,6 +70,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
     
     func beginStroke(id:String){
         if(!self.isHidden){
+           
             autoreleasepool {
                 if(jotView.state == nil){
                     #if DEBUG
@@ -64,57 +81,98 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
                 let newStroke = JotStroke(texture: self.textureForStroke(), andBufferManager: jotView.state.bufferManager());
                 newStroke!.delegate = jotView as JotStrokeDelegate;
                 
-                strokes[id] = newStroke!;
+                if(id == "eraseStroke"){
+                    eraseStroke = newStroke;
+                }
+                else{
+                    activeStrokes[id] = newStroke!;
+                    allStrokes.append(newStroke!)
+                }
             }
             JotGLContext.validateEmptyStack()
         }
     }
     
-    func renderStroke(currentStrokeId:String,toPoint:CGPoint,toWidth:CGFloat,toColor:UIColor!){
+    func removeAllStrokes(){
+        for value in allStrokes{
+            value.lock();
+            value.empty();
+            value.unlock();
+            
+        }
+        self.allStrokes.removeAll();
+        self.activeStrokes.removeAll();
+        JotGLContext.validateEmptyStack();
+    }
+    
+    func renderStrokeById(currentStrokeId: String, toPoint:CGPoint,toWidth:CGFloat,toColor:UIColor!){
+        guard let currentStroke:JotStroke = activeStrokes[currentStrokeId] else {return}
+        self.renderStroke(currentStroke: currentStroke, toPoint: toPoint, toWidth: toWidth, toColor: toColor)
+    }
+    
+    func renderStroke(currentStroke:JotStroke,toPoint:CGPoint,toWidth:CGFloat,toColor:UIColor!){
         #if DEBUG
             //print("draw interval render stroke",toPoint)
         #endif
         if(!self.isHidden){
-            let currentStroke = strokes[currentStrokeId]
-            currentStroke?.lock();
-            
-            jotView.state.currentStroke = currentStroke
-            autoreleasepool {
-                
-                //self.willMoveStroke(withCoalescedTouch: coalescedTouch, from: touch)
-                //var shouldSkipSegment = false;
-                
-                if(currentStroke != nil){
-                    jotView.addLine(toAndRenderStroke: currentStroke, to: toPoint, toWidth: toWidth*4, to: toColor, andSmoothness: self.getSmoothness(), withStepWidth: self.stepWidthForStroke())
-                    
+           
+                if(jotView.state == nil){
+                    #if DEBUG
+                        print("state is nil")
+                    #endif
+                    return;
                 }
-            }
+                
+            currentStroke.lock();
+             autoreleasepool {
+                   _ = jotView.addLine(toAndRenderStroke: currentStroke, to: toPoint, toWidth: toWidth*4, to: toColor, andSmoothness: self.getSmoothness(), withStepWidth: self.stepWidthForStroke())
+                    
+                
             
-            currentStroke?.unlock();
+            }
+            currentStroke.unlock();
+                JotGLContext.validateEmptyStack();
+
+            
         }
     }
     
-    func validateEmptyStack(){
-        JotGLContext.validateEmptyStack();
-    }
     
     func endAllStrokes(){
-        for (_, value) in self.strokes{
-            self.endStroke(currentStroke: value)
+         #if DEBUG
+            
+        print("ending all strokes",self.activeStrokes,self.activeStrokes.count)
+            #endif
+        
+        
+        
+        for (id, value) in self.activeStrokes{
+            if(value.segments.count > 0){
+                self.endStroke(currentStroke: value)
+                activeStrokes.removeValue(forKey: id)
+            }
         }
-        self.strokes.removeAll();
+        #if DEBUG
+            print("strokes remaining",self.activeStrokes,self.activeStrokes.count)
+        #endif
+       
+
     }
     
     func endStrokes(idList:[String]){
         #if DEBUG
             
-            print("total number of jot view strokes",id, strokes.count,strokes);
+            print("total number of active jot view strokes",id, activeStrokes.count,activeStrokes);
             
         #endif
         for id in idList{
-            let stroke =  strokes.removeValue(forKey: id)
+            #if DEBUG
+            print("ending strokes",id,activeStrokes[id]);
+            #endif
+            let stroke =  activeStrokes[id]
             if(stroke != nil){
                 endStroke(currentStroke: stroke!)
+                activeStrokes.removeValue(forKey: id)
             }
         }
         
@@ -125,99 +183,102 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
             currentStroke.lock();
             jotView.state.currentStroke =  currentStroke;
             jotView.state.finishCurrentStroke();
-            
-            //if currentStroke.segments.count == 1 && (((currentStroke.segments.first as? MoveToPathElement) != nil)) {
-            //currentStroke.empty()
-            //}
-            
-            
-            
             currentStroke.unlock();
         }
         JotGLContext.validateEmptyStack();
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if(drawActive){
-            if let touch = touches.first  {
-                let point = touch.location(in: self)
-                let x = Float(point.x)
-                let y = Float(point.y)
-                let force = Float(touch.force);
-                let angle = Float(touch.azimuthAngle(in: self))
-                stylus.onStylusDown(x: x, y:y, force:force, angle:angle)
+    
+    func layerTouchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touch = touches.first else { return }
+
+        if touch.type == .stylus {
+            if(drawActive){
+                if let touch = touches.first  {
+                    let point = touch.location(in: self)
+                    let x = Float(point.x)
+                    let y = Float(point.y)
+                    let force = Float(touch.force);
+                    let angle = Float(touch.azimuthAngle(in: self))
+                    stylus.onStylusDown(x: x, y:y, force:force, angle:angle)
+                }
+            }
+            else {
+                self.beginStroke(id:"eraseStroke")
             }
         }
-        else {
-            self.beginStroke(id:"eraseStroke")
+    }
+    
+    
+    
+    func saveUIImageAndState(){
+        self.endAllStrokes();
+        let stateImage: ((UIImage?, UIImage?, JotViewImmutableState?) -> Void)! = imageStateSaveComplete
+        jotView.exportImage(to: self.jotViewStateInkPathFunc(), andThumbnailTo:self.jotViewStateThumbPathFunc(), andStateTo: self.jotViewStatePlistPathFunc(), withThumbnailScale:1.0, onComplete: stateImage)
+    }
+
+    
+    //handler called when state is saved
+    func imageStateSaveComplete(ink:UIImage?, thumb:UIImage?, state:JotViewImmutableState?){
+        if(thumb != nil && ink != nil && state != nil){
+        self.saveEvent.raise(data: ("COMPLETE",self.id,thumb!,ink!,state!));
+        }
+        else{
+            self.saveEvent.raise(data: ("INCOMPLETE",self.id,nil,nil,nil));
+
         }
     }
     
-    /*
-     - (IBAction)saveImage {
-     [jotView exportImageTo:[self jotViewStateInkPath] andThumbnailTo:[self jotViewStateThumbPath] andStateTo:[self jotViewStatePlistPath] withThumbnailScale:1.0 onComplete:^(UIImage* ink, UIImage* thumb, JotViewImmutableState* state) {
-     UIImageWriteToSavedPhotosAlbum(thumb, nil, nil, nil);
-     dispatch_async(dispatch_get_main_queue(), ^{
-     UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Saved" message:@"The JotView's state has been saved to disk, and a full resolution image has been saved to the photo album." preferredStyle:UIAlertControllerStyleAlert];
-     [alert addAction:[UIAlertAction actionWithTitle:@"Ok" style:UIAlertActionStyleDefault handler:nil]];
-     [self presentViewController:alert animated:YES completion:nil];
-     });
-     }];
-     }*/
     
-    func statePlistPath() -> String {
-        return URL(fileURLWithPath: documentsDir()).appendingPathComponent("state.plist").absoluteString
+    //returns a list of all saved strokes in the state
+    func getSavedStrokes()->[String]{
+        var strokeList = [String]();
+
+        for value in allStrokes{
+            if value.uuid() != "1" {
+            strokeList.append(value.uuid());
+            }
+        }
+      
+        return strokeList;
     }
+
     
-    func documentsDir() -> String {
-        let userDocumentsPaths: [String] = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-        return userDocumentsPaths[0]
-    }
     
-    func exportUIImage(){
-        self.endAllStrokes();
-        let fileManager = FileManager.default
-        let path = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent("\(id).png")
-        let thumb_path = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent("\(id)_thumb.png")
+    func loadNewState() {
+        self.removeAllStrokes();
+        _ = jotViewStateInkPathFunc();
+        _ = jotViewStatePlistPathFunc();
+        _ = jotViewStateThumbPathFunc();
+        print("load new state called",self.jotViewStatePlistPath,self.jotViewStateInkPath)
+        jotView.state.isForgetful = true
+        let state = JotViewStateProxy(delegate:self);
+        state?.loadJotStateAsynchronously(false, with: jotView.bounds.size, andScale: 1.0, andContext: jotView.context, andBufferManager: JotBufferManager.sharedInstance())
+        jotView.loadState(state)
         
-        let image: ((UIImage?) -> Void)! = imageExportComplete
-        jotView.exportToImage(onComplete: image, withScale: 2)
-    }
-    
-    func exportPNGAsFile()->String?{
+        let v_strokes = state?.everyVisibleStroke();
+        #if DEBUG
+        print("visible strokes",v_strokes as Any);
+        #endif
         
-        /*let image = self.image
-         
-         if(image != nil){
-         let fileManager = FileManager.default
-         let path = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent("\(id).png")
-         let imageData = UIImagePNGRepresentation(image!)
-         UIImagePNGRepresentation(UIImage())
-         fileManager.createFile(atPath: path as String, contents: imageData, attributes: nil)
-         return path;
-         }*/
-        return nil
+        for s in v_strokes!{
+            guard let stroke = s as? JotStroke else { return }
+           
+            self.allStrokes.append(stroke)
+            
+        }
+        
+        print("strokes after load = ",self.allStrokes);
         
     }
-    func imageExportComplete(image: UIImage?) {
-        print("image: \(image)")
-        self.exportEvent.raise(data: ("COMPLETE",image!));
-    }
-    
-    func loadImage(path:String){
-        
-        let image = UIImage(contentsOfFile: path)
-        self.contentMode = .scaleAspectFit
-        //  self.image = image
-        
-    }
+
     
     func pushContext()->ModifiedCanvasView{
         return self;
     }
     
     
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+    func layerTouchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
         var touches = [UITouch]()
         if let coalescedTouches = event?.coalescedTouches(for: touch) {
@@ -228,7 +289,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
         #if DEBUG
             //print("number of coalesced touches \(touches.count)");
         #endif
-        // if touch.type == .stylus {
+         if touch.type == .stylus {
         if(drawActive){
             
             for touch in touches {
@@ -244,21 +305,18 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
         }
             //Erase mode
         else {
+            
             let location = touch.location(in: self)
             let width = CGFloat(uiInput.diameter.get(id: nil));
-            
-            
-            self.renderStroke(currentStrokeId: "eraseStroke", toPoint: location, toWidth: width, toColor: nil)
+            self.renderStroke(currentStroke: eraseStroke, toPoint: location, toWidth: width, toColor: nil)
         }
-        // }
+        }
         
         
         
     }
     
     func eraseCanvas(context:CGContext, start:CGPoint,end:CGPoint,force:CGFloat){
-        
-        
         
         context.setStrokeColor(UIColor.red.cgColor)
         //TODO: will need to fine tune this
@@ -274,10 +332,13 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
     }
     
     
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+    func layerTouchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         stylus.onStylusUp()
         if drawActive == false {
-            self.endStrokes(idList: ["eraseStroke"])
+            if eraseStroke != nil{
+                self.endStroke(currentStroke: eraseStroke)
+                eraseStroke = nil;
+            }
         }
     }
     
@@ -312,29 +373,10 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
     }
     
     func willBeginStroke(withCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!) -> Bool {
-        /*   velocity = 1;
-         lastDate = NSDate();
-         numberOfTouches = 1;
-         */
+        
         return true;
     }
     func willMoveStroke(withCoalescedTouch coalescedTouch: UITouch!, from touch: UITouch!) {
-        /*        numberOfTouches += 1;
-         if (numberOfTouches > 4){
-         numberOfTouches = 4;
-         }
-         let dur = NSDate().timeIntervalSince(lastDate as Date)
-         
-         if(dur > 00.01){
-         // require small duration, otherwise the pts/sec calculation can vary wildly
-         /*if self.velocityForTouch(touch) {
-         velocity = self.velocityForTouch
-         }
-         */
-         lastDate = NSDate()
-         lastLoc = touch.preciseLocation(in:nil);
-         }*/
-        
         
     }
     
@@ -383,27 +425,37 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
         
     }
     
-    /*- (NSString*)documentsDir {
-     NSArray<NSString*>* userDocumentsPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-     return [userDocumentsPaths objectAtIndex:0];
-     }
-     
-     
-     - (NSString*)jotViewStateInkPath {
-     return [[self documentsDir] stringByAppendingPathComponent:@"ink.png"];
-     }
-     
-     - (NSString*)jotViewStateThumbPath {
-     return [[self documentsDir] stringByAppendingPathComponent:@"thumb.png"];
-     }
-     
-     - (NSString*)jotViewStatePlistPath {
-     return [[self documentsDir] stringByAppendingPathComponent:@"state.plist"];
-     }
-     
-     - (void)didLoadState:(JotViewStateProxy*)state {
-     }
-     
-     - (void)didUnloadState:(JotViewStateProxy*)state {
-     }*/
+    
+    func jotViewStateInkPathFunc() -> String {
+        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
+        let documentDirectory = paths[0] as! String
+        let path = documentDirectory.appending("/ink_"+id+".png")
+        print("ink",path)
+        self.jotViewStateInkPath = path;
+        return path
+
+    }
+    
+    func jotViewStateThumbPathFunc() -> String {
+        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
+        let documentDirectory = paths[0] as! String
+        let path = documentDirectory.appending("/thumb_"+id+".png")
+        print("thumb",path)
+        return path
+
+    }
+    
+    func jotViewStatePlistPathFunc() -> String {
+        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
+        let documentDirectory = paths[0] as! String
+        let path = documentDirectory.appending("/state_"+id+".plist")
+        print("plist",path)
+        self.jotViewStatePlistPath = path;
+
+        return path
+    }
+
+   
+
+
 }

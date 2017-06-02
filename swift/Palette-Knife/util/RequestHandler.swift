@@ -117,8 +117,8 @@ class RequestHandler{
                 case "download":
                     RequestHandler.saveManager.downloadFile(downloadData:RequestHandler.activeItem!.data!)
                     break;
-                case "download_image":
-                    RequestHandler.saveManager.downloadImage(downloadData:RequestHandler.activeItem!.data!)
+                case "download_project_file":
+                    RequestHandler.saveManager.downloadProjectFile(downloadData:RequestHandler.activeItem!.data!)
                     break;
                     
                 case "filelist":

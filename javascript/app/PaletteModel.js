@@ -92,7 +92,7 @@ define(['emitter', 'app/id', 'app/Emitter'],
               type: "ui_prop"
 
             }]
-          },
+          },  
 
 
           "brush_properties": {

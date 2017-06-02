@@ -40,12 +40,27 @@ class SaveManager{
         let s3 = AWSS3.s3(forKey: "defaultKey")
         s3.listObjects(listRequest).continueWith { (task) -> AnyObject? in
             var listArray = [String:String]()
-            
+            print("list objects output",task.result?.contents)
             let listObjectsOutput = task.result;
             for object in (listObjectsOutput?.contents)! {
                 let key = object.key
                 let nameArray = key!.components(separatedBy: "/")
-                let name = nameArray[3]
+                
+                let name:String
+                if nameArray.count>3{
+                    name = nameArray[3]
+                }
+                else if nameArray.count>2{
+                    name = nameArray[2]
+
+                }
+                else if nameArray.count>1{
+                    name = nameArray[1]
+                    
+                }
+                else{
+                    name = nameArray[0]
+                }
                 listArray[key!] = name
             }
             
@@ -81,7 +96,7 @@ class SaveManager{
         let uploadRequest = AWSS3TransferManagerUploadRequest()
         uploadRequest?.bucket = bucketName
         uploadRequest?.key = filename
-        uploadRequest?.contentType = "image/png"
+        uploadRequest?.contentType = uploadData["content_type"].stringValue;
         uploadRequest?.body = fileUrl as URL!
         uploadRequest?.serverSideEncryption = AWSS3ServerSideEncryption.awsKms
         uploadRequest?.uploadProgress = { (bytesSent, totalBytesSent, totalBytesExpectedToSend) -> Void in
@@ -242,13 +257,14 @@ class SaveManager{
     }
     
     
-    func downloadImage(downloadData:JSON){
+    func downloadProjectFile(downloadData:JSON){
         
         let filename = downloadData["filename"].stringValue;
         let id = downloadData["id"].stringValue;
         let transferManager = AWSS3TransferManager.default()
-        
-        let url = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(id+".png")
+        let url =  URL(fileURLWithPath: downloadData["url"].stringValue)
+        let content_type = downloadData["content_type"].stringValue
+       // let url = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(id+".png")
         
         let downloadRequest = AWSS3TransferManagerDownloadRequest()
         downloadRequest?.bucket = bucketName
@@ -260,7 +276,7 @@ class SaveManager{
                 //self.progressView.progress = progress
                 //   self.statusLabel.text = "Downloading..."
                 #if DEBUG
-                print("Progress is: %f",progress)
+                print("Progress for \(content_type) is: %f",progress)
                 #endif
             })
         }
@@ -283,16 +299,17 @@ class SaveManager{
                 }
             }
             #if DEBUG
-            print("Download complete for: \(String(describing: downloadRequest?.key))")
+            print("Download complete for: \(url.absoluteString)")
             #endif
             _ = task.result
             var downloadJSON:JSON = [:]
             
             downloadJSON["path"] = JSON(url.path);
             downloadJSON["id"] = JSON(id);
-            
-            self.dataEvent.raise(data: ("download_image_complete",downloadJSON))
-            self.requestEvent.raise(data:("download_image_complete",downloadJSON))
+            downloadJSON["content_type"] = JSON(content_type)
+           
+            self.dataEvent.raise(data: ("download_project_complete",downloadJSON))
+            self.requestEvent.raise(data:("download_project_complete",downloadJSON))
             
             
             return nil

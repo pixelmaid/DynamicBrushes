@@ -3,7 +3,7 @@
 define(["jquery"],
 
     function($) {
-        var save_btn, saveas_btn, file_select;
+        var save_btn, saveas_btn, file_select, example_file_select;
 
         var SaveView = class {
 
@@ -13,10 +13,14 @@ define(["jquery"],
                 save_btn = $("#save");
                 saveas_btn = $("#saveas");
                 file_select = $("#fileselect");
+                example_file_select = $("#example_fileselect");
                 var self = this;
                 console.log("el,savebutton", this.el, save_btn, model);
                 this.model.addListener("ON_SAVED_FILES_UPDATED", function() {
                     this.onSavedFilesUpdated();
+                }.bind(this));
+                this.model.addListener("ON_EXAMPLE_FILES_UPDATED", function() {
+                    this.onExampleFilesUpdated();
                 }.bind(this));
                 this.model.addListener("ON_NEW_FILE_SELECTED", function() {
                     this.updateSelectedFile();
@@ -26,6 +30,14 @@ define(["jquery"],
                     console.log("file select change", file_select.val());
                     if(file_select.val()!== "empty"){
                         self.model.loadSavedFile(file_select.val());
+                    }
+                });
+
+
+                example_file_select.change(function(event) {
+                    console.log("example file select change", example_file_select.val());
+                    if(example_file_select.val()!== "empty"){
+                        self.model.loadSavedExampleFile(example_file_select.val());
                     }
                 });
 
@@ -58,6 +70,7 @@ define(["jquery"],
                 }
             }
 
+
             onSavedFilesUpdated() {
                 console.log("saved files updated called");
                 var filelist = this.model.saved_files;
@@ -79,6 +92,28 @@ define(["jquery"],
                 }
                 this.updateSelectedFile();
             }
+
+             onExampleFilesUpdated() {
+                console.log("example files updated called");
+                var filelist = this.model.example_files;
+                example_file_select.find('option').remove();
+                 example_file_select.append($('<option>', {
+                                value: "empty",
+                                text: ""
+                            }));
+                for (var key in filelist) {
+                    if (filelist.hasOwnProperty(key)) {
+                        var name = filelist[key];
+                        if (name !== "") {
+                            example_file_select.append($('<option>', {
+                                value: key,
+                                text: name
+                            }));
+                        }
+                    }
+                }
+            }
+
 
 
 

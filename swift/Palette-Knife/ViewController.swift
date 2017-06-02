@@ -26,16 +26,15 @@ let kMinEraseInterval =	0.5
 let kLeftMargin =	10.0
 let kTopMargin =	10.0
 let kRightMargin =      10.0
-let pX = Float(1024)
-let pY = Float(768)
-
+let pX = Float(1024*2)
+let pY = Float(768*2)
 class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     
     
     // MARK: Properties
     
-       
+    
     var layerContainerView:LayerContainerView!
     
     var behaviorManager: BehaviorManager?
@@ -52,11 +51,14 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     let strokeGeneratedKey = NSUUID().uuidString
     let strokeRemovedKey = NSUUID().uuidString
     let exportKey = NSUUID().uuidString
+    let backupKey = NSUUID().uuidString
+    let saveEventKey = NSUUID().uuidString
     
     var toolbarController: ToolbarViewController?
     var layerPanelController: LayerPanelViewController?
     var fileListController: SavedFilesPanelViewController?
-    
+    let targetSize = CGSize(width:CGFloat(pX),height:CGFloat(pY))
+
     
     var colorPickerView: SwiftHSVColorPicker?
     override var prefersStatusBarHidden: Bool {
@@ -79,7 +81,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     required init?(coder: NSCoder) {
         layerContainerView = LayerContainerView(width:pX,height:pY);
-            super.init(coder: coder);
+        super.init(coder: coder);
         
     }
     
@@ -142,13 +144,15 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             
             break;
         case "TOGGLE_FILE_PANEL":
-            if(fileListContainerView?.isHidden == true){
+           
+            
+           if(fileListContainerView?.isHidden == true){
                 fileListContainerView?.isHidden = false
             }
             else{
                 fileListContainerView?.isHidden = true
             }
-            
+           
             break;
         case "TOGGLE_COLOR_PANEL":
             if(colorPickerContainerView?.isHidden == true){
@@ -211,7 +215,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     func strokeRemovedHandler(data:([String]),key:String){
         self.layerContainerView.removeStroke(idList:data);
-
+        
     }
     
     
@@ -223,14 +227,14 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         
         self.initCanvas()
         
-     
+        
         _ = RequestHandler.dataEvent.addHandler(target: self, handler: ViewController.processRequestHandler, key: dataEventKey)
         
         let configureRequest = Request(target: "storage", action: "configure", data:JSON([]), requester: self)
         
         RequestHandler.addRequest(requestData:configureRequest);
         
-             layerContainerView.center = CGPoint(x:self.view.frame.size.width/2,y:self.view.frame.size.height/2);
+        layerContainerView.center = CGPoint(x:self.view.frame.size.width/2,y:self.view.frame.size.height/2);
         self.view.addSubview(layerContainerView);
         self.view.sendSubview(toBack: layerContainerView);
         
@@ -266,12 +270,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         fileListContainerView.clipsToBounds = true
         fileListContainerView.isHidden = true;
         
-          }
+    }
     
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated);
-      
+        
         self.loginAlert(isIncorrect: false);
         
     }
@@ -282,11 +286,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     }
     
     func addProjectInitRequests(){
-    
+        
         
         var templateJSON:JSON = [:]
         templateJSON["filename"] = "templates/ui_debugging.json"
-       templateJSON["type"] = JSON("load")
+        templateJSON["type"] = JSON("load")
         let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: self)
         RequestHandler.addRequest(requestData:behaviorDownloadRequest);
         
@@ -296,7 +300,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         
         backupTimer  = Timer.scheduledTimer(timeInterval:TimeInterval(backupInterval), target: self, selector: #selector(ViewController.backupCallback), userInfo: nil, repeats: true)
         
-
+        
     }
     
     
@@ -325,7 +329,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     func keyRecognized(){
         #if DEBUG
-        print("key is recognized")
+            print("key is recognized")
         #endif
         if(startup == true){
             self.addProjectInitRequests()
@@ -348,10 +352,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
                 UserDefaults.standard.set(field.text, forKey: "userkey")
                 UserDefaults.standard.synchronize()
                 self.addConnectionRequests();
-            
+                
             } else {
                 #if DEBUG
-                print("no login key provided");
+                    print("no login key provided");
                 #endif
             }
         }
@@ -404,21 +408,40 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     }
     
     
-    
     func uploadProject(type:String,filename:String){
+        UserDefaults.standard.set(type, forKey: "save_type")
+        UserDefaults.standard.set(filename, forKey: "save_filename")
+        
+        UserDefaults.standard.synchronize()
+        
+        _ = self.layerContainerView.saveEvent.addHandler(target: self, handler: ViewController.uploadProjectHandler, key: saveEventKey)
+        self.behaviorManager?.refreshAllBehaviors();
+        //TODO: this is a hack. need to create a delay in case it's saving a stroke to the texture
+        let when = DispatchTime.now() + 2;         DispatchQueue.main.asyncAfter(deadline: when) {
+            self.layerContainerView.save();
+        }
+
+    }
+    
+    
+    func uploadProjectHandler(data:(JSON,[String:String],[String:String],[String:[String]]),key:String){
+        self.layerContainerView.saveEvent.removeAllHandlers();
+        let type = UserDefaults.standard.string(forKey: "save_type")!
+        let filename = UserDefaults.standard.string(forKey: "save_filename")!
         let prefix:String
         
         if(type == "backup"){
             prefix = "/drawing_backups/"
-
+            
         }
         else{
             prefix = "/drawings/"
         }
         
-        let save_data = self.layerContainerView.save();
-        let save_json = save_data.0;
-        let save_images = save_data.1;
+        let save_json = data.0;
+        let save_inks = data.1;
+        let save_plists = data.2
+        let save_strokes = data.3
         let artistName = UserDefaults.standard.string(forKey:"userkey");
         
         var uploadJSON:JSON = [:]
@@ -432,10 +455,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         
         RequestHandler.addRequest(requestData:uploadRequest);
         
-        for (key,val) in save_images{
+        for (key,val) in save_inks{
             if(val != "no_image"){
                 var uploadData:JSON = [:]
-                uploadData["filename"] = JSON("saved_files/"+artistName!+prefix+filename+"/"+key+".png")
+                uploadData["content_type"] = JSON("image/png")
+                uploadData["filename"] = JSON("saved_files/"+artistName!+prefix+filename+"/"+"ink_"+key+".png")
                 uploadData["path"] = JSON(val)
                 uploadData["targetFolder"] = JSON("saved_files/"+artistName!+prefix)
                 let uploadRequest = Request(target: "storage", action: "upload_image", data:uploadData, requester: self)
@@ -443,6 +467,41 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             }
             
         }
+        
+        
+        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
+        let documentDirectory = paths[0] as! String
+        
+        for (_, strokes) in save_strokes{
+            for s in strokes{
+            var uploadData:JSON = [:]
+            uploadData["content_type"] = JSON("text/strokedata")
+            uploadData["filename"] = JSON("saved_files/"+artistName!+prefix+filename+"/"+s+".strokedata")
+            let path = documentDirectory.appending("/"+s+".strokedata")
+            uploadData["path"] = JSON(path)
+                print("stroke data upload path",path);
+            uploadData["targetFolder"] = JSON("saved_files/"+artistName!+prefix)
+            let uploadRequest = Request(target: "storage", action: "upload_image", data:uploadData, requester: self)
+            RequestHandler.addRequest(requestData:uploadRequest);
+            }
+
+        }
+        
+        for (key,val) in save_plists{
+            
+            var uploadData:JSON = [:]
+            uploadData["content_type"] = JSON("text/plist")
+            
+            uploadData["filename"] = JSON("saved_files/"+artistName!+prefix+filename+"/"+"state_"+key+".plist")
+            uploadData["path"] = JSON(val)
+            uploadData["targetFolder"] = JSON("saved_files/"+artistName!+prefix)
+            let uploadRequest = Request(target: "storage", action: "upload_image", data:uploadData, requester: self)
+            RequestHandler.addRequest(requestData:uploadRequest);
+            
+            
+        }
+        self.requestProjectList()
+
     }
     
     func backupProject(filename:String){
@@ -455,12 +514,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         let confirmAction = UIAlertAction(title: "Save", style: .default) { (_) in
             if let field = alertController.textFields?[0] {
                 self.uploadProject(type:"save", filename: field.text!)
-                self.requestProjectList()
                 
                 
             } else {
                 #if DEBUG
-                print("no name key provided");
+                    print("no name key provided");
                 #endif
             }
         }
@@ -478,12 +536,21 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         
         
     }
-    func backupImage(filename:String){
-       let path = layerContainerView.exportPNGAsFile();
-       let prefix = "/image_backups/";
-        let artistName = UserDefaults.standard.string(forKey:"userkey");
-
-        if(path != nil){
+    
+    func backupImage(){
+        
+        _ = self.layerContainerView.exportEvent.addHandler(target: self, handler: ViewController.backupImageHandler, key: backupKey)
+        self.layerContainerView.exportPNG();
+    }
+    
+    func backupImageHandler(data:(String,Data?),key:String){
+        layerContainerView.exportEvent.removeHandler(key: backupKey);
+        if(data.0 == "COMPLETE"){
+            let filename =  UserDefaults.standard.string(forKey: "backup_filename")!
+            let prefix = "/image_backups/";
+            let artistName = UserDefaults.standard.string(forKey:"userkey");
+            let path = self.layerContainerView.exportPNGAsFile(image: data.1!)
+            
             var uploadData:JSON = [:]
             uploadData["filename"] = JSON("saved_files/"+artistName!+prefix+filename+".png")
             uploadData["path"] = JSON(path)
@@ -491,23 +558,23 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             let uploadRequest = Request(target: "storage", action: "upload_image", data:uploadData, requester: self)
             RequestHandler.addRequest(requestData:uploadRequest);
         }
-        else{
-             #if DEBUG
-            print("cannot backup image because nothing is there")
-            #endif
-        }
     }
     
-
+    
     func exportImage(){
-        self.layerContainerView.exportEvent.addHandler(target: self, handler: ViewController.handleExportRequest, key: exportKey)
-        self.layerContainerView.exportPNG();
+       _ = self.layerContainerView.exportEvent.addHandler(target: self, handler: ViewController.handleExportRequest, key: exportKey)
+        self.behaviorManager?.refreshAllBehaviors();
+        //TODO: this is a hack. need to create a delay in case it's saving a stroke to the texture
+        let when = DispatchTime.now() + 2;         DispatchQueue.main.asyncAfter(deadline: when) {
+            self.layerContainerView.exportPNG();
+
+        }
     }
     
     func handleExportRequest(data:(String,Data?),key:String) {
         let contentToShare = data.1;
-         #if DEBUG
-        print("handle export request",contentToShare)
+        #if DEBUG
+            print("handle export request",contentToShare)
         #endif
         layerContainerView.exportEvent.removeHandler(key: exportKey);
         if(contentToShare != nil){
@@ -518,48 +585,57 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             present(activityViewController, animated: true, completion: {})
         }
         else{
-             #if DEBUG
-            print("cannot share image because nothing is there")
+            #if DEBUG
+                print("cannot share image because nothing is there")
             #endif
         }
-
+        
         
     }
-
+    
     
     @objc func drawIntervalCallback(){
         DispatchQueue.global(qos: .userInteractive).async {
-        #if DEBUG
-           //print("draw interval callback called",self.currentCanvas!.dirty)
-        #endif
-        if(self.currentCanvas!.dirty){
-             DispatchQueue.main.async {
-                self.layerContainerView.drawIntoCurrentLayer(currentCanvas:self.currentCanvas!);
+            #if DEBUG
+                //print("draw interval callback called",self.currentCanvas!.dirty)
+            #endif
+            if(self.currentCanvas!.dirty){
+                DispatchQueue.main.async {
+                    self.layerContainerView.drawIntoCurrentLayer(currentCanvas:self.currentCanvas!);
+                }
+                self.backupNeeded = true;
+                
             }
-            self.backupNeeded = true;
-            
-        }
         }
     }
     
     
     @objc func backupCallback(){
         if(backupNeeded){
-        let filename = String(Int((NSDate().timeIntervalSince1970)*100000));
-        self.backupBehavior(filename:filename)
-        self.backupProject(filename:filename)
-        self.backupImage(filename: filename)
-        backupNeeded = false;
+            let filename = String(Int((NSDate().timeIntervalSince1970)*100000));
+            UserDefaults.standard.set(filename, forKey: "backup_filename")
+            UserDefaults.standard.synchronize()
+            
+            self.backupBehavior(filename:filename)
+            self.backupProject(filename:filename)
+            self.backupImage()
+            backupNeeded = false;
         }
     }
     
-   
-
+    
+    
     
     
     func newLayer(){
-        let id = layerContainerView.newLayer(name: (layerPanelController?.getNextName())!,id:nil);
-        layerPanelController?.addLayer(layerId: id);
+       
+        self.behaviorManager?.refreshAllBehaviors();
+        //TODO: this is a hack. need to create a delay in case it's saving a stroke to the texture
+        let when = DispatchTime.now() + 1;
+        DispatchQueue.main.asyncAfter(deadline: when) {
+            let id = self.layerContainerView.newLayer(name: (self.layerPanelController?.getNextName())!,id:nil, size:self.targetSize);
+        self.layerPanelController?.addLayer(layerId: id);
+        }
     }
     
     func onErase(sender: UIButton!) {
@@ -583,7 +659,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             break;
         case "correct_key":
             self.keyRecognized()
-        break;
+            break;
         case "filelist_complete":
             let listType = data.1?["list_type"].stringValue
             if(listType == "project_list"){
@@ -597,20 +673,29 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         case "download_complete":
             currentBehaviorName = (data.1?["short_filename"].stringValue)!
             currentBehaviorFile = (data.1?["filename"].stringValue)!
-
+            
             behaviorManager?.loadBehavior(json: data.1!["data"])
             self.synchronizeWithAuthoringClient();
             break;
-        case "download_image_complete":
+        case "download_project_complete":
             let id = data.1!["id"].stringValue;
             let path = data.1!["path"].stringValue;
-            layerContainerView.loadImageIntoLayer(id:id,path:path);
+            let content_type = data.1!["content_type"].stringValue;
+            
+            print("download project complete id:\(id),path:\(path),content_type:\(content_type)")
+            if(content_type == "plist"){
+                layerContainerView.loadImageIntoLayer(id:id);
+            }
             
             break;
         case "project_data_download_complete":
             let fileData = data.1!["data"];
-            let newLayers = layerContainerView.loadFromData(fileData: fileData)
+            let newLayers = layerContainerView.loadFromData(fileData: fileData,size:targetSize)
             layerPanelController?.loadLayers(newLayers:newLayers);
+
+            
+            let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
+            let documentDirectory = paths[0] as! String
             
             var jsonLayerArray = fileData["layers"].arrayValue;
             for i in 0..<jsonLayerArray.count{
@@ -620,12 +705,47 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
                     let id = layerData["id"].stringValue;
                     let artistName = UserDefaults.standard.string(forKey: "userkey")!
                     let projectName = data.1!["projectName"].stringValue
-                    var downloadData:JSON = [:]
-                    downloadData["id"] = JSON(id)
-                    let filename = "saved_files/"+artistName+"/drawings/"+projectName+"/"+id+".png"
-                    downloadData["filename"] = JSON(filename);
-                    let image_load_request = Request(target:"storage",action:"download_image",data:downloadData,requester:self)
+                    var imageDownloadData:JSON = [:]
+                    let imageUrl = documentDirectory.appending("/ink_"+id+".png")
+                    imageDownloadData["id"] = JSON(id)
+                    imageDownloadData["url"] = JSON(imageUrl)
+                     imageDownloadData["content_type"] = JSON("ink")
+                    let image_filename = "saved_files/"+artistName+"/drawings/"+projectName+"/ink_"+id+".png"
+                    imageDownloadData["filename"] = JSON(image_filename);
+                    let image_load_request = Request(target:"storage",action:"download_project_file",data:imageDownloadData,requester:self)
                     RequestHandler.addRequest(requestData: image_load_request)
+                    
+                    let saved_strokes = layerData["saved_strokes"].arrayValue
+                    print("saved strokes list json",saved_strokes);
+                    for stroke in saved_strokes{
+                        let stroke_id = stroke.stringValue
+                        print("stroke id",stroke_id)
+
+                        var strokeDownloadData:JSON = [:]
+                        let strokeURL = documentDirectory.appending("/"+stroke_id+".strokedata")
+                        strokeDownloadData["id"] = JSON(id)
+                        strokeDownloadData["url"] = JSON(strokeURL)
+                        strokeDownloadData["content_type"] = JSON("strokedata")
+                        
+                        let stroke_filename = "saved_files/"+artistName+"/drawings/"+projectName+"/"+stroke_id+".strokedata"
+                        strokeDownloadData["filename"] = JSON(stroke_filename);
+                        let stroke_load_request = Request(target:"storage",action:"download_project_file",data:strokeDownloadData,requester:self)
+                        RequestHandler.addRequest(requestData: stroke_load_request)
+
+                    }
+                    
+                    
+                    
+                    var plistDownloadData:JSON = [:]
+                    let plistURL = documentDirectory.appending("/state_"+id+".plist")
+                    plistDownloadData["id"] = JSON(id)
+                    plistDownloadData["url"] = JSON(plistURL)
+                    plistDownloadData["content_type"] = JSON("plist")
+
+                    let plist_filename = "saved_files/"+artistName+"/drawings/"+projectName+"/state_"+id+".plist"
+                    plistDownloadData["filename"] = JSON(plist_filename);
+                    let plist_load_request = Request(target:"storage",action:"download_project_file",data:plistDownloadData,requester:self)
+                    RequestHandler.addRequest(requestData: plist_load_request)
                 }
             }
             
@@ -659,7 +779,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             }
             catch{
                 #if DEBUG
-                print("failed authoring request");
+                    print("failed authoring request");
                 #endif
                 var jsonArg:JSON = [:]
                 jsonArg["type"] = "authoring_response"
@@ -670,7 +790,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
                 RequestHandler.addRequest(requestData:socketRequest);
             }
             backupNeeded = true
-
+            
             break;
         case "storage_request":
             let storage_data = data.1!["data"];
@@ -712,14 +832,15 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         RequestHandler.addRequest(requestData: request)
     }
     
-   
+    
     
     func loadBehavior(filename:String, artistName:String){
-        let long_filename = "saved_files/"+artistName+"/behaviors/"+filename
+        let long_filename = filename;
+        //let long_filename = "saved_files/"+artistName+"/behaviors/"+filename
         var loadJSON:JSON = [:]
         loadJSON["filename"] = JSON(long_filename);
         loadJSON["short_filename"] = JSON(filename);
-
+        
         loadJSON["type"] = JSON("load")
         
         loadJSON["targetFolder"] = JSON("saved_files/"+artistName+"/behaviors/")
@@ -772,7 +893,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         RequestHandler.addRequest(requestData: request);
     }
     
-
+    
     
     
     //event handler for incoming data
@@ -796,31 +917,31 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         behaviorManager = BehaviorManager(canvas: currentCanvas!);
         currentCanvas!.initDrawing();
         _ = currentCanvas!.currentDrawing?.strokeGeneratedEvent.addHandler(target: self, handler: ViewController.strokeGeneratedHandler, key: strokeGeneratedKey)
-         _ = currentCanvas!.currentDrawing?.strokeRemovedEvent.addHandler(target: self, handler: ViewController.strokeRemovedHandler, key: strokeRemovedKey)
+        _ = currentCanvas!.currentDrawing?.strokeRemovedEvent.addHandler(target: self, handler: ViewController.strokeRemovedHandler, key: strokeRemovedKey)
     }
     
-
+    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         #if DEBUG
-        print("did receive memory warning")
+            print("did receive memory warning")
         #endif
         // Dispose of any resources that can be recreated.
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         if(layerContainerView.activeLayer != nil){
-            layerContainerView.activeLayer?.touchesEnded(touches, with: event)
+           layerContainerView.activeLayer?.layerTouchesEnded(touches, with: event)
         }
         
     }
     
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-
+        
         if(layerContainerView.activeLayer != nil){
-            layerContainerView.activeLayer?.touchesBegan(touches, with: event)
+            layerContainerView.activeLayer?.layerTouchesBegan(touches, with: event)
         }
     }
     
@@ -828,14 +949,14 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         if(layerContainerView.activeLayer != nil){
             
-            layerContainerView.activeLayer?.touchesMoved(touches, with: event)
+            layerContainerView.activeLayer?.layerTouchesMoved(touches, with: event)
         }
     }
     
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         if(layerContainerView.activeLayer != nil){
-            layerContainerView.activeLayer?.touchesCancelled(touches, with: event)
+            //layerContainerView.activeLayer?.touchesCancelled(touches, with: event)
         }
         
     }
@@ -850,7 +971,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         }
     }
     
-    func handleRotate(recognizer : UIRotationGestureRecognizer) {        
+    func handleRotate(recognizer : UIRotationGestureRecognizer) {
         if let view = recognizer.view {
             view.transform = view.transform.rotated(by: recognizer.rotation)
             recognizer.rotation = 0
@@ -869,8 +990,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
-
-
+    
+    
     
 }
 

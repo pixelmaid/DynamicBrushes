@@ -86,6 +86,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     }
     
     func retireCurrentStrokes(parentID:String){
+        print("retire strokes for \(parentID, activeStrokes[parentID])");
         if (self.activeStrokes[parentID] != nil){
             var toRemove = [String]();
             for s in self.activeStrokes[parentID]!{
@@ -98,7 +99,9 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
             self.activeStrokes[parentID]!.removeAll();
 
             self.allStrokes = allStrokes.filter({ $0.parentID != parentID })
-            
+            #if DEBUG
+            print("strokes to remove",toRemove)
+            #endif
            self.strokeRemovedEvent.raise(data: toRemove);
         }
         #if DEBUG
@@ -129,7 +132,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         for i in 0..<self.activeStrokes[parentID]!.count{
             let currentStroke = self.activeStrokes[parentID]![i]
 
-            var seg = currentStroke.addSegment(brushId: parentID, point: point,d:weight,color:color,alpha:alpha)
+            _ = currentStroke.addSegment(brushId: parentID, point: point,d:weight,color:color,alpha:alpha)
 
         }
     }

@@ -16,9 +16,20 @@ class LayerContainerView: UIView {
     var layers = [ModifiedCanvasView]();
     var drawActive = true;
     let exportKey = NSUUID().uuidString;
+    let saveKey = NSUUID().uuidString;
+
     let exportEvent = Event<(String,Data?)>()
+    let saveEvent = Event<(JSON,[String:String],[String:String],[String:[String]])>()
+
     var exportHandlers = [Disposable]();
+    var saveHandlers = [Disposable]();
+
     var exportedImages = [UIImage]();
+    var savedImageList = [String:String]();
+    var savedStateList = [String:String]();
+    var savedStrokeList = [String:[String]]();
+    var savedJSONList = [JSON]();
+    
     var exportTarget = 0;
     init(width:Float,height:Float){
         let frame = CGRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(height))
@@ -39,25 +50,75 @@ class LayerContainerView: UIView {
         #endif
         for l in layers{
             if l.isHidden == false{
-               let handler = l.exportEvent.addHandler(target: self, handler: LayerContainerView.exportHandler, key: exportKey)
+               let handler = l.saveEvent.addHandler(target: self, handler: LayerContainerView.exportHandler, key: exportKey)
                 exportHandlers.append(handler);
-                l.exportUIImage();
+                l.saveUIImageAndState();
             }
         }
-      /*  UIGraphicsBeginImageContext(self.bounds.size);
-        self.layer.render(in: UIGraphicsGetCurrentContext()!);
-        let viewImage = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
-        let contentToShare = UIImagePNGRepresentation(viewImage!)
-        return contentToShare;*/
     }
     
-    func exportHandler(data:(String,UIImage?),key:String){
-        if(data.0 == "COMPLETE" && data.1 != nil){
+    func save(){
+        savedJSONList.removeAll();
+        savedImageList.removeAll();
+        savedStateList.removeAll();
+        savedStrokeList.removeAll();
+        
+        for l in layers{
+            let h = l.saveEvent.addHandler(target: self, handler: LayerContainerView.saveHandler, key: saveKey)
+            l.saveUIImageAndState();
+            saveHandlers.append(h);
+        }
+    }
+    
+    func saveHandler(data:(String,String,UIImage?,UIImage?,JotViewImmutableState?),key:String){
+        if(data.0 == "COMPLETE"){
+        
+            
+        let layer_id =  data.1
+            let layer = layers.filter({$0.id == layer_id})[0]
+            let strokeData = layer.getSavedStrokes();
+            var json:JSON = [:]
+            
+            json["id"] = JSON(layer.id);
+            json["name"] = JSON(layer.name!);
+            json["isHidden"] = JSON(layer.isHidden);
+            let isActive = (activeLayer == layer)
+            json["isActive"] = JSON(isActive);
+            json["saved_strokes"] = JSON(strokeData);
+            let imageData = layer.jotViewStateInkPathFunc();
+            savedImageList[layer_id] = imageData
+            json["hasImageData"] = JSON(true)
+            
+            
+            savedStrokeList[layer_id] = strokeData
+            
+            let stateData = layer.jotViewStatePlistPathFunc();
+            savedStateList[layer_id] = stateData
+            
+            savedJSONList.append(json)
+            
+            print("saved values",savedJSONList,savedImageList,savedStateList)
+            
+            if(savedJSONList.count == layers.count){
+                for s in saveHandlers{
+                    s.dispose()
+                }
+                saveHandlers.removeAll();
+                var drawingJSON:JSON = [:]
+                drawingJSON["layers"] = JSON(savedJSONList);
+                self.saveEvent.raise(data:(drawingJSON,savedImageList,savedStateList,savedStrokeList))
+
+            }
+       
+        }
+    }
+    
+    func exportHandler(data:(String,String,UIImage?,UIImage?,JotViewImmutableState?),key:String){
+        if(data.0 == "COMPLETE" && data.2 != nil){
             #if DEBUG
-            print("export complete",data.1,data.1?.size)
+            print("export complete",data.2 as Any,data.2?.size as Any)
             #endif
-            exportedImages.append(data.1!);
+            exportedImages.append(data.2!);
         }
         
         if(exportedImages.count == exportTarget){
@@ -88,52 +149,19 @@ class LayerContainerView: UIView {
         
     }
     
-    func exportPNGAsFile()->String?{
-      /*  let fileManager = FileManager.default
+    func exportPNGAsFile(image:Data)->String{
+       let fileManager = FileManager.default
        let path = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent("\"layer_container.png")
-            let imageData = self.exportPNG()
-        if(imageData != nil){
+            let imageData = image
+       
             fileManager.createFile(atPath: path as String, contents: imageData, attributes: nil)
             return path;
-        }
-        return nil*/
-        return nil
+       
     }
     
-    func save()->(JSON,[String:String]){
-        var imageList = [String:String]();
-        var drawingJSON:JSON = [:]
-        var jsonLayerArray = [JSON]();
-        for i in 0..<layers.count{
-            var json:JSON = [:]
-            let id = layers[i].id;
-            json["id"] = JSON(id);
-            let name = layers[i].name;
-            json["name"] = JSON(name!);
-            let isHidden = layers[i].isHidden;
-            json["isHidden"] = JSON(isHidden);
-            let isActive = (activeLayer == layers[i])
-            json["isActive"] = JSON(isActive);
-            
-            let imageData = layers[i].exportPNGAsFile();
-            if(imageData != nil){
-                imageList[id] = imageData
-                json["hasImageData"] = JSON(true)
-            }
-            else{
-                 imageList[id] = "no_image";
-                json["hasImageData"] = JSON(false)
 
-            }
-            jsonLayerArray.append(json)
-
-            
-        }
-        drawingJSON["layers"] = JSON(jsonLayerArray);
-        return(drawingJSON,imageList)
-    }
     
-    func loadFromData(fileData:JSON)->[(String,String,Bool,Bool)]{
+    func loadFromData(fileData:JSON,size:CGSize)->[(String,String,Bool,Bool)]{
         self.deleteAllLayers();
         var jsonLayerArray = fileData["layers"].arrayValue;
         var newLayers = [(String,String,Bool,Bool)]()
@@ -143,7 +171,7 @@ class LayerContainerView: UIView {
             let name = layerData["name"].stringValue;
             let isHidden = layerData["isHidden"].boolValue;
             let isActive = layerData["isActive"].boolValue;
-            _ = self.newLayer(name: name, id: id);
+            _ = self.newLayer(name: name, id: id,size: size);
             self.layers.last?.isHidden = isHidden;
             if(isActive){
                 self.activeLayer = self.layers.last
@@ -156,13 +184,18 @@ class LayerContainerView: UIView {
         
     }
     
-    func loadImageIntoLayer(id:String, path:String){
+    func loadImageIntoLayer(id:String){
+    print ("load image into layer",id,layers)
         for l in layers{
             if l.id == id {
-                l.loadImage(path:path);
+                
+                l.loadNewState()
+                return;
             }
             
         }
+        print ("layer not found",id)
+
     }
     
     func setDrawActive(val:Bool){
@@ -172,9 +205,9 @@ class LayerContainerView: UIView {
     }
     
     
-    func newLayer(name:String,id:String?)->String{
-        let size = self.frame.size;
-        let layer = ModifiedCanvasView(name:name,frame: CGRect(origin:CGPoint(x:0,y:0), size:size))
+    func newLayer(name:String,id:String?,size:CGSize)->String{
+       
+        let layer = ModifiedCanvasView(name:name,frame: CGRect(origin:CGPoint(x:0,y:0), size:(size)))
        layer.center = CGPoint(x:size.width/2,y:size.height / 2);
         self.layers.append(layer)
         self.addSubview(layer);

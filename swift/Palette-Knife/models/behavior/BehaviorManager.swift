@@ -34,6 +34,13 @@ class BehaviorManager{
         return nil
     }
     
+    
+    func refreshAllBehaviors(){
+        for (_,behavior) in BehaviorManager.behaviors{
+            behavior.createBehavior(canvas:canvas)
+        }
+    }
+    
     func loadBehavior(json:JSON){
         self.loadBehaviorsFromJSON(json: json, rewriteAll: true)
     }
