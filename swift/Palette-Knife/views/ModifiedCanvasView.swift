@@ -214,7 +214,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
     func saveUIImageAndState(){
         self.endAllStrokes();
         let stateImage: ((UIImage?, UIImage?, JotViewImmutableState?) -> Void)! = imageStateSaveComplete
-        jotView.exportImage(to: self.jotViewStateInkPathFunc(), andThumbnailTo:self.jotViewStateThumbPathFunc(), andStateTo: self.jotViewStatePlistPathFunc(), withThumbnailScale:1.0, onComplete: stateImage)
+        jotView.exportImage(to: self.jotViewStateInkPathFunc(), andThumbnailTo:self.jotViewStateThumbPathFunc(), andStateTo: self.jotViewStatePlistPathFunc(), withThumbnailScale:2.0, onComplete: stateImage)
     }
 
     

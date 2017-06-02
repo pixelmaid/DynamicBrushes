@@ -29,15 +29,18 @@ class LayerContainerView: UIView {
     var savedStateList = [String:String]();
     var savedStrokeList = [String:[String]]();
     var savedJSONList = [JSON]();
+    var targetSize: CGSize;
     
     var exportTarget = 0;
     init(width:Float,height:Float){
         let frame = CGRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(height))
+        self.targetSize = CGSize(width: CGFloat(width), height: CGFloat(height))
         super.init(frame: frame);
         self.backgroundColor = UIColor.white;
     }
     
     required init?(coder aDecoder: NSCoder) {
+        self.targetSize = CGSize(width: 100, height: 100)
         super.init(coder: aDecoder)
         
     }
@@ -122,7 +125,7 @@ class LayerContainerView: UIView {
         }
         
         if(exportedImages.count == exportTarget){
-            let masterImage = UIView(frame: self.frame);
+            let masterImage = UIView(frame: CGRect(x:0,y:0,width:targetSize.width,height: targetSize.height))
             
             for i in exportedImages{
                 let img = i
