@@ -58,7 +58,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     var layerPanelController: LayerPanelViewController?
     var fileListController: SavedFilesPanelViewController?
     let targetSize = CGSize(width:CGFloat(pX),height:CGFloat(pY))
-
+    var blockAlert:UIAlertController!
     
     var colorPickerView: SwiftHSVColorPicker?
     override var prefersStatusBarHidden: Bool {
@@ -298,7 +298,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         
         drawInterval  = Timer.scheduledTimer(timeInterval:0.016 , target: self, selector: #selector(ViewController.drawIntervalCallback), userInfo: nil, repeats: true)
         
-        backupTimer  = Timer.scheduledTimer(timeInterval:TimeInterval(backupInterval), target: self, selector: #selector(ViewController.backupCallback), userInfo: nil, repeats: true)
+      //  backupTimer  = Timer.scheduledTimer(timeInterval:TimeInterval(backupInterval), target: self, selector: #selector(ViewController.backupCallback), userInfo: nil, repeats: true)
         
         
     }
@@ -566,6 +566,16 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
        _ = self.layerContainerView.exportEvent.addHandler(target: self, handler: ViewController.handleExportRequest, key: exportKey)
         self.behaviorManager?.refreshAllBehaviors();
         //TODO: this is a hack. need to create a delay in case it's saving a stroke to the texture
+        DispatchQueue.global(qos: .userInteractive).async {
+            
+            DispatchQueue.main.async {
+                let alert = UIAlertController(title: "Saving", message: "Saving Image", preferredStyle: .alert)
+        
+                self.present(alert, animated: true, completion: { _ in }
+                )
+            }
+        }
+        
         let when = DispatchTime.now() + 2;
         DispatchQueue.main.asyncAfter(deadline: when) {
             self.layerContainerView.exportPNG();
@@ -582,13 +592,16 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         if(contentToShare != nil){
             
             UIImageWriteToSavedPhotosAlbum(contentToShare!, nil, nil, nil)
-          
+            self.dismiss(animated: true, completion: nil)
+
              DispatchQueue.global(qos: .userInteractive).async {
                 
                  DispatchQueue.main.async {
                     let alert = UIAlertController(title: "Saved", message: "Your image has been saved to the photo album", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-                    self.present(alert, animated: true, completion: { _ in })
+                    
+                    self.present(alert, animated: true, completion: { _ in }
+                    )
                 }
             }
             
