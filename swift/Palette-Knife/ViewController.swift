@@ -26,8 +26,8 @@ let kMinEraseInterval =	0.5
 let kLeftMargin =	10.0
 let kTopMargin =	10.0
 let kRightMargin =      10.0
-let pX = Float(1024*2)
-let pY = Float(768*2)
+let pX = Float(1024*1)
+let pY = Float(768*1)
 class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     
@@ -543,13 +543,14 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         self.layerContainerView.exportPNG();
     }
     
-    func backupImageHandler(data:(String,Data?),key:String){
+    func backupImageHandler(data:(String,UIImage?),key:String){
         layerContainerView.exportEvent.removeHandler(key: backupKey);
         if(data.0 == "COMPLETE"){
             let filename =  UserDefaults.standard.string(forKey: "backup_filename")!
             let prefix = "/image_backups/";
             let artistName = UserDefaults.standard.string(forKey:"userkey");
-            let path = self.layerContainerView.exportPNGAsFile(image: data.1!)
+            let png = UIImagePNGRepresentation(data.1!)
+            let path = self.layerContainerView.exportPNGAsFile(image: png!)
             
             var uploadData:JSON = [:]
             uploadData["filename"] = JSON("saved_files/"+artistName!+prefix+filename+".png")
@@ -572,18 +573,30 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         }
     }
     
-    func handleExportRequest(data:(String,Data?),key:String) {
+    func handleExportRequest(data:(String,UIImage?),key:String) {
         let contentToShare = data.1;
         #if DEBUG
-            print("handle export request",contentToShare)
+            print("handle export request",contentToShare as Any)
         #endif
         layerContainerView.exportEvent.removeHandler(key: exportKey);
         if(contentToShare != nil){
-            let nsContent = NSData(data: contentToShare!)
+            
+            UIImageWriteToSavedPhotosAlbum(contentToShare!, nil, nil, nil)
+          
+             DispatchQueue.global(qos: .userInteractive).async {
+                
+                 DispatchQueue.main.async {
+                    let alert = UIAlertController(title: "Saved", message: "Your image has been saved to the photo album", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                    self.present(alert, animated: true, completion: { _ in })
+                }
+            }
+            
+            /*let nsContent = NSData(data: contentToShare!)
             let activityViewController = UIActivityViewController(activityItems: [nsContent], applicationActivities: nil)
             // let activityViewController = UIActivityViewController(activityItems: [shareContent as NSString], applicationActivities: nil)
             activityViewController.popoverPresentationController?.sourceView = toolbarController?.exportButton
-            present(activityViewController, animated: true, completion: {})
+            present(activityViewController, animated: true, completion: {})*/
         }
         else{
             #if DEBUG

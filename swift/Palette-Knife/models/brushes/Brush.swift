@@ -154,10 +154,10 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
         self.diameter = Observable<Float>(1)
         self.diameter.printname = "brush_diameter"
-        self.alpha = Observable<Float>(1)
-        self.hue = Observable<Float>(0.5)
-        self.lightness = Observable<Float>(0.25)
-        self.saturation = Observable<Float>(1)
+        self.alpha = Observable<Float>(100)
+        self.hue = Observable<Float>(100)
+        self.lightness = Observable<Float>(100)
+        self.saturation = Observable<Float>(100)
         
         self.xBuffer = CircularBuffer()
         self.yBuffer = CircularBuffer()
@@ -290,75 +290,57 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             let _delta = self.position.sub(point: self.bPosition)
             
            
-            
-            let dX = _delta.x.get(id:nil);
-            let dY = _delta.y.get(id:nil);
-            
-           
-            let r = self.rotation.get(id:nil)
-            
-            let sX = self.scaling.x.get(id:nil)
-            let sY = self.scaling.y.get(id:nil)
-            
-            let rX = self.reflectX.get(id:nil)
-            let rY = self.reflectY.get(id:nil)
-            
-            let d = self.diameter.get(id:nil)
-           
-            let h = self.hue.get(id:nil)
-            let s = self.saturation.get(id:nil)
-            let l = self.lightness.get(id:nil)
-            let a = self.alpha.get(id:nil)
-            
-            let dist = self.distance.get(id:nil);
-            let xDist = self.xDistance.get(id:nil);
-            let yDist = self.yDistance.get(id:nil);
-            
-            let ds = DeltaStorage(dX:dX,dY:dY,r:r,sX:sX,sY:sY,rX:rX,rY:rY,d:d,h:h,s:s,l:l,a:a,dist:dist,xDist:xDist,yDist:yDist)
-            self.deltaChangeBuffer.append(ds);
-            self.processDeltaBuffer();
+            self.calculateProperties(_delta:_delta)
         
         }
         
         
     }
     
+    
     func deltaChange(data:(String,(Float,Float),(Float,Float)),key:String){
         
             if(!self.undergoing_transition){
-                
-                let dX = self.dx.get(id:nil)
-                let dY = self.dy.get(id:nil)
-                #if DEBUG
-                   // print("delta change",dX,dY)
-                #endif
-                
-                let r = self.rotation.get(id:nil)
-                
-                let sX = self.scaling.x.get(id:nil)
-                let sY = self.scaling.y.get(id:nil)
-                
-                let rX = self.reflectX.get(id:nil)
-                let rY = self.reflectY.get(id:nil)
-                
-                let d = self.diameter.get(id:nil)
-               
-                let h = self.hue.get(id:nil)
-                let s = self.saturation.get(id:nil)
-                let l = self.lightness.get(id:nil)
-                let a = self.alpha.get(id:nil)
-                
-                let dist = self.distance.get(id:nil);
-                let xDist = self.xDistance.get(id:nil);
-                let yDist = self.yDistance.get(id:nil);
-                
-                let ds = DeltaStorage(dX:dX,dY:dY,r:r,sX:sX,sY:sY,rX:rX,rY:rY,d:d,h:h,s:s,l:l,a:a,dist:dist,xDist:xDist,yDist:yDist)
-               
-                self.deltaChangeBuffer.append(ds);
-                self.processDeltaBuffer();
-       }
+               self.calculateProperties(_delta: self.delta)
+            }
         
     }
+    
+    func calculateProperties(_delta:Point){
+        
+        let dX = _delta.x.get(id:nil);
+        let dY = _delta.y.get(id:nil);
+        
+        
+        let r =  MathUtil.map(value: self.rotation.get(id:nil), low1: 0.0, high1: 100.0, low2: 0.0, high2: 360.0)
+        
+        let sX = self.scaling.x.get(id:nil)
+        let sY = self.scaling.y.get(id:nil)
+        
+        let rX = self.reflectX.get(id:nil)
+        let rY = self.reflectY.get(id:nil)
+        
+        let mapped_diameter = pow(1.03,self.diameter.get(id:nil))*0.54
+        let d = mapped_diameter
+        
+        
+        let h =   MathUtil.map(value: self.hue.get(id:nil), low1: 0.0, high1: 100.0, low2: 0.0, high2: 1.0)
+        
+        let s = MathUtil.map(value: self.saturation.get(id:nil), low1: 0.0, high1: 100.0, low2: 0.0, high2: 1.0)
+        
+        let l = MathUtil.map(value: self.lightness.get(id:nil), low1: 0.0, high1: 100.0, low2: 0.0, high2: 1.0)
+        let mapped_alpha = pow(1.054,self.alpha.get(id:nil))*0.54
+        let a = MathUtil.map(value: mapped_alpha, low1: 0.0, high1: 100.0, low2: 0.0, high2: 1.0)
+        
+        let dist = self.distance.get(id:nil);
+        let xDist = self.xDistance.get(id:nil);
+        let yDist = self.yDistance.get(id:nil);
+        
+        let ds = DeltaStorage(dX:dX,dY:dY,r:r,sX:sX,sY:sY,rX:rX,rY:rY,d:d,h:h,s:s,l:l,a:a,dist:dist,xDist:xDist,yDist:yDist)
+        self.deltaChangeBuffer.append(ds);
+        self.processDeltaBuffer();
+    }
+
     
     func processDeltaBuffer(){
         var ds:DeltaStorage! = nil

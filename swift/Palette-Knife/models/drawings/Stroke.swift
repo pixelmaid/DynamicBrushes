@@ -113,6 +113,9 @@ struct Segment:Geometry, Equatable {
             if(a_color.alpha <= 0){
                 a_color.alpha = 0.0001
             }
+            if(a_color.alpha > 1){
+                a_color.alpha = 1
+            }
             if(a_color.hue>360){
                 a_color.hue = 360;
             }
@@ -121,9 +124,10 @@ struct Segment:Geometry, Equatable {
             if(d < 1){
                 d = 1
             }
-           /* if(d >= 360){
+            if(d >= 360){
                 d = 359
-            }*/
+            }
+        
             context.renderStrokeById(currentStrokeId: id, toPoint: self.point.toCGPoint(), toWidth: CGFloat(d), toColor: a_color.toUIColor())
         }
     }

@@ -61,7 +61,8 @@ struct Color {
     }
     
     func toUIColor()->UIColor{
-        return UIColor(red: CGFloat(self.red), green: CGFloat(self.green), blue: CGFloat(self.blue), alpha: CGFloat(self.alpha))
+        return  UIColor(hue: CGFloat(hue), saturation: CGFloat(saturation), brightness: CGFloat(lightness), alpha: CGFloat(self.alpha))
+        
     }
     
 }

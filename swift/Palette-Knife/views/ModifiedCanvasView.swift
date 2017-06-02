@@ -148,7 +148,9 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
         
         for (id, value) in self.activeStrokes{
             if(value.segments.count > 0){
-                self.endStroke(currentStroke: value)
+                if(value.segments.count > 0){
+                    endStroke(currentStroke: value)
+                }
                 activeStrokes.removeValue(forKey: id)
             }
         }
@@ -171,7 +173,9 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
             #endif
             let stroke =  activeStrokes[id]
             if(stroke != nil){
-                endStroke(currentStroke: stroke!)
+                if((stroke?.segments.count)! > 0){
+                    endStroke(currentStroke: stroke!)
+                }
                 activeStrokes.removeValue(forKey: id)
             }
         }
@@ -192,7 +196,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
     func layerTouchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
 
-        if touch.type == .stylus {
+       // if touch.type == .stylus {
             if(drawActive){
                 if let touch = touches.first  {
                     let point = touch.location(in: self)
@@ -206,7 +210,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
             else {
                 self.beginStroke(id:"eraseStroke")
             }
-        }
+        //}
     }
     
     
@@ -289,7 +293,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
         #if DEBUG
             //print("number of coalesced touches \(touches.count)");
         #endif
-         if touch.type == .stylus {
+         //if touch.type == .stylus {
         if(drawActive){
             
             for touch in touches {
@@ -310,7 +314,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
             let width = CGFloat(uiInput.diameter.get(id: nil));
             self.renderStroke(currentStroke: eraseStroke, toPoint: location, toWidth: width, toColor: nil)
         }
-        }
+       // }
         
         
         

@@ -18,7 +18,7 @@ class LayerContainerView: UIView {
     let exportKey = NSUUID().uuidString;
     let saveKey = NSUUID().uuidString;
 
-    let exportEvent = Event<(String,Data?)>()
+    let exportEvent = Event<(String,UIImage?)>()
     let saveEvent = Event<(JSON,[String:String],[String:String],[String:[String]])>()
 
     var exportHandlers = [Disposable]();
@@ -135,16 +135,16 @@ class LayerContainerView: UIView {
             masterImage.layer.render(in: UIGraphicsGetCurrentContext()!);
             let viewImage = UIGraphicsGetImageFromCurrentImageContext();
             UIGraphicsEndImageContext();
-            let contentToShare = UIImagePNGRepresentation(viewImage!)
+        
             #if DEBUG
-                print("export compilation complete",contentToShare,viewImage!.size)
+                print("export compilation complete",viewImage!.size)
                 print("export images count",exportedImages.count)
             #endif
             for d in self.exportHandlers{
                 d.dispose();
             }
             exportedImages.removeAll();
-            self.exportEvent.raise(data:("COMPLETE",contentToShare));
+            self.exportEvent.raise(data:("COMPLETE",viewImage));
             
         }
         

@@ -48,14 +48,14 @@ class UIInput: TimeSeries, WebTransmitter {
     
     func setColor(color:UIColor){
         var _hue = CGFloat(0)
-        var _saturation = CGFloat(0)
-        var _brightness = CGFloat(0)
+        var _saturation = CGFloat(100)
+        var _brightness = CGFloat(100)
         var _alpha = CGFloat(0)
         let success = color.getHue(&_hue, saturation: &_saturation, brightness: &_brightness, alpha: &_alpha)
         if(success){
-            self.hue.set(newValue: Float(_hue))
-            self.lightness.set(newValue: Float(_brightness))
-            self.saturation.set(newValue: Float(_saturation))
+            self.hue.set(newValue: MathUtil.map(value:Float(_hue), low1:0, high1:1, low2:0, high2: 100))
+            self.lightness.set(newValue: MathUtil.map(value:Float(_brightness), low1:0, high1:1, low2:0, high2: 100))
+            self.saturation.set(newValue:MathUtil.map(value:Float(_saturation), low1:0, high1:1, low2:0, high2: 100))
             
         }
     }
