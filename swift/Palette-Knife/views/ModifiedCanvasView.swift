@@ -40,7 +40,9 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
         _ = self.jotViewStateInkPathFunc();
         _ = self.jotViewStatePlistPathFunc();
         _ = self.jotViewStateThumbPathFunc();
-    
+        #if DEBUG
+            print("jot view size and scale",jotView.bounds.size.width,jotView.bounds.size.height,jotView.scale)
+        #endif
         let paperState = JotViewStateProxy(delegate: self)
         paperState?.loadJotStateAsynchronously(false, with: jotView.bounds.size, andScale: jotView.scale, andContext: jotView.context, andBufferManager: JotBufferManager.sharedInstance())
         jotView.loadState(paperState)
@@ -244,7 +246,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
             }
         }
       
-        return strokeList;
+        return [String]();
     }
 
     

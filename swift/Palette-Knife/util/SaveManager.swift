@@ -114,8 +114,8 @@ class SaveManager{
                 #endif
                 
             } else {
-                self.dataEvent.raise(data: ("upload_image_complete",nil))
-                self.requestEvent.raise(data:("upload_image_complete",nil));
+                self.dataEvent.raise(data: ("upload_image_complete",uploadData))
+                self.requestEvent.raise(data:("upload_image_complete",uploadData));
                 
             }
             return nil
@@ -307,7 +307,7 @@ class SaveManager{
             downloadJSON["path"] = JSON(url.path);
             downloadJSON["id"] = JSON(id);
             downloadJSON["content_type"] = JSON(content_type)
-           
+            downloadJSON["isLast"] = downloadData["isLast"]
             self.dataEvent.raise(data: ("download_project_complete",downloadJSON))
             self.requestEvent.raise(data:("download_project_complete",downloadJSON))
             

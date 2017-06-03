@@ -13,4 +13,7 @@
 
 - (CGRect)portraitBounds;
 
+- (CGRect)landscapeBounds;
+
+
 @end

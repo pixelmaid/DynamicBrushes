@@ -26,8 +26,8 @@ let kMinEraseInterval =	0.5
 let kLeftMargin =	10.0
 let kTopMargin =	10.0
 let kRightMargin =      10.0
-let pX = Float(1024*1)
-let pY = Float(768*1)
+let pX = Float(1366)
+let pY = Float(1024)
 class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     
@@ -182,7 +182,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             layerContainerView.selectActiveLayer(id:data.1);
             break;
         case "LAYER_ADDED":
-            self.newLayer();
+            self.userInitLayer();
             break;
         case "SHOW_LAYER":
             layerContainerView.showLayer(id: data.1);
@@ -202,6 +202,16 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         switch(data.0){
         case "FILE_SELECTED":
             let artistName = UserDefaults.standard.string(forKey: "userkey")
+            
+            DispatchQueue.global(qos: .userInteractive).async {
+                
+                DispatchQueue.main.async {
+                    let alert = UIAlertController(title: "Loading", message: "Loading Project", preferredStyle: .alert)
+                    
+                    self.present(alert, animated: true, completion: { _ in }
+                    )
+                }
+            }
             self.loadProject(projectName: data.2!, artistName: artistName!);
             break;
         default:
@@ -298,7 +308,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         
         drawInterval  = Timer.scheduledTimer(timeInterval:0.016 , target: self, selector: #selector(ViewController.drawIntervalCallback), userInfo: nil, repeats: true)
         
-      //  backupTimer  = Timer.scheduledTimer(timeInterval:TimeInterval(backupInterval), target: self, selector: #selector(ViewController.backupCallback), userInfo: nil, repeats: true)
+       backupTimer  = Timer.scheduledTimer(timeInterval:TimeInterval(backupInterval), target: self, selector: #selector(ViewController.backupCallback), userInfo: nil, repeats: true)
         
         
     }
@@ -409,6 +419,18 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     
     func uploadProject(type:String,filename:String){
+        if(type != "backup"){
+        DispatchQueue.global(qos: .userInteractive).async {
+           
+            DispatchQueue.main.async {
+                let alert = UIAlertController(title: "Saving", message: "Saving Project", preferredStyle: .alert)
+                
+                self.present(alert, animated: true, completion: { _ in }
+                )
+            }
+        }
+        }
+        
         UserDefaults.standard.set(type, forKey: "save_type")
         UserDefaults.standard.set(filename, forKey: "save_filename")
         
@@ -417,9 +439,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         _ = self.layerContainerView.saveEvent.addHandler(target: self, handler: ViewController.uploadProjectHandler, key: saveEventKey)
         self.behaviorManager?.refreshAllBehaviors();
         //TODO: this is a hack. need to create a delay in case it's saving a stroke to the texture
-        let when = DispatchTime.now() + 2;         DispatchQueue.main.asyncAfter(deadline: when) {
+        
             self.layerContainerView.save();
-        }
+        
 
     }
     
@@ -486,15 +508,19 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             }
 
         }
+        var count = 0;
         
         for (key,val) in save_plists{
-            
+            count += 1
             var uploadData:JSON = [:]
             uploadData["content_type"] = JSON("text/plist")
             
             uploadData["filename"] = JSON("saved_files/"+artistName!+prefix+filename+"/"+"state_"+key+".plist")
             uploadData["path"] = JSON(val)
             uploadData["targetFolder"] = JSON("saved_files/"+artistName!+prefix)
+            if(count == save_plists.count){
+                uploadData["isLast"] = JSON(true);
+            }
             let uploadRequest = Request(target: "storage", action: "upload_image", data:uploadData, requester: self)
             RequestHandler.addRequest(requestData:uploadRequest);
             
@@ -576,11 +602,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             }
         }
         
-        let when = DispatchTime.now() + 2;
-        DispatchQueue.main.asyncAfter(deadline: when) {
-            self.layerContainerView.exportPNG();
+        
+        self.layerContainerView.exportPNG();
 
-        }
+        
     }
     
     func handleExportRequest(data:(String,UIImage?),key:String) {
@@ -643,33 +668,47 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             UserDefaults.standard.set(filename, forKey: "backup_filename")
             UserDefaults.standard.synchronize()
             
-            self.behaviorManager?.refreshAllBehaviors();
+            //self.behaviorManager?.refreshAllBehaviors();
             //TODO: this is a hack. need to create a delay in case it's saving a stroke to the texture
-            let when = DispatchTime.now() + 2;
-            DispatchQueue.main.asyncAfter(deadline: when) {
+            
 
                 self.backupBehavior(filename:filename)
                 self.backupProject(filename:filename)
                 self.backupImage()
                 self.backupNeeded = false;
 
-            }
+            
         }
     }
     
     
     
-    
+    func userInitLayer(){
+        
+            DispatchQueue.main.async {
+                let alert = UIAlertController(title: "Layers", message: "Adding Layer", preferredStyle: .alert)
+                
+                self.present(alert, animated: true, completion: { _ in }
+                )
+            }
+        
+
+        let when = DispatchTime.now() + 1;
+        DispatchQueue.main.asyncAfter(deadline: when) {
+            self.dismiss(animated: true, completion: nil)
+
+            self.newLayer();
+        }
+    }
     
     func newLayer(){
        
         self.behaviorManager?.refreshAllBehaviors();
         //TODO: this is a hack. need to create a delay in case it's saving a stroke to the texture
-        let when = DispatchTime.now() + 1;
-        DispatchQueue.main.asyncAfter(deadline: when) {
+     
             let id = self.layerContainerView.newLayer(name: (self.layerPanelController?.getNextName())!,id:nil, size:self.targetSize);
         self.layerPanelController?.addLayer(layerId: id);
-        }
+        
     }
     
     func onErase(sender: UIButton!) {
@@ -694,6 +733,14 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         case "correct_key":
             self.keyRecognized()
             break;
+        case "upload_image_complete":
+            let isLast = data.1?["isLast"].boolValue
+                if isLast != nil && isLast == true {
+                    self.requestProjectList()
+
+                    self.dismiss(animated: true, completion: nil)
+            }
+            break;
         case "filelist_complete":
             let listType = data.1?["list_type"].stringValue
             if(listType == "project_list"){
@@ -715,10 +762,15 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             let id = data.1!["id"].stringValue;
             let path = data.1!["path"].stringValue;
             let content_type = data.1!["content_type"].stringValue;
-            
+            let isLast = data.1!["isLast"].boolValue
             print("download project complete id:\(id),path:\(path),content_type:\(content_type)")
             if(content_type == "plist"){
                 layerContainerView.loadImageIntoLayer(id:id);
+            }
+            if isLast == true{
+                fileListContainerView?.isHidden = true
+                self.dismiss(animated: true, completion: nil)
+ 
             }
             
             break;
@@ -778,6 +830,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
 
                     let plist_filename = "saved_files/"+artistName+"/drawings/"+projectName+"/state_"+id+".plist"
                     plistDownloadData["filename"] = JSON(plist_filename);
+                    if(i == jsonLayerArray.count-1){
+                       plistDownloadData["isLast"]  = JSON(true)
+                    }
                     let plist_load_request = Request(target:"storage",action:"download_project_file",data:plistDownloadData,requester:self)
                     RequestHandler.addRequest(requestData: plist_load_request)
                 }
@@ -786,7 +841,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             
             break;
         case "upload_complete":
-            let uploadtype = data.1!["type"];
+            let uploadtype = data.1!["type"].stringValue;
             switch(uploadtype){
             case "backup":
                 break;
