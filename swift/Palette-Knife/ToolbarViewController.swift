@@ -50,7 +50,6 @@ class ToolbarViewController: UIViewController {
         
         super.viewDidLoad()
         backupLabel.isHidden = true
-        behaviorPanelButton.isHidden = true;
         toolEvent.raise(data: ("VIEW_LOADED"));
         
         let circlePath = UIBezierPath(arcCenter: CGPoint(x: 20,y: 20), radius: CGFloat(12), startAngle: CGFloat(0), endAngle:CGFloat(Float.pi * 2), clockwise: true)

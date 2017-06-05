@@ -39,7 +39,11 @@ class RequestHandler{
     
     static func checkRequest(){
         #if DEBUG
+            
             print("checking request, activeitem: \(RequestHandler.activeItem == nil), requestQueue: \(requestQueue.count), dataQueue: \(dataQueue.count)")
+            for val in requestQueue {
+                print("request: \(val.action,val.requester, val.data)")
+            }
         #endif
 
         if(RequestHandler.activeItem == nil){
@@ -50,6 +54,14 @@ class RequestHandler{
                 sharedInstance.handleData();
             }
         }
+        
+    }
+    
+    static func emptyQueue(){
+        RequestHandler.activeItem = nil
+        requestQueue.removeAll();
+        RequestHandler.socketManager.requestEvent.removeAllHandlers();
+        RequestHandler.saveManager.requestEvent.removeAllHandlers();
         
     }
     

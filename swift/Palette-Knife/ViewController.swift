@@ -45,7 +45,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     let layerEventKey = NSUUID().uuidString
     let colorPickerKey = NSUUID().uuidString
     let fileEventKey = NSUUID().uuidString
-    
+    let behaviorEventKey = NSUUID().uuidString
+
     let brushEventKey = NSUUID().uuidString
     let dataEventKey = NSUUID().uuidString
     let strokeGeneratedKey = NSUUID().uuidString
@@ -56,10 +57,15 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     var toolbarController: ToolbarViewController?
     var layerPanelController: LayerPanelViewController?
+    var behaviorPanelController: BehaviorPanelViewController?
+
     var fileListController: SavedFilesPanelViewController?
     let targetSize = CGSize(width:CGFloat(pX),height:CGFloat(pY))
     var blockAlert:UIAlertController!
     
+    //for checking if person is drawing
+    var touchesDown:Bool = false;
+
     var colorPickerView: SwiftHSVColorPicker?
     override var prefersStatusBarHidden: Bool {
         return true
@@ -70,7 +76,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     var backupTimer:Timer!
     var cancelBackupTimer:Timer!
     var backupInterval = 30; //set to backup every 5 min
-    var cancelBackupInterval = 120; //set to backup every 5 min
+    var cancelBackupInterval = 60*2; //set to cancel after 2 min
 
     var backupNeeded:Bool = false;
     
@@ -82,6 +88,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     @IBOutlet weak var colorPickerContainerView: UIView!
     @IBOutlet weak var fileListContainerView: UIView!
     
+    @IBOutlet weak var behaviorPanelContainerView: UIView!
     required init?(coder: NSCoder) {
         layerContainerView = LayerContainerView(width:pX,height:pY);
         super.init(coder: coder);
@@ -112,6 +119,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             _ = fileListController?.fileEvent.addHandler(target: self, handler: ViewController.fileEventHandler, key: fileEventKey)
         }
         
+        else if(segue.identifier == "behaviorPanelSegue"){
+            behaviorPanelController = segue.destination as? BehaviorPanelViewController;
+            _ =  behaviorPanelController?.behaviorEvent.addHandler(target: self, handler: ViewController.behaviorEventHandler, key: behaviorEventKey)
+        }
+        
     }
     
     func colorPickerEventHandler(data:(UIColor), key: String){
@@ -125,7 +137,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         case "VIEW_LOADED":
             toolbarController?.exportButton.addTarget(self, action: #selector(ViewController.exportImage), for: .touchUpInside)
             toolbarController?.saveButton.addTarget(self, action: #selector(ViewController.saveProject), for: .touchUpInside)
-            
             break;
         case "ERASE_MODE":
             layerContainerView.toggleDrawActive();
@@ -146,9 +157,20 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
                 layerPanelContainerView?.isHidden = true
             }
             colorPickerContainerView?.isHidden = true
+            behaviorPanelContainerView?.isHidden = true
+
             
             break;
         case "TOGGLE_BEHAVIOR_PANEL":
+            if(behaviorPanelContainerView?.isHidden == true){
+                behaviorPanelContainerView?.isHidden = false
+            }
+            else{
+                behaviorPanelContainerView?.isHidden = true
+            }
+            colorPickerContainerView?.isHidden = true
+            layerPanelContainerView?.isHidden = true
+
             
             break;
         case "TOGGLE_FILE_PANEL":
@@ -170,6 +192,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
                 colorPickerContainerView?.isHidden = true
             }
             layerPanelContainerView?.isHidden = true
+            behaviorPanelContainerView?.isHidden = true
+
             
             break
         case "DIAMETER_CHANGED":
@@ -200,6 +224,65 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             break;
         case "DELETE_LAYER":
             self.deleteAlert(layerName: data.2!, layerId: data.1)
+            break;
+        default:
+            break;
+        }
+    }
+    
+    func behaviorEventHandler(data: (String,String,String?), key: String){
+        switch(data.0){
+        case "ACTIVATE_BEHAVIOR":
+            var authoringData:JSON = [:]
+            authoringData["type"] = JSON("set_behavior_active")
+            authoringData["behaviorId"] = JSON(data.1)
+            authoringData["active_status"] = JSON(true)
+            var data:JSON = [:]
+            data["data"] = authoringData
+            do {
+           try _ = behaviorManager?.handleAuthoringRequest(authoring_data: data)
+                self.synchronizeWithAuthoringClient();
+
+            }
+            catch{
+                #if DEBUG
+                    print("error in authoring")
+                #endif
+            }
+            break;
+        case "DEACTIVATE_BEHAVIOR":
+            var authoringData:JSON = [:]
+            authoringData["type"] = JSON("set_behavior_active")
+            authoringData["behaviorId"] = JSON(data.1)
+            authoringData["active_status"] = JSON(false)
+            var data:JSON = [:]
+            data["data"] = authoringData
+            do {
+                try _ = behaviorManager?.handleAuthoringRequest(authoring_data: data)
+                self.synchronizeWithAuthoringClient();
+
+            }
+            catch{
+                #if DEBUG
+                    print("error in authoring")
+                #endif
+            }
+            
+            break;
+        case "REFRESH_BEHAVIOR":
+            var authoringData:JSON = [:]
+            authoringData["type"] = JSON("refresh_behavior")
+            authoringData["behaviorId"] = JSON(data.1)
+            var data:JSON = [:]
+            data["data"] = authoringData
+            do {
+                try _ = behaviorManager?.handleAuthoringRequest(authoring_data: data)
+            }
+            catch{
+                #if DEBUG
+                    print("error in authoring")
+                #endif
+            }
             break;
         default:
             break;
@@ -275,6 +358,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         
         layerPanelContainerView.isHidden = true;
         
+        
+        
+        behaviorPanelContainerView.layer.cornerRadius = 8.0
+        behaviorPanelContainerView.clipsToBounds = true
+        behaviorPanelContainerView.isHidden = true;
+
         colorPickerContainerView.layer.cornerRadius = 8.0
         colorPickerContainerView.clipsToBounds = true
         
@@ -542,15 +631,27 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     }
     
     func startBackupTimer(interval:Int){
+        self.endBackupTimer();
         self.toolbarController?.enableSaveLoad();
         self.dismiss(animated: true, completion: nil)
+        self.endCancelTimer();
         backupTimer  = Timer.scheduledTimer(timeInterval:TimeInterval(interval), target: self, selector: #selector(ViewController.backupCallback), userInfo: nil, repeats: true)
 
     }
     
+    
+    func startCancelBackupTimer(){
+        cancelBackupTimer  = Timer.scheduledTimer(timeInterval:TimeInterval(cancelBackupInterval), target: self, selector: #selector(ViewController.cancelBackupCallback), userInfo: nil, repeats: true)
+    }
     func endBackupTimer(){
         if(backupTimer != nil){
             backupTimer.invalidate();
+        }
+    }
+    
+    func endCancelTimer(){
+        if(cancelBackupTimer != nil){
+            cancelBackupTimer.invalidate();
         }
     }
     
@@ -597,6 +698,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         layerContainerView.exportEvent.removeHandler(key: backupKey);
         if(data.0 == "COMPLETE"){
             let filename =  UserDefaults.standard.string(forKey: "backup_filename")!
+            #if DEBUG
+                print("backing up image to",filename)
+            #endif
+            
             let prefix = "/image_backups/";
             let artistName = UserDefaults.standard.string(forKey:"userkey");
             let png = UIImagePNGRepresentation(data.1!)
@@ -606,6 +711,9 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             uploadData["filename"] = JSON("saved_files/"+artistName!+prefix+filename+".png")
             uploadData["path"] = JSON(path)
             uploadData["isLast"] = JSON(true)
+            uploadData["save_type"] = "backup"
+            uploadData["content_type"] = "image/png"
+
             uploadData["targetFolder"] = JSON("saved_files/"+artistName!+"/")
             let uploadRequest = Request(target: "storage", action: "upload_image", data:uploadData, requester: self)
             RequestHandler.addRequest(requestData:uploadRequest);
@@ -691,9 +799,21 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     }
     
     
+    @objc func cancelBackupCallback(){
+        RequestHandler.emptyQueue()
+        self.layerContainerView.saveEvent.removeAllHandlers();
+        self.layerContainerView.exportEvent.removeAllHandlers();
+        self.startBackupTimer(interval: self.backupInterval);
+    }
+    
+    
     @objc func backupCallback(){
-        if(backupNeeded){
-            
+        #if DEBUG
+            print("ready to export?",layerContainerView.isReadyToExport())
+        #endif
+        if(backupNeeded && layerContainerView.isReadyToExport() && !self.touchesDown){
+            self.endBackupTimer();
+            self.startCancelBackupTimer();
             let alertController = UIAlertController(title:"Backup", message: "Backup project now?", preferredStyle: .alert)
             
             let confirmAction = UIAlertAction(title: "Yes", style: .default) { (_) in
@@ -710,17 +830,15 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
                 self.behaviorManager?.refreshAllBehaviors();
             
                 self.backupProject(filename:filename)
-                //self.backupImage()
-
-                //self.backupBehavior(filename:filename)
+               
                 
                 
                 self.backupNeeded = false;
             }
             
             let cancelAction = UIAlertAction(title: "Later", style: .cancel) { (_) in
-            
-                self.startBackupTimer(interval:60)
+        
+                self.startBackupTimer(interval:60*5)
             
             }
             
@@ -730,6 +848,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             self.present(alertController, animated: true, completion: nil)
 
             
+        }
+        else if(backupNeeded){
+            self.endBackupTimer();
+            self.startBackupTimer(interval:1)
         }
     }
     
@@ -799,10 +921,18 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             let content_type = data.1?["content_type"].stringValue
                 if isLast != nil && isLast == true {
                     if(saveType == "backup" && content_type == "text/plist"){
-                        let filename = UserDefaults.standard.string(forKey: "save_filename")!
                         #if DEBUG
-                        print("backing up behavior")
+                        print("backing up image")
                         #endif
+                        self.backupImage()
+                        
+                    }
+                    else if(saveType == "backup" && content_type == "image/png"){
+                        #if DEBUG
+                            print("backing up behavior")
+                        #endif
+
+                        let filename = UserDefaults.standard.string(forKey: "backup_filename")!
                         self.backupBehavior(filename: filename)
                     }
                     else{
@@ -827,6 +957,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             currentBehaviorFile = (data.1?["filename"].stringValue)!
             
             behaviorManager?.loadBehavior(json: data.1!["data"])
+            self.behaviorPanelController?.loadBehaviors(json: data.1!["data"])
             self.synchronizeWithAuthoringClient();
             self.startBackupTimer(interval:self.backupInterval);
             break;
@@ -933,7 +1064,15 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             do{
                 let authoring_data = data.1! as JSON
                 let attempt = try behaviorManager?.handleAuthoringRequest(authoring_data: authoring_data);
-                
+                let data = authoring_data["data"]
+                if(data["type"].stringValue == "behavior_added"){
+                    
+                    behaviorPanelController?.addBehavior(behaviorId: data["id"].stringValue, behaviorName: data["name"].stringValue, activeStatus: true)
+                }
+                else if(data["type"].stringValue == "delete_behavior_request"){
+                    behaviorPanelController?.removeBehavior(behaviorId: data["behaviorId"].stringValue)
+                }
+
                 let socketRequest = Request(target: "socket", action: "authoring_response", data: attempt, requester: self)
                 
                 RequestHandler.addRequest(requestData:socketRequest);
@@ -1096,6 +1235,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         if(layerContainerView.activeLayer != nil){
+            self.touchesDown = false;
            layerContainerView.activeLayer?.layerTouchesEnded(touches, with: event)
         }
         
@@ -1105,6 +1245,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
         if(layerContainerView.activeLayer != nil){
+            self.touchesDown = true;
             layerContainerView.activeLayer?.layerTouchesBegan(touches, with: event)
         }
     }
@@ -1120,6 +1261,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         if(layerContainerView.activeLayer != nil){
+            self.touchesDown = false
             //layerContainerView.activeLayer?.touchesCancelled(touches, with: event)
         }
         

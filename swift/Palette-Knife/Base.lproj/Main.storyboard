@@ -22,7 +22,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Q7O-f9-au8" userLabel="layer_container_view">
-                                <rect key="frame" x="1126" y="56" width="766" height="668"/>
+                                <rect key="frame" x="1079" y="56" width="287" height="670"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <connections>
@@ -37,7 +37,7 @@
                                 </connections>
                             </containerView>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UvX-z4-bEI" userLabel="colorpicker_container_view">
-                                <rect key="frame" x="1046" y="56" width="766" height="420"/>
+                                <rect key="frame" x="1046" y="56" width="320" height="420"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <connections>
@@ -45,10 +45,18 @@
                                 </connections>
                             </containerView>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HKn-rf-Zo8" userLabel="filelist_container_view">
-                                <rect key="frame" x="0.0" y="56" width="334" height="486"/>
+                                <rect key="frame" x="0.0" y="56" width="353" height="486"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <connections>
                                     <segue destination="jTm-Tz-1uO" kind="embed" identifier="fileListSegue" id="Hj1-pq-3u9"/>
+                                </connections>
+                            </containerView>
+                            <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ps7-aG-Wgi" userLabel="behavior_container_view">
+                                <rect key="frame" x="1057" y="56" width="309" height="411"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <connections>
+                                    <segue destination="UwA-iS-HSQ" kind="embed" identifier="behaviorPanelSegue" id="DWn-Ae-HWN"/>
                                 </connections>
                             </containerView>
                         </subviews>
@@ -60,6 +68,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="behaviorPanelContainerView" destination="Ps7-aG-Wgi" id="G78-N2-Mw9"/>
                         <outlet property="colorPickerContainerView" destination="UvX-z4-bEI" id="JrC-Un-iNs"/>
                         <outlet property="fileListContainerView" destination="HKn-rf-Zo8" id="qPq-59-Crb"/>
                         <outlet property="layerPanelContainerView" destination="Q7O-f9-au8" id="8jF-Do-vKb"/>
@@ -185,11 +194,11 @@
             <objects>
                 <tableViewController id="T1X-5t-gog" customClass="LayerPanelViewController" customModule="DynamicBrushes" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="70" sectionHeaderHeight="28" sectionFooterHeight="28" id="xek-Ol-9Fp">
-                        <rect key="frame" x="0.0" y="0.0" width="766" height="668"/>
+                        <rect key="frame" x="0.0" y="0.0" width="287" height="670"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <view key="tableHeaderView" contentMode="scaleToFill" id="jeG-R1-4vp">
-                            <rect key="frame" x="0.0" y="0.0" width="766" height="46"/>
+                            <rect key="frame" x="0.0" y="0.0" width="287" height="46"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Layers" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="0Z7-SH-Fil">
@@ -211,10 +220,10 @@
                         </view>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="LayerTableCell" id="o3t-LT-Vkn" customClass="LayerCell" customModule="DynamicBrushes" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="74" width="766" height="70"/>
+                                <rect key="frame" x="0.0" y="74" width="287" height="70"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="o3t-LT-Vkn" id="l3m-4V-6nh">
-                                    <rect key="frame" x="0.0" y="0.0" width="766" height="70"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="287" height="70"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XsQ-H6-Mys">
@@ -279,11 +288,11 @@
             <objects>
                 <tableViewController id="jTm-Tz-1uO" userLabel="File Panel View Controller" customClass="SavedFilesPanelViewController" customModule="DynamicBrushes" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="50" sectionHeaderHeight="28" sectionFooterHeight="28" id="nYL-Tf-6CB">
-                        <rect key="frame" x="0.0" y="0.0" width="334" height="486"/>
+                        <rect key="frame" x="0.0" y="0.0" width="353" height="486"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <view key="tableHeaderView" contentMode="scaleToFill" id="mJk-0r-UuI">
-                            <rect key="frame" x="0.0" y="0.0" width="334" height="46"/>
+                            <rect key="frame" x="0.0" y="0.0" width="353" height="46"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Files" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="U2O-Y9-ZpQ">
@@ -298,14 +307,14 @@
                         </view>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="FileTableCell" id="Yqg-rA-mIA" userLabel="FileTableCell" customClass="FileCell" customModule="DynamicBrushes" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="74" width="334" height="50"/>
+                                <rect key="frame" x="0.0" y="74" width="353" height="50"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Yqg-rA-mIA" id="3co-GL-OVt">
-                                    <rect key="frame" x="0.0" y="0.0" width="334" height="50"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="353" height="50"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0wb-hJ-JT7">
-                                            <rect key="frame" x="28" y="15" width="298" height="21"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0wb-hJ-JT7" userLabel="Behavior Label">
+                                            <rect key="frame" x="8" y="15" width="337" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -334,7 +343,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DG8-if-8M9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-540.26354319180086" y="689.6484375"/>
+            <point key="canvasLocation" x="-226.42752562225473" y="471.67968749999994"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="c3s-SM-Oja">
@@ -345,18 +354,92 @@
                         <viewControllerLayoutGuide type="bottom" id="Ofy-S8-k8H"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="5Aw-8Y-Qcd" customClass="SwiftHSVColorPicker" customModule="DynamicBrushes" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="766" height="420"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="420"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0bd-eS-Usr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="800" y="1319"/>
+            <point key="canvasLocation" x="-171" y="1192"/>
+        </scene>
+        <!--Behavior Panel View Controller-->
+        <scene sceneID="N4A-Ob-I5H">
+            <objects>
+                <tableViewController id="UwA-iS-HSQ" customClass="BehaviorPanelViewController" customModule="DynamicBrushes" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="eLh-Sx-mCW">
+                        <rect key="frame" x="0.0" y="0.0" width="309" height="411"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        <view key="tableHeaderView" contentMode="scaleToFill" id="B1e-W9-SGo">
+                            <rect key="frame" x="0.0" y="0.0" width="309" height="46"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Behaviors" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="B3B-Qa-QHu">
+                                    <rect key="frame" x="17" y="8" width="80" height="31"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        </view>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="BehaviorTableCell" id="DiX-tE-Gkg" userLabel="BehaviorTableCell" customClass="BehaviorCell" customModule="DynamicBrushes" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="74" width="309" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="DiX-tE-Gkg" id="Epu-Z9-bbl">
+                                    <rect key="frame" x="0.0" y="0.0" width="309" height="44"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nd0-Fg-Vjn">
+                                            <rect key="frame" x="18" y="11" width="188" height="21"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="y9Q-VC-Etj">
+                                            <rect key="frame" x="226" y="6" width="30" height="30.5"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                                            <state key="normal" image="behavior_activate_button2x.png">
+                                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                        </button>
+                                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yel-ZR-qBi">
+                                            <rect key="frame" x="264" y="6" width="37" height="30.5"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                                            <state key="normal" image="refresh_button2x.png">
+                                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                        </button>
+                                    </subviews>
+                                    <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                </tableViewCellContentView>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <connections>
+                                    <outlet property="activateButton" destination="y9Q-VC-Etj" id="EfS-EM-EQl"/>
+                                    <outlet property="label" destination="Nd0-Fg-Vjn" id="9bf-IU-Q1A"/>
+                                    <outlet property="refreshButton" destination="yel-ZR-qBi" id="srq-Uq-C2L"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="UwA-iS-HSQ" id="lKj-SV-whi"/>
+                            <outlet property="delegate" destination="UwA-iS-HSQ" id="860-8j-KxJ"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="PMo-8Q-sbh" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1309" y="602"/>
         </scene>
     </scenes>
     <resources>
         <image name="airbrush_button2x.png" width="108" height="108"/>
+        <image name="behavior_activate_button2x.png" width="126" height="126"/>
         <image name="behavior_button2x.png" width="121" height="120"/>
         <image name="brush_button2x.png" width="121" height="121"/>
         <image name="erase_button2x.png" width="121" height="121"/>
@@ -365,6 +448,7 @@
         <image name="layerVisible_button_active2x.png" width="105" height="62"/>
         <image name="layer_button2x.png" width="121" height="120"/>
         <image name="layeradd_button.png" width="33" height="33"/>
+        <image name="refresh_button2x.png" width="121" height="101"/>
         <image name="save_button2x.png" width="121" height="120"/>
         <image name="trash_button.png" width="44" height="48"/>
     </resources>

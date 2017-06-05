@@ -31,7 +31,6 @@ class LayerContainerView: UIView {
     var savedStrokeList = [String:[String]]();
     var savedJSONList = [JSON]();
     var targetSize: CGSize;
-    
     var exportTarget = 0;
     init(width:Float,height:Float){
         let frame = CGRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(height))
@@ -202,6 +201,14 @@ class LayerContainerView: UIView {
         }
         print ("layer not found",id)
 
+    }
+    
+    
+    func isReadyToExport()->Bool{
+        if(activeLayer != nil){
+        return activeLayer!.isReadyToExport()
+        }
+        return false;
     }
     
     func setDrawActive(val:Bool){
