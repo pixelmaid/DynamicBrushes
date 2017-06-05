@@ -68,7 +68,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     //variables for setting backups
     var backupTimer:Timer!
-    var backupInterval = 60*5.0; //set to backup every 5 min
+    var cancelBackupTimer:Timer!
+    var backupInterval = 30; //set to backup every 5 min
+    var cancelBackupInterval = 120; //set to backup every 5 min
+
     var backupNeeded:Bool = false;
     
     var currentBehaviorName = ""
@@ -313,7 +316,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         
         drawInterval  = Timer.scheduledTimer(timeInterval:0.016 , target: self, selector: #selector(ViewController.drawIntervalCallback), userInfo: nil, repeats: true)
         
-       backupTimer  = Timer.scheduledTimer(timeInterval:TimeInterval(backupInterval), target: self, selector: #selector(ViewController.backupCallback), userInfo: nil, repeats: true)
+        self.startBackupTimer();
         
         
     }
@@ -535,12 +538,24 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
 
     }
     
+    func startBackupTimer(){
+        self.toolbarController?.enableSaveLoad();
+        backupTimer  = Timer.scheduledTimer(timeInterval:TimeInterval(backupInterval), target: self, selector: #selector(ViewController.backupCallback), userInfo: nil, repeats: true)
+
+    }
+    
+    func endBackupTimer(){
+        if(backupTimer != nil){
+            backupTimer.invalidate();
+        }
+    }
+    
     func backupProject(filename:String){
         self.uploadProject(type: "backup", filename: filename)
     }
     
     func saveProject(){
-        
+        endBackupTimer();
         let alertController = UIAlertController(title: "Save", message: "Enter a name for your project", preferredStyle: .alert)
         let confirmAction = UIAlertAction(title: "Save", style: .default) { (_) in
             if let field = alertController.textFields?[0] {
@@ -586,6 +601,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             var uploadData:JSON = [:]
             uploadData["filename"] = JSON("saved_files/"+artistName!+prefix+filename+".png")
             uploadData["path"] = JSON(path)
+            uploadData["isLast"] = JSON(true)
             uploadData["targetFolder"] = JSON("saved_files/"+artistName!+"/")
             let uploadRequest = Request(target: "storage", action: "upload_image", data:uploadData, requester: self)
             RequestHandler.addRequest(requestData:uploadRequest);
@@ -594,6 +610,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     
     func exportImage(){
+        self.endBackupTimer()
        _ = self.layerContainerView.exportEvent.addHandler(target: self, handler: ViewController.handleExportRequest, key: exportKey)
         self.behaviorManager?.refreshAllBehaviors();
         //TODO: this is a hack. need to create a delay in case it's saving a stroke to the texture
@@ -626,7 +643,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             let pngSmallImage = UIImage(data: pngImageData!)
             UIImageWriteToSavedPhotosAlbum(pngSmallImage!, self, nil, nil)
             self.dismiss(animated: true, completion: nil)
-
+            self.startBackupTimer();
              DispatchQueue.global(qos: .userInteractive).async {
                 
                  DispatchQueue.main.async {
@@ -672,6 +689,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     @objc func backupCallback(){
         if(backupNeeded){
+            self.endBackupTimer()
+            #if DEBUG
+                print("begining backup")
+            #endif
+            toolbarController?.disableSaveLoad();
             let filename = String(Int((NSDate().timeIntervalSince1970)*100000));
             UserDefaults.standard.set(filename, forKey: "backup_filename")
             UserDefaults.standard.synchronize()
@@ -704,12 +726,13 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         let when = DispatchTime.now() + 1;
         DispatchQueue.main.asyncAfter(deadline: when) {
             self.dismiss(animated: true, completion: nil)
-
+            self.startBackupTimer();
             self.newLayer();
         }
     }
     
     func newLayer(){
+        endBackupTimer()
        
         self.behaviorManager?.refreshAllBehaviors();
         //TODO: this is a hack. need to create a delay in case it's saving a stroke to the texture
@@ -747,6 +770,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
                     self.requestProjectList()
 
                     self.dismiss(animated: true, completion: nil)
+                    self.startBackupTimer();
             }
             break;
         case "filelist_complete":
@@ -765,6 +789,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             
             behaviorManager?.loadBehavior(json: data.1!["data"])
             self.synchronizeWithAuthoringClient();
+            self.startBackupTimer();
             break;
         case "download_project_complete":
             let id = data.1!["id"].stringValue;
@@ -778,6 +803,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             if isLast == true{
                 fileListContainerView?.isHidden = true
                 self.dismiss(animated: true, completion: nil)
+                self.startBackupTimer()
  
             }
             
@@ -947,6 +973,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     
     func loadProject(projectName:String, artistName:String){
+        endBackupTimer();
         let project_filename = "saved_files/"+artistName+"/drawings/"+projectName+"/data.json"
         var loadJSON:JSON = [:]
         loadJSON["filename"] = JSON(project_filename);
@@ -959,6 +986,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     
     func saveBehavior(filename:String,artistName:String){
+        endBackupTimer()
         var behavior_json:JSON = [:]
         for (key,val) in BehaviorManager.behaviors{
             behavior_json[key] = val.toJSON();

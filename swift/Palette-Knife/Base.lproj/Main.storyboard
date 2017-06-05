@@ -45,7 +45,7 @@
                                 </connections>
                             </containerView>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HKn-rf-Zo8" userLabel="filelist_container_view">
-                                <rect key="frame" x="0.0" y="56" width="766" height="486"/>
+                                <rect key="frame" x="0.0" y="56" width="334" height="486"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <connections>
                                     <segue destination="jTm-Tz-1uO" kind="embed" identifier="fileListSegue" id="Hj1-pq-3u9"/>
@@ -147,6 +147,13 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="airbrush_button2x.png"/>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="backing up" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5Jr-jJ-F9P">
+                                <rect key="frame" x="157" y="15" width="85" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -157,6 +164,7 @@
                         <outlet property="addLayerButton" destination="b9f-FX-vgT" id="58C-xh-PN8"/>
                         <outlet property="airbrushButton" destination="LW3-Ue-dhe" id="YGY-5n-j9h"/>
                         <outlet property="alphaSlider" destination="soS-Q4-Hj5" id="9R3-dT-Orn"/>
+                        <outlet property="backupLabel" destination="5Jr-jJ-F9P" id="Y02-n5-QNg"/>
                         <outlet property="behaviorPanelButton" destination="tLC-Sz-Orh" id="YD4-w8-a3e"/>
                         <outlet property="colorPickerButton" destination="p2B-Eq-Wjm" id="avw-ml-nWM"/>
                         <outlet property="diameterSlider" destination="tsh-Qc-EHp" id="1me-Xa-kg1"/>
@@ -271,11 +279,11 @@
             <objects>
                 <tableViewController id="jTm-Tz-1uO" userLabel="File Panel View Controller" customClass="SavedFilesPanelViewController" customModule="DynamicBrushes" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="50" sectionHeaderHeight="28" sectionFooterHeight="28" id="nYL-Tf-6CB">
-                        <rect key="frame" x="0.0" y="0.0" width="766" height="486"/>
+                        <rect key="frame" x="0.0" y="0.0" width="334" height="486"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <view key="tableHeaderView" contentMode="scaleToFill" id="mJk-0r-UuI">
-                            <rect key="frame" x="0.0" y="0.0" width="766" height="46"/>
+                            <rect key="frame" x="0.0" y="0.0" width="334" height="46"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Files" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="U2O-Y9-ZpQ">
@@ -290,14 +298,14 @@
                         </view>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="FileTableCell" id="Yqg-rA-mIA" userLabel="FileTableCell" customClass="FileCell" customModule="DynamicBrushes" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="74" width="766" height="50"/>
+                                <rect key="frame" x="0.0" y="74" width="334" height="50"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Yqg-rA-mIA" id="3co-GL-OVt">
-                                    <rect key="frame" x="0.0" y="0.0" width="766" height="50"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="334" height="50"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0wb-hJ-JT7">
-                                            <rect key="frame" x="28" y="15" width="82" height="21"/>
+                                            <rect key="frame" x="28" y="15" width="298" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -326,7 +334,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DG8-if-8M9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-540" y="690"/>
+            <point key="canvasLocation" x="-540.26354319180086" y="689.6484375"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="c3s-SM-Oja">

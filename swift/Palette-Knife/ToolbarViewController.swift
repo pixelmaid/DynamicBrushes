@@ -26,6 +26,7 @@ class ToolbarViewController: UIViewController {
     
     @IBOutlet weak var alphaSlider: UISlider!
     
+    @IBOutlet weak var backupLabel: UILabel!
     
     var toolEvent = Event<(String)>();
     var activePanel:String?
@@ -48,6 +49,7 @@ class ToolbarViewController: UIViewController {
     override func viewDidLoad() {
         
         super.viewDidLoad()
+        backupLabel.isHidden = true
         behaviorPanelButton.isHidden = true;
         toolEvent.raise(data: ("VIEW_LOADED"));
         
@@ -95,6 +97,25 @@ class ToolbarViewController: UIViewController {
         toolEvent.raise(data:("ALPHA_CHANGED"))
         
     }
+    
+    func disableSaveLoad(){
+        saveButton.isEnabled = false;
+        exportButton.isEnabled = false;
+        fileListButton.isEnabled = false;
+        backupLabel.isHidden = false;
+
+        
+    }
+    
+    func enableSaveLoad(){
+        saveButton.isEnabled = true;
+        exportButton.isEnabled = true;
+        fileListButton.isEnabled = true;
+        backupLabel.isHidden = true;
+
+        
+    }
+
     
     func panelToggled(sender: AnyObject){
         let target = (sender as! UIButton);
