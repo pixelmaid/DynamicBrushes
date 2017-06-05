@@ -117,6 +117,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     }
     
     func toolEventHandler(data: (String), key: String){
+        print("tool event handler",data)
         switch(data){
         case "VIEW_LOADED":
             toolbarController?.exportButton.addTarget(self, action: #selector(ViewController.exportImage), for: .touchUpInside)
@@ -124,11 +125,15 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             
             break;
         case "ERASE_MODE":
-            layerContainerView.setDrawActive(val: false);
+            layerContainerView.toggleDrawActive();
             break;
-        case "BRUSH_MODE":
-            layerContainerView.setDrawActive(val: true);
+        case "PEN_MODE":
+            layerContainerView.setPenActive();
             break;
+        case "AIRBRUSH_MODE":
+            layerContainerView.setAirbrushActive();
+            break;
+
             
         case "TOGGLE_LAYER_PANEL":
             if(layerPanelContainerView?.isHidden == true){
@@ -616,7 +621,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         layerContainerView.exportEvent.removeHandler(key: exportKey);
         if(contentToShare != nil){
             
-            UIImageWriteToSavedPhotosAlbum(contentToShare!, nil, nil, nil)
+         
+            let pngImageData: Data? = UIImagePNGRepresentation(contentToShare!)
+            let pngSmallImage = UIImage(data: pngImageData!)
+            UIImageWriteToSavedPhotosAlbum(pngSmallImage!, self, nil, nil)
             self.dismiss(animated: true, completion: nil)
 
              DispatchQueue.global(qos: .userInteractive).async {

@@ -15,6 +15,7 @@ class LayerContainerView: UIView {
     var activeLayer:ModifiedCanvasView?
     var layers = [ModifiedCanvasView]();
     var drawActive = true;
+    var drawMode = "n/a"
     let exportKey = NSUUID().uuidString;
     let saveKey = NSUUID().uuidString;
 
@@ -126,10 +127,12 @@ class LayerContainerView: UIView {
         
         if(exportedImages.count == exportTarget){
             let masterImage = UIView(frame: CGRect(x:0,y:0,width:targetSize.width,height: targetSize.height))
-            
+            masterImage.backgroundColor = UIColor.clear;
             for i in exportedImages{
                 let img = i
-                masterImage.addSubview(UIImageView(image:img));
+                let subview = UIImageView(image:img)
+                subview.backgroundColor = UIColor.clear
+                masterImage.addSubview(subview);
             }
             UIGraphicsBeginImageContext(masterImage.bounds.size);
             masterImage.layer.render(in: UIGraphicsGetCurrentContext()!);
@@ -203,8 +206,26 @@ class LayerContainerView: UIView {
     
     func setDrawActive(val:Bool){
         drawActive = val
+        drawMode = "n/a"
         self.activeLayer?.drawActive = drawActive;
         //self.activeLayer?.eraseAll();
+    }
+    
+    func toggleDrawActive(){
+        self.setDrawActive(val: !self.drawActive)
+    }
+    
+    func setPenActive(){
+        print("set pen active")
+        drawMode = "PEN"
+        self.activeLayer?.drawMode = drawMode;
+    }
+    
+    func setAirbrushActive(){
+        print("set airbrush active")
+        drawMode = "AIRBRUSH"
+        self.activeLayer?.drawMode = drawMode;
+        
     }
     
     

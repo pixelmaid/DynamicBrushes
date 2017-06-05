@@ -19,9 +19,9 @@ class ToolbarViewController: UIViewController {
     @IBOutlet weak var layerPanelButton: UIButton!
     @IBOutlet weak var behaviorPanelButton: UIButton!
     
+    @IBOutlet weak var penButton: UIButton!
     @IBOutlet weak var eraseButton: UIButton!
-    @IBOutlet weak var brushButton: UIButton!
-    
+    @IBOutlet weak var airbrushButton: UIButton!
     @IBOutlet weak var diameterSlider: UISlider!
     
     @IBOutlet weak var alphaSlider: UISlider!
@@ -29,13 +29,18 @@ class ToolbarViewController: UIViewController {
     
     var toolEvent = Event<(String)>();
     var activePanel:String?
-    var activeMode:String = "erase";
+    var activeMode:String = "pen";
+    var eraseActive:Bool = false;
+
     var shapeLayer: CAShapeLayer?
     let eraseHighlight = UIImage(named: "erase_button_active2x")
     let eraseStandard = UIImage(named: "erase_button2x")
     
-    let brushHighlight = UIImage(named: "brush_button_active2x")
-    let brushStandard = UIImage(named: "brush_button2x")
+    let penHighlight = UIImage(named: "brush_button_active2x")
+    let penStandard = UIImage(named: "brush_button2x")
+
+    let airbrushHighlight = UIImage(named: "airbrush_button_active2x")
+    let airbrushStandard = UIImage(named: "airbrush_button2x")
 
 
     
@@ -62,7 +67,9 @@ class ToolbarViewController: UIViewController {
         
         eraseButton.addTarget(self, action: #selector(ToolbarViewController.eraseToggled), for: .touchUpInside)
         
-        brushButton.addTarget(self, action: #selector(ToolbarViewController.brushToggled), for: .touchUpInside)
+        penButton.addTarget(self, action: #selector(ToolbarViewController.penToggled), for: .touchUpInside)
+       
+        airbrushButton.addTarget(self, action: #selector(ToolbarViewController.airbrushToggled), for: .touchUpInside)
         
         layerPanelButton.addTarget(self, action: #selector(ToolbarViewController.panelToggled), for: .touchUpInside)
          fileListButton.addTarget(self, action: #selector(ToolbarViewController.panelToggled), for: .touchUpInside)
@@ -72,7 +79,7 @@ class ToolbarViewController: UIViewController {
         diameterSlider.addTarget(self, action: #selector(ToolbarViewController.diameterSliderChanged), for: .valueChanged)
           alphaSlider.addTarget(self, action: #selector(ToolbarViewController.alphaSliderChanged), for: .valueChanged)
         
-        brushToggled();
+        penToggled();
     }
     
     func setColor(color:UIColor){
@@ -106,26 +113,47 @@ class ToolbarViewController: UIViewController {
     }
     
     func eraseToggled(){
-        if activeMode == "brush"{
+        if(eraseActive){
+            eraseButton.setImage(eraseStandard, for: UIControlState.normal)
+            eraseActive = false;
+        }
+        else{
             eraseButton.setImage(eraseHighlight, for: UIControlState.normal)
-            brushButton.setImage(brushStandard, for: UIControlState.normal)
-            activeMode = "erase"
-            toolEvent.raise(data: ("ERASE_MODE"));
+            eraseActive = true;
 
         }
         
+        toolEvent.raise(data: ("ERASE_MODE"));
+
+        
+        
     }
     
-    func brushToggled(){
-        if activeMode == "erase"{
-            eraseButton.setImage(eraseStandard, for: UIControlState.normal)
-            brushButton.setImage(brushHighlight, for: UIControlState.normal)
-            activeMode = "brush"
+    func penToggled(){
+       
+            penButton.setImage(penHighlight, for: UIControlState.normal)
+           airbrushButton.setImage(airbrushStandard, for: UIControlState.normal)
+
+            activeMode = "pen"
             
-            toolEvent.raise(data: ("BRUSH_MODE"));
+            toolEvent.raise(data: ("PEN_MODE"));
 
             
-        }
+        
+        
+        
+        
+    }
+    
+    func airbrushToggled(){
+            penButton.setImage(penStandard, for: UIControlState.normal)
+            airbrushButton.setImage(airbrushHighlight, for: UIControlState.normal)
+            
+            activeMode = "airbrush"
+            
+            toolEvent.raise(data: ("AIRBRUSH_MODE"));
+            
+            
         
     }
 

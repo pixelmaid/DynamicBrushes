@@ -19,6 +19,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
     var id = NSUUID().uuidString;
     let name:String?
     var drawActive = true;
+    var drawMode = "PEN"
     var jotView:JotView!
     //JotView params
    
@@ -35,7 +36,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
         self.name = name
         jotView = JotView(frame:frame);
         super.init(frame:frame)
-        
+        jotView.backgroundColor = UIColor.clear
         jotView.delegate = self
         _ = self.jotViewStateInkPathFunc();
         _ = self.jotViewStatePlistPathFunc();
@@ -79,7 +80,18 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
                     #endif
                     return;
                 }
-                let newStroke = JotStroke(texture: self.textureForStroke(), andBufferManager: jotView.state.bufferManager());
+                let texture: JotBrushTexture
+                if(self.drawMode == "PEN"){
+                    print("setting texture to pen")
+                   // JotDefaultBrushTexture.sharedInstance().unbind();
+                    texture = JotSquareBrushTexture.sharedInstance()
+                }
+                else{
+                    print("setting texture to brush")
+                    //JotSquareBrushTexture.sharedInstance().unbind();
+                    texture = JotDefaultBrushTexture.sharedInstance()
+                }
+                let newStroke = JotStroke(texture: texture, andBufferManager: jotView.state.bufferManager());
                 newStroke!.delegate = jotView as JotStrokeDelegate;
                 
                 
@@ -349,7 +361,18 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
     // #pragma mark - JotViewDelegate
     
     func textureForStroke()->JotBrushTexture {
-        return JotDefaultBrushTexture.sharedInstance()
+        #if DEBUG
+            print("current draw mode",self.drawMode)
+        #endif
+        if(self.drawMode == "PEN"){
+            print("setting texture to pen")
+            return JotSquareBrushTexture.sharedInstance()
+        }
+        else{
+            print("setting texture to brush")
+
+           return JotDefaultBrushTexture.sharedInstance()
+        }
     }
     
     func stepWidthForStroke()->CGFloat {

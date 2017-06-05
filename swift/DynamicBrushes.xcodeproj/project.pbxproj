@@ -124,6 +124,10 @@
 		5FFAC4D71E9D84040009DC5E /* SaveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFAC4D61E9D84040009DC5E /* SaveManager.swift */; };
 		5FFC455A1EE1B133007B7597 /* Particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FFC45581EE1B133007B7597 /* Particle.png */; };
 		5FFC455B1EE1B133007B7597 /* point.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 5FFC45591EE1B133007B7597 /* point.vsh */; };
+		5FFC456F1EE4C648007B7597 /* airbrush_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FFC456D1EE4C648007B7597 /* airbrush_button.png */; };
+		5FFC45701EE4C648007B7597 /* airbrush_button2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FFC456E1EE4C648007B7597 /* airbrush_button2x.png */; };
+		5FFC45731EE4C855007B7597 /* airbrush_button_active.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FFC45711EE4C855007B7597 /* airbrush_button_active.png */; };
+		5FFC45741EE4C855007B7597 /* airbrush_button_active2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FFC45721EE4C855007B7597 /* airbrush_button_active2x.png */; };
 		5FFDAB091D21B5C400632A26 /* SocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFDAB081D21B5C400632A26 /* SocketManager.swift */; };
 		86D9E5D4C68732BC03AD249A /* Pods_PaletteKnife.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76DB207CD163015E13C1998B /* Pods_PaletteKnife.framework */; };
 		AD28AABCDC9E1C7118844AC4 /* Pods_PaletteKnifeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC68E1A2193A02A54E663498 /* Pods_PaletteKnifeTests.framework */; };
@@ -278,6 +282,10 @@
 		5FFAC4D61E9D84040009DC5E /* SaveManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SaveManager.swift; sourceTree = "<group>"; };
 		5FFC45581EE1B133007B7597 /* Particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Particle.png; sourceTree = SOURCE_ROOT; };
 		5FFC45591EE1B133007B7597 /* point.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = point.vsh; sourceTree = SOURCE_ROOT; };
+		5FFC456D1EE4C648007B7597 /* airbrush_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = airbrush_button.png; sourceTree = "<group>"; };
+		5FFC456E1EE4C648007B7597 /* airbrush_button2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = airbrush_button2x.png; sourceTree = "<group>"; };
+		5FFC45711EE4C855007B7597 /* airbrush_button_active.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = airbrush_button_active.png; sourceTree = "<group>"; };
+		5FFC45721EE4C855007B7597 /* airbrush_button_active2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = airbrush_button_active2x.png; sourceTree = "<group>"; };
 		5FFDAB081D21B5C400632A26 /* SocketManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketManager.swift; sourceTree = "<group>"; };
 		76DB207CD163015E13C1998B /* Pods_PaletteKnife.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PaletteKnife.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7CCD589D0593142C66540CEB /* Pods-PaletteKnifeUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeUITests/Pods-PaletteKnifeUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -569,6 +577,10 @@
 		5FD6CD101DE0EE0E007D94AA /* image_assets */ = {
 			isa = PBXGroup;
 			children = (
+				5FFC45711EE4C855007B7597 /* airbrush_button_active.png */,
+				5FFC45721EE4C855007B7597 /* airbrush_button_active2x.png */,
+				5FFC456D1EE4C648007B7597 /* airbrush_button.png */,
+				5FFC456E1EE4C648007B7597 /* airbrush_button2x.png */,
 				5F2CF3D81ED333AD0066AC8E /* fileList_button.png */,
 				5F2CF3D91ED333AD0066AC8E /* fileList_button2x.png */,
 				5FE32F9C1ECF70BE00ADC01E /* layerVisible_button_active.png */,
@@ -865,8 +877,10 @@
 				5F9F25AD1DEFE3A0005CB5D8 /* shopbot_position_inactive2x.png in Resources */,
 				5FFC455B1EE1B133007B7597 /* point.vsh in Resources */,
 				5FE32F971ECF6DC900ADC01E /* refresh_button2x.png in Resources */,
+				5FFC45701EE4C648007B7597 /* airbrush_button2x.png in Resources */,
 				5FE32F8A1ECF6D5300ADC01E /* export_button.png in Resources */,
 				5FE32F851ECF6D5300ADC01E /* brush_button2x.png in Resources */,
+				5FFC456F1EE4C648007B7597 /* airbrush_button.png in Resources */,
 				5F9118D81DEE345100A6B247 /* draw_icon.png in Resources */,
 				5FBDF0EC1ED8D95300022B07 /* stencil.fsh in Resources */,
 				5FA4C72B1CDA7B5B004A728C /* Assets.xcassets in Resources */,
@@ -874,9 +888,11 @@
 				5FBDF0E91ED8D95300022B07 /* colorlesspoint.vsh in Resources */,
 				5F9F25AC1DEFE3A0005CB5D8 /* select_icon2x.png in Resources */,
 				5FE32F801ECF6D5300ADC01E /* behavior_button.png in Resources */,
+				5FFC45731EE4C855007B7597 /* airbrush_button_active.png in Resources */,
 				5FE32F8B1ECF6D5300ADC01E /* export_button2x.png in Resources */,
 				5F9F25AF1DEFE3A0005CB5D8 /* lg_pen_blue2x.png in Resources */,
 				5FBDF0EB1ED8D95300022B07 /* quad.fsh in Resources */,
+				5FFC45741EE4C855007B7597 /* airbrush_button_active2x.png in Resources */,
 				5F9F25B21DEFE490005CB5D8 /* radial.png in Resources */,
 				5F9F25AB1DEFE3A0005CB5D8 /* draw_icon2x.png in Resources */,
 				5FE32FA21ECF70BE00ADC01E /* layerVisible_button.png in Resources */,

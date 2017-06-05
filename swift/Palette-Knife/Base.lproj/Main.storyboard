@@ -110,7 +110,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="erase_button2x.png"/>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QPW-J3-rUs" userLabel="Brush Button">
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QPW-J3-rUs" userLabel="Pen Button">
                                 <rect key="frame" x="326" y="4" width="40" height="40"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="brush_button2x.png"/>
@@ -142,6 +142,11 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="export_button2x.png"/>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LW3-Ue-dhe" userLabel="Airbrush button">
+                                <rect key="frame" x="278" y="3" width="40" height="40"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="airbrush_button2x.png"/>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -150,21 +155,22 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="addLayerButton" destination="b9f-FX-vgT" id="58C-xh-PN8"/>
+                        <outlet property="airbrushButton" destination="LW3-Ue-dhe" id="YGY-5n-j9h"/>
                         <outlet property="alphaSlider" destination="soS-Q4-Hj5" id="9R3-dT-Orn"/>
                         <outlet property="behaviorPanelButton" destination="tLC-Sz-Orh" id="YD4-w8-a3e"/>
-                        <outlet property="brushButton" destination="QPW-J3-rUs" id="KBn-Bq-Mff"/>
                         <outlet property="colorPickerButton" destination="p2B-Eq-Wjm" id="avw-ml-nWM"/>
                         <outlet property="diameterSlider" destination="tsh-Qc-EHp" id="1me-Xa-kg1"/>
                         <outlet property="eraseButton" destination="gVA-ZT-zoR" id="MNA-sp-N1q"/>
                         <outlet property="exportButton" destination="raq-oY-wRn" id="xMl-nY-4EZ"/>
                         <outlet property="fileListButton" destination="SLf-eG-2ZY" id="b55-NL-sCF"/>
                         <outlet property="layerPanelButton" destination="civ-vQ-wsY" id="2tW-cw-hVQ"/>
+                        <outlet property="penButton" destination="QPW-J3-rUs" id="NpX-gX-qlq"/>
                         <outlet property="saveButton" destination="8gS-nz-efH" id="Hzl-b5-jO9"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cO4-mP-nr5" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="296.92532942898976" y="938.67187499999989"/>
+            <point key="canvasLocation" x="111" y="1656"/>
         </scene>
         <!--Layer Panel View Controller-->
         <scene sceneID="cZd-Nb-Aah">
@@ -258,7 +264,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UR4-HB-PTJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="911" y="333"/>
+            <point key="canvasLocation" x="1511" y="365"/>
         </scene>
         <!--File Panel View Controller-->
         <scene sceneID="A4f-Rb-TOI">
@@ -320,7 +326,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DG8-if-8M9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-138" y="994"/>
+            <point key="canvasLocation" x="-540" y="690"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="c3s-SM-Oja">
@@ -338,10 +344,11 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0bd-eS-Usr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="745" y="705"/>
+            <point key="canvasLocation" x="800" y="1319"/>
         </scene>
     </scenes>
     <resources>
+        <image name="airbrush_button2x.png" width="108" height="108"/>
         <image name="behavior_button2x.png" width="121" height="120"/>
         <image name="brush_button2x.png" width="121" height="121"/>
         <image name="erase_button2x.png" width="121" height="121"/>
