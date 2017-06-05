@@ -69,7 +69,6 @@ class SaveManager{
                 var revisedUploadData = uploadData;
                 revisedUploadData!["filelist"] = listJSON;
                 revisedUploadData!["list_type"] = JSON(list_type)
-                
                 self.dataEvent.raise(data: ("upload_complete",revisedUploadData))
                 self.requestEvent.raise(data:("upload_complete",revisedUploadData))
             }
@@ -94,6 +93,7 @@ class SaveManager{
         let filename = uploadData["filename"].stringValue
         let fileUrl = NSURL(fileURLWithPath: path)
         let uploadRequest = AWSS3TransferManagerUploadRequest()
+        
         uploadRequest?.bucket = bucketName
         uploadRequest?.key = filename
         uploadRequest?.contentType = uploadData["content_type"].stringValue;

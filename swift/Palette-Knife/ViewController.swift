@@ -316,7 +316,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         
         drawInterval  = Timer.scheduledTimer(timeInterval:0.016 , target: self, selector: #selector(ViewController.drawIntervalCallback), userInfo: nil, repeats: true)
         
-        self.startBackupTimer();
+        self.startBackupTimer(interval:self.backupInterval);
         
         
     }
@@ -427,7 +427,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     
     func uploadProject(type:String,filename:String){
-        if(type != "backup"){
+       // if(type != "backup"){
         DispatchQueue.global(qos: .userInteractive).async {
            
             DispatchQueue.main.async {
@@ -437,7 +437,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
                 )
             }
         }
-        }
+       // }
         
         UserDefaults.standard.set(type, forKey: "save_type")
         UserDefaults.standard.set(filename, forKey: "save_filename")
@@ -489,6 +489,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             if(val != "no_image"){
                 var uploadData:JSON = [:]
                 uploadData["content_type"] = JSON("image/png")
+                 uploadData["save_type"] = JSON(type)
                 uploadData["filename"] = JSON("saved_files/"+artistName!+prefix+filename+"/"+"ink_"+key+".png")
                 uploadData["path"] = JSON(val)
                 uploadData["targetFolder"] = JSON("saved_files/"+artistName!+prefix)
@@ -506,6 +507,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             for s in strokes{
             var uploadData:JSON = [:]
             uploadData["content_type"] = JSON("text/strokedata")
+            uploadData["save_type"] = JSON(type)
             uploadData["filename"] = JSON("saved_files/"+artistName!+prefix+filename+"/"+s+".strokedata")
             let path = documentDirectory.appending("/"+s+".strokedata")
             uploadData["path"] = JSON(path)
@@ -522,13 +524,14 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             count += 1
             var uploadData:JSON = [:]
             uploadData["content_type"] = JSON("text/plist")
-            
+            uploadData["save_type"] = JSON(type)
             uploadData["filename"] = JSON("saved_files/"+artistName!+prefix+filename+"/"+"state_"+key+".plist")
             uploadData["path"] = JSON(val)
             uploadData["targetFolder"] = JSON("saved_files/"+artistName!+prefix)
             if(count == save_plists.count){
                 uploadData["isLast"] = JSON(true);
             }
+            
             let uploadRequest = Request(target: "storage", action: "upload_image", data:uploadData, requester: self)
             RequestHandler.addRequest(requestData:uploadRequest);
             
@@ -538,9 +541,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
 
     }
     
-    func startBackupTimer(){
+    func startBackupTimer(interval:Int){
         self.toolbarController?.enableSaveLoad();
-        backupTimer  = Timer.scheduledTimer(timeInterval:TimeInterval(backupInterval), target: self, selector: #selector(ViewController.backupCallback), userInfo: nil, repeats: true)
+        self.dismiss(animated: true, completion: nil)
+        backupTimer  = Timer.scheduledTimer(timeInterval:TimeInterval(interval), target: self, selector: #selector(ViewController.backupCallback), userInfo: nil, repeats: true)
 
     }
     
@@ -643,7 +647,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             let pngSmallImage = UIImage(data: pngImageData!)
             UIImageWriteToSavedPhotosAlbum(pngSmallImage!, self, nil, nil)
             self.dismiss(animated: true, completion: nil)
-            self.startBackupTimer();
+            self.startBackupTimer(interval:self.backupInterval);
              DispatchQueue.global(qos: .userInteractive).async {
                 
                  DispatchQueue.main.async {
@@ -689,23 +693,41 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     @objc func backupCallback(){
         if(backupNeeded){
+            
+            let alertController = UIAlertController(title:"Backup", message: "Backup project now?", preferredStyle: .alert)
+            
+            let confirmAction = UIAlertAction(title: "Yes", style: .default) { (_) in
+           
             self.endBackupTimer()
             #if DEBUG
                 print("begining backup")
             #endif
-            toolbarController?.disableSaveLoad();
+            self.toolbarController?.disableSaveLoad();
             let filename = String(Int((NSDate().timeIntervalSince1970)*100000));
             UserDefaults.standard.set(filename, forKey: "backup_filename")
             UserDefaults.standard.synchronize()
             
-            //self.behaviorManager?.refreshAllBehaviors();
-            //TODO: this is a hack. need to create a delay in case it's saving a stroke to the texture
+                self.behaviorManager?.refreshAllBehaviors();
             
-
-                self.backupBehavior(filename:filename)
                 self.backupProject(filename:filename)
-                self.backupImage()
+                //self.backupImage()
+
+                //self.backupBehavior(filename:filename)
+                
+                
                 self.backupNeeded = false;
+            }
+            
+            let cancelAction = UIAlertAction(title: "Later", style: .cancel) { (_) in
+            
+                self.startBackupTimer(interval:60)
+            
+            }
+            
+            alertController.addAction(confirmAction)
+            alertController.addAction(cancelAction)
+            
+            self.present(alertController, animated: true, completion: nil)
 
             
         }
@@ -726,7 +748,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         let when = DispatchTime.now() + 1;
         DispatchQueue.main.asyncAfter(deadline: when) {
             self.dismiss(animated: true, completion: nil)
-            self.startBackupTimer();
+            self.startBackupTimer(interval:self.backupInterval);
             self.newLayer();
         }
     }
@@ -754,7 +776,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     //from Requester protocol. Handles result of request
     internal func processRequest(data: (String, JSON?)) {
+               #if DEBUG
+            print("process request",data.0)
+        #endif
         switch(data.0){
+        
         case "disconnected":
             recconnectAlert();
             break;
@@ -764,13 +790,26 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         case "correct_key":
             self.keyRecognized()
             break;
+        case "backup_complete":
+            self.startBackupTimer(interval: self.backupInterval)
+            break;
         case "upload_image_complete":
             let isLast = data.1?["isLast"].boolValue
+            let saveType = data.1?["save_type"].stringValue
+            let content_type = data.1?["content_type"].stringValue
                 if isLast != nil && isLast == true {
-                    self.requestProjectList()
-
-                    self.dismiss(animated: true, completion: nil)
-                    self.startBackupTimer();
+                    if(saveType == "backup" && content_type == "text/plist"){
+                        let filename = UserDefaults.standard.string(forKey: "save_filename")!
+                        #if DEBUG
+                        print("backing up behavior")
+                        #endif
+                        self.backupBehavior(filename: filename)
+                    }
+                    else{
+                        self.requestProjectList()
+                        self.dismiss(animated: true, completion: nil)
+                        self.startBackupTimer(interval:self.backupInterval);
+                    }
             }
             break;
         case "filelist_complete":
@@ -789,7 +828,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             
             behaviorManager?.loadBehavior(json: data.1!["data"])
             self.synchronizeWithAuthoringClient();
-            self.startBackupTimer();
+            self.startBackupTimer(interval:self.backupInterval);
             break;
         case "download_project_complete":
             let id = data.1!["id"].stringValue;
@@ -803,7 +842,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             if isLast == true{
                 fileListContainerView?.isHidden = true
                 self.dismiss(animated: true, completion: nil)
-                self.startBackupTimer()
+                self.startBackupTimer(interval:self.backupInterval)
  
             }
             
