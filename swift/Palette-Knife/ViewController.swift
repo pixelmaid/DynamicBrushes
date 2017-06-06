@@ -74,8 +74,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     //variables for setting backups
     var backupTimer:Timer!
-    var cancelBackupTimer:Timer!
-    var backupInterval = 30; //set to backup every 5 min
+    //var cancelBackupTimer:Timer!
+    var backupInterval = 60*3; //set to backup every 5 min
     var cancelBackupInterval = 60*2; //set to cancel after 2 min
 
     var backupNeeded:Bool = false;
@@ -139,12 +139,15 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             toolbarController?.saveButton.addTarget(self, action: #selector(ViewController.saveProject), for: .touchUpInside)
             break;
         case "ERASE_MODE":
+            self.layerContainerView.removeAllStrokes()
             layerContainerView.toggleDrawActive();
             break;
         case "PEN_MODE":
+            self.layerContainerView.removeAllStrokes()
             layerContainerView.setPenActive();
             break;
         case "AIRBRUSH_MODE":
+            self.layerContainerView.removeAllStrokes()
             layerContainerView.setAirbrushActive();
             break;
 
@@ -515,13 +518,26 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     }
     
     
+    func saveFileToTempDir(data:NSData,filename:String,ext:String)->String{
+        let fileManager = FileManager.default
+        let path = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent("\(filename).\(ext)")
+       
+        fileManager.createFile(atPath: path as String, contents: data as Data, attributes: nil)
+        return path;
+    }
+    
     func uploadProject(type:String,filename:String){
        // if(type != "backup"){
         DispatchQueue.global(qos: .userInteractive).async {
            
             DispatchQueue.main.async {
                 let alert = UIAlertController(title: "Saving", message: "Saving Project", preferredStyle: .alert)
+                let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in
+                    self.cancelBackupCallback()
                 
+                }
+                alert.addAction(cancelAction)
+
                 self.present(alert, animated: true, completion: { _ in }
                 )
             }
@@ -634,26 +650,26 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         self.endBackupTimer();
         self.toolbarController?.enableSaveLoad();
         self.dismiss(animated: true, completion: nil)
-        self.endCancelTimer();
+        //self.endCancelTimer();
         backupTimer  = Timer.scheduledTimer(timeInterval:TimeInterval(interval), target: self, selector: #selector(ViewController.backupCallback), userInfo: nil, repeats: true)
 
     }
     
     
-    func startCancelBackupTimer(){
+    /*func startCancelBackupTimer(){
         cancelBackupTimer  = Timer.scheduledTimer(timeInterval:TimeInterval(cancelBackupInterval), target: self, selector: #selector(ViewController.cancelBackupCallback), userInfo: nil, repeats: true)
-    }
+    }*/
     func endBackupTimer(){
         if(backupTimer != nil){
             backupTimer.invalidate();
         }
     }
     
-    func endCancelTimer(){
+    /*func endCancelTimer(){
         if(cancelBackupTimer != nil){
             cancelBackupTimer.invalidate();
         }
-    }
+    }*/
     
     func backupProject(filename:String){
         self.uploadProject(type: "backup", filename: filename)
@@ -730,7 +746,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             
             DispatchQueue.main.async {
                 let alert = UIAlertController(title: "Saving", message: "Saving Image", preferredStyle: .alert)
-        
+                let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in
+                    self.cancelBackupCallback()
+                    
+                }
+                alert.addAction(cancelAction)
+
                 self.present(alert, animated: true, completion: { _ in }
                 )
             }
@@ -813,7 +834,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         #endif
         if(backupNeeded && layerContainerView.isReadyToExport() && !self.touchesDown){
             self.endBackupTimer();
-            self.startCancelBackupTimer();
+           // self.startCancelBackupTimer();
             let alertController = UIAlertController(title:"Backup", message: "Backup project now?", preferredStyle: .alert)
             
             let confirmAction = UIAlertAction(title: "Yes", style: .default) { (_) in
@@ -1072,6 +1093,17 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
                 else if(data["type"].stringValue == "delete_behavior_request"){
                     behaviorPanelController?.removeBehavior(behaviorId: data["behaviorId"].stringValue)
                 }
+                
+                else if(data["type"].stringValue == "set_behavior_active"){
+                    let active = data["active_status"].boolValue
+                    if(active){
+                    behaviorPanelController?.setActive(id: data["behaviorId"].stringValue)
+                    }
+                    else{
+                        behaviorPanelController?.setInactive(id: data["behaviorId"].stringValue)
+ 
+                    }
+                }
 
                 let socketRequest = Request(target: "socket", action: "authoring_response", data: attempt, requester: self)
                 
@@ -1272,6 +1304,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     func handlePinch(recognizer : UIPinchGestureRecognizer) {
         if let view = recognizer.view {
+            self.layerContainerView.removeAllStrokes()
             view.transform = view.transform.scaledBy(x: recognizer.scale, y: recognizer.scale)
             recognizer.scale = 1
         }
@@ -1279,6 +1312,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     func handleRotate(recognizer : UIRotationGestureRecognizer) {
         if let view = recognizer.view {
+            self.layerContainerView.removeAllStrokes()
+
             view.transform = view.transform.rotated(by: recognizer.rotation)
             recognizer.rotation = 0
         }
@@ -1287,6 +1322,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     func handlePan(recognizer:UIPanGestureRecognizer) {
         let translation = recognizer.translation(in: self.view)
         if let view = recognizer.view {
+            self.layerContainerView.removeAllStrokes()
+
             view.center = CGPoint(x:view.center.x + translation.x,
                                   y:view.center.y + translation.y)
         }

@@ -96,11 +96,15 @@ class SaveManager{
         
         uploadRequest?.bucket = bucketName
         uploadRequest?.key = filename
+       // uploadRequest?.contentLength =
         uploadRequest?.contentType = uploadData["content_type"].stringValue;
         uploadRequest?.body = fileUrl as URL!
         uploadRequest?.serverSideEncryption = AWSS3ServerSideEncryption.awsKms
         uploadRequest?.uploadProgress = { (bytesSent, totalBytesSent, totalBytesExpectedToSend) -> Void in
             DispatchQueue.main.async(execute: {
+                #if DEBUG
+                    print("Progress for \( uploadData["content_type"].stringValue) is: %f : %f", totalBytesSent, totalBytesExpectedToSend)
+                #endif
                 //self.amountUploaded = totalBytesSent // To show the updating data status in label.
                 //self.fileSize = totalBytesExpectedToSend
             })

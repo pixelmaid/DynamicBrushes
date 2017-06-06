@@ -262,6 +262,12 @@ class LayerContainerView: UIView {
         }
     }
     
+    func removeAllStrokes(){
+        if(self.activeLayer != nil){
+            self.activeLayer?.endAllStrokes()
+        }
+    }
+    
     func selectActiveLayer(id:String){
         for l in layers{
             if l.id == id {

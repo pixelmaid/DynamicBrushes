@@ -190,7 +190,7 @@ class RequestHandler{
     
     private func saveRequestHandler(data:(String,JSON?), key:String) {
         #if DEBUG
-        print("save request handler called \(String(describing: RequestHandler.activeItem))")
+        print("save request handler called \(String(describing: RequestHandler.activeItem),data.0)")
         #endif
         if(RequestHandler.activeItem != nil){
             let activeItem = RequestHandler.activeItem;

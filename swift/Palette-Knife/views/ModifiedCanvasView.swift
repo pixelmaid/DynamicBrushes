@@ -133,7 +133,14 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
         else{
             color = nil
         }
+        if(inBounds(point:toPoint)){
+
         self.renderStroke(currentStroke: currentStroke, toPoint: toPoint, toWidth: toWidth, toColor: color)
+        }
+        else{
+            self.endStrokes(idList: [currentStrokeId]);
+ 
+        }
     }
     
     func renderStroke(currentStroke:JotStroke,toPoint:CGPoint,toWidth:CGFloat,toColor:UIColor!){
@@ -148,9 +155,10 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
                     #endif
                     return;
                 }
-                
+            
             currentStroke.lock();
              autoreleasepool {
+                
                    _ = jotView.addLine(toAndRenderStroke: currentStroke, to: toPoint, toWidth: toWidth*4, to: toColor, andSmoothness: self.getSmoothness(), withStepWidth: self.stepWidthForStroke())
                     
                 
@@ -158,11 +166,26 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
             }
             currentStroke.unlock();
                 JotGLContext.validateEmptyStack();
+            
 
             
         }
     }
     
+    
+    func inBounds(point:CGPoint)->Bool{
+        var inb = true
+        if(point.x<0 || point.y<0){
+            inb = false
+        }
+        if(point.x>jotView.bounds.width || point.y>jotView.bounds.height){
+            inb = false
+        }
+        
+        
+        return inb
+        
+    }
     
     func endAllStrokes(){
          #if DEBUG
