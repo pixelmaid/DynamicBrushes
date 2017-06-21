@@ -61,6 +61,20 @@ define(['emitter', 'app/id', 'app/Emitter'],
               type: "sensor_prop",
               help_text: "returns the current angle of the stylus."
 
+            }, {
+              item_class: "block property palette sensor",
+              item_name: "stylus_speed",
+              name: "speed",
+              type: "sensor_prop",
+              help_text: "returns the speed of the stylus."
+
+            }, {
+              item_class: "block property palette sensor",
+              item_name: "stylus_deltaAngle",
+              name: "deltaAngle",
+              type: "sensor_prop",
+              help_text: "returns the angle of the direction the stylus is moving."
+
             }]
           },
           "ui_properties": {
@@ -186,19 +200,35 @@ define(['emitter', 'app/id', 'app/Emitter'],
                 name: "sine wave",
                 item_name: "sine",
                 type: "generator",
-                help_text: "returns a series of values corresponding to a sine wave"
-              }, {
+                help_text: "<img src ='images/sine_wave.gif'/>"
+              },
+              {
+                item_class: "block property generator palette",
+                name: "square wave",
+                item_name: "square",
+                type: "generator",
+                help_text: "<img src ='images/square_wave.gif'/>"
+              },
+                {
+                item_class: "block property generator palette",
+                name: "triangle wave",
+                item_name: "triangle",
+                type: "generator",
+                help_text: "<img src ='images/triangle_wave.gif'/>"
+              },
+              {
+                item_class: " block property generator palette",
+                name: "sawtooth wave",
+                item_name: "range",
+                type: "generator",
+                help_text: "<img src ='images/sawtooth_wave.gif'/>"
+              }, 
+               {
                 item_class: " block property generator palette",
                 name: "random",
                 item_name: "random",
                 type: "generator",
                 help_text: "returns a series of uniform random values"
-              }, {
-                item_class: " block property generator palette",
-                name: "range",
-                item_name: "range",
-                type: "generator",
-                help_text: "returns cycling range of values"
               }, {
                 item_class: " block property generator palette",
                 name: "alternate",

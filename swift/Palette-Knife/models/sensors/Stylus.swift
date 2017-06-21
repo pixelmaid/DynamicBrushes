@@ -13,11 +13,12 @@ import Foundation
 class Stylus: TimeSeries, WebTransmitter {
     var prevPosition: Point
     var force = Observable<Float>(0)
-    var prevForce: Float
+    var prevForce = Observable<Float>(0)
     var angle = Observable<Float>(0)
-    var speed = Float(0)
-    var prevAngle: Float
-    var position = LinkedPoint(x:0,y:0);
+    var speed = MovingAverage()
+    var prevAngle = Observable<Float>(0)
+    var deltaAngle = Observable<Float>(0)
+    var position = LinkedPoint(x:0,y:0)
     var origin = Point(x:0,y:0);
     var delta = LinkedPoint(x:0,y:0);
     var deltaChangeBuffer = [Point]();
@@ -42,14 +43,14 @@ class Stylus: TimeSeries, WebTransmitter {
     init(x:Float,y:Float,angle:Float,force:Float){
         prevPosition = Point(x:0, y:0)
         self.force.set(newValue: force);
-        self.prevForce = force
+        self.prevForce.set(newValue: force)
         self.angle.set(newValue: angle)
-        self.prevAngle = angle;
+        self.prevAngle.set(newValue: angle)
         self.x = position.x;
         self.y = position.y
         self.x.printname = "stylus_position_x"
         self.y.printname = "stylus_position_y"
-
+        self.speed.set(newValue: 0)
         self.dx = delta.x;
         self.dy = delta.y;
         self.dx.printname = "stylus_delta_x"
@@ -72,7 +73,7 @@ class Stylus: TimeSeries, WebTransmitter {
     
     @objc override func timerIntervalCallback()
     {
-        self.transmitData();
+        //self.transmitData();
     }
     
     func transmitData(){
@@ -82,7 +83,7 @@ class Stylus: TimeSeries, WebTransmitter {
         string+="\"pressure\":"+String(describing: self.force)+","
         string+="\"angle\":"+String(describing: self.angle)+","
         string+="\"penDown\":"+String(describing: self.penDown)+","
-        string+="\"speed\":"+String(self.speed)+","
+        string+="\"speed\":"+String(self.speed.get(id:nil))+","
         string+="\"position\":{\"x\":"+String(describing: self.position.x)+",\"y\":"+String(describing: self.position.y)+"}"
         // string+="\"delta\":{\"x\":"+String(delta.x)+",\"y\":"+String(delta.y)+"}"
         string+="}}"
@@ -155,20 +156,22 @@ class Stylus: TimeSeries, WebTransmitter {
         }
         //self.delta.set(x: 0,y:0)
         self.penDown.set(newValue: 0);
-        self.speed = 0;
+        self.speed.hardReset(val: 0);
+        self.speed.set(newValue: 0);
         self.resetDistance();
-        self.transmitData();
+        //self.transmitData();
         
     }
     
     func onStylusDown(x:Float,y:Float,force:Float,angle:Float){
         //TODO: silent set, need to make more robust/ readable
+        self.origin.set(x: x, y: y)
         self.position.x.setSilent(newValue: x)
         self.position.y.setSilent(newValue: y)
         for key in self.keyStorage["STYLUS_DOWN"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;
-                eventCondition?.evaluate()
+                _ = eventCondition?.evaluate()
             }
             else{
                 NotificationCenter.default.post(name:NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_DOWN"])
@@ -178,8 +181,8 @@ class Stylus: TimeSeries, WebTransmitter {
         self.delta.set(x: 0,y:0)
         self.penDown.set(newValue: 1);
         self.prevTime = self.getTimeElapsed();
-        self.speed = 0;
-        self.transmitData();
+        self.speed.set(newValue: 0);
+        //self.transmitData();
         
     }
     
@@ -248,11 +251,12 @@ class Stylus: TimeSeries, WebTransmitter {
         self.position.set(val:newP)
        
     
-      let d = self.position.sub(point: self.prevPosition)
-
+        let d = self.position.sub(point: self.prevPosition)
       
-      self.delta.set(val:d)
-
+        self.delta.set(val:d)
+        var _deltaAngle =  MathUtil.cartToPolar(p1: self.origin, p2: self.position).1
+        _deltaAngle = MathUtil.map(value: _deltaAngle, low1:0.0, high1: 2*Float.pi, low2: 0.0, high2: 100.0)
+        self.deltaAngle.set(newValue: _deltaAngle)
         //self.delta.set(x: 0,y:0)
 
        //deltaChangeBuffer.append(self.position.sub(point: self.prevPosition));
@@ -261,13 +265,23 @@ class Stylus: TimeSeries, WebTransmitter {
         self.xDistance.set(newValue: self.xDistance.getSilent() + abs(d.x.getSilent()));
         self.yDistance.set(newValue: self.yDistance.getSilent() + abs(d.y.getSilent()));
 
-        self.prevForce = self.force.get(id:nil)
-        self.force.set(newValue: force*5)
-        self.prevAngle = self.angle.get(id:nil);
+        self.prevForce.set(newValue:self.force.get(id:nil))
+        self.force.set(newValue: force*20)
+        self.prevAngle.set(newValue:self.angle.get(id:nil));
         self.angle.set(newValue:angle)
         let currentTime = self.getTimeElapsed();
-        self.speed = prevPosition.dist(point: position)/(currentTime-prevTime)
+        var _speed = prevPosition.dist(point: position)/(currentTime-prevTime)
+        if(_speed > 5000){
+            _speed = 5000
+        }
+         _speed = MathUtil.map(value: _speed, low1:0, high1: 5000, low2: 0, high2: 100)
+        self.speed.set(newValue:_speed)
         self.prevTime = currentTime;
+        #if DEBUG
+           // print("stylus speed =",self.speed.get(id: nil));
+            print("stylus delta angle =",self.deltaAngle.get(id: nil));
+
+        #endif
         
     }
     

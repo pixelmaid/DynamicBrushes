@@ -259,6 +259,16 @@ class BehaviorDefinition {
             
             break;
             
+        case "square":
+            self.addSquare(name: data["generatorId"].stringValue, min: data["min"].floatValue, max: data["max"].floatValue, freq: data["freq"].floatValue);
+            
+            break;
+            
+        case "triangle":
+            self.addTriangle(name: data["generatorId"].stringValue, min: data["min"].floatValue, max: data["max"].floatValue, freq: data["freq"].floatValue);
+            break;
+            
+
         case "ease":
             self.addEaseGenerator(name: data["generatorId"].stringValue, a: data["a"].floatValue, b: data["b"].floatValue, k: data["k"].floatValue);
             
@@ -483,6 +493,16 @@ class BehaviorDefinition {
                 generatorJSON["freq"] = JSON(data.1[0]!)
                 generatorJSON["amp"] = JSON(data.1[1]!)
                 generatorJSON["phase"] = JSON(data.1[2]!)
+                break;
+            case "triangle":
+                generatorJSON["min"] = JSON(data.1[0]!)
+                generatorJSON["max"] = JSON(data.1[1]!)
+                generatorJSON["freq"] = JSON(data.1[2]!)
+                break;
+            case "square":
+                generatorJSON["min"] = JSON(data.1[0]!)
+                generatorJSON["max"] = JSON(data.1[1]!)
+                generatorJSON["freq"] = JSON(data.1[2]!)
                 break;
             case "ease":
                 generatorJSON["a"] = JSON(data.1[0]!)
@@ -767,6 +787,16 @@ class BehaviorDefinition {
         generators[name] = ("sine",[freq,amp,phase]);
     }
     
+    func addTriangle(name:String,min:Float,max:Float,freq:Float){
+        generators[name] = ("triangle",[min,max,freq]);
+    }
+
+    
+    func addSquare(name:String,min:Float,max:Float,freq:Float){
+        generators[name] = ("square",[min,max,freq]);
+    }
+    
+    
     func addIndex(name:String){
         generators[name] = ("index",[]);
     }
@@ -992,6 +1022,14 @@ class BehaviorDefinition {
         case "sine":
             let sine = Sine(freq: data.1[0] as! Float, amp: data.1[1] as! Float, phase: data.1[2] as! Float);
             storedGenerators[id]![name] = sine;
+        case "square":
+            let square = Square(min: data.1[0] as! Float, max: data.1[1] as! Float, freq: data.1[2] as! Float);
+            storedGenerators[id]![name] = square;
+
+        case "triangle":
+            let triangle = Triangle(min: data.1[0] as! Float, max: data.1[1] as! Float, freq: data.1[2] as! Float);
+            storedGenerators[id]![name] = triangle;
+
         case "random":
             let random = RandomGenerator(start:data.1[0] as! Float, end:data.1[1] as! Float)
             storedGenerators[id]![name] = random;

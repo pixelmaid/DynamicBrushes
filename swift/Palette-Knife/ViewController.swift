@@ -775,9 +775,17 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             let pngImageData: Data? = UIImagePNGRepresentation(contentToShare!)
             let pngSmallImage = UIImage(data: pngImageData!)
             UIImageWriteToSavedPhotosAlbum(pngSmallImage!, self, nil, nil)
+            let svg = (currentCanvas?.currentDrawing?.getSVG())! as NSString;
+            let svg_data = svg.data(using: String.Encoding.utf8.rawValue)!
+            let activityViewController = UIActivityViewController(activityItems: [svg_data], applicationActivities: nil)
+            activityViewController.popoverPresentationController?.sourceView = self.view // so that iPads won't crash
+            
+            
+            // present the view controller
+            self.present(activityViewController, animated: true, completion: nil)
             self.dismiss(animated: true, completion: nil)
             self.startBackupTimer(interval:self.backupInterval);
-             DispatchQueue.global(qos: .userInteractive).async {
+             /*DispatchQueue.global(qos: .userInteractive).async {
                 
                  DispatchQueue.main.async {
                     let alert = UIAlertController(title: "Saved", message: "Your image has been saved to the photo album", preferredStyle: .alert)
@@ -786,7 +794,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
                     self.present(alert, animated: true, completion: { _ in }
                     )
                 }
-            }
+            }*/
             
             /*let nsContent = NSData(data: contentToShare!)
             let activityViewController = UIActivityViewController(activityItems: [nsContent], applicationActivities: nil)

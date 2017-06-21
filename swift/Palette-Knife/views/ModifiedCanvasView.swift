@@ -133,14 +133,14 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
         else{
             color = nil
         }
-        if(inBounds(point:toPoint)){
+        //if(inBounds(point:toPoint)){
 
         self.renderStroke(currentStroke: currentStroke, toPoint: toPoint, toWidth: toWidth, toColor: color)
-        }
+        /*}
         else{
             self.endStrokes(idList: [currentStrokeId]);
  
-        }
+        }*/
     }
     
     func renderStroke(currentStroke:JotStroke,toPoint:CGPoint,toWidth:CGFloat,toColor:UIColor!){

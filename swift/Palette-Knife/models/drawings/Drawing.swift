@@ -98,7 +98,7 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
             }
             self.activeStrokes[parentID]!.removeAll();
 
-            self.allStrokes = allStrokes.filter({ $0.parentID != parentID })
+            //self.allStrokes = allStrokes.filter({ $0.parentID != parentID })
             #if DEBUG
             print("strokes to remove",toRemove)
             #endif

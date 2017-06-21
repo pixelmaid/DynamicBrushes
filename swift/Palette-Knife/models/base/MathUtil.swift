@@ -20,4 +20,62 @@ struct MathUtil{
     static func expMap(value:Float,exp:Float)->Float{
         return pow(value,exp)
     }
+    
+    static func cartToPolar(p1:Point, p2:Point)->(Float,Float) {
+        
+        var r = Float(0.0);
+        var theta = Float(0.0);
+        let x = p2.x.get(id:nil) - p1.x.get(id:nil)
+        let y = p2.y.get(id:nil) - p1.y.get(id:nil)
+        r = sqrt((x * x) + (y * y));
+        
+        var type = 0;
+        if (x > 0 && y >= 0) {
+            type = 1;
+        }
+        if (x > 0 && y < 0) {
+            type = 2;
+        }
+        if (x < 0) {
+            type = 3;
+        }
+        if (x == 0 && y > 0) {
+            type = 4;
+        }
+        if (x == 0 && y < 0) {
+            type = 5;
+        }
+        if (x == 0 && y == 0) {
+            type = 6;
+        }
+        
+        //Find theta
+        switch (type) {
+        case (1):
+            theta = atan(y / x);
+            break;
+        case (2):
+            theta = atan(y / x) + 2 * Float.pi;
+            break;
+        case (3):
+            theta = atan(y / x) +  Float.pi;
+            break;
+        case (4):
+            theta = Float.pi / 2.0;
+            break;
+        case (5):
+            theta = 3 * Float.pi / 2.0;
+            break;
+        case (6):
+            theta = 0.0;
+            break;
+        default:
+            theta = 0.0;
+            break;
+        }
+        
+        return (r,theta)
+        
+    }
+    
 }

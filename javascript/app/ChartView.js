@@ -492,9 +492,15 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                         var referenceName, referenceProperties, referencePropertiesDisplayNames;
                         if (type == 'sensor_prop') {
                             referenceName = 'stylus';
+                            var constraint_type = "active"
                             console.log("sensor prop dropped on mapping", displayName);
                             $(ui.helper).remove(); //destroy cloneit'
                             referenceProperties = [name.split("_")[1]];
+
+                            //TODO: Should set constraint active or passive in palette model, not here
+                            if(referenceProperties[0]=="speed"){
+                                constraint_type = "passive"
+                            }
                             referencePropertiesDisplayNames = [displayName];
 
                             console.log("reference properties =", referenceProperties, name.split("_"));
@@ -502,7 +508,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                             console.log('reference properties set', expression.getPropertyList());
 
-                            self.trigger("ON_MAPPING_REFERENCE_UPDATE", [mapping_data.mappingId, self.id, target_state, relativePropertyName, relativePropertyItemName, expression.id, expression.getText(), expression.getPropertyList(), "active"]);
+                            self.trigger("ON_MAPPING_REFERENCE_UPDATE", [mapping_data.mappingId, self.id, target_state, relativePropertyName, relativePropertyItemName, expression.id, expression.getText(), expression.getPropertyList(), constraint_type]);
 
                         } else if (type == 'ui_prop') {
                             referenceName = 'ui';

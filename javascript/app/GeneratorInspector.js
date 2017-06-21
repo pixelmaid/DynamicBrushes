@@ -32,6 +32,16 @@ define(["jquery", "app/id", "app/Emitter"],
 					data.amp = 100;
 					data.phase = -1.6;
 					break;
+					case "square":
+					data.min = 0;
+					data.max = 100;
+					data.freq = 10;
+					break;
+					case "triangle":
+					data.min = 0;
+					data.max = 100;
+					data.freq = 0.5;
+					break;
 					case "index":
 					break;
 					case "siblingcount":

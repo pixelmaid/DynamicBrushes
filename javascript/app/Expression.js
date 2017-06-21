@@ -178,7 +178,7 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
                         var name = propList[1][0];
                          var referenceDisplayName = propList[2][0];
                       
-                        els.push($(this.addMark(referenceDisplayName, type, key, name)));
+                        els.push($(this.addMark(referenceDisplayName, type, key, name, propList[0])));
                     }
                 }
                 this.renderMarks();
@@ -186,7 +186,7 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
             }
 
 
-            addMark(referenceDisplayName, type, referenceId, name) {
+            addMark(referenceDisplayName, type, referenceId, name,heading) {
                 var el = document.createElement("span");
                 el.innerHTML = referenceDisplayName;
                 el.setAttribute("class", "block property " + type);
@@ -204,7 +204,7 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
                 this.addReferenceCheck = true;
                 this.mirror.setValue(this.mirror.getValue() + "%" + referenceId + "%");
                 this.addReferenceCheck = false;
-                var el = this.addMark(referenceDisplayName, type, referenceId, name);
+                var el = this.addMark(referenceDisplayName, type, referenceId, name, referenceName);
 
                 this.renderMarks();
                 return $(el);

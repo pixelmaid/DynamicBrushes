@@ -17,6 +17,40 @@ class Generator:Observable<Float>{
     
 }
 
+class MovingAverage:Generator{
+    var queue = [Float]()
+    var index = 0;
+    let alpha = Float(0.009)
+    var val = Float(0)
+    var averageCount = 20
+    override func set(newValue: Float) {
+        self.queue.append(newValue)
+    }
+    
+    func hardReset(val:Float){
+        self.val = val;
+        self.queue.removeAll();
+    }
+    
+    override func get(id:String?)->Float{
+        #if DEBUG
+        #endif
+        if(queue.count>averageCount){
+        var sum = Float(0.0)
+            for i in 0..<averageCount{
+                sum += queue[i];
+            }
+        let avg = sum/Float(averageCount)
+        //let _val = last_val*alpha + (1.0-alpha)*Float(index)
+        self.val = avg
+        self.queue.removeFirst();
+        }
+        print("moving average",self.val);
+
+        return self.val;
+    }
+}
+
 class Interval:Generator{
     var val = [Float]();
     var index = 0;
@@ -241,6 +275,80 @@ class Sine:Generator{
         return v;
     }
 
+    
+}
+
+class Triangle:Generator{
+    var freq:Float
+    var min:Float
+    var max:Float
+    
+    var index = Observable<Float>(0);
+    
+    init(min:Float, max:Float, freq:Float){
+        self.freq = freq;
+        self.min = min;
+        self.max = max;
+    }
+    
+    func incrementIndex(){
+        index.set(newValue: index.get(id: nil)+freq);
+        
+    }
+    override func get(id:String?) -> Float {
+        let ti = 2.0 * Float.pi * (880 / 44100);
+        let theta = ti * self.index.get(id: nil)
+        let _v = 1.0 - Float.abs(Float(theta.truncatingRemainder(dividingBy: 4)-2));
+        let v = MathUtil.map(value: _v, low1: -1, high1: 1, low2: min, high2: max)
+        self.incrementIndex();
+        #if DEBUG
+            print("triangle wave val",v,index.get(id: nil))
+        #endif
+        return v;
+    }
+    
+    
+}
+
+class Square:Generator{
+    var freq:Float
+    var min:Float
+    var max:Float
+    var currentVal:Float
+    
+    var index = Observable<Float>(0);
+    
+    init(min:Float, max:Float, freq:Float){
+        self.freq = freq;
+        self.min = min;
+        self.max = max;
+        self.currentVal = min;
+    }
+    
+    func incrementIndex(){
+        index.set(newValue: index.get(id: nil)+1);
+        if(index.get(id: nil) > freq){
+            index.set(newValue: 0.0)
+        }
+        
+    }
+    override func get(id:String?) -> Float {
+        let v:Float;
+        self.incrementIndex();
+
+        if(index.get(id: nil) == 0.0){
+            if(currentVal == min){
+                currentVal = max;
+            }
+            else{
+                currentVal = min;
+            }
+        }
+       
+        return currentVal;
+        
+    }
+    
     
 }
 

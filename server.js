@@ -7,7 +7,7 @@ const path = require('path');
 // list of currently connected clients
 var drawing_clients = {};
 var authoring_clients = {};
-var keys = ["jen","fish","ben","joel","radomir"];
+var keys = ["jen","fish","ben","joel","radomir","golan","sarah","cara","james","jesse"];
 
 const PORT = process.env.PORT || 3000;
 const INDEX = path.join(__dirname, 'index.html');

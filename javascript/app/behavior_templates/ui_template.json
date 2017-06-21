@@ -3,7 +3,7 @@
     "name" : "ui_defaults",
     "methods" : [
       {
-        "targetTransition" : "_jsplumb_c_1495732428373",
+        "targetTransition" : "_jsplumb_c_1492035674156",
         "hasArguments" : true,
         "currentArguments" : [
           "stylus_position"
@@ -15,66 +15,115 @@
           "stylus_position" : "stylus_position",
           "parent_position" : "parent_position"
         },
-        "methodId" : "_qfasrll2z"
+        "methodId" : "_8ulurims4"
       }
     ],
     "generators" : [
 
     ],
-    "id" : "_4p3cptdsx",
+    "id" : "_4m68b4c68",
     "states" : [
       {
-        "name" : "state 1",
-        "x" : 356,
-        "id" : "_s865vlzry",
-        "y" : 187
+        "name" : "myState",
+        "x" : 436,
+        "id" : "_uerji92qt",
+        "y" : 160
       },
       {
         "name" : "setup",
-        "x" : 20,
+        "x" : 21,
         "id" : "_y5p6lqn2a",
-        "y" : 229
+        "y" : 205
       },
       {
         "name" : "die",
-        "x" : 1018,
+        "x" : 1006,
         "id" : "_jupcoyws8",
-        "y" : 221
+        "y" : 190
       }
     ],
     "auto_spawn_num" : 1,
     "active_status" : true,
     "transitions" : [
       {
-        "name" : "setup",
-        "eventName" : "STATE_COMPLETE",
-        "transitionId" : "_jsplumb_c_1495732354038",
-        "fromStateId" : "_y5p6lqn2a",
-        "toStateId" : "_s865vlzry",
-        "parentFlag" : false,
-        "displayName" : "stateComplete"
-      },
-      {
-        "name" : "jen",
+        "name" : "myState",
         "emitter" : "stylus",
         "eventName" : "STYLUS_DOWN",
-        "transitionId" : "_jsplumb_c_1495732428373",
-        "fromStateId" : "_s865vlzry",
-        "toStateId" : "_s865vlzry",
+        "transitionId" : "_jsplumb_c_1492035674156",
+        "fromStateId" : "_uerji92qt",
+        "toStateId" : "_uerji92qt",
         "parentFlag" : false,
         "displayName" : "stylusDown"
+      },
+      {
+        "name" : "setup",
+        "eventName" : "STATE_COMPLETE",
+        "transitionId" : "_jsplumb_c_1492035672042",
+        "fromStateId" : "_y5p6lqn2a",
+        "toStateId" : "_uerji92qt",
+        "parentFlag" : false,
+        "displayName" : "stateComplete"
       }
     ],
     "mappings" : [
       {
-        "stateId" : "_s865vlzry",
+        "stateId" : "_uerji92qt",
+        "constraintType" : "active",
+        "mappingId" : "_u2rbm6lev",
+        "expressionId" : "_d23m14w3e",
+        "expressionText" : "%_e3s7ssvo4%",
+        "relativePropertyName" : "dy",
+        "expressionPropertyList" : {
+          "_e3s7ssvo4" : [
+            "stylus",
+            [
+              "dy"
+            ],
+            [
+              "stylus delta y"
+            ]
+          ]
+        },
+        "relativePropertyItemName" : "delta y"
+      },
+      {
+        "stateId" : "_uerji92qt",
+        "constraintType" : "active",
+        "mappingId" : "_g5eigl56o",
+        "expressionId" : "_axv13llb0",
+        "expressionText" : "%_gaskbbyuo%+%_fynao64bp%",
+        "relativePropertyName" : "diameter",
+        "expressionPropertyList" : {
+          "_gaskbbyuo" : [
+            "ui",
+            [
+              "diameter"
+            ],
+            [
+              "diameter"
+            ]
+          ],
+          "_fynao64bp" : [
+            "stylus",
+            [
+              "force"
+            ],
+            [
+              "force"
+            ]
+          ]
+        },
+        "relativePropertyItemName" : "diameter"
+      },
+      {
+        "stateId" : "_uerji92qt",
         "constraintType" : "passive",
-        "mappingId" : "_vg76tuwpf",
-        "expressionId" : "_cbx0dm6rs",
-        "expressionText" : "%_mx383xvjo%",
+        "mappingId" : "_umzb60z20",
+        "expressionId" : "_borz1vhkf",
+        "expressionText" : "%_te5lmr56y%",
         "relativePropertyName" : "hue",
         "expressionPropertyList" : {
-          "_mx383xvjo" : [
+          "_te5lmr56y" : [
             "ui",
             [
               "hue"
@@ -87,34 +136,14 @@
         "relativePropertyItemName" : "hue"
       },
       {
-        "stateId" : "_s865vlzry",
+        "stateId" : "_uerji92qt",
         "constraintType" : "passive",
-        "mappingId" : "_dcl5fgykq",
-        "expressionId" : "_od2ov3myz",
-        "expressionText" : "%_l49hx5693%",
-        "relativePropertyName" : "saturation",
-        "expressionPropertyList" : {
-          "_l49hx5693" : [
-            "ui",
-            [
-              "saturation"
-            ],
-            [
-              "saturation"
-            ]
-          ]
-        },
-        "relativePropertyItemName" : "saturation"
-      },
-      {
-        "stateId" : "_s865vlzry",
-        "constraintType" : "passive",
-        "mappingId" : "_x0gss4h85",
-        "expressionId" : "_314fop8d3",
-        "expressionText" : "%_yjkvf7a5z%",
+        "mappingId" : "_yujn0vncb",
+        "expressionId" : "_bqcq1jx7f",
+        "expressionText" : "%_drjz49ay9%",
         "relativePropertyName" : "lightness",
         "expressionPropertyList" : {
-          "_yjkvf7a5z" : [
+          "_drjz49ay9" : [
             "ui",
             [
               "lightness"
@@ -127,63 +156,54 @@
         "relativePropertyItemName" : "lightness"
       },
       {
-        "stateId" : "_s865vlzry",
+        "stateId" : "_uerji92qt",
         "constraintType" : "active",
-        "mappingId" : "_6t0kk5q07",
-        "expressionId" : "_iimuyggfg",
-        "expressionText" : "%_nc9xozcnx%",
+        "mappingId" : "_wdwywu5kd",
+        "expressionId" : "_46uoyr58z",
+        "expressionText" : "%_ryx9e2jk9%",
         "relativePropertyName" : "dx",
         "expressionPropertyList" : {
-          "_nc9xozcnx" : [
+          "_ryx9e2jk9" : [
             "stylus",
             [
               "dx"
             ],
             [
-              "dx"
+              "stylus delta x"
             ]
           ]
         },
         "relativePropertyItemName" : "delta x"
       },
       {
-        "stateId" : "_s865vlzry",
+        "stateId" : "_uerji92qt",
         "constraintType" : "passive",
-        "mappingId" : "_y85vzhv8y",
-        "expressionId" : "_nczvfar0z",
-        "expressionText" : "%_qqdax1q3z%*%_uuwrgd1ui%",
-        "relativePropertyName" : "diameter",
+        "mappingId" : "_6p8kev5ic",
+        "expressionId" : "_jt1iyk0yy",
+        "expressionText" : "%_t2919wotl%",
+        "relativePropertyName" : "saturation",
         "expressionPropertyList" : {
-          "_uuwrgd1ui" : [
-            "stylus",
-            [
-              "force"
-            ],
-            [
-              "force"
-            ]
-          ],
-          "_qqdax1q3z" : [
+          "_t2919wotl" : [
             "ui",
             [
-              "diameter"
+              "saturation"
             ],
             [
-              "diameter"
+              "saturation"
             ]
           ]
         },
-        "relativePropertyItemName" : "diameter"
+        "relativePropertyItemName" : "saturation"
       },
       {
-        "stateId" : "_s865vlzry",
+        "stateId" : "_uerji92qt",
         "constraintType" : "passive",
-        "mappingId" : "_gnpd0ku37",
-        "expressionId" : "_aanlrlr19",
-        "expressionText" : "%_dxmwliw8h%",
+        "mappingId" : "_49jq97v24",
+        "expressionId" : "_7z9f0p5e8",
+        "expressionText" : "%_3vgb0c8ry%",
         "relativePropertyName" : "alpha",
         "expressionPropertyList" : {
-          "_dxmwliw8h" : [
+          "_3vgb0c8ry" : [
             "ui",
             [
               "alpha"
@@ -194,26 +214,6 @@
           ]
         },
         "relativePropertyItemName" : "alpha"
-      },
-      {
-        "stateId" : "_s865vlzry",
-        "constraintType" : "active",
-        "mappingId" : "_jneiih44q",
-        "expressionId" : "_bwqpxia82",
-        "expressionText" : "%_mi3u0u57a%",
-        "relativePropertyName" : "dy",
-        "expressionPropertyList" : {
-          "_mi3u0u57a" : [
-            "stylus",
-            [
-              "dy"
-            ],
-            [
-              "dy"
-            ]
-          ]
-        },
-        "relativePropertyItemName" : "delta y"
       }
     ],
     "conditions" : [

@@ -1,6 +1,6 @@
 {
- "default" : {
-    "name" : "behavior_1",
+"default" : {
+    "name" : "behavior_5",
     "methods" : [
       {
         "targetTransition" : "_jsplumb_c_1492035674156",
@@ -21,8 +21,14 @@
     "generators" : [
 
     ],
-    "id" : "_4p3cptdsx",
+    "id" : "_8d39ggj4t",
     "states" : [
+      {
+        "name" : "die",
+        "x" : 1006,
+        "id" : "_jupcoyws8",
+        "y" : 190
+      },
       {
         "name" : "setup",
         "x" : 21,
@@ -34,12 +40,6 @@
         "x" : 436,
         "id" : "_uerji92qt",
         "y" : 160
-      },
-      {
-        "name" : "die",
-        "x" : 1006,
-        "id" : "_jupcoyws8",
-        "y" : 190
       }
     ],
     "auto_spawn_num" : 1,
@@ -69,43 +69,256 @@
       {
         "stateId" : "_uerji92qt",
         "constraintType" : "active",
-        "mappingId" : "_u2rbm6lev",
-        "expressionId" : "_d23m14w3e",
-        "expressionText" : "%_cysvu355d%",
-        "relativePropertyName" : "dy",
-        "expressionPropertyList" : {
-          "_cysvu355d" : [
-            "stylus",
-            [
-              "dy"
-            ],
-            [
-              "dy"
-            ]
-          ]
-        },
-        "relativePropertyItemName" : "delta y"
-      },
-      {
-        "stateId" : "_uerji92qt",
-        "constraintType" : "active",
         "mappingId" : "_wdwywu5kd",
         "expressionId" : "_46uoyr58z",
-        "expressionText" : "%_d0s77ryjp%",
+        "expressionText" : "%_ryx9e2jk9%",
         "relativePropertyName" : "dx",
         "expressionPropertyList" : {
-          "_d0s77ryjp" : [
+          "_ryx9e2jk9" : [
             "stylus",
             [
               "dx"
             ],
             [
-              "dx"
+              "stylus delta x"
             ]
           ]
         },
         "relativePropertyItemName" : "delta x"
+      },
+      {
+        "stateId" : "_uerji92qt",
+        "constraintType" : "active",
+        "mappingId" : "_u2rbm6lev",
+        "expressionId" : "_d23m14w3e",
+        "expressionText" : "%_e3s7ssvo4%",
+        "relativePropertyName" : "dy",
+        "expressionPropertyList" : {
+          "_e3s7ssvo4" : [
+            "stylus",
+            [
+              "dy"
+            ],
+            [
+              "stylus delta y"
+            ]
+          ]
+        },
+        "relativePropertyItemName" : "delta y"
       }
+    ],
+    "conditions" : [
+
+    ]
+  },
+  "_5r448vpl8" : {
+    "name" : "timer",
+    "methods" : [
+      {
+        "targetTransition" : "_jsplumb_c_1492035674156",
+        "hasArguments" : true,
+        "currentArguments" : [
+          "stylus_position"
+        ],
+        "targetMethod" : "newStroke",
+        "defaultArgument" : "stylus_position",
+        "methodArguments" : {
+          "parent_origin" : "parent_origin",
+          "stylus_position" : "stylus_position",
+          "parent_position" : "parent_position"
+        },
+        "methodId" : "_8ulurims4"
+      },
+      {
+        "hasArguments" : false,
+        "targetMethod" : "startTimer",
+        "targetTransition" : "_jsplumb_c_1492035672042",
+        "methodId" : "_44gvumijh"
+      }
+    ],
+    "generators" : [
+      {
+        "generator_type" : "interval",
+        "generatorId" : "interval_12D9E044-CD08-455C-B244-1B6D1353790E",
+        "inc" : 1
+      },
+      {
+        "generator_type" : "interval",
+        "generatorId" : "interval_5151EC00-B60D-4E2C-8740-C87E2F5B5456",
+        "inc" : 0.001
+      }
+    ],
+    "id" : "_5r448vpl8",
+    "states" : [
+      {
+        "name" : "myState",
+        "x" : 455,
+        "id" : "_uerji92qt",
+        "y" : 245
+      },
+      {
+        "name" : "setup",
+        "x" : 21,
+        "id" : "_y5p6lqn2a",
+        "y" : 205
+      },
+      {
+        "name" : "die",
+        "x" : 1006,
+        "id" : "_jupcoyws8",
+        "y" : 190
+      }
+    ],
+    "auto_spawn_num" : 0,
+    "active_status" : false,
+    "transitions" : [
+      {
+        "name" : "myState",
+        "emitter" : "stylus",
+        "eventName" : "STYLUS_DOWN",
+        "transitionId" : "_jsplumb_c_1492035674156",
+        "fromStateId" : "_uerji92qt",
+        "toStateId" : "_uerji92qt",
+        "parentFlag" : false,
+        "displayName" : "stylusDown"
+      },
+      {
+        "name" : "setup",
+        "eventName" : "STATE_COMPLETE",
+        "transitionId" : "_jsplumb_c_1492035672042",
+        "fromStateId" : "_y5p6lqn2a",
+        "toStateId" : "_uerji92qt",
+        "parentFlag" : false,
+        "displayName" : "stateComplete"
+      },
+      {
+        "name" : "myState",
+        "eventName" : "TIME_INTERVAL",
+        "transitionId" : "_jsplumb_c_1495916611365",
+        "fromStateId" : "_uerji92qt",
+        "toStateId" : "_uerji92qt",
+        "parentFlag" : false,
+        "displayName" : "timeInterval",
+        "conditionName" : "condition_566AB134-E33B-44E6-B395-8B9B8402ED15"
+      }
+    ],
+    "mappings" : [
+      {
+        "stateId" : "_uerji92qt",
+        "constraintType" : "passive",
+        "mappingId" : "_03yhm37we",
+        "expressionId" : "_uv8gkdc8f",
+        "expressionText" : "1",
+        "relativePropertyName" : "dx",
+        "expressionPropertyList" : {
+
+        },
+        "relativePropertyItemName" : "delta x"
+      },
+      {
+        "stateId" : "_uerji92qt",
+        "constraintType" : "passive",
+        "mappingId" : "_290ejg1qk",
+        "expressionId" : "_5yqen90s0",
+        "expressionText" : "1",
+        "relativePropertyName" : "dy",
+        "expressionPropertyList" : {
+
+        },
+        "relativePropertyItemName" : "delta y"
+      }
+    ],
+    "conditions" : [
+      {
+        "name" : "condition_F287230F-1598-46A9-BA7F-6CAB40DCA15C",
+        "referenceNames" : [
+          "time"
+        ],
+        "relativeNames" : [
+          "interval_12D9E044-CD08-455C-B244-1B6D1353790E"
+        ],
+        "relational" : "within"
+      },
+      {
+        "name" : "condition_566AB134-E33B-44E6-B395-8B9B8402ED15",
+        "referenceNames" : [
+          "time"
+        ],
+        "relativeNames" : [
+          "interval_5151EC00-B60D-4E2C-8740-C87E2F5B5456"
+        ],
+        "relational" : "within"
+      }
+    ]
+  },
+  "_1mdky0bav" : {
+    "name" : "behavior_4",
+    "methods" : [
+      {
+        "targetTransition" : "_jsplumb_c_1492035672042",
+        "hasArguments" : true,
+        "currentArguments" : [
+          "parent_origin"
+        ],
+        "targetMethod" : "newStroke",
+        "defaultArgument" : "stylus_position",
+        "methodArguments" : {
+          "parent_origin" : "parent_origin",
+          "stylus_position" : "stylus_position",
+          "parent_position" : "parent_position"
+        },
+        "methodId" : "_y9981vzdi"
+      }
+    ],
+    "generators" : [
+
+    ],
+    "id" : "_1mdky0bav",
+    "states" : [
+      {
+        "name" : "die",
+        "x" : 1018,
+        "id" : "_jupcoyws8",
+        "y" : 221
+      },
+      {
+        "name" : "setup",
+        "x" : 20,
+        "id" : "_y5p6lqn2a",
+        "y" : 229
+      },
+      {
+        "name" : "myState",
+        "x" : 498,
+        "id" : "_uerji92qt",
+        "y" : 200
+      }
+    ],
+    "auto_spawn_num" : 0,
+    "active_status" : false,
+    "transitions" : [
+      {
+        "name" : "setup",
+        "eventName" : "STATE_COMPLETE",
+        "transitionId" : "_jsplumb_c_1492035672042",
+        "fromStateId" : "_y5p6lqn2a",
+        "toStateId" : "_uerji92qt",
+        "parentFlag" : false,
+        "displayName" : "stateComplete"
+      },
+      {
+        "name" : "myState",
+        "emitter" : "stylus",
+        "eventName" : "STYLUS_UP",
+        "transitionId" : "_jsplumb_c_1495729376173",
+        "fromStateId" : "_uerji92qt",
+        "toStateId" : "_jupcoyws8",
+        "parentFlag" : false,
+        "displayName" : "stylusUp"
+      }
+    ],
+    "mappings" : [
+
     ],
     "conditions" : [
 
