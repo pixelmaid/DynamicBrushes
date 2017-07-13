@@ -776,6 +776,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             let pngSmallImage = UIImage(data: pngImageData!)
             UIImageWriteToSavedPhotosAlbum(pngSmallImage!, self, nil, nil)
             let svg = (currentCanvas?.currentDrawing?.getSVG())! as NSString;
+            print("svg=",svg);
             let svg_data = svg.data(using: String.Encoding.utf8.rawValue)!
             let activityViewController = UIActivityViewController(activityItems: [svg_data], applicationActivities: nil)
             activityViewController.popoverPresentationController?.sourceView = self.view // so that iPads won't crash
