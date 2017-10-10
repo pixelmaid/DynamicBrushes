@@ -150,6 +150,24 @@ class Point:Observable<(Float,Float)>,Geometry{
         return vec.div(val:vec.length());
     }
     
+    
+    static func normalize(vec:Point,length:Float)->Point{
+        let current = vec.length()
+        var scale:Float;
+        if(current == 0){
+            scale = 0;
+        }
+        else{
+            scale = length/current;
+        }
+        let point =  Point(x:vec.x.get(id: nil) * scale, y:vec.y.get(id: nil) * scale);
+        // Preserve angle.
+        if (scale >= 0){
+            point.angle = vec.angle;
+        }
+        return point;
+    }
+    
     //Computes the dot product of a and b'
     func dot(b:Point)->Float {
     return (self.x.get(id: nil) * b.x.get(id: nil)) + (self.y.get(id: nil) * b.y.get(id: nil));

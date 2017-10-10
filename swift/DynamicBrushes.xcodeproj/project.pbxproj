@@ -119,6 +119,7 @@
 		5FE32FA11ECF70BE00ADC01E /* layerVisible_button_active2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FE32F9D1ECF70BE00ADC01E /* layerVisible_button_active2x.png */; };
 		5FE32FA21ECF70BE00ADC01E /* layerVisible_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FE32F9E1ECF70BE00ADC01E /* layerVisible_button.png */; };
 		5FE32FA31ECF70BE00ADC01E /* layerVisible_button2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FE32F9F1ECF70BE00ADC01E /* layerVisible_button2x.png */; };
+		5FE34C7B1F1FA61300E26C06 /* PathFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE34C7A1F1FA61300E26C06 /* PathFunctions.swift */; };
 		5FEE2AC91DE127D800080095 /* dual_pen.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FEE2AC71DE127D800080095 /* dual_pen.png */; };
 		5FEE2ACA1DE127D800080095 /* lg_pen_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FEE2AC81DE127D800080095 /* lg_pen_blue.png */; };
 		5FFAC4D71E9D84040009DC5E /* SaveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFAC4D61E9D84040009DC5E /* SaveManager.swift */; };
@@ -279,6 +280,7 @@
 		5FE32F9D1ECF70BE00ADC01E /* layerVisible_button_active2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = layerVisible_button_active2x.png; sourceTree = "<group>"; };
 		5FE32F9E1ECF70BE00ADC01E /* layerVisible_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = layerVisible_button.png; sourceTree = "<group>"; };
 		5FE32F9F1ECF70BE00ADC01E /* layerVisible_button2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = layerVisible_button2x.png; sourceTree = "<group>"; };
+		5FE34C7A1F1FA61300E26C06 /* PathFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathFunctions.swift; sourceTree = "<group>"; };
 		5FEE2AC71DE127D800080095 /* dual_pen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dual_pen.png; sourceTree = "<group>"; };
 		5FEE2AC81DE127D800080095 /* lg_pen_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lg_pen_blue.png; sourceTree = "<group>"; };
 		5FFAC4D61E9D84040009DC5E /* SaveManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SaveManager.swift; sourceTree = "<group>"; };
@@ -652,6 +654,7 @@
 				5FFAC4D61E9D84040009DC5E /* SaveManager.swift */,
 				5FC91D2C1EA00C2F00A19206 /* RequestHandler.swift */,
 				5F50372D1EAD48BB004ABAC1 /* MathUtil.swift */,
+				5FE34C7A1F1FA61300E26C06 /* PathFunctions.swift */,
 			);
 			path = util;
 			sourceTree = "<group>";
@@ -1120,6 +1123,7 @@
 				5F90F5681E9D5BCC006BB9FE /* Condition.swift in Sources */,
 				5F90F5661E9D5BCC006BB9FE /* BehaviorManager.swift in Sources */,
 				5F5CED2A1ED10AED00A253A0 /* ColorUtils.swift in Sources */,
+				5FE34C7B1F1FA61300E26C06 /* PathFunctions.swift in Sources */,
 				5FFAC4D71E9D84040009DC5E /* SaveManager.swift in Sources */,
 				5F5037201EA95833004ABAC1 /* NumTypes+Conversion.swift in Sources */,
 				5F90F5671E9D5BCC006BB9FE /* BehaviorMapper.swift in Sources */,

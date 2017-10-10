@@ -51,6 +51,36 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
         
     }
     
+    func parentHitTest(point:Point,threshold:Float,id:String, parentId:String)->Stroke?{
+       
+        var parentStroke:Stroke? = nil
+        var stroke:Stroke? = nil
+        for i in 0..<allStrokes.count{
+            if(allStrokes[i].parentID == parentId){
+                parentStroke = allStrokes[i];
+            }
+            if(allStrokes[i].parentID == id){
+                stroke = allStrokes[i];
+            }        }
+        print("parent stroke=\(parentStroke,id)");
+        if(stroke != nil && stroke!.segments.count>15       ){
+            
+        }
+        else{
+            return nil;
+        }
+        if(parentStroke != nil){
+            let seg = parentStroke?.hitTest(testPoint: point,threshold:threshold,sameStroke: false);
+            if(seg != nil){
+                print("parent stroke hit");
+
+                return parentStroke;
+            }
+        }
+        
+        return nil;
+    }
+    
     func hitTest(point:Point,threshold:Float,id:String)->Stroke?{
         var targetStroke:Stroke! = nil
         let targetActiveStrokes = self.activeStrokes[id];
@@ -59,11 +89,17 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
                 targetStroke = targetActiveStrokes!.last
             }
         }
+        #if DEBUG
+           // print("drawing hit test: \(allStrokes.count,self.activeStrokes.count,id)");
+        #endif
+        
+
         for i in 0..<allStrokes.count{
             let stroke = allStrokes[i];
             if(targetStroke != nil && targetStroke! == stroke){
                 let seg = stroke.hitTest(testPoint: point,threshold:threshold,sameStroke: true);
                 if(seg != nil){
+                    
                     return stroke;
                 }
             }
@@ -91,14 +127,14 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
             var toRemove = [String]();
             for s in self.activeStrokes[parentID]!{
                 toRemove.append(s.id);
-                s.segments.removeAll();
+                //s.segments.removeAll();
                 
                 s.dirtySegments.removeAll()
-                s.destroy();
+                //s.destroy();
             }
             self.activeStrokes[parentID]!.removeAll();
 
-            self.allStrokes = allStrokes.filter({ $0.parentID != parentID })
+            //self.allStrokes = allStrokes.filter({ $0.parentID != parentID })
             #if DEBUG
             print("strokes to remove",toRemove)
             #endif

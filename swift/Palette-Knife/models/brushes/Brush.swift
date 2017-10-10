@@ -10,7 +10,7 @@ import Foundation
 struct DeltaStorage{
     var dX = Float(0)
     var dY = Float(0)
-    //var pX = Float(0)
+       //var pX = Float(0)
     //var pY = Float(0)
     //var oX = Float(0)
     //var oY = Float(0)
@@ -47,6 +47,10 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     let x:Observable<Float>
     let y:Observable<Float>
     
+    let polarPosition:LinkedPoint //settable position for polar coordinates
+    let theta:Observable<Float>
+    let radius:Observable<Float>
+
     let delta:LinkedPoint
     let dx:Observable<Float>
     let dy:Observable<Float>
@@ -71,6 +75,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     var time:Observable<Float>
     let intersections:Observable<Float>
     let index:Observable<Float>
+    let level:Observable<Float>
+
     let siblingcount:Observable<Float>
     
     let diameter:Observable<Float>
@@ -125,6 +131,14 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
 
         self.position.name = "brush_position";
         
+        self.polarPosition = LinkedPoint(x:0,y:0)
+        self.radius = self.polarPosition.x;
+        self.theta = self.polarPosition.y;
+        self.radius.printname = "brush_radius"
+        self.theta.printname = "brush_theta"
+        
+        self.polarPosition.name = "brush_polarPosition";
+        
         self.delta = LinkedPoint(x:0,y:0)
         self.dx = delta.x;
         self.dy = delta.y
@@ -148,6 +162,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.yDistance = Observable<Float>(0)
         
         self.index = Observable<Float>(0)
+        self.level = Observable<Float>(0)
         self.siblingcount = Observable<Float>(0)
         self.intersections = Observable<Float>(0)
         self.time = Observable<Float>(0)
@@ -178,7 +193,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         observables.append(bPosition)
         observables.append(delta)
         observables.append(position)
-        
+        observables.append(polarPosition)
+
         observables.append(origin)
         observables.append(scaling)
         
@@ -192,7 +208,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
         observables.append(index)
         observables.append(siblingcount)
-        
+        observables.append(level)
+
         
         observables.append(diameter)
         observables.append(alpha)
@@ -223,7 +240,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         //setup listener for delta observable
         _ = self.delta.didChange.addHandler(target: self, handler:Brush.deltaChange, key:deltaKey)
         _ = self.position.didChange.addHandler(target: self, handler:Brush.positionChange, key:deltaKey)
-        
+        _ = self.polarPosition.didChange.addHandler(target: self, handler:Brush.polarPositionChange, key:deltaKey)
+
         _ = self.xBuffer.bufferEvent.addHandler(target: self, handler: Brush.deltaBufferLimitReached, key: bufferKey)
         
         
@@ -286,16 +304,34 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     }
     
     func positionChange(data:(String,(Float,Float),(Float,Float)),key:String){
+        print("position change called");
+
         if(!self.undergoing_transition){
             let _delta = self.position.sub(point: self.bPosition)
-            
-           
+            let polarPos = MathUtil.cartToPolar(p1: self.bPosition, p2: self.position);
+           // self.polarPosition.setSilent(newValue: (polarPos));
             self.calculateProperties(_delta:_delta)
         
+        }
+    }
+    
+    func polarPositionChange(data:(String,(Float,Float),(Float,Float)),key:String){
+        print("polar change called");
+        if(!self.undergoing_transition){
+            let t =  MathUtil.map(value: self.polarPosition.y.get(id: nil),low1: 0,high1: 100,low2: 0,high2: 360);
+            let cartPos = MathUtil.polarToCart(r: self.polarPosition.x.get(id: nil),theta:t);
+           // self.position.setSilent(newValue: cartPos)
+            let p = Point(x:cartPos.0+self.origin.x.get(id: nil),y:cartPos.1+self.origin.y.get(id: nil));
+            let _delta = p.sub(point: self.bPosition)
+            print("polar change theta:",t,"rad:",self.polarPosition.x.get(id: nil),"cart point:",p.x.get(id:nil),p.y.get(id:nil),"delta",_delta.x.get(id:nil),_delta.y.get(id:nil))
+
+            self.calculateProperties(_delta:_delta)
+            
         }
         
         
     }
+
     
     
     func deltaChange(data:(String,(Float,Float),(Float,Float)),key:String){
@@ -410,7 +446,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
         
         if((keyStorage["INTERSECTION"]!.count)>0){
-            let hit = self.currentCanvas!.hitTest(point: self.bPosition, threshold: 5, id:self.id);
+            if(self.parent != nil){
+                let hit = self.currentCanvas!.parentHitTest(point: self.bPosition, threshold: 5, id:self.id, parentId:self.parent!.id);
             if(hit != nil){
                 self.intersections.set(newValue: self.intersections.getSilent()+1);
                 for key in keyStorage["INTERSECTION"]!
@@ -428,7 +465,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                     
                 }
             }
+         }
         }
+            
     }
     
     func distanceIntervalCheck()
@@ -454,6 +493,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     func setOrigin(p:Point){
         self.origin.set(val:p);
+        let pol = MathUtil.cartToPolar(p1: Point(x:0,y:0), p2: p);
+        self.polarPosition.x.setSilent(newValue: pol.0);
+        self.polarPosition.y.setSilent(newValue: pol.1);
         self.position.x.setSilent(newValue: self.origin.x.get(id: nil))
         self.position.y.setSilent(newValue: self.origin.y.get(id: nil))
         self.bPosition.x.setSilent(newValue: self.origin.x.get(id: nil))
@@ -485,7 +527,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     func transitionToState(transition:StateTransition){
         var constraint_mappings:[String:Constraint];
-        
+        print("transitioning to state:\(currentState) from state: \(transition.toStateId)");
         if(states[currentState] != nil){
             constraint_mappings =  states[currentState]!.constraint_mappings
             for (_, value) in constraint_mappings{
@@ -496,6 +538,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             }
         }
         self.currentState = transition.toStateId;
+        if(states[currentState] != nil){
         self.raiseBehaviorEvent(d: states[currentState]!.toJSON(), event: "state")
         self.executeTransitionMethods(methods: transition.methods)
         
@@ -512,7 +555,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
         if(states[currentState]?.name == "die"){
             self.die();
-        }
+            }}
+        
+        
     }
     
     func raiseBehaviorEvent(d:String, event:String){
@@ -702,7 +747,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     func setConstraint(constraint:Constraint){
         #if DEBUG
-           // print("calling set constraint on",  constraint.relativeProperty.name,constraint.relativeProperty,constraint.reference.get(id: self.id))
+            print("calling set constraint on",  constraint.relativeProperty.name,constraint.relativeProperty,constraint.reference.get(id: self.id))
         #endif
         constraint.relativeProperty.set(newValue: constraint.reference.get(id: self.id));
         
@@ -786,7 +831,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.resetDistance();
     }
     
-    //creates number of clones specified by num and adds them as children
+    //creates number of clones specified by num and adds them as childre    n
     func spawn(behavior:BehaviorDefinition,num:Int) {
 
         if(num > 0){
@@ -794,6 +839,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 let child = Brush(name:name, behaviorDef: behavior, parent:self, canvas:self.currentCanvas!)
                 self.children.append(child);
                 child.index.set(newValue: Float(self.children.count-1));
+                child.level.set(newValue: Float(self.level.get(id: nil)+1));
                 self.initEvent.raise(data: (child,"brush_init"));
                /* #if DEBUG
                     print("spawn called")
@@ -866,8 +912,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     }
     
     override func destroy() {
+        self.stopInterval();
         #if DEBUG
-            print("destroying brush: \(self.id)");
+            //print("destroying brush: \(self.id)");
         #endif
         currentCanvas!.currentDrawing!.retireCurrentStrokes(parentID: self.id)
         self.clearBehavior();

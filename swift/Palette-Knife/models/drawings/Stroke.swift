@@ -77,6 +77,14 @@ struct Segment:Geometry, Equatable {
         self.handleOut = handleOut
     }
     
+    mutating func setHandleOut(point:Point){
+    self.handleOut = point;
+    }
+    
+    mutating func setHandleIn(point:Point){
+        self.handleIn = point;
+    }
+    
     
     /* func getTimeDelta()->Float{
      let prevSeg = self.getPreviousSegment();
@@ -184,7 +192,11 @@ class Stroke:TimeSeries, Geometry {
     }
     
     func hitTest(testPoint:Point,threshold:Float,sameStroke:Bool)->Segment?{
+        if(self.segments.count>4){
         if(sameStroke){
+            #if DEBUG
+                //print ("stroke hit test same stroke\(self.segments.count)")
+                #endif
             if self.segments.count>15{
                 for i in 0..<self.segments.count-15{
                     let seg = self.segments[i]
@@ -196,12 +208,17 @@ class Stroke:TimeSeries, Geometry {
             }
         }
         else{
+            #if DEBUG
+
+            //print ("stroke hit test different stroke\(self.segments.count)")
+                #endif
             for seg in self.segments{
                 let hit = seg.hitTest(testPoint: testPoint, threshold: threshold);
                 if hit{
                     return seg
                 }
             }
+        }
         }
         return nil;
         
@@ -226,7 +243,7 @@ class Stroke:TimeSeries, Geometry {
         }
         
         self.toDrawSegments.removeAll();
-        self.segments.removeAll();
+        //self.segments.removeAll();
         self.dirty = false;
     }
     

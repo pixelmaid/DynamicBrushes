@@ -21,6 +21,22 @@ struct MathUtil{
         return pow(value,exp)
     }
     
+    static func max(v1:Float,v2:Float)->Float{
+        if(v1>v2){
+            return v1;
+            
+        }
+        else{
+            return v2;
+        }
+    }
+    
+    static func polarToCart(r:Float, theta:Float)->(Float,Float){
+        let x = cos(theta * (Float.pi / 180.0)) * r;
+        let y = sin(theta * (Float.pi / 180.0)) * r;
+        return (x,y)
+    }
+    
     static func cartToPolar(p1:Point, p2:Point)->(Float,Float) {
         
         var r = Float(0.0);

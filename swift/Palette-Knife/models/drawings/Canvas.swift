@@ -70,10 +70,31 @@ class Canvas: WebTransmitter, Hashable{
 
     
     func hitTest(point:Point, threshold:Float, id:String)->Stroke?{
+        
         let hit = currentDrawing!.hitTest(point: point,threshold:threshold, id: id)
+        #if DEBUG
+            //print("canvas hit test: \(String(describing: hit))");
+        #endif
+
         if(hit != nil){
             return hit;
         }
+       
+        
+        return nil;
+    }
+    
+    func parentHitTest(point:Point, threshold:Float, id:String, parentId:String)->Stroke?{
+        
+        let hit = currentDrawing!.parentHitTest(point: point,threshold:threshold, id: id, parentId: parentId)
+        #if DEBUG
+            //print("canvas hit test: \(String(describing: hit))");
+        #endif
+        
+        if(hit != nil){
+            return hit;
+        }
+        
         
         return nil;
     }

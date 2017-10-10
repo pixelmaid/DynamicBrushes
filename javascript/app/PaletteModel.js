@@ -132,7 +132,19 @@ define(['emitter', 'app/id', 'app/Emitter'],
                 item_name: "y",
                 type: "brush_prop"
 
+              },
+               {
+                item_class: "block property palette",
+                name: "radius",
+                item_name: "radius",
+                type: "brush_prop"
               }, {
+                item_class: " block property palette",
+                name: "theta",
+                item_name: "theta",
+                type: "brush_prop"
+              }
+              , {
                 item_class: " block property palette",
                 name: "rotation",
                 item_name: "rotation",
@@ -245,7 +257,7 @@ define(['emitter', 'app/id', 'app/Emitter'],
                          },*/
               {
                 item_class: " block property generator palette",
-                name: "index",
+                name: "spawn index",
                 item_name: "index",
                 type: "generator",
                 help_text: "returns the index of the brush instance"
@@ -255,6 +267,13 @@ define(['emitter', 'app/id', 'app/Emitter'],
                 item_name: "siblingcount",
                 type: "generator",
                 help_text: "returns the number of siblings of the brush instance"
+              },
+              {
+                item_class: " block property generator palette",
+                name: "spawn level",
+                item_name: "level",
+                type: "generator",
+                help_text: "returns the number of connections between the brush instance and the root brush"
               },
               /*({ item_class: " block property generator palette",
                 name: "ease",
