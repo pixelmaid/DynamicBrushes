@@ -1,5 +1,5 @@
 'use strict';
-define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveView", "app/PaletteModel", "app/PaletteView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart"],
+define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveView", "app/PaletteModel", "app/PaletteView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/DataLoader", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart"],
 
 
     function($, paper, Handlebars, ID, SaveManager, SaveView, PaletteModel, PaletteView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart) {
@@ -83,7 +83,9 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
             socketController.sendMessage(transmit_data);
             requestFileList(codename);
             requestExampleFileList();
+            paletteModel.setupData();
             hideOverlay();
+
 
         };
 
@@ -184,6 +186,20 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
             }
         };
 
+        var onDataReady = function(dataset){
+               console.log("transmit_data set data", dataset);
+               var data = {dataset:dataset,type:"dataset_loaded"};
+            var transmit_data = {
+                type: "authoring_request",
+                requester: "authoring",
+                data: data
+
+            };
+            socketController.sendMessage(transmit_data);
+        };
+
+
+
         socketController.addListener("ON_MESSAGE", onMessage);
         socketController.addListener("ON_DISCONNECT", onDisconnect);
 
@@ -196,6 +212,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
 
         chartViewManager.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
         saveManager.addListener("ON_SAVE_EVENT", onStorageEvent);
+        paletteModel.addListener("ON_DATA_READY",onDataReady);
         promptConnect();
 
 

@@ -11,8 +11,7 @@ import AWSS3
 import SwiftyJSON
 
 enum SaveError: Error {
-    case jsonConversionFailed
-    
+    case jsonConversionFailed;
 }
 
 class SaveManager{

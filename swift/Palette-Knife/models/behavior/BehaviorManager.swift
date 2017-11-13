@@ -19,6 +19,7 @@ enum BehaviorError: Error {
 
 class BehaviorManager{
     static var behaviors = [String:BehaviorDefinition]()
+    static var datasets = [String:Table]();
     var canvas:Canvas
     init(canvas:Canvas){
         self.canvas = canvas;
@@ -298,7 +299,21 @@ class BehaviorManager{
             
             resultJSON["result"] = "success";
             return resultJSON;
+        case "dataset_added":
+            //BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseDatasetJSON(data:data)
+           // BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)
             
+            resultJSON["result"] = "success";
+            return resultJSON;
+            
+        case "dataset_loaded":
+             #if DEBUG
+                //print("dataset loaded",data);
+            #endif
+            // BehaviorManager.parseDataset(data:data)
+            
+            resultJSON["result"] = "success";
+            return resultJSON;
             
         default:
             break
@@ -308,6 +323,14 @@ class BehaviorManager{
         
         resultJSON["result"] = "failure";
         return resultJSON;
+    }
+    
+    
+   static func parseDataset(data:JSON){
+    let id = data["tableId"].stringValue;
+    let table = Table(id:id);
+        table.loadDataFromJSON(data: data["dataset"]);
+    BehaviorManager.datasets[id] = table;
     }
     
     //checks to see if other behaviors reference the target behavior

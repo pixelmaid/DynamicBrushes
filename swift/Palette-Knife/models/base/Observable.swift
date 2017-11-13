@@ -58,7 +58,10 @@ class Observable<T>:Object, DisposableObservable {
     func passiveConstrain(target:Observable<T>){
         self.constraintTarget = target;
         target.isPassive = true;
+    
     }
+    
+    
     
     //sets without raising change event
     func setSilent(newValue:T){

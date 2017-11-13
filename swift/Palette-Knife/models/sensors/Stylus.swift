@@ -35,7 +35,7 @@ class Stylus: TimeSeries, WebTransmitter {
     var id = NSUUID().uuidString;
     var transmitEvent = Event<(String)>()
     var initEvent = Event<(WebTransmitter,String)>()
-
+    var moveCounter  = 0;
     var constraintTransmitComplete = true;
     //var moveDist = Float(0);
     
@@ -164,6 +164,7 @@ class Stylus: TimeSeries, WebTransmitter {
     }
     
     func onStylusDown(x:Float,y:Float,force:Float,angle:Float){
+        moveCounter = 0;
         //TODO: silent set, need to make more robust/ readable
         self.origin.set(x: x, y: y)
         self.position.x.setSilent(newValue: x)
@@ -187,6 +188,7 @@ class Stylus: TimeSeries, WebTransmitter {
     }
     
     func onStylusMove(x:Float,y:Float,force:Float,angle:Float){
+        if(moveCounter == 0){
         for key in keyStorage["STYLUS_MOVE_BY"]!  {
             if(key.1 != nil){
                 let eventCondition = key.1;
@@ -282,6 +284,11 @@ class Stylus: TimeSeries, WebTransmitter {
             print("stylus delta angle =",self.deltaAngle.get(id: nil));
 
         #endif
+        }
+       // moveCounter += 1
+        if(moveCounter > 10){
+            moveCounter = 0;
+        }
         
     }
     

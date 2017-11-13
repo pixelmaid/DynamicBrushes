@@ -4,8 +4,7 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", 'app/i
 
     function($, jqueryui, Handlebars, paletteTemplate, ID) {
 
-        var states_btn, generator_btn, brush_properties_btn, sensor_properties_btn, ui_properties_btn, brush_actions_btn, transitions_btn;
-        var btn_list;
+        var datasets_btn, states_btn, generator_btn, brush_properties_btn, sensor_properties_btn, ui_properties_btn, brush_actions_btn, transitions_btn;
 
         var PaletteView = class {
 
@@ -22,7 +21,8 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", 'app/i
                 ui_properties_btn = this.el.find('#ui_properties');
                 brush_actions_btn = this.el.find('#brush_actions');
                 transitions_btn = this.el.find('#transitions');
-                btn_list = [states_btn, generator_btn, brush_properties_btn, sensor_properties_btn, ui_properties_btn, brush_actions_btn, transitions_btn];
+                datasets_btn = this.el.find('#datasets');
+                this.btn_list = [states_btn, generator_btn, datasets_btn, brush_properties_btn, sensor_properties_btn, ui_properties_btn, brush_actions_btn, transitions_btn];
 
 
                 this.el.droppable({
@@ -33,18 +33,26 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", 'app/i
                     }
                 });
 
-                for (var i = 0; i < btn_list.length; i++) {
-                    btn_list[i].click(function(event) {
-                        for (var j = 0; j < btn_list.length; j++) {
-                            btn_list[j].removeClass("selected");
+                this.model.addListener("ON_DATA_READY",function(data) {
+                    this.generatePalette();
+                }.bind(this));
+            }
+
+
+            generatePalette(){
+                var self = this;
+                for (var i = 0; i < this.btn_list.length; i++) {
+                   this.btn_list[i].click(function(event) {
+                        for (var j = 0; j < self.btn_list.length; j++) {
+                            self.btn_list[j].removeClass("selected");
                         }
                         self.model.selected = $(event.target).attr('id');
                         $(event.target).addClass("selected");
+                        console.log("model selected",self.model.selected,self.model.data)
                         self.updateSelectedPalette(self.model.data[self.model.selected]);
                     });
                 }
             }
-
 
             updateSelectedPalette(data) {
                 var html = paletteTemplate(data);

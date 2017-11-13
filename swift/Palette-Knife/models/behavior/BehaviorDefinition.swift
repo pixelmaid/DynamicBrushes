@@ -233,6 +233,20 @@ class BehaviorDefinition {
         self.addCondition(name: name, reference: reference, referenceNames: referenceNames, relative: relative, relativeNames: relativeNames, relational: relational)
     }
     
+    func parseDataJSON(data:JSON){
+        
+        
+    }
+    
+    func parseDataset(data:JSON){
+        
+    }
+    
+    func parseDatasetJSON(tableId:String,data:JSON){
+        let type = data["dataset_type"].stringValue;
+        self.addDatasetReference(tableId:id,type:type);
+    }
+    
     func parseGeneratorJSON(data:JSON){
         let type = data["generator_type"].stringValue;
         switch(type){

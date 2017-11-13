@@ -1,8 +1,8 @@
 //SocketController.js
 'use strict';
-define(['emitter', 'app/id', 'app/Emitter'],
+define(['emitter', 'app/id', 'app/Emitter', 'app/DataLoader',],
 
-  function(EventEmitter, ID, Emitter) {
+  function(EventEmitter, ID, Emitter,DataLoader) {
 
     var PaletteModel = class extends Emitter {
 
@@ -10,6 +10,10 @@ define(['emitter', 'app/id', 'app/Emitter'],
         super();
         this.selected = "states";
         this.lastAuthoringRequest = null;
+        this.data={};
+      }
+
+      setupData(){
         this.data = {
           "states": {
             items: [{
@@ -143,8 +147,7 @@ define(['emitter', 'app/id', 'app/Emitter'],
                 name: "theta",
                 item_name: "theta",
                 type: "brush_prop"
-              }
-              , {
+              }, {
                 item_class: " block property palette",
                 name: "rotation",
                 item_name: "rotation",
@@ -362,6 +365,20 @@ define(['emitter', 'app/id', 'app/Emitter'],
             }]
           }
         };
+
+        var dataLoader = new DataLoader();
+        dataLoader.addListener("ON_DATA_LOADED",  function(items,data) {
+                    this.onDataLoaded(items,data);
+                }.bind(this));
+
+        dataLoader.loadData();
+        
+      }
+
+      onDataLoaded(items,data){
+        this.data["datasets"] = {items:items};
+        console.log("meteor_data",items,this);
+        this.trigger("ON_DATA_READY",[data]);
       }
 
 

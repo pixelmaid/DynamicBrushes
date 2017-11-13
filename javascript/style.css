@@ -188,7 +188,7 @@ h1{
 .methods{
   margin: 10px 5px 5px;
   min-height: 20px;
-  max-width: 300px;
+  max-width: 250px;
   min-width: 200px;
   display: inline-block;
   text-align: center;
@@ -395,7 +395,7 @@ span.block {
 }
 
 .aLabel.jsplumb-hover, .jsplumb-source-hover, .jsplumb-target-hover {
-  background-color: #1e8151;
+  background-color: #777777;
   color: white;
 }
 
@@ -803,6 +803,9 @@ span.refresh{
   background-color: #4a89eb;
 }
 
+.data {
+    background-color: rgb(235, 104, 75);
+}
 .sensor, .sensor_prop{
   background-color: #7D4FAE;
 }

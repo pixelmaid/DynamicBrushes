@@ -492,14 +492,14 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                         var referenceName, referenceProperties, referencePropertiesDisplayNames;
                         if (type == 'sensor_prop') {
                             referenceName = 'stylus';
-                            var constraint_type = "active"
+                            var constraint_type = "active";
                             console.log("sensor prop dropped on mapping", displayName);
                             $(ui.helper).remove(); //destroy cloneit'
                             referenceProperties = [name.split("_")[1]];
 
                             //TODO: Should set constraint active or passive in palette model, not here
                             if(referenceProperties[0]=="speed"){
-                                constraint_type = "passive"
+                                constraint_type = "passive";
                             }
                             referencePropertiesDisplayNames = [displayName];
 
@@ -535,6 +535,21 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                             referencePropertiesDisplayNames = [displayName];
                             expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, referencePropertiesDisplayNames, generatorId, displayName, name);
                             self.trigger("ON_GENERATOR_ADDED", [mapping_data.mappingId, generatorId, generatorType, self.id, target_state, relativePropertyName, relativePropertyItemName, expression.id, expression.getText(), expression.getPropertyList()]);
+
+                        }
+
+                         else if (type == 'dataset') {
+
+                            console.log("dataset dropped on mapping");
+                            $(ui.helper).remove(); //destroy clone
+                            //$(ui.draggable).remove(); //remove from list
+                            referenceName = null;
+                            var datasetID = drop_id;
+                            var datasetType = name;
+                            referenceProperties = [datasetID];
+                            referencePropertiesDisplayNames = [displayName];
+                            expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, referencePropertiesDisplayNames, datasetID, displayName, name);
+                            self.trigger("ON_DATASET_ADDED", [mapping_data.mappingId, datasetID, datasetType, self.id, target_state, relativePropertyName, relativePropertyItemName, expression.id, expression.getText(), expression.getPropertyList()]);
 
                         }
                     }
@@ -922,6 +937,9 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                                 }
                             }
                             connection.getOverlay("transition_" + id).show();
+                            console.log("transition overlay",id, $('#' + id).parent());
+                            $('#' + id).parent().css('z-index', 50);
+
                             connection.getOverlay("toggle_" + id).hide();
 
                         }

@@ -700,9 +700,10 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 }
             }
         #endif*/
+        reference.subscribe(id: self.id);
         
         if(type == "active"){
-            reference.subscribe(id: self.id);
+           
             _ = reference.didChange.addHandler(target: self, handler:  Brush.setHandler, key:id)
         }
             

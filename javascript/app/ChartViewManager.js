@@ -14,6 +14,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
         var basic_template, empty_template, parent_template, child_template, ui_template, timer_template;
         var ChartViewManager = class extends Emitter {
 
+
             constructor(model, element) {
                 super();
                 this.el = $(element);
@@ -344,6 +345,10 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
 
                 chartView.addListener("ON_GENERATOR_ADDED", function(mappingId, generatorId, generator_type, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList) {
                     this.onGeneratorAdded(mappingId, generatorId, generator_type, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList);
+                }.bind(this));
+
+                chartView.addListener("ON_DATASET_ADDED", function(mappingId, datasetId, datasetType, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList) {
+                    this.onDatasetAdded(mappingId, datasetId, datasetType, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList);
                 }.bind(this));
 
                 chartView.addListener("ON_STATE_ADDED", function(x, y, data) {
@@ -831,6 +836,31 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                     type: "generator_added"
                 };
                 this.generatorInspector.addDefaultValues(generator_type, transmit_data);
+                this.lastAuthoringRequest = {
+                    data: transmit_data
+                };
+
+                this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
+            }
+
+
+ onDatasetAdded(mappingId, datasetId, datasetType, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList) {
+                console.log("dataset added called", datasetId, datasetType, stateId);
+
+                var transmit_data = {
+                    mappingId: mappingId,
+                    datasetId: datasetId,
+                    datasetType: datasetType,
+                    behaviorId: behaviorId,
+                    stateId: stateId,
+                    relativePropertyName: relativePropertyName,
+                    relativePropertyItemName: relativePropertyItemName,
+                    expressionId: expressionId,
+                    expressionText: expressionText,
+                    expressionPropertyList: expressionPropertyList,
+                    type: "dataset_added"
+                };
+                this.generatorInspector.addDefaultValues(datasetType, transmit_data);
                 this.lastAuthoringRequest = {
                     data: transmit_data
                 };
