@@ -35,7 +35,7 @@ class Stylus: TimeSeries, WebTransmitter {
     var id = NSUUID().uuidString;
     var transmitEvent = Event<(String)>()
     var initEvent = Event<(WebTransmitter,String)>()
-
+    var moveCounter  = 0;
     var constraintTransmitComplete = true;
     //var moveDist = Float(0);
     
@@ -117,7 +117,7 @@ class Stylus: TimeSeries, WebTransmitter {
                 let eventCondition = key.1;
                 eventCondition!.reset();
             }
-
+            
         }
         
         
@@ -148,11 +148,11 @@ class Stylus: TimeSeries, WebTransmitter {
                 let eventCondition = key.1;
             }
             else{
-                  NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_UP"])
+                NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_UP"])
                 
             }
             key.2.undergoing_transition = false;
-
+            
         }
         //self.delta.set(x: 0,y:0)
         self.penDown.set(newValue: 0);
@@ -164,6 +164,7 @@ class Stylus: TimeSeries, WebTransmitter {
     }
     
     func onStylusDown(x:Float,y:Float,force:Float,angle:Float){
+        moveCounter = 0;
         //TODO: silent set, need to make more robust/ readable
         self.origin.set(x: x, y: y)
         self.position.x.setSilent(newValue: x)
@@ -187,108 +188,114 @@ class Stylus: TimeSeries, WebTransmitter {
     }
     
     func onStylusMove(x:Float,y:Float,force:Float,angle:Float){
-        for key in keyStorage["STYLUS_MOVE_BY"]!  {
-            if(key.1 != nil){
-                let eventCondition = key.1;
-                if(eventCondition?.evaluate())!{
-                     NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_MOVE_BY"])
+        if(moveCounter == 0){
+            for key in keyStorage["STYLUS_MOVE_BY"]!  {
+                if(key.1 != nil){
+                    let eventCondition = key.1;
+                    if(eventCondition?.evaluate())!{
+                        NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_MOVE_BY"])
+                        
+                    }
+                    else{
+                        #if DEBUG
+                            //print("EVALUATION FOR CONDITION FAILED")
+                        #endif
+                    }
                     
                 }
                 else{
-                    #if DEBUG
-                    //print("EVALUATION FOR CONDITION FAILED")
-                    #endif
+                    NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_MOVE_BY"])
+                    
                 }
-                
             }
-            else{
-                NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_MOVE_BY"])
-                
-            }
-        }
-        for key in keyStorage["STYLUS_X_MOVE_BY"]!  {
-            if(key.1 != nil){
-                let eventCondition = key.1;
-                if(eventCondition?.evaluate())!{
-                    NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_X_MOVE_BY"])
+            for key in keyStorage["STYLUS_X_MOVE_BY"]!  {
+                if(key.1 != nil){
+                    let eventCondition = key.1;
+                    if(eventCondition?.evaluate())!{
+                        NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_X_MOVE_BY"])
+                        
+                    }
+                    else{
+                        #if DEBUG
+                            //print("EVALUATION FOR CONDITION FAILED")
+                        #endif
+                    }
                     
                 }
                 else{
-                    #if DEBUG
-                        //print("EVALUATION FOR CONDITION FAILED")
-                    #endif
+                    NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_X_MOVE"])
+                    
                 }
-                
             }
-            else{
-                NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_X_MOVE"])
-                
-            }
-        }
-        for key in keyStorage["STYLUS_Y_MOVE_BY"]!  {
-            if(key.1 != nil){
-                let eventCondition = key.1;
-                if(eventCondition?.evaluate())!{
+            for key in keyStorage["STYLUS_Y_MOVE_BY"]!  {
+                if(key.1 != nil){
+                    let eventCondition = key.1;
+                    if(eventCondition?.evaluate())!{
+                        NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_Y_MOVE_BY"])
+                        
+                    }
+                    else{
+                        #if DEBUG
+                            //print("EVALUATION FOR CONDITION FAILED")
+                        #endif
+                    }
+                    
+                }
+                else{
                     NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_Y_MOVE_BY"])
                     
                 }
-                else{
-                    #if DEBUG
-                        //print("EVALUATION FOR CONDITION FAILED")
-                    #endif
-                }
-                
             }
-            else{
-                NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_Y_MOVE_BY"])
-                
+            
+            
+            self.prevPosition.set(val:position);
+            let newP = Point(x:x,y:y);
+            self.position.set(val:newP)
+            
+            
+            let d = self.position.sub(point: self.prevPosition)
+            
+            self.delta.set(val:d)
+            var _deltaAngle =  MathUtil.cartToPolar(p1: self.origin, p2: self.position).1
+            _deltaAngle = MathUtil.map(value: _deltaAngle, low1:0.0, high1: 2*Float.pi, low2: 0.0, high2: 100.0)
+            self.deltaAngle.set(newValue: _deltaAngle)
+            //self.delta.set(x: 0,y:0)
+            
+            //deltaChangeBuffer.append(self.position.sub(point: self.prevPosition));
+            
+            self.distance.set(newValue: self.distance.getSilent() + sqrt(pow( d.x.getSilent(),2)+pow( d.y.getSilent(),2)));
+            self.xDistance.set(newValue: self.xDistance.getSilent() + abs(d.x.getSilent()));
+            self.yDistance.set(newValue: self.yDistance.getSilent() + abs(d.y.getSilent()));
+            
+            self.prevForce.set(newValue:self.force.get(id:nil))
+            self.force.set(newValue: force*20)
+            self.prevAngle.set(newValue:self.angle.get(id:nil));
+            self.angle.set(newValue:angle)
+            let currentTime = self.getTimeElapsed();
+            var _speed = prevPosition.dist(point: position)/(currentTime-prevTime)
+            if(_speed > 5000){
+                _speed = 5000
             }
+            _speed = MathUtil.map(value: _speed, low1:0, high1: 5000, low2: 0, high2: 100)
+            self.speed.set(newValue:_speed)
+            self.prevTime = currentTime;
+            #if DEBUG
+                // print("stylus speed =",self.speed.get(id: nil));
+                print("stylus delta angle =",self.deltaAngle.get(id: nil));
+                
+            #endif
         }
-
-
-        self.prevPosition.set(val:position);
-        let newP = Point(x:x,y:y);
-        self.position.set(val:newP)
-       
-    
-        let d = self.position.sub(point: self.prevPosition)
-      
-        self.delta.set(val:d)
-        var _deltaAngle =  MathUtil.cartToPolar(p1: self.origin, p2: self.position).1
-        _deltaAngle = MathUtil.map(value: _deltaAngle, low1:0.0, high1: 2*Float.pi, low2: 0.0, high2: 100.0)
-        self.deltaAngle.set(newValue: _deltaAngle)
-        //self.delta.set(x: 0,y:0)
-
-       //deltaChangeBuffer.append(self.position.sub(point: self.prevPosition));
-        
-         self.distance.set(newValue: self.distance.getSilent() + sqrt(pow( d.x.getSilent(),2)+pow( d.y.getSilent(),2)));
-        self.xDistance.set(newValue: self.xDistance.getSilent() + abs(d.x.getSilent()));
-        self.yDistance.set(newValue: self.yDistance.getSilent() + abs(d.y.getSilent()));
-
-        self.prevForce.set(newValue:self.force.get(id:nil))
-        self.force.set(newValue: force*20)
-        self.prevAngle.set(newValue:self.angle.get(id:nil));
-        self.angle.set(newValue:angle)
-        let currentTime = self.getTimeElapsed();
-        var _speed = prevPosition.dist(point: position)/(currentTime-prevTime)
-        if(_speed > 5000){
-            _speed = 5000
+         moveCounter += 1
+        if(moveCounter > 1){
+            moveCounter = 0;
         }
-         _speed = MathUtil.map(value: _speed, low1:0, high1: 5000, low2: 0, high2: 100)
-        self.speed.set(newValue:_speed)
-        self.prevTime = currentTime;
-        #if DEBUG
-           // print("stylus speed =",self.speed.get(id: nil));
-            print("stylus delta angle =",self.deltaAngle.get(id: nil));
-
-        #endif
         
     }
     
     
     func shiftDeltaBuffer(){
         self.delta.set(val:self.position.sub(point: self.prevPosition))
-
+        
     }
     
     
