@@ -70,12 +70,13 @@ class BehaviorManager{
     }
     
     func handleAuthoringRequest(authoring_data:JSON) throws->JSON{
+        BehaviorManager.resetAllDatasets();
+
         let data = authoring_data["data"] as JSON;
         let type = data["type"].stringValue;
         var resultJSON:JSON = [:]
         resultJSON["type"] = JSON("authoring_response");
         resultJSON["authoring_type"] = JSON(type);
-
         switch(type){
         case "set_behavior_active":
             let behaviorId = data["behaviorId"].stringValue;
@@ -299,18 +300,12 @@ class BehaviorManager{
             
             resultJSON["result"] = "success";
             return resultJSON;
-        case "dataset_added":
-            //BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseDatasetJSON(data:data)
-           // BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)
-            
-            resultJSON["result"] = "success";
-            return resultJSON;
             
         case "dataset_loaded":
              #if DEBUG
                 //print("dataset loaded",data);
             #endif
-            // BehaviorManager.parseDataset(data:data)
+           BehaviorManager.parseDataset(data:data)
             
             resultJSON["result"] = "success";
             return resultJSON;
@@ -327,10 +322,17 @@ class BehaviorManager{
     
     
    static func parseDataset(data:JSON){
-    let id = data["tableId"].stringValue;
+    let id = data["id"].stringValue;
     let table = Table(id:id);
         table.loadDataFromJSON(data: data["dataset"]);
     BehaviorManager.datasets[id] = table;
+    }
+    
+    static func resetAllDatasets(){
+        print("resetting all datasets")
+        for (_,value) in BehaviorManager.datasets{
+            value.resetColumns();
+        }
     }
     
     //checks to see if other behaviors reference the target behavior

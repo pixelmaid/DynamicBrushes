@@ -21,13 +21,13 @@ class DataObject:Observable<Float>{
     
 }
 
-class Table {
+class Table:Emitter {
     var i = 0
     var limit = 0
     var columns = [String:Column]()
     var data:[JSON]?
-    var subscribers = [String:[String]]()
     let id:String
+    var metadataRowOffset:Int = 0;
     
     init(id:String){
         self.id = id;
@@ -36,18 +36,21 @@ class Table {
         
         let columns = data["meta"]["view"]["columns"].arrayValue;
         #if DEBUG
-        print("dataset loaded",columns,data)
+            //print("dataset loaded",columns,data)
         #endif
         for i in 0..<columns.count{
             let fieldName = columns[i]["fieldName"].stringValue;
-            let position = columns[i]["position"].intValue;
+            let position = columns[i]["position"].intValue-1; //NOTE: assumes position count starts from 1 not zero
             let dataTypeName = columns[i]["dataTypeName"].stringValue;
             let description = columns[i]["description"].stringValue;
             let largest = columns[i]["cachedContents"]["largest"].stringValue;
             let smallest = columns[i]["cachedContents"]["smallest"].stringValue;
-            let width = columns[i]["width"].intValue + 7;
+            let width = columns[i]["width"].intValue;
             let id = String(columns[i]["id"].intValue);
             let c:Column?
+            if(dataTypeName == "meta_data"){
+                metadataRowOffset+=1;
+            }
             if(dataTypeName == "number"){
                 
                 let average = Float(columns[i]["cachedContents"]["average"].stringValue)
@@ -55,12 +58,12 @@ class Table {
                 
                 
             }
-           
+                
             else if(dataTypeName == "calendar_data"){
                 c = CalendarDateColumn(table:self,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName, largest:largest,smallest:smallest)
             }
                 
-            else if(dataTypeName == "location"){
+            else if( dataTypeName == "reclat" || dataTypeName == "reclong"){
                 c = GeoColumn(table:self,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName, largest:largest,smallest:smallest)
             }
             else{
@@ -68,92 +71,140 @@ class Table {
                 
             }
             #if DEBUG
-                print("dataset fieldname",fieldName);
+                //print("dataset fieldname",fieldName);
             #endif
             self.columns[fieldName] = c;
             
         }
         self.data = data["data"].arrayValue;
+        #if DEBUG
+            print("metadata offset",metadataRowOffset);
+        #endif
     }
     
-    func getData(fieldName:String,type:String,id:String?)->Float{
-        
-        return 0.0;
-    }
-    
-    func subscribe(fieldName:String,subscriberId:String){
-        subscribers[fieldName]?.append(subscriberId);
-    }
-    
-    func unsubscribe(fieldName:String,subscriberId:String){
-       var subscriberList = subscribers[fieldName]!
-        for i in 0..<subscriberList.count{
-            if subscriberList[i] == subscriberId{
-            subscribers[fieldName]?.remove(at: i);
-            }
+    func resetColumns(){
+        for (key,column) in self.columns{
+            column.reset();
+            
         }
     }
     
- 
-class Column:DataObject{
-    let fieldName:String
-    let position:Int
-    let table:Table
-    let dataTypeName:String
-    let id:String
-    let largest:String
-    let smallest:String
-    
-    init(table:Table,id:String, fieldName:String,position:Int,dataTypeName:String,largest:String,smallest:String){
-        self.fieldName = fieldName
-        self.position = position
-        self.dataTypeName = dataTypeName
-        self.table = table
-        self.id = id
-        self.largest = largest
-        self.smallest = smallest
-        super.init(0)
-    }
-    
-    override func subscribe(id: String) {
-        super.subscribe(id: id)
-        self.table.subscribe(fieldName:self.fieldName,subscriberId:id)
-    }
-    
-    override func unsubscribe(id: String) {
-        super.unsubscribe(id: id)
-        self.table.unsubscribe(fieldName:self.fieldName,subscriberId:id)
-    }
-    
-    override func get(id:String?)->Float{
-        #if DEBUG
-        #endif
+    func getData(position:Int,row:Int)->Float{
+        let row = self.data![row].arrayValue;
+        let val = row[position+metadataRowOffset].floatValue;
+        return val;
         
-        return self.table.getData(fieldName:self.fieldName,type:self.dataTypeName,id:id)
     }
     
-}
+    /*func subscribe(fieldName:String,subscriberId:String){
+     subscribers[fieldName]?.append(subscriberId);
+     }
+     
+     func unsubscribe(fieldName:String,subscriberId:String){
+     var subscriberList = subscribers[fieldName]!
+     for i in 0..<subscriberList.count{
+     if subscriberList[i] == subscriberId{
+     subscribers[fieldName]?.remove(at: i);
+     }
+     }
+     }*/
     
-class CalendarDateColumn:Column{
-        
-}
-class TextColumn:Column{
-        
-}
     
-class GeoColumn:Column{
+    class Column:DataObject{
+        let fieldName:String
+        let position:Int
+        let table:Table
+        let dataTypeName:String
+        let id:String
+        let largest:String
+        let smallest:String
+        var currentRow = 0;
+        init(table:Table,id:String, fieldName:String,position:Int,dataTypeName:String,largest:String,smallest:String){
+            self.fieldName = fieldName
+            self.position = position
+            self.dataTypeName = dataTypeName
+            self.table = table
+            self.id = id
+            self.largest = largest
+            self.smallest = smallest
+            super.init(0)
+        }
         
-}
-
-
-class NumberColumn:Column{
-    let average:Float
-    
-    init(table:Table,id:String,fieldName:String,position:Int,dataTypeName:String,largest:String,smallest:String,average:Float){
-
-        self.average = average
-        super.init(table:table,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName, largest:largest, smallest:smallest);
+        override func subscribe(id: String) {
+            
+            subscribers[id] = currentRow
+            currentRow += 1;
+            
+        }
+        
+        
+        
+        override func get(id:String?)->Float{
+            let row = subscribers[id!];
+            let val = self.table.getData(position:self.position,row:row!)
+            
+            #if DEBUG
+                print("column being accessed",fieldName,position,row!,val)
+            #endif
+            
+            return val;
+            
+        }
+        
+        
+        
+        func reset(){
+            self.currentRow = 0;
+            self.removeAllSubscribers();
+        }
+        
     }
+    
+    class CalendarDateColumn:Column{
+        
+    }
+    
+    class TextColumn:Column{
+        
+    }
+    
+    class GeoColumn:Column{
+        
+        
+        override init(table: Table, id: String, fieldName: String, position: Int, dataTypeName: String, largest: String, smallest: String) {
+            
+            super.init(table:table,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName, largest:largest, smallest:smallest);
+        }
+        
+        override func get(id:String?)->Float{
+            let low,high:Float;
+            let mapper:Mapper;
+            let val = super.get(id:id);
+            if(fieldName == "reclong"){
+                low = -180.0
+                high = 180.0
+                mapper = CanvasYPositionMapper(input:Observable<Float>(val),low:low,high:high)
+                
+            }
+            else{//is latitude
+                low = -90
+                high = 90
+                mapper = CanvasYPositionMapper(input:Observable<Float>(val),low:low,high:high)
+            }
+            return mapper.get(id:id);
+        }
+        
+    }
+    
+    
+    class NumberColumn:Column{
+        let average:Float
+        
+        init(table:Table,id:String,fieldName:String,position:Int,dataTypeName:String,largest:String,smallest:String,average:Float){
+            
+            self.average = average
+            super.init(table:table,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName, largest:largest, smallest:smallest);
+        }
         
         
         

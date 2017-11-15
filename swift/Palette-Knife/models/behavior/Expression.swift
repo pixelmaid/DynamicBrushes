@@ -50,7 +50,7 @@ class TextExpression:Observable<Float>{
     var id: String;
     var eventHandlers = [Disposable]();
 
-    init(id:String,operandList:[String:Observable<Float>],text:String){
+    init(id:String,brushIndex:int,operandList:[String:Observable<Float>],text:String){
         self.id = id;
         self.text = text;
         self.operandList = operandList;

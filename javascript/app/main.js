@@ -32,6 +32,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
             } else if (data.type == "behavior_change") {
 
             } else if (data.type == "authoring_response") {
+
                 chartViewManager.processAuthoringResponse(data);
 
             } else if (data.type == "synchronize") {
@@ -84,6 +85,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
             requestFileList(codename);
             requestExampleFileList();
             paletteModel.setupData();
+
             hideOverlay();
 
 
@@ -186,14 +188,13 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
             }
         };
 
-        var onDataReady = function(dataset){
+        var onDataReady = function(id,dataset){
                console.log("transmit_data set data", dataset);
-               var data = {dataset:dataset,type:"dataset_loaded"};
+               var data = {id:id,dataset:dataset,type:"dataset_loaded"};
             var transmit_data = {
                 type: "authoring_request",
                 requester: "authoring",
                 data: data
-
             };
             socketController.sendMessage(transmit_data);
         };

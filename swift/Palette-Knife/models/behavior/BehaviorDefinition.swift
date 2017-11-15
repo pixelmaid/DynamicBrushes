@@ -233,19 +233,6 @@ class BehaviorDefinition {
         self.addCondition(name: name, reference: reference, referenceNames: referenceNames, relative: relative, relativeNames: relativeNames, relational: relational)
     }
     
-    func parseDataJSON(data:JSON){
-        
-        
-    }
-    
-    func parseDataset(data:JSON){
-        
-    }
-    
-    func parseDatasetJSON(tableId:String,data:JSON){
-        let type = data["dataset_type"].stringValue;
-        self.addDatasetReference(tableId:id,type:type);
-    }
     
     func parseGeneratorJSON(data:JSON){
         let type = data["generator_type"].stringValue;
@@ -323,22 +310,37 @@ class BehaviorDefinition {
         let expressionPropertyList = data["expressionPropertyList"];
         let expressionText = data["expressionText"].stringValue;
         var emitterOperandList = [String:(Any?,[String]?,[String]?)]();
-        
+        #if DEBUG
+            print("expression prop list",expressionPropertyList);
+        #endif
         if(expressionPropertyList != JSON.null){
             let dataExpressionDictionary = expressionPropertyList.dictionaryValue;
             for (key,value) in dataExpressionDictionary{
                 let dataEmitterValue = (value.arrayValue)[0].stringValue;
                 let emitter:Any?
-                switch(dataEmitterValue){
-                case "stylus":
+                #if DEBUG
+                    print("data emitter value",dataEmitterValue);
+                    
+                    
+                    #endif
+                if (dataEmitterValue == "stylus"){
+                
                     emitter = stylus;
-                    break;
-                case "ui":
+                    
+                }
+                    else if(dataEmitterValue == "ui"){
                     emitter = uiInput;
-                    break;
-                default:
+                    }
+                    
+                    else if(dataEmitterValue.range(of:"dataset") != nil){
+                        emitter = BehaviorManager.datasets[dataEmitterValue];
+                     #if DEBUG
+                    print("found dataset emitter",emitter)
+                    #endif
+                    }
+                    else{
                     emitter = nil;
-                    break;
+                    
                 }
                 var propertyList:[String]?;
                 
@@ -1088,7 +1090,12 @@ class BehaviorDefinition {
                 
             }
             else{
+                if let table = emitter as? Table{
+                     operand = table.columns[propList![0]]! as! Observable<Float>
+                }
+                else{
                 operand = (emitter as! Object)[propList![0]]! as! Observable<Float>
+                }
             }
             
             if(propList!.count > 1){
@@ -1209,7 +1216,7 @@ class BehaviorDefinition {
             let operand = self.generateSingleOperand(targetBrush: targetBrush, emitter: emitter, propList: propList)
             operands[key] = operand;
         }
-        let expression = TextExpression(id:name,operandList: operands, text: data.1);
+        let expression = TextExpression(id:name,brushIndex:targetBrush.index,operandList: operands, text: data.1);
         self.storedExpressions[id]![name] = expression;
     }
     

@@ -367,18 +367,19 @@ define(['emitter', 'app/id', 'app/Emitter', 'app/DataLoader',],
         };
 
         var dataLoader = new DataLoader();
-        dataLoader.addListener("ON_DATA_LOADED",  function(items,data) {
-                    this.onDataLoaded(items,data);
+        dataLoader.addListener("ON_DATA_LOADED",  function(id,items,data) {
+                    this.onDataLoaded(id,items,data);
                 }.bind(this));
 
         dataLoader.loadData();
         
       }
 
-      onDataLoaded(items,data){
+      onDataLoaded(id,items,data){
+
         this.data["datasets"] = {items:items};
         console.log("meteor_data",items,this);
-        this.trigger("ON_DATA_READY",[data]);
+        this.trigger("ON_DATA_READY",[id,data]);
       }
 
 

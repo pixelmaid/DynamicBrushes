@@ -76,8 +76,18 @@ define(["app/Emitter"],
 				this.loadRequest(fileval);
 			}
 
+			
 			updateFileList(storage_data) {
-				this.saved_files = storage_data.filelist;
+				var cleanedFiles = {};
+				for (var file in storage_data.filelist){
+					if(storage_data.filelist.hasOwnProperty(file)){
+						console.log(storage_data.filelist[file]);
+						if(storage_data.filelist[file]!=="old_saved"){
+							cleanedFiles[file] = storage_data.filelist[file];
+						}
+					}
+				}
+				this.saved_files = cleanedFiles;
 
 				this.trigger("ON_SAVED_FILES_UPDATED");
 			}

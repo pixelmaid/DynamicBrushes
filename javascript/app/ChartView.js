@@ -483,6 +483,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                         console.log("drop on expression", type);
 
                         var drop_id = ID();
+                        var constraint_type;
                         var data = {
                             type: type,
                             id: drop_id,
@@ -492,7 +493,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                         var referenceName, referenceProperties, referencePropertiesDisplayNames;
                         if (type == 'sensor_prop') {
                             referenceName = 'stylus';
-                            var constraint_type = "active";
+                             constraint_type = "active";
                             console.log("sensor prop dropped on mapping", displayName);
                             $(ui.helper).remove(); //destroy cloneit'
                             referenceProperties = [name.split("_")[1]];
@@ -540,16 +541,19 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                          else if (type == 'dataset') {
 
-                            console.log("dataset dropped on mapping");
-                            $(ui.helper).remove(); //destroy clone
-                            //$(ui.draggable).remove(); //remove from list
-                            referenceName = null;
-                            var datasetID = drop_id;
-                            var datasetType = name;
-                            referenceProperties = [datasetID];
+                            referenceName = name.split("_")[0]+"_"+name.split("_")[1];
+                             constraint_type = "passive";
+                            console.log("dataset prop dropped on mapping", displayName);
+                            $(ui.helper).remove(); //destroy cloneit'
+                            referenceProperties = [name.split("_")[2]];
+
+                           
                             referencePropertiesDisplayNames = [displayName];
-                            expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, referencePropertiesDisplayNames, datasetID, displayName, name);
-                            self.trigger("ON_DATASET_ADDED", [mapping_data.mappingId, datasetID, datasetType, self.id, target_state, relativePropertyName, relativePropertyItemName, expression.id, expression.getText(), expression.getPropertyList()]);
+
+                            expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, referencePropertiesDisplayNames, drop_id, displayName, name);
+
+
+                            self.trigger("ON_MAPPING_REFERENCE_UPDATE", [mapping_data.mappingId, self.id, target_state, relativePropertyName, relativePropertyItemName, expression.id, expression.getText(), expression.getPropertyList(), constraint_type]);
 
                         }
                     }

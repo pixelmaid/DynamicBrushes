@@ -85,6 +85,10 @@ class Observable<T>:Object, DisposableObservable {
         subscribers[id] = 0
     }
     
+    func removeAllSubscribers(){
+        self.subscribers.removeAll();
+    }
+    
     func unsubscribe(id:String){
         subscribers.removeValue(forKey: id)
     }
@@ -94,7 +98,7 @@ class Observable<T>:Object, DisposableObservable {
             observable.destroy();
         }
         self.didChange.removeAllHandlers();
-        self.subscribers.removeAll();
+        self.removeAllSubscribers();
         self.constraintTarget = nil;
         
     }

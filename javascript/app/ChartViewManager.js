@@ -426,6 +426,9 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
             processAuthoringResponse(data) {
                 console.log("chart manager process authoring response", data, this.lastAuthoringRequest, data.result);
                 if (data.result == "success" || data.result == "check") {
+                    if(data.authoring_type == "dataset_loaded"){
+                        return;
+                    }
                     var behaviorId = this.lastAuthoringRequest.data.behaviorId;
                     switch (this.lastAuthoringRequest.data.type) {
 

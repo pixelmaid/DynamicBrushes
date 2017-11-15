@@ -40,10 +40,10 @@ class RequestHandler{
     static func checkRequest(){
         #if DEBUG
             
-            print("checking request, activeitem: \(RequestHandler.activeItem == nil), requestQueue: \(requestQueue.count), dataQueue: \(dataQueue.count)")
-            for val in requestQueue {
-                print("request: \(val.action,val.requester, val.data)")
-            }
+            //print("checking request, activeitem: \(RequestHandler.activeItem == nil), requestQueue: \(requestQueue.count), dataQueue: \(dataQueue.count)")
+            //for val in requestQueue {
+              //  print("request: \(val.action,val.requester, val.data)")
+            //}
         #endif
 
         if(RequestHandler.activeItem == nil){
@@ -220,7 +220,7 @@ class RequestHandler{
     private func socketDataHandler(data:(String,JSON?), key:String){
         if(data.1 != nil){
             #if DEBUG
-            print("socket data handler called \(data.0,data.1?["type"].stringValue,RequestHandler.activeItem == nil )")
+           // print("socket data handler called \(data.0,data.1?["type"].stringValue,RequestHandler.activeItem == nil )")
             #endif
 
         }
