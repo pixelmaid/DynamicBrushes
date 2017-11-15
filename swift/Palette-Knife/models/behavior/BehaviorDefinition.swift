@@ -1091,7 +1091,7 @@ class BehaviorDefinition {
             }
             else{
                 if let table = emitter as? Table{
-                     operand = table.columns[propList![0]]! as! Observable<Float>
+                     operand = table.columns[propList![0]]! as Observable<Float>
                 }
                 else{
                 operand = (emitter as! Object)[propList![0]]! as! Observable<Float>
@@ -1216,7 +1216,7 @@ class BehaviorDefinition {
             let operand = self.generateSingleOperand(targetBrush: targetBrush, emitter: emitter, propList: propList)
             operands[key] = operand;
         }
-        let expression = TextExpression(id:name,brushIndex:targetBrush.index,operandList: operands, text: data.1);
+        let expression = TextExpression(id:name,subscriberId:id,brushIndex:targetBrush.index,operandList: operands, text: data.1);
         self.storedExpressions[id]![name] = expression;
     }
     

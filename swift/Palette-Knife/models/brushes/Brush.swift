@@ -304,8 +304,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     }
     
     func positionChange(data:(String,(Float,Float),(Float,Float)),key:String){
-        print("position change called");
-
+        #if DEBUG
+            print("position change called",self.index.get(id:nil),self.position.get(id: nil));
+        #endif
         if(!self.undergoing_transition){
             let _delta = self.position.sub(point: self.bPosition)
             let polarPos = MathUtil.cartToPolar(p1: self.bPosition, p2: self.position);
@@ -700,7 +701,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 }
             }
         #endif*/
-        reference.subscribe(id: self.id);
+        reference.subscribe(id: self.id,brushId:self.id,brushIndex:nil);
         
         if(type == "active"){
            
@@ -839,7 +840,11 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             for _ in 0...num-1{
                 let child = Brush(name:name, behaviorDef: behavior, parent:self, canvas:self.currentCanvas!)
                 self.children.append(child);
+              
                 child.index.set(newValue: Float(self.children.count-1));
+                #if DEBUG
+                    print("spawn called, new index is:",child.index.get(id:nil),"of",(self.children.count))
+                #endif
                 child.level.set(newValue: Float(self.level.get(id: nil)+1));
                 self.initEvent.raise(data: (child,"brush_init"));
                /* #if DEBUG

@@ -285,7 +285,7 @@ class Stylus: TimeSeries, WebTransmitter {
 
         #endif
         }
-       // moveCounter += 1
+        moveCounter += 1
         if(moveCounter > 10){
             moveCounter = 0;
         }

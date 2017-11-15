@@ -24,8 +24,8 @@ class Expression: Observable<Float>{
         
       //  operand1.didChange.addHandler(self, handler: Expression.setHandler,key:operand1Key)
        // operand2.didChange.addHandler(self, handler: Expression.setHandler, key:operand2Key)
-        operand1.subscribe(id: self.id);
-        operand2.subscribe(id: self.id);
+    //operand1.subscribe(id: self.id, brushId:String,brushIndex: nil);
+       // operand2.subscribe(id: self.id,brushIndex: nil);
 
         //initial set after intialize
         //TODO: check if this causes errors...
@@ -49,15 +49,18 @@ class TextExpression:Observable<Float>{
     var text:String;
     var id: String;
     var eventHandlers = [Disposable]();
-
-    init(id:String,brushIndex:int,operandList:[String:Observable<Float>],text:String){
+    var brushIndex:Observable<Float>
+    var subscriberId:String
+    init(id:String,subscriberId:String,brushIndex:Observable<Float>,operandList:[String:Observable<Float>],text:String){
         self.id = id;
         self.text = text;
         self.operandList = operandList;
+        self.brushIndex = brushIndex;
+        self.subscriberId = subscriberId;
         super.init(0);
         
         for (key,value) in self.operandList{
-           value.subscribe(id: self.id);
+            value.subscribe(id: self.id,brushId:subscriberId,brushIndex:brushIndex);
             let operandKey = NSUUID().uuidString;
             let handler = value.didChange.addHandler(target: self, handler: TextExpression.setHandler,key:operandKey)
            eventHandlers.append(handler)
@@ -81,9 +84,12 @@ class TextExpression:Observable<Float>{
         
         
         for (key,value) in self.operandList{
-            currentVals[key] = value.get(id:self.id);
+            currentVals[key] = value.get(id:subscriberId);
             
         }
+        #if DEBUG
+            print("expression values",brushIndex.get(id:nil),currentVals);
+        #endif
         
         for i in 0..<stringArr.count{
             let s = stringArr[i];

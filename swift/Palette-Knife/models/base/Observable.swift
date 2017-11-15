@@ -81,7 +81,7 @@ class Observable<T>:Object, DisposableObservable {
         return value
     }
     
-    func subscribe(id:String){
+    func subscribe(id:String,brushId:String,brushIndex:Observable<Float>?){
         subscribers[id] = 0
     }
     

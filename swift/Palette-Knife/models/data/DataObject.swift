@@ -55,15 +55,13 @@ class Table:Emitter {
                 
                 let average = Float(columns[i]["cachedContents"]["average"].stringValue)
                 c = NumberColumn(table:self,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName, largest:largest,smallest:smallest,average:average!)
-                
-                
             }
                 
             else if(dataTypeName == "calendar_data"){
                 c = CalendarDateColumn(table:self,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName, largest:largest,smallest:smallest)
             }
                 
-            else if( dataTypeName == "reclat" || dataTypeName == "reclong"){
+            else if( fieldName == "reclat" || fieldName == "reclong"){
                 c = GeoColumn(table:self,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName, largest:largest,smallest:smallest)
             }
             else{
@@ -119,6 +117,7 @@ class Table:Emitter {
         let largest:String
         let smallest:String
         var currentRow = 0;
+        var dataSubscribers = [String:Observable<Float>]()
         init(table:Table,id:String, fieldName:String,position:Int,dataTypeName:String,largest:String,smallest:String){
             self.fieldName = fieldName
             self.position = position
@@ -130,31 +129,29 @@ class Table:Emitter {
             super.init(0)
         }
         
-        override func subscribe(id: String) {
-            
-            subscribers[id] = currentRow
-            currentRow += 1;
+        override func subscribe(id: String, brushId:String, brushIndex:Observable<Float>?) {
+            #if DEBUG
+                print("column subscribing with id,index",id,brushIndex?.get(id: nil));
+            #endif
+            subscribers[id] = currentRow; //Int(brushIndex!.get(id: nil));
+            dataSubscribers[brushId] = brushIndex!
             
         }
         
         
         
         override func get(id:String?)->Float{
-            let row = subscribers[id!];
-            let val = self.table.getData(position:self.position,row:row!)
-            
+            let row = Int(dataSubscribers[id!]!.get(id:nil));
+            let val = self.table.getData(position:self.position,row:row)
             #if DEBUG
-                print("column being accessed",fieldName,position,row!,val)
+                print("column being accessed",id,fieldName,position,row,val)
             #endif
-            
             return val;
-            
         }
-        
-        
+    
         
         func reset(){
-            self.currentRow = 0;
+          //  self.currentRow = 0;
             self.removeAllSubscribers();
         }
         
@@ -177,13 +174,14 @@ class Table:Emitter {
         }
         
         override func get(id:String?)->Float{
+                 let row = Int(dataSubscribers[id!]!.get(id:nil));
             let low,high:Float;
             let mapper:Mapper;
             let val = super.get(id:id);
             if(fieldName == "reclong"){
                 low = -180.0
                 high = 180.0
-                mapper = CanvasYPositionMapper(input:Observable<Float>(val),low:low,high:high)
+                mapper = CanvasXPositionMapper(input:Observable<Float>(val),low:low,high:high)
                 
             }
             else{//is latitude
@@ -191,7 +189,11 @@ class Table:Emitter {
                 high = 90
                 mapper = CanvasYPositionMapper(input:Observable<Float>(val),low:low,high:high)
             }
-            return mapper.get(id:id);
+            let mappedVal =  mapper.get(id:id);
+            #if DEBUG
+                print("geodata being accessed",row,mappedVal,val);
+            #endif
+            return mappedVal;
         }
         
     }
