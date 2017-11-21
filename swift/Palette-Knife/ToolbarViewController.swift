@@ -27,6 +27,7 @@ class ToolbarViewController: UIViewController {
     @IBOutlet weak var alphaSlider: UISlider!
     
     @IBOutlet weak var backupLabel: UILabel!
+    @IBOutlet weak var programViewToggle: UIButton!
     
     var toolEvent = Event<(String)>();
     var activePanel:String?
@@ -76,10 +77,11 @@ class ToolbarViewController: UIViewController {
          fileListButton.addTarget(self, action: #selector(ToolbarViewController.panelToggled), for: .touchUpInside)
         colorPickerButton.addTarget(self, action: #selector(ToolbarViewController.panelToggled), for: .touchUpInside)
         behaviorPanelButton.addTarget(self, action: #selector(ToolbarViewController.panelToggled), for: .touchUpInside)
+        programViewToggle.addTarget(self, action: #selector(ToolbarViewController.panelToggled), for: .touchUpInside)
 
         diameterSlider.addTarget(self, action: #selector(ToolbarViewController.diameterSliderChanged), for: .valueChanged)
           alphaSlider.addTarget(self, action: #selector(ToolbarViewController.alphaSliderChanged), for: .valueChanged)
-        
+
         penToggled();
     }
     
@@ -129,6 +131,9 @@ class ToolbarViewController: UIViewController {
         }
         else if(target == fileListButton){
             toolEvent.raise(data: ("TOGGLE_FILE_PANEL"));
+        }
+        else if(target == programViewToggle){
+            toolEvent.raise(data: ("PROGRAMMING_VIEW_REQUEST"));
         }
     }
     

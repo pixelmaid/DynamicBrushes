@@ -692,7 +692,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
      //passive: this for constraints which are not actively modifed by an interval or an external change. This can include constants
      //or generators and buffers which will return a new value each time they are accessed
      */
-    func addConstraint(id:String,reference:Observable<Float>, relative:Observable<Float>, stateId:String, type:String){
+    func addConstraint(id:String,reference:Observable<Float>, relative:Observable<Float>, stateId:String){
        
         /*#if DEBUG
             if let expref = reference as? TextExpression{
@@ -702,13 +702,15 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             }
         #endif*/
         reference.subscribe(id: self.id,brushId:self.id,brushIndex:nil);
-        
-        if(type == "active"){
-           
+        let active = reference.getActiveStatus()
+        let type:String
+        if(active){
+           type = "active"
             _ = reference.didChange.addHandler(target: self, handler:  Brush.setHandler, key:id)
         }
             
-        else if(type == "passive"){
+        else{
+            type = "passive"
             relative.passiveConstrain(target: reference);
         }
         

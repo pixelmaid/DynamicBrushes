@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="ipad12_9" orientation="landscape">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13174"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -57,6 +57,13 @@
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <connections>
                                     <segue destination="UwA-iS-HSQ" kind="embed" identifier="behaviorPanelSegue" id="DWn-Ae-HWN"/>
+                                </connections>
+                            </containerView>
+                            <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bow-ri-d28">
+                                <rect key="frame" x="0.0" y="0.0" width="1366" height="1024"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <connections>
+                                    <segue destination="0C2-4k-XMc" kind="embed" identifier="programmingViewSegue" id="pEf-1R-INS"/>
                                 </connections>
                             </containerView>
                         </subviews>
@@ -163,6 +170,11 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zj8-xR-5ec">
+                                <rect key="frame" x="1078" y="8" width="59" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="program"/>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -182,6 +194,7 @@
                         <outlet property="fileListButton" destination="SLf-eG-2ZY" id="b55-NL-sCF"/>
                         <outlet property="layerPanelButton" destination="civ-vQ-wsY" id="2tW-cw-hVQ"/>
                         <outlet property="penButton" destination="QPW-J3-rUs" id="NpX-gX-qlq"/>
+                        <outlet property="programViewToggle" destination="zj8-xR-5ec" id="z8o-5E-Frm"/>
                         <outlet property="saveButton" destination="8gS-nz-efH" id="Hzl-b5-jO9"/>
                     </connections>
                 </viewController>
@@ -436,6 +449,20 @@
             </objects>
             <point key="canvasLocation" x="1309" y="602"/>
         </scene>
+        <!--Programming View Controller-->
+        <scene sceneID="B31-Re-zkV">
+            <objects>
+                <viewController id="0C2-4k-XMc" customClass="ProgrammingViewController" customModule="DynamicBrushes" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="ezW-tN-GbD">
+                        <rect key="frame" x="0.0" y="0.0" width="1366" height="1024"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="b2d-Q0-h1S" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-644" y="1086"/>
+        </scene>
     </scenes>
     <resources>
         <image name="airbrush_button2x.png" width="108" height="108"/>
@@ -452,5 +479,5 @@
         <image name="save_button2x.png" width="121" height="120"/>
         <image name="trash_button.png" width="44" height="48"/>
     </resources>
-    <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+    <color key="tintColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
 </document>

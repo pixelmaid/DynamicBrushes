@@ -13,10 +13,10 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 
 			loadData(){
 				var self = this;
-				$.getJSON("app/sample_datasets/meteor.json", function(data) {
+				$.getJSON("app/sample_datasets/BrainDrain.json", function(data) {
 					var meteor_data = data;
 
-					var id = "dataset"+ID();
+					var id = data["meta"]["view"]["id"]
 					var columns = meteor_data["meta"]["view"]["columns"];
 					var items = [];
 					for (var i=0; i<columns.length;i++) {
@@ -24,8 +24,8 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 							//if (c["fieldName"] == "mass" || c["fieldName"] == "reclat" || c["fieldName"] == "reclong" || c["fieldName"] == "year") {
 								items.push({
 									item_class: "block data palette",
-									item_name:  id+"_"+columns[i]["fieldName"],
-									name:columns[i]["fieldName"],
+									item_name:  id+"_"+columns[i]["name"],
+									name:columns[i]["name"],
 									type: "dataset"
 
 								});
@@ -33,7 +33,7 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 							
 						}
 					
-					console.log("loaded meteor data",columns, items);
+					console.log("loaded data",columns, items);
 
 					self.trigger("ON_DATA_LOADED",[id,items,data]);
 				});

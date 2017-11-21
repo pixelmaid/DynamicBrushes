@@ -13,7 +13,7 @@ class Observable<T>:Object, DisposableObservable {
     
     var name = "observable"
     var printname = "observable"
-    var isPassive = false;
+    private var active = false;
     var invalidated = false;
     var constrained = false;
     var subscribers = [String:Int]();
@@ -31,6 +31,14 @@ class Observable<T>:Object, DisposableObservable {
         value = newValue
         self.invalidate(oldValue: oldValue, newValue: newValue)
        
+    }
+    
+    func getActiveStatus()->Bool{
+        return active;
+    }
+    
+    func setActiveStatus(status:Bool){
+        self.active = status;
     }
     
     func constrainedAndActive()->Bool{
@@ -53,12 +61,10 @@ class Observable<T>:Object, DisposableObservable {
         didChange.raise(data: (name, oldValue, newValue))
     }
     
-    //used for passiveConstraints
+    //used for passive Constraints
     
     func passiveConstrain(target:Observable<T>){
         self.constraintTarget = target;
-        target.isPassive = true;
-    
     }
     
     

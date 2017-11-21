@@ -16,7 +16,7 @@ class BehaviorMapper{
     
       
     func createMapping(id:String, reference:Observable<Float>, relative:Brush, relativeProperty:Observable<Float>,stateId:String, type:String){
-        relative.addConstraint(id: id, reference:reference, relative: relativeProperty, stateId: stateId, type:type)
+        relative.addConstraint(id: id, reference:reference, relative: relativeProperty, stateId: stateId)
     
     }
     

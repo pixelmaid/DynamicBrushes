@@ -58,22 +58,26 @@ class TextExpression:Observable<Float>{
         self.brushIndex = brushIndex;
         self.subscriberId = subscriberId;
         super.init(0);
-        
-        for (key,value) in self.operandList{
+        var hasActive = false;
+        for (_,value) in self.operandList{
+            
+            if(!hasActive){
+                hasActive = value.getActiveStatus();
+            }
             value.subscribe(id: self.id,brushId:subscriberId,brushIndex:brushIndex);
             let operandKey = NSUUID().uuidString;
             let handler = value.didChange.addHandler(target: self, handler: TextExpression.setHandler,key:operandKey)
            eventHandlers.append(handler)
         }
-        
+        self.setActiveStatus(status: hasActive);
     }
     
     override func get(id:String?) -> Float {
         invalidated = false;
-        if(isPassive){
-            return calculateValue();
-        }
-        return super.get(id:id);
+    
+        return calculateValue();
+        
+       
     }
     
     func calculateValue()->Float{

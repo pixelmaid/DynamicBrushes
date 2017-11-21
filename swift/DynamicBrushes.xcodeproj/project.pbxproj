@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5F0EB6621EB5775100225A6E /* ModifiedCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F0EB6611EB5775100225A6E /* ModifiedCanvasView.swift */; };
+		5F13B69A1FC3A40C00E37A37 /* ProgrammingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F13B6991FC3A40C00E37A37 /* ProgrammingViewController.swift */; };
 		5F15BB601F8D94C8005E5B08 /* DataObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F15BB5F1F8D94C8005E5B08 /* DataObject.swift */; };
 		5F2CF3D51ED32D0B0066AC8E /* SavedFilesPanelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2CF3D41ED32D0B0066AC8E /* SavedFilesPanelViewController.swift */; };
 		5F2CF3D71ED32EC00066AC8E /* FileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2CF3D61ED32EC00066AC8E /* FileCell.swift */; };
@@ -162,6 +163,7 @@
 		5F0EB6611EB5775100225A6E /* ModifiedCanvasView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModifiedCanvasView.swift; sourceTree = "<group>"; };
 		5F1109381ECE248E000FBF24 /* DynamicBrushes_devTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DynamicBrushes_devTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F1109431ECE248E000FBF24 /* DynamicBrushes_devUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DynamicBrushes_devUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F13B6991FC3A40C00E37A37 /* ProgrammingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgrammingViewController.swift; sourceTree = "<group>"; };
 		5F15BB5F1F8D94C8005E5B08 /* DataObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DataObject.swift; path = data/DataObject.swift; sourceTree = "<group>"; };
 		5F1E15891F199E478AB56B38 /* Pods-PaletteKnife.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnife.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnife/Pods-PaletteKnife.debug.xcconfig"; sourceTree = "<group>"; };
 		5F2CF3D41ED32D0B0066AC8E /* SavedFilesPanelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SavedFilesPanelViewController.swift; sourceTree = "<group>"; };
@@ -527,6 +529,7 @@
 				5FA4C7551CDB9E9A004A728C /* models */,
 				5FA4C7231CDA7B5B004A728C /* AppDelegate.swift */,
 				5FFC45771EE5C473007B7597 /* BehaviorPanelViewController.swift */,
+				5F13B6991FC3A40C00E37A37 /* ProgrammingViewController.swift */,
 				5FA4C7251CDA7B5B004A728C /* ViewController.swift */,
 				5FE32F601ECE2EBB00ADC01E /* ToolbarViewController.swift */,
 				5FA4C7271CDA7B5B004A728C /* Main.storyboard */,
@@ -1161,6 +1164,7 @@
 				5F90F5441E9D59D4006BB9FE /* Matrix.swift in Sources */,
 				5F2CF3D71ED32EC00066AC8E /* FileCell.swift in Sources */,
 				5FA4C7241CDA7B5B004A728C /* AppDelegate.swift in Sources */,
+				5F13B69A1FC3A40C00E37A37 /* ProgrammingViewController.swift in Sources */,
 				5F6903361FBBB75F00EB3437 /* MapFunctions.swift in Sources */,
 				5F90F5461E9D59D4006BB9FE /* Observable.swift in Sources */,
 				5F90F5421E9D59D4006BB9FE /* Event.swift in Sources */,

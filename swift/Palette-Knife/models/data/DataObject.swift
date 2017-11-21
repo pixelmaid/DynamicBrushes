@@ -43,9 +43,9 @@ class Table:Emitter {
             let position = columns[i]["position"].intValue-1; //NOTE: assumes position count starts from 1 not zero
             let dataTypeName = columns[i]["dataTypeName"].stringValue;
             let description = columns[i]["description"].stringValue;
-            let largest = columns[i]["cachedContents"]["largest"].stringValue;
-            let smallest = columns[i]["cachedContents"]["smallest"].stringValue;
-            let width = columns[i]["width"].intValue;
+            //let largest = columns[i]["cachedContents"]["largest"].stringValue;
+           // let smallest = columns[i]["cachedContents"]["smallest"].stringValue;
+           // let width = columns[i]["width"].intValue;
             let id = String(columns[i]["id"].intValue);
             let c:Column?
             if(dataTypeName == "meta_data"){
@@ -54,18 +54,18 @@ class Table:Emitter {
             if(dataTypeName == "number"){
                 
                 let average = Float(columns[i]["cachedContents"]["average"].stringValue)
-                c = NumberColumn(table:self,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName, largest:largest,smallest:smallest,average:average!)
+                c = NumberColumn(table:self,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName)
             }
                 
             else if(dataTypeName == "calendar_data"){
-                c = CalendarDateColumn(table:self,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName, largest:largest,smallest:smallest)
+                c = CalendarDateColumn(table:self,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName)
             }
                 
             else if( fieldName == "reclat" || fieldName == "reclong"){
-                c = GeoColumn(table:self,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName, largest:largest,smallest:smallest)
+                c = GeoColumn(table:self,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName)
             }
             else{
-                c = TextColumn(table:self,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName, largest:largest,smallest:smallest)
+                c = TextColumn(table:self,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName)
                 
             }
             #if DEBUG
@@ -114,18 +114,17 @@ class Table:Emitter {
         let table:Table
         let dataTypeName:String
         let id:String
-        let largest:String
-        let smallest:String
+       // let largest:String
+      //  let smallest:String
         var currentRow = 0;
         var dataSubscribers = [String:Observable<Float>]()
-        init(table:Table,id:String, fieldName:String,position:Int,dataTypeName:String,largest:String,smallest:String){
+        init(table:Table,id:String, fieldName:String,position:Int,dataTypeName:String){
             self.fieldName = fieldName
             self.position = position
             self.dataTypeName = dataTypeName
             self.table = table
             self.id = id
-            self.largest = largest
-            self.smallest = smallest
+   
             super.init(0)
         }
         
@@ -168,9 +167,9 @@ class Table:Emitter {
     class GeoColumn:Column{
         
         
-        override init(table: Table, id: String, fieldName: String, position: Int, dataTypeName: String, largest: String, smallest: String) {
+        override init(table: Table, id: String, fieldName: String, position: Int, dataTypeName: String) {
             
-            super.init(table:table,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName, largest:largest, smallest:smallest);
+            super.init(table:table,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName);
         }
         
         override func get(id:String?)->Float{
@@ -200,14 +199,9 @@ class Table:Emitter {
     
     
     class NumberColumn:Column{
-        let average:Float
+        //let average:Float
         
-        init(table:Table,id:String,fieldName:String,position:Int,dataTypeName:String,largest:String,smallest:String,average:Float){
-            
-            self.average = average
-            super.init(table:table,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName, largest:largest, smallest:smallest);
-        }
-        
+     
         
         
         

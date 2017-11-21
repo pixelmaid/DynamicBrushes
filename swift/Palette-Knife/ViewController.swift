@@ -46,6 +46,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     let colorPickerKey = NSUUID().uuidString
     let fileEventKey = NSUUID().uuidString
     let behaviorEventKey = NSUUID().uuidString
+    let programmingEventKey = NSUUID().uuidString
 
     let brushEventKey = NSUUID().uuidString
     let dataEventKey = NSUUID().uuidString
@@ -58,11 +59,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     var toolbarController: ToolbarViewController?
     var layerPanelController: LayerPanelViewController?
     var behaviorPanelController: BehaviorPanelViewController?
+    var programmingViewController: ProgrammingViewController?
 
     var fileListController: SavedFilesPanelViewController?
     let targetSize = CGSize(width:CGFloat(pX),height:CGFloat(pY))
     var blockAlert:UIAlertController!
-    
+    private var loggedIn = false;
     //for checking if person is drawing
     var touchesDown:Bool = false;
 
@@ -122,6 +124,13 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         else if(segue.identifier == "behaviorPanelSegue"){
             behaviorPanelController = segue.destination as? BehaviorPanelViewController;
             _ =  behaviorPanelController?.behaviorEvent.addHandler(target: self, handler: ViewController.behaviorEventHandler, key: behaviorEventKey)
+        }
+        
+        else if (segue.identifier == "programmingViewSegue"){
+            programmingViewController = segue.destination as? ProgrammingViewController
+           // programmingViewController?.view.isHidden = true;
+              self.view.sendSubview(toBack:  (programmingViewController?.view)!)
+              _ =  programmingViewController?.programmingEvent.addHandler(target: self, handler: ViewController.programmingEventHandler, key: programmingEventKey)
         }
         
     }
@@ -204,6 +213,23 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             break;
         case "ALPHA_CHANGED":
             uiInput.setAlpha(val: (toolbarController?.alphaSlider.value)!);
+            break;
+        case "PROGRAMMING_VIEW_REQUEST":
+            programmingViewController?.view.isHidden = false;
+            self.view.bringSubview(toFront:  (programmingViewController?.view)!)
+
+            break;
+        default:
+            break;
+        }
+    }
+    
+    func programmingEventHandler(data:(String,JSON?), key:String){
+        switch(data.0){
+        case "RETURN_TO_MAIN":
+            programmingViewController?.view.isHidden = true;
+            self.view.sendSubview(toBack:  (programmingViewController?.view)!)
+
             break;
         default:
             break;
@@ -325,7 +351,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     override func viewDidLoad() {
         
-        
+        print("loaded main view controller")
         
         super.viewDidLoad()
         
@@ -380,19 +406,24 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         fileListContainerView.clipsToBounds = true
         fileListContainerView.isHidden = true;
         
+
     }
     
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated);
-        
-        self.loginAlert(isIncorrect: false);
-        
+        print("logged in state",loggedIn)
+        if(!loggedIn){
+            self.loginAlert(isIncorrect: false);
+        }
+
     }
     
     func addConnectionRequests(){
         let connectRequest = Request(target: "socket", action: "connect", data:JSON([]), requester: self)
         RequestHandler.addRequest(requestData:connectRequest);
+       loggedIn = true;
+      print("logged in state after connection",loggedIn)
     }
     
     func addProjectInitRequests(){
@@ -410,7 +441,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         
         self.startBackupTimer(interval:self.backupInterval);
         
-        
+
     }
     
     
@@ -483,6 +514,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     }
     
     func recconnectAlert(){
+        print("reconnectAlert logged in",loggedIn)
+        loggedIn = false;
         let alertController = UIAlertController(title:"Connection Issue", message: "You were disconnected from the server. Try to reconnect?", preferredStyle: .alert)
         
         let confirmAction = UIAlertAction(title: "Confirm", style: .default) { (_) in
@@ -937,6 +970,10 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             recconnectAlert();
             break;
         case "incorrect_key":
+            loggedIn = false;
+
+            print("incorrect key logged in",loggedIn)
+
             self.loginAlert(isIncorrect: true)
             break;
         case "correct_key":

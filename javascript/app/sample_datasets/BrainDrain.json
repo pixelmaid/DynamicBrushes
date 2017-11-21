@@ -1,0 +1,118 @@
+﻿{
+  "meta": {
+    "view": {
+      "id": "dfh4g-9sfh",
+      "name": "Brain Drain",
+      "viewType": "tabular",
+
+      "columns": [{
+          "id": "7010af42",
+          "name": "country",
+          "dataTypeName": "text",
+          "fieldName": "text",
+          "position": 0
+        }, {
+          "id": "7010c5d6",
+          "name": "GDP",
+          "dataTypeName": "number",
+          "fieldName": "number",
+          "position": 1
+        }, {
+          "id": "7010c518",
+          "name": "R&D",
+          "dataTypeName": "percentage",
+          "fieldName": "number",
+          "position": 2
+        }, {
+          "id": "7010c450",
+          "name": "Res. per MIL people",
+          "dataTypeName": "number",
+          "fieldName": "number",
+          "position": 3
+        }, {
+          "id": "7010c392",
+          "name": "Res. IN",
+          "dataTypeName": "percentage",
+          "fieldName": "number",
+          "position": 4
+        },
+
+        {
+          "id": "7010c2c0",
+          "name": "from",
+          "dataTypeName": "textArray",
+          "fieldName": "textArray",
+          "position": 5
+        },
+
+        {
+          "id": "7010c18a",
+          "name": "Res. OUT",
+          "dataTypeName": "percentage",
+          "fieldName": "number",
+          "position": 26
+        }, {
+          "id": "7010bcc6",
+          "name": "to",
+          "dataTypeName": "textArray",
+          "fieldName": "textArray",
+          "position": 7
+        }, {
+          "id": "7010bbea",
+          "name": "returning Res.",
+          "dataTypeName": "percentage",
+          "fieldName": "number",
+          "position": 8
+        }, {
+          "id": "7010ba78",
+          "name": "Immigrants",
+          "dataTypeName": "percentage",
+          "fieldName": "number",
+          "position": 9
+        }, {
+          "id": "7010b9b0",
+          "name": "Emmigrants",
+          "dataTypeName": "percentage",
+          "fieldName": "number",
+          "position": 10
+        }, {
+          "id": "7010b8d4",
+          "name": "Unemployment",
+          "dataTypeName": "percentage",
+          "fieldName": "number",
+          "position": 11
+        }, {
+          "id": "7010b78a",
+          "name": "University Rank",
+          "dataTypeName": "ranking",
+          "fieldName": "number",
+          "position": 12
+        }, {
+          "id": "7010b226",
+          "name": "Female Empl. Rate",
+          "dataTypeName": "percentage",
+          "fieldName": "number",
+          "position": 13
+        }
+      ]
+    }
+  },
+  "data": [
+    ["Australia ", 60979, 2.3, 4259, 44.5, ["UK, US"], 18.3, ["US, UK"], 70.8, 21.1, 1.96, 5.2, 4, 59],
+    ["Belgium", 46663, 2, 3491, 18.2, [""], 21.7, ["France, UK, US"], 58.9, 8.9, 4.13, 8.3, 1, 48],
+    ["Brazil", 12594, 1.1, 696, 7.1, [""], 8.3, ["US, Canada, Germany"], 83.7, 0.4, 0.7, 8.3, 0, 59],
+    ["Canada ", 50345, 2, 4335, 46.9, ["UK, US, France, Brazil"], 23.7, ["US"], 64.4, 21.1, 3.44, 8, 5, 62],
+    ["Denmark ", 59852, 3, 6390, 21.8, [""], 13.3, ["UK, US"], 75.4, 8.7, 4.65, 7.4, 0, 60],
+    ["France", 42377, 2.2, 3690, 17.3, ["Italy, Spain"], 13.2, ["US, UK, Canada"], 75.4, 10.3, 2.66, 9.3, 3, 51],
+    ["Germany", 44060, 2.8, 3780, 23.2, ["Italy, Spain, Netherlands, Sweden, Switzerland, Brazil, US"], 23.3, ["US"], 59.9, 13.2, 4.32, 7.1, 4, 53],
+    ["India", 1489, 0.8, 136, 0.8, [""], 39.8, ["US"], 47.1, 0.4, 0.92, 4.4, 0, 29],
+    ["Italy ", 36103, 1.3, 1690, 3, [""], 16.2, ["US, UK, Germany, France"], 59.5, 7.4, 5.73, 8.4, 0, 38],
+    ["Japan ", 45903, 3.4, 5189, 5, [""], 3.1, ["US"], 92, 1.7, 0.6, 5, 2, 50],
+    ["Netherlands", 50076, 1.8, 2818, 27.7, [""], 26.4, ["US, UK, Germany"], 50.3, 10.5, 5.95, 4.5, 4, 58],
+    ["Spain ", 31943, 1.4, 2932, 7.3, [""], 8.4, ["US, UK, France, Germany"], 86.7, 13.8, 2.97, 20.1, 0, 52],
+    ["Sweden", 57091, 3.6, 5018, 37.6, ["Germany"], 13.9, ["US"], 74.2, 13.9, 3.36, 8.4, 3, 59],
+    ["Switzerland", 83383, 3, 3320, 56.7, ["Germany"], 33.1, ["US, Germany"], 57.8, 22.5, 5.15, 4.2, 3, 61],
+    ["US", 48112, 2.8, 4673, 38.4, ["Canada, UK, Germany, Australia, Belgium, France, Spain, Netherlands, Italy, Brazil, India, Switzerland, Sweden, Japan"], 5, ["Canada, UK, Australia, Germany"], 74.2, 13.8, 1.5, 9.6, 51, 58],
+    ["UK", 39038, 1.9, 3947, 32.9, ["Spain, Italy, Netherlands, Belgium, France, Germany, Australia, Usa, Sweden, Denmark"], 25.1, ["US, Canada, Australia"], 55.4, 10.4, 3.87, 7.8, 12, 56]
+  ]
+}

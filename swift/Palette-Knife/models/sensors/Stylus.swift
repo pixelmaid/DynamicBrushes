@@ -65,6 +65,13 @@ class Stylus: TimeSeries, WebTransmitter {
         self.events =  ["STYLUS_UP","STYLUS_DOWN","STYLUS_MOVE_BY","STYLUS_X_MOVE_BY","STYLUS_Y_MOVE_BY"]
         self.createKeyStorage();
         
+        self.x.setActiveStatus(status: true)
+        self.y.setActiveStatus(status: true)
+        self.dx.setActiveStatus(status: true)
+        self.dy.setActiveStatus(status: true)
+        self.force.setActiveStatus(status: true)
+        self.angle.setActiveStatus(status: true)
+        
         self.startInterval();
         
     }
