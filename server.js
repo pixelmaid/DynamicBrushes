@@ -52,6 +52,7 @@ wss.on('connection', (ws) => {
 
 		var json_data = JSON.parse(message);
 	    console.log('message', clientName, userkey, message,json_data.type=="inspector_data");
+	    //foo
 
 
 		 if (json_data.type == "synchronize" || json_data.type == "behavior_data" || json_data.type == "authoring_response" || json_data.type == "storage_data" || json_data.type == "inspector_data") {
