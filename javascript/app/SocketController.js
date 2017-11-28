@@ -3,7 +3,7 @@
 define(['emitter', 'app/Emitter'],
 
   function(EventEmitter, Emitter) {
-    var keepAlive = false;
+    var keepAlive = true;
     var SocketController = class extends Emitter {
 
       constructor() {
