@@ -48,6 +48,10 @@ class Stylus: TimeSeries, WebTransmitter {
         self.prevAngle.set(newValue: angle)
         self.x = position.x;
         self.y = position.y
+        
+        RequestHandler.registerObservable(observableId: "stylus_x", observable: self.x, target: nil)
+        RequestHandler.registerObservable(observableId: "stylus_y", observable: self.y, target: nil)
+
         self.x.printname = "stylus_position_x"
         self.y.printname = "stylus_position_y"
         self.speed.set(newValue: 0)
@@ -292,7 +296,7 @@ class Stylus: TimeSeries, WebTransmitter {
 
         #endif
         }
-        moveCounter += 1
+       // moveCounter += 1
         if(moveCounter > 10){
             moveCounter = 0;
         }

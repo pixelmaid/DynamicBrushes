@@ -18,6 +18,11 @@ class ProgrammingViewController:UIViewController,  WKUIDelegate {
     var returnButton:UIButton!
     var programmingEvent = Event<(String,JSON?)>();
     
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
+  
     override func loadView() {
         let webConfiguration = WKWebViewConfiguration()
         webView = WKWebView(frame: .zero, configuration: webConfiguration)

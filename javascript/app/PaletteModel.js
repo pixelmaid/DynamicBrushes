@@ -1,8 +1,8 @@
 //SocketController.js
 'use strict';
-define(['emitter', 'app/id', 'app/Emitter', 'app/DataLoader',],
+define(['emitter', 'app/id', 'app/Emitter', 'app/DatasetLoader'],
 
-  function(EventEmitter, ID, Emitter,DataLoader) {
+  function(EventEmitter, ID, Emitter,DatasetLoader) {
 
     var PaletteModel = class extends Emitter {
 
@@ -11,6 +11,18 @@ define(['emitter', 'app/id', 'app/Emitter', 'app/DataLoader',],
         this.selected = "states";
         this.lastAuthoringRequest = null;
         this.data={};
+        this.datasetLoader = new DatasetLoader();
+        this.datasetLoader.addListener("ON_DATA_LOADED",  function(id,items,data) {
+                    this.onDatasetLoaded(id,items,data);
+                }.bind(this));
+        this.setupData();
+      }
+
+      onDatasetLoaded(id,items,data){
+
+        this.data["datasets"] = {items:items};
+        console.log("data_loaded",items,this);
+        this.trigger("ON_DATASET_READY",[id,data]);
       }
 
       setupData(){
@@ -366,21 +378,12 @@ define(['emitter', 'app/id', 'app/Emitter', 'app/DataLoader',],
           }
         };
 
-        var dataLoader = new DataLoader();
-        dataLoader.addListener("ON_DATA_LOADED",  function(id,items,data) {
-                    this.onDataLoaded(id,items,data);
-                }.bind(this));
+      
 
-        dataLoader.loadData();
         
       }
 
-      onDataLoaded(id,items,data){
-
-        this.data["datasets"] = {items:items};
-        console.log("meteor_data",items,this);
-        this.trigger("ON_DATA_READY",[id,data]);
-      }
+     
 
 
 

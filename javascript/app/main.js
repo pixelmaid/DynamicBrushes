@@ -1,8 +1,8 @@
 'use strict';
-define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveView", "app/PaletteModel", "app/PaletteView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/DataLoader", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart"],
+define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveView", "app/PaletteModel", "app/PaletteView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart", "app/DatasetView"],
 
 
-    function($, paper, Handlebars, ID, SaveManager, SaveView, PaletteModel, PaletteView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart) {
+    function($, paper, Handlebars, ID, SaveManager, SaveView, PaletteModel, PaletteView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart,DatasetView) {
 
         var socketController = new SocketController();
         var socketView = new SocketView(socketController, "#socket");
@@ -12,8 +12,13 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
         var saveManager = new SaveManager();
         var saveView = new SaveView(saveManager, "#save-menu");
         var codename;
+        var dataView = new DatasetView(paletteModel.datasetLoader, "#dataset_select");
 
-
+        //sets up interface by initializing palette, removing overlay etc.
+        var setupInterface = function(){
+            requestFileList(codename);
+            requestExampleFileList();
+        };
 
         var onMessage = function(data) {
             console.log("ON MESSGE CALLED", data);
@@ -35,7 +40,13 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
 
                 chartViewManager.processAuthoringResponse(data);
 
-            } else if (data.type == "synchronize") {
+            }  else if (data.type == "inspector_data") {
+
+                chartViewManager.processInspectorData(data);
+
+            }
+
+            else if (data.type == "synchronize") {
                 hideOverlay();
                 var currentBehaviorName = data["currentBehaviorName"];
                 var currentBehaviorFile = data["currentFile"];
@@ -47,15 +58,14 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
                 saveManager.loadStorageData(data);
             }
 
-        };
+        };  
 
         var onConnection = function() {
             console.log("connection made");
         };
 
         var onKeyRecognized = function() {
-            requestFileList(codename);
-            requestExampleFileList();
+           setupInterface();
         };
 
         var onConnectionError = function() {
@@ -81,13 +91,10 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
                 data: {}
 
             };
+           setupInterface();
             socketController.sendMessage(transmit_data);
-            requestFileList(codename);
-            requestExampleFileList();
-            paletteModel.setupData();
-
+            
             hideOverlay();
-
 
         };
 
@@ -213,7 +220,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
 
         chartViewManager.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
         saveManager.addListener("ON_SAVE_EVENT", onStorageEvent);
-        paletteModel.addListener("ON_DATA_READY",onDataReady);
+        paletteModel.addListener("ON_DATASET_READY",onDataReady);
         promptConnect();
 
 

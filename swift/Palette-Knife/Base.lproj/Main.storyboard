@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="eLq-vb-ujc">
     <device id="ipad12_9" orientation="landscape">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13174"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--mainView-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController title="mainView" id="BYZ-38-t0r" customClass="ViewController" customModule="DynamicBrushes" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="mainView" id="BYZ-38-t0r" customClass="DrawingViewController" customModule="DynamicBrushes" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -21,55 +21,49 @@
                         <rect key="frame" x="0.0" y="0.0" width="1366" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HKn-rf-Zo8" userLabel="filelist_container_view">
+                                <rect key="frame" x="0.0" y="112" width="353" height="486"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <connections>
+                                    <segue destination="jTm-Tz-1uO" kind="embed" identifier="fileListSegue" id="Hj1-pq-3u9"/>
+                                </connections>
+                            </containerView>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Q7O-f9-au8" userLabel="layer_container_view">
-                                <rect key="frame" x="1079" y="56" width="287" height="670"/>
+                                <rect key="frame" x="1079" y="112" width="287" height="670"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <connections>
                                     <segue destination="T1X-5t-gog" kind="embed" identifier="layerPanelSegue" id="Pz1-xT-pFT"/>
                                 </connections>
                             </containerView>
-                            <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qus-XL-8dQ" userLabel="toolbar_container_view">
-                                <rect key="frame" x="0.0" y="0.0" width="1366" height="48"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                <connections>
-                                    <segue destination="pkZ-4g-ASv" kind="embed" identifier="toolbarSegue" id="caa-Rq-pHd"/>
-                                </connections>
-                            </containerView>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UvX-z4-bEI" userLabel="colorpicker_container_view">
-                                <rect key="frame" x="1046" y="56" width="320" height="420"/>
+                                <rect key="frame" x="1046" y="112" width="320" height="420"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <connections>
                                     <segue destination="CKi-vh-0fK" kind="embed" identifier="colorPickerSegue" id="6oB-FP-GnI"/>
                                 </connections>
                             </containerView>
-                            <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HKn-rf-Zo8" userLabel="filelist_container_view">
-                                <rect key="frame" x="0.0" y="56" width="353" height="486"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                <connections>
-                                    <segue destination="jTm-Tz-1uO" kind="embed" identifier="fileListSegue" id="Hj1-pq-3u9"/>
-                                </connections>
-                            </containerView>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ps7-aG-Wgi" userLabel="behavior_container_view">
-                                <rect key="frame" x="1057" y="56" width="309" height="411"/>
+                                <rect key="frame" x="1056" y="112" width="309" height="411"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <connections>
                                     <segue destination="UwA-iS-HSQ" kind="embed" identifier="behaviorPanelSegue" id="DWn-Ae-HWN"/>
                                 </connections>
                             </containerView>
-                            <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bow-ri-d28">
-                                <rect key="frame" x="0.0" y="0.0" width="1366" height="1024"/>
+                            <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qus-XL-8dQ" userLabel="toolbar_container_view">
+                                <rect key="frame" x="-1" y="0.0" width="1366" height="48"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <connections>
-                                    <segue destination="0C2-4k-XMc" kind="embed" identifier="programmingViewSegue" id="pEf-1R-INS"/>
+                                    <segue destination="pkZ-4g-ASv" kind="embed" identifier="toolbarSegue" id="caa-Rq-pHd"/>
                                 </connections>
                             </containerView>
                         </subviews>
                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <toolbarItems/>
+                    <navigationItem key="navigationItem" id="4mh-kE-eAw"/>
                     <value key="contentSizeForViewInPopover" type="size" width="1366" height="1024"/>
                     <nil key="simulatedStatusBarMetrics"/>
                     <nil key="simulatedTopBarMetrics"/>
@@ -83,7 +77,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="280.67349926793554" y="489.84374999999994"/>
+            <point key="canvasLocation" x="260" y="-284"/>
         </scene>
         <!--Toolbar View Controller-->
         <scene sceneID="KeE-9Q-Jvn">
@@ -200,7 +194,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cO4-mP-nr5" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="111" y="1656"/>
+            <point key="canvasLocation" x="333" y="973"/>
         </scene>
         <!--Layer Panel View Controller-->
         <scene sceneID="cZd-Nb-Aah">
@@ -294,7 +288,23 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UR4-HB-PTJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1511" y="365"/>
+            <point key="canvasLocation" x="731" y="346"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="cKC-Jg-eaX">
+            <objects>
+                <navigationController storyboardIdentifier="NavigationController" id="eLq-vb-ujc" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" hidden="YES" opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="sml-ST-s7V">
+                        <rect key="frame" x="0.0" y="20" width="1366" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="cDV-J6-bHd"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="AHh-Ag-sL5" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-578" y="-284"/>
         </scene>
         <!--File Panel View Controller-->
         <scene sceneID="A4f-Rb-TOI">
@@ -356,7 +366,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DG8-if-8M9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-226.42752562225473" y="471.67968749999994"/>
+            <point key="canvasLocation" x="-171" y="441"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="c3s-SM-Oja">
@@ -374,7 +384,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="0bd-eS-Usr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-171" y="1192"/>
+            <point key="canvasLocation" x="-108" y="973"/>
         </scene>
         <!--Behavior Panel View Controller-->
         <scene sceneID="N4A-Ob-I5H">
@@ -447,12 +457,16 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PMo-8Q-sbh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1309" y="602"/>
+            <point key="canvasLocation" x="731" y="695"/>
         </scene>
         <!--Programming View Controller-->
         <scene sceneID="B31-Re-zkV">
             <objects>
-                <viewController id="0C2-4k-XMc" customClass="ProgrammingViewController" customModule="DynamicBrushes" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ProgrammingController" id="0C2-4k-XMc" customClass="ProgrammingViewController" customModule="DynamicBrushes" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="JXe-Ch-h6t"/>
+                        <viewControllerLayoutGuide type="bottom" id="v4m-zT-1gF"/>
+                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="ezW-tN-GbD">
                         <rect key="frame" x="0.0" y="0.0" width="1366" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -461,7 +475,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="b2d-Q0-h1S" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-644" y="1086"/>
+            <point key="canvasLocation" x="-831" y="476"/>
         </scene>
     </scenes>
     <resources>

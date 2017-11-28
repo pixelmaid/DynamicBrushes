@@ -28,7 +28,7 @@ let kTopMargin =	10.0
 let kRightMargin =      10.0
 let pX = Float(1366)
 let pY = Float(1024)
-class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
+class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     
     
@@ -59,7 +59,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     var toolbarController: ToolbarViewController?
     var layerPanelController: LayerPanelViewController?
     var behaviorPanelController: BehaviorPanelViewController?
-    var programmingViewController: ProgrammingViewController?
 
     var fileListController: SavedFilesPanelViewController?
     let targetSize = CGSize(width:CGFloat(pX),height:CGFloat(pY))
@@ -85,6 +84,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     var currentBehaviorName = ""
     var currentBehaviorFile = ""
     var startup = true;
+    var router:Router?
     @IBOutlet weak var layerPanelContainerView: UIView!
     
     @IBOutlet weak var colorPickerContainerView: UIView!
@@ -94,44 +94,37 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     required init?(coder: NSCoder) {
         layerContainerView = LayerContainerView(width:pX,height:pY);
         super.init(coder: coder);
-        
     }
     
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if(segue.identifier == "toolbarSegue"){
             toolbarController = segue.destination as? ToolbarViewController;
-            _ = toolbarController?.toolEvent.addHandler(target: self, handler: ViewController.toolEventHandler, key: toolbarKey)
+            _ = toolbarController?.toolEvent.addHandler(target: self, handler: DrawingViewController.toolEventHandler, key: toolbarKey)
             
         }
         else if(segue.identifier == "layerPanelSegue"){
             layerPanelController = segue.destination as? LayerPanelViewController;
-            _ = layerPanelController?.layerEvent.addHandler(target: self, handler: ViewController.layerEventHandler, key: layerEventKey)
+            _ = layerPanelController?.layerEvent.addHandler(target: self, handler: DrawingViewController.layerEventHandler, key: layerEventKey)
             
         }
         else if(segue.identifier == "colorPickerSegue"){
             colorPickerView = SwiftHSVColorPicker(frame: CGRect(x:10, y:20, width:300, height:400))
             segue.destination.view.addSubview(colorPickerView!)
             colorPickerView?.setViewColor(UIColor.red)
-            _ = colorPickerView?.colorEvent.addHandler(target: self, handler: ViewController.colorPickerEventHandler, key: colorPickerKey)
+            _ = colorPickerView?.colorEvent.addHandler(target: self, handler: DrawingViewController.colorPickerEventHandler, key: colorPickerKey)
         }
             
         else if(segue.identifier == "fileListSegue"){
             fileListController = segue.destination as? SavedFilesPanelViewController;
-            _ = fileListController?.fileEvent.addHandler(target: self, handler: ViewController.fileEventHandler, key: fileEventKey)
+            _ = fileListController?.fileEvent.addHandler(target: self, handler: DrawingViewController.fileEventHandler, key: fileEventKey)
         }
         
         else if(segue.identifier == "behaviorPanelSegue"){
             behaviorPanelController = segue.destination as? BehaviorPanelViewController;
-            _ =  behaviorPanelController?.behaviorEvent.addHandler(target: self, handler: ViewController.behaviorEventHandler, key: behaviorEventKey)
+            _ =  behaviorPanelController?.behaviorEvent.addHandler(target: self, handler: DrawingViewController.behaviorEventHandler, key: behaviorEventKey)
         }
         
-        else if (segue.identifier == "programmingViewSegue"){
-            programmingViewController = segue.destination as? ProgrammingViewController
-           // programmingViewController?.view.isHidden = true;
-              self.view.sendSubview(toBack:  (programmingViewController?.view)!)
-              _ =  programmingViewController?.programmingEvent.addHandler(target: self, handler: ViewController.programmingEventHandler, key: programmingEventKey)
-        }
         
     }
     
@@ -143,9 +136,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     func toolEventHandler(data: (String), key: String){
         print("tool event handler",data)
         switch(data){
+        case "PROGRAMMING_VIEW_REQUEST":
+            Router.createProgrammingModule();
+            break;
         case "VIEW_LOADED":
-            toolbarController?.exportButton.addTarget(self, action: #selector(ViewController.exportImage), for: .touchUpInside)
-            toolbarController?.saveButton.addTarget(self, action: #selector(ViewController.saveProject), for: .touchUpInside)
+            toolbarController?.exportButton.addTarget(self, action: #selector(DrawingViewController.exportImage), for: .touchUpInside)
+            toolbarController?.saveButton.addTarget(self, action: #selector(DrawingViewController.saveProject), for: .touchUpInside)
             break;
         case "ERASE_MODE":
             self.layerContainerView.removeAllStrokes()
@@ -214,27 +210,11 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         case "ALPHA_CHANGED":
             uiInput.setAlpha(val: (toolbarController?.alphaSlider.value)!);
             break;
-        case "PROGRAMMING_VIEW_REQUEST":
-            programmingViewController?.view.isHidden = false;
-            self.view.bringSubview(toFront:  (programmingViewController?.view)!)
-
-            break;
         default:
             break;
         }
     }
     
-    func programmingEventHandler(data:(String,JSON?), key:String){
-        switch(data.0){
-        case "RETURN_TO_MAIN":
-            programmingViewController?.view.isHidden = true;
-            self.view.sendSubview(toBack:  (programmingViewController?.view)!)
-
-            break;
-        default:
-            break;
-        }
-    }
     
     
     func layerEventHandler(data: (String,String,String?), key: String){
@@ -350,15 +330,19 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     
     override func viewDidLoad() {
-        
-        print("loaded main view controller")
-        
         super.viewDidLoad()
+        self.navigationController?.isNavigationBarHidden = true
         
+        self.initInterface();
+
+    }
+    
+    
+    func initInterface(){
         self.initCanvas()
         
         
-        _ = RequestHandler.dataEvent.addHandler(target: self, handler: ViewController.processRequestHandler, key: dataEventKey)
+        _ = RequestHandler.dataEvent.addHandler(target: self, handler: DrawingViewController.processRequestHandler, key: dataEventKey)
         
         let configureRequest = Request(target: "storage", action: "configure", data:JSON([]), requester: self)
         
@@ -368,15 +352,15 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         self.view.addSubview(layerContainerView);
         self.view.sendSubview(toBack: layerContainerView);
         
-        let pinchRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(ViewController.handlePinch))
+        let pinchRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(DrawingViewController.handlePinch))
         pinchRecognizer.delegate = self
         layerContainerView.addGestureRecognizer(pinchRecognizer)
         
-        let rotateRecognizer = UIRotationGestureRecognizer(target: self, action: #selector(ViewController.handleRotate))
+        let rotateRecognizer = UIRotationGestureRecognizer(target: self, action: #selector(DrawingViewController.handleRotate))
         rotateRecognizer.delegate = self
         layerContainerView.addGestureRecognizer(rotateRecognizer)
         
-        let panRecognizer = UIPanGestureRecognizer(target: self, action: #selector(ViewController.handlePan))
+        let panRecognizer = UIPanGestureRecognizer(target: self, action: #selector(DrawingViewController.handlePan))
         panRecognizer.delegate = self
         panRecognizer.minimumNumberOfTouches = 2;
         layerContainerView.addGestureRecognizer(panRecognizer)
@@ -392,7 +376,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         behaviorPanelContainerView.layer.cornerRadius = 8.0
         behaviorPanelContainerView.clipsToBounds = true
         behaviorPanelContainerView.isHidden = true;
-
+        
         colorPickerContainerView.layer.cornerRadius = 8.0
         colorPickerContainerView.clipsToBounds = true
         
@@ -405,10 +389,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         fileListContainerView.layer.cornerRadius = 8.0
         fileListContainerView.clipsToBounds = true
         fileListContainerView.isHidden = true;
-        
-
     }
-    
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated);
@@ -437,7 +418,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         
         requestProjectList()
         
-        drawInterval  = Timer.scheduledTimer(timeInterval:0.016 , target: self, selector: #selector(ViewController.drawIntervalCallback), userInfo: nil, repeats: true)
+        drawInterval  = Timer.scheduledTimer(timeInterval:0.016 , target: self, selector: #selector(DrawingViewController.drawIntervalCallback), userInfo: nil, repeats: true)
         
         self.startBackupTimer(interval:self.backupInterval);
         
@@ -582,7 +563,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         
         UserDefaults.standard.synchronize()
         
-        _ = self.layerContainerView.saveEvent.addHandler(target: self, handler: ViewController.uploadProjectHandler, key: saveEventKey)
+        _ = self.layerContainerView.saveEvent.addHandler(target: self, handler: DrawingViewController.uploadProjectHandler, key: saveEventKey)
         self.behaviorManager?.refreshAllBehaviors();
         //TODO: this is a hack. need to create a delay in case it's saving a stroke to the texture
         
@@ -684,7 +665,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         self.toolbarController?.enableSaveLoad();
         self.dismiss(animated: true, completion: nil)
         //self.endCancelTimer();
-        backupTimer  = Timer.scheduledTimer(timeInterval:TimeInterval(interval), target: self, selector: #selector(ViewController.backupCallback), userInfo: nil, repeats: true)
+        backupTimer  = Timer.scheduledTimer(timeInterval:TimeInterval(interval), target: self, selector: #selector(DrawingViewController.backupCallback), userInfo: nil, repeats: true)
 
     }
     
@@ -739,7 +720,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     func backupImage(){
         
-        _ = self.layerContainerView.exportEvent.addHandler(target: self, handler: ViewController.backupImageHandler, key: backupKey)
+        _ = self.layerContainerView.exportEvent.addHandler(target: self, handler: DrawingViewController.backupImageHandler, key: backupKey)
         self.layerContainerView.exportPNG();
     }
     
@@ -772,7 +753,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     func exportImage(){
         self.endBackupTimer()
-       _ = self.layerContainerView.exportEvent.addHandler(target: self, handler: ViewController.handleExportRequest, key: exportKey)
+       _ = self.layerContainerView.exportEvent.addHandler(target: self, handler: DrawingViewController.handleExportRequest, key: exportKey)
         self.behaviorManager?.refreshAllBehaviors();
         //TODO: this is a hack. need to create a delay in case it's saving a stroke to the texture
         DispatchQueue.global(qos: .userInteractive).async {
@@ -1297,8 +1278,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         currentCanvas = Canvas();
         behaviorManager = BehaviorManager(canvas: currentCanvas!);
         currentCanvas!.initDrawing();
-        _ = currentCanvas!.currentDrawing?.strokeGeneratedEvent.addHandler(target: self, handler: ViewController.strokeGeneratedHandler, key: strokeGeneratedKey)
-        _ = currentCanvas!.currentDrawing?.strokeRemovedEvent.addHandler(target: self, handler: ViewController.strokeRemovedHandler, key: strokeRemovedKey)
+        _ = currentCanvas!.currentDrawing?.strokeGeneratedEvent.addHandler(target: self, handler: DrawingViewController.strokeGeneratedHandler, key: strokeGeneratedKey)
+        _ = currentCanvas!.currentDrawing?.strokeRemovedEvent.addHandler(target: self, handler: DrawingViewController.strokeRemovedHandler, key: strokeRemovedKey)
     }
     
     

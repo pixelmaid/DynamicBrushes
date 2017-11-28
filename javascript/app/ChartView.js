@@ -7,7 +7,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
     function($, panzoom, contextmenu, ui, jsPlumb, EditableSelect, Expression, Emitter, ID, methodTemplate, eventTemplate, behaviorTemplate, stateTemplate, startTemplate, transitionTemplate, mappingTemplate) {
 
         var block_was_dragged = null;
-        var conditionalEvents = ["TIME_INTERVAL","DISTANCE_INTERVAL","STYLUS_MOVE_BY","STYLUS_X_MOVE_BY","STYLUS_Y_MOVE_BY","INTERSECTION"];
+        var conditionalEvents = ["TIME_INTERVAL", "DISTANCE_INTERVAL", "STYLUS_MOVE_BY", "STYLUS_X_MOVE_BY", "STYLUS_Y_MOVE_BY", "INTERSECTION"];
         console.log("start template", startTemplate);
         console.log("state template", stateTemplate);
         var state_counter = 0;
@@ -158,13 +158,13 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                 });
 
-                 $.contextMenu({
+                $.contextMenu({
                     selector: '#' + self.id + ' .method',
                     callback: function(key, options) {
                         if (key == "delete") {
-                           var methodId = $(options.$trigger[0]).attr("id");
+                            var methodId = $(options.$trigger[0]).attr("id");
 
-                        self.trigger("ON_METHOD_REMOVED", [self.id, methodId]);
+                            self.trigger("ON_METHOD_REMOVED", [self.id, methodId]);
 
                         }
                     },
@@ -247,17 +247,18 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                             }
 
-                        } /*else if (type == "action") {
-                            var methodId = ID();
-                            var targetMethod = $(ui.draggable).attr('name');
-                            var defaultArgument = $(ui.draggable).attr('defaultArgument');
-                            //data.name = name;
-                            self.trigger("ON_METHOD_ADDED", [self.id, null, methodId, targetMethod, defaultArgument]);
-                            $(ui.helper).remove(); //destroy clone
-                            $(ui.draggable).remove(); //remove from list
+                        }
+                        /*else if (type == "action") {
+                                                   var methodId = ID();
+                                                   var targetMethod = $(ui.draggable).attr('name');
+                                                   var defaultArgument = $(ui.draggable).attr('defaultArgument');
+                                                   //data.name = name;
+                                                   self.trigger("ON_METHOD_ADDED", [self.id, null, methodId, targetMethod, defaultArgument]);
+                                                   $(ui.helper).remove(); //destroy clone
+                                                   $(ui.draggable).remove(); //remove from list
 
 
-                        }*/
+                                               }*/
 
 
                     }
@@ -446,7 +447,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 var el = expression.addReference(referenceType, referenceName, referenceProperties, referencePropertiesDisplayNames, referenceId, referenceDisplayName, name);
                 console.log("el to make draggable");
                 this.makeDraggable(el);
-
+                this.addInspector(el);
                 return expression;
             }
 
@@ -493,13 +494,13 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                         var referenceName, referenceProperties, referencePropertiesDisplayNames;
                         if (type == 'sensor_prop') {
                             referenceName = 'stylus';
-                             constraint_type = "active";
+                            constraint_type = "active";
                             console.log("sensor prop dropped on mapping", displayName);
                             $(ui.helper).remove(); //destroy cloneit'
                             referenceProperties = [name.split("_")[1]];
 
                             //TODO: Should set constraint active or passive in palette model, not here
-                            if(referenceProperties[0]=="speed"){
+                            if (referenceProperties[0] == "speed") {
                                 constraint_type = "passive";
                             }
                             referencePropertiesDisplayNames = [displayName];
@@ -537,17 +538,15 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                             expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, referencePropertiesDisplayNames, generatorId, displayName, name);
                             self.trigger("ON_GENERATOR_ADDED", [mapping_data.mappingId, generatorId, generatorType, self.id, target_state, relativePropertyName, relativePropertyItemName, expression.id, expression.getText(), expression.getPropertyList()]);
 
-                        }
+                        } else if (type == 'dataset') {
 
-                         else if (type == 'dataset') {
-
-                            referenceName = name.split("_")[0]+"_"+name.split("_")[1];
-                             constraint_type = "passive";
+                            referenceName = "dataset_" + name.split("_")[0];
+                            constraint_type = "passive";
                             console.log("dataset prop dropped on mapping", displayName);
                             $(ui.helper).remove(); //destroy cloneit'
-                            referenceProperties = [name.split("_")[2]];
+                            referenceProperties = [name.split("_")[1]];
 
-                           
+
                             referencePropertiesDisplayNames = [displayName];
 
                             expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, referencePropertiesDisplayNames, drop_id, displayName, name);
@@ -563,7 +562,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
             }
 
-            addTransitionEvent(data,generator_data,condition_data) {
+            addTransitionEvent(data, generator_data, condition_data) {
                 console.log("adding transition event", data);
                 //var html = "<div parent_id='" + data.transitionId + "'name='" + data.eventName + "'type='transition' class='block transition'>" + data.displayName + "</div>";
                 var self = this;
@@ -573,28 +572,28 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     displayName: data.displayName,
                 };
 
-                if (conditionalEvents.indexOf(data.eventName)>=0) {
+                if (conditionalEvents.indexOf(data.eventName) >= 0) {
                     eventTemplateData.transitionNumberId = data.transitionId + "_num";
-                       eventTemplateData.value = 1;
+                    eventTemplateData.value = 1;
                 }
 
-                if(data.conditionName){
+                if (data.conditionName) {
                     var conditionName = data.conditionName;
-                    var condition = condition_data.filter(function(c){
+                    var condition = condition_data.filter(function(c) {
                         return c.name == conditionName;
                     });
 
                     var relativeName = condition[0].relativeNames[0];
-                    var generator = generator_data.filter(function(g){
-                        return g.generatorId == relativeName ;
+                    var generator = generator_data.filter(function(g) {
+                        return g.generatorId == relativeName;
                     });
-                    if(generator[0].generator_type == "interval"){
+                    if (generator[0].generator_type == "interval") {
                         var val = generator[0].inc;
                         eventTemplateData.value = val;
 
                     }
 
-                    console.log("transition has condition!",conditionName,condition,generator);
+                    console.log("transition has condition!", conditionName, condition, generator);
 
                 }
 
@@ -624,7 +623,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
             transitionConditionChanged(behaviorId, transitionId, eventName, fromStateId, toStateId, displayName, name) {
                 var transitionHTML = $('#' + transitionId);
                 var conditions = [];
-                if (conditionalEvents.indexOf(eventName)>=0){
+                if (conditionalEvents.indexOf(eventName) >= 0) {
                     var num_condition = $('#' + transitionId + "_num").val();
                     conditions.push(num_condition);
                     console.log("transition condition  changed for ", eventName, num_condition);
@@ -701,7 +700,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     $('#' + self.id).append(html);
 
                 }
-               // this.makeDraggable($("#" + data.methodId));
+                // this.makeDraggable($("#" + data.methodId));
                 if (data.hasArguments) {
                     console.log("get text box by id", document.getElementById(methodTemplateData.methodTextId), methodTemplateData.methodTextId);
                     EditableSelect.createEditableSelect(document.getElementById(methodTemplateData.methodTextId));
@@ -745,12 +744,25 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
             //TODO: I think remove unbinds events of child elements but need to confirm here
             removeMapping(data) {
                 console.log("mapping to remove", $("#" + data.mappingId), data.mappingId);
-                var br = $("#" + data.mappingId+"+ br");
+                var br = $("#" + data.mappingId + "+ br");
                 var mapping = $("#" + data.mappingId);
                 br.remove();
                 mapping.remove();
                 this.instance.repaintEverything();
 
+            }
+
+            addInspector(target){
+                target.hover(
+                    function() {
+                        var position = $(this).offset(); 
+                        $("#inspector").css({left:position.left, top:position.top+30,visibility:"visible"});
+                    },
+                    function() {
+                       
+                          $("#inspector").css({visibility:"hidden"});
+
+                    });
             }
 
             makeDraggable(target) {
@@ -862,7 +874,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                     console.log("connection id", data.transitions[j], connection.id);
                     self.addOverlayToConnection(data.transitions[j]);
-                    self.addTransitionEvent(data.transitions[j],data.generators,data.conditions);
+                    self.addTransitionEvent(data.transitions[j], data.generators, data.conditions);
                 }
                 this.instance.bind("connection", function(info) {
                     console.log("state transition made", info);
@@ -877,6 +889,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     els.every(function(el) {
                         console.log("el to make draggable", el);
                         self.makeDraggable(el);
+                        self.addInspector(el);
                     });
                 }
 
@@ -909,7 +922,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     id: "transition_" + id
                 }]);
 
-                
+
 
                 connection.addOverlay(["Custom", {
                     create: function(component) {
@@ -941,7 +954,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                                 }
                             }
                             connection.getOverlay("transition_" + id).show();
-                            console.log("transition overlay",id, $('#' + id).parent());
+                            console.log("transition overlay", id, $('#' + id).parent());
                             $('#' + id).parent().css('z-index', 50);
 
                             connection.getOverlay("toggle_" + id).hide();
@@ -1003,14 +1016,14 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
 
                 connection.getOverlay("transition_" + id).hide();
-                var selector = $("#"+id).parent().closest('div').attr('id');
-                console.log("selector:",selector);
-                 $.contextMenu({
-                    selector: "#"+selector,
+                var selector = $("#" + id).parent().closest('div').attr('id');
+                console.log("selector:", selector);
+                $.contextMenu({
+                    selector: "#" + selector,
                     callback: function(key, options) {
                         if (key == "minimize") {
-                           connection.getOverlay("transition_" + id).hide();
-                             connection.getOverlay("toggle_" + id).show();
+                            connection.getOverlay("transition_" + id).hide();
+                            connection.getOverlay("toggle_" + id).show();
 
 
                         }

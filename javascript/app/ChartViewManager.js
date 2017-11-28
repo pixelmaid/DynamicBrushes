@@ -423,6 +423,11 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
 
             }
 
+            processInspectorData(data){
+                console.log("chart manager process inspector data", data);
+
+            }
+
             processAuthoringResponse(data) {
                 console.log("chart manager process authoring response", data, this.lastAuthoringRequest, data.result);
                 if (data.result == "success" || data.result == "check") {

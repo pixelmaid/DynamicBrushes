@@ -5,19 +5,21 @@
 define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 
 	function($, EventEmitter, ID, Emitter) {
-		var DataLoader = class extends Emitter {
+		var DatasetLoader = class extends Emitter {
 
 			constructor() {
 				super();
+				 //todo: should read this dynamically from the file folder
+
+				this.filenames = ["BrainDrain.json","meteor.json"];
 			}
 
-			loadData(){
+			loadDataset(filename){
 				var self = this;
-				$.getJSON("app/sample_datasets/BrainDrain.json", function(data) {
-					var meteor_data = data;
+				$.getJSON("app/sample_datasets/"+filename, function(data) {
 
 					var id = data["meta"]["view"]["id"]
-					var columns = meteor_data["meta"]["view"]["columns"];
+					var columns = data["meta"]["view"]["columns"];
 					var items = [];
 					for (var i=0; i<columns.length;i++) {
 							if(columns[i]["dataTypeName"]!="meta_data"){
@@ -41,6 +43,6 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 			}
 		};
 
-		return DataLoader;
+		return DatasetLoader;
 
 	});

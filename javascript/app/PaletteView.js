@@ -33,13 +33,16 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", 'app/i
                     }
                 });
 
-                this.model.addListener("ON_DATA_READY",function(data) {
-                    this.generatePalette();
+                this.generatePalette();
+
+               this.model.addListener("ON_DATA_READY",function(data) {
+                    this.updateSelectedPalette(data);
                 }.bind(this));
             }
 
 
             generatePalette(){
+                console.log("generate palette called");
                 var self = this;
                 for (var i = 0; i < this.btn_list.length; i++) {
                    this.btn_list[i].click(function(event) {
@@ -48,7 +51,7 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", 'app/i
                         }
                         self.model.selected = $(event.target).attr('id');
                         $(event.target).addClass("selected");
-                        console.log("model selected",self.model.selected,self.model.data)
+                        console.log("model selected",self.model.selected,self.model.data);
                         self.updateSelectedPalette(self.model.data[self.model.selected]);
                     });
                 }

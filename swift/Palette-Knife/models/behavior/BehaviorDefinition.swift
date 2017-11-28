@@ -316,7 +316,7 @@ class BehaviorDefinition {
         if(expressionPropertyList != JSON.null){
             let dataExpressionDictionary = expressionPropertyList.dictionaryValue;
             for (key,value) in dataExpressionDictionary{
-                let dataEmitterValue = (value.arrayValue)[0].stringValue;
+                var dataEmitterValue = (value.arrayValue)[0].stringValue;
                 let emitter:Any?
                 #if DEBUG
                     print("data emitter value",dataEmitterValue);
@@ -332,8 +332,9 @@ class BehaviorDefinition {
                     emitter = uiInput;
                     }
                     
-                    else if(dataEmitterValue.range(of:"dataset") != nil){
-                        emitter = BehaviorManager.datasets[dataEmitterValue];
+                else if(dataEmitterValue.range(of:"dataset") != nil){
+                    let dataset_id = String(dataEmitterValue.split(separator: "_")[1]);
+                    emitter = BehaviorManager.datasets[dataset_id];
                      #if DEBUG
                     print("found dataset emitter",emitter)
                     #endif

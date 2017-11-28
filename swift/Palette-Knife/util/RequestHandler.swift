@@ -9,7 +9,7 @@
 import Foundation
 import SwiftyJSON
 
-class RequestHandler{
+final class RequestHandler: Requester{
     
     static let saveManager = SaveManager();
     static let socketManager = SocketManager();
@@ -19,9 +19,11 @@ class RequestHandler{
     
     static let socketKey = NSUUID().uuidString
     static let storageKey = NSUUID().uuidString
+
     static let sharedInstance = RequestHandler()
-    
     static var activeItem:Request?
+    static var emitters = [String:ObservableChangeLog]();
+    static var emitterTimer:Timer!
     
     static func addRequest(requestData:Request){
         requestQueue.append(requestData);
@@ -29,6 +31,7 @@ class RequestHandler{
             checkRequest();
         }
     }
+    
     
     
     init(){
@@ -65,6 +68,14 @@ class RequestHandler{
         
     }
     
+    func processRequest(data: (String,JSON?)){
+        
+    }
+    
+    func processRequestHandler(data:(String, JSON?), key: String){
+    
+    }
+    
     private func handleRequest(){
         if(RequestHandler.requestQueue.count>0){
             let request = RequestHandler.requestQueue.removeFirst()
@@ -88,6 +99,13 @@ class RequestHandler{
                     send_data["type"] = JSON("storage_data")
                     RequestHandler.socketManager.sendData(data: send_data);
                     break;
+                case "send_inspector_data":
+                    let data = RequestHandler.activeItem!.data!
+                    var send_data:JSON = [:]
+                    send_data["data"] = data;
+                    send_data["type"] = JSON("inspector_data")
+                    RequestHandler.socketManager.sendData(data: send_data);
+                    break;
                 case "authoring_response":
                     let data = RequestHandler.activeItem!.data!
                     RequestHandler.socketManager.sendData(data: data);
@@ -95,7 +113,7 @@ class RequestHandler{
                     break;
                 case "synchronize":
                     let data = RequestHandler.activeItem!.data!
-                    let requester = RequestHandler.activeItem!.requester as! ViewController;
+                    let requester = RequestHandler.activeItem!.requester as! DrawingViewController;
                     let currentBehaviorName = requester.currentBehaviorName;
                     let currentBehaviorFile = requester.currentBehaviorFile;
 
@@ -230,11 +248,94 @@ class RequestHandler{
     }
     
     
+    static func registerObservable(observableId:String,observable:Observable<Float>,target:String?){
+        if(RequestHandler.emitters[observableId]==nil){
+            RequestHandler.emitters[observableId] = ObservableChangeLog(observableId:observableId);
+            _ = observable.didChange.addHandler(target: sharedInstance, handler: RequestHandler.emitterChangeHandler, key: observableId)
+
+        }
+        if(target != nil){
+            RequestHandler.emitters[observableId]!.registerListener(listenerId: target!);
+        }
+        if(emitterTimer == nil){
+            emitterTimer = Timer.scheduledTimer(timeInterval:1, target: RequestHandler.sharedInstance, selector: #selector(RequestHandler.emitterLogCallback), userInfo: nil, repeats: true)
+        }
+    }
+    
+    @objc private func emitterLogCallback(){
+        var transmitData:JSON = [:];
+        for (key, emitterChangeLog) in RequestHandler.emitters{
+            
+            if emitterChangeLog.hasNewValues{
+                let values = emitterChangeLog.getValues();
+                let registeredListeners = emitterChangeLog.getListeners();
+                var valueListenerJSON:JSON = [:];
+                valueListenerJSON["values"] = JSON(values);
+                valueListenerJSON["listeners"] = JSON(registeredListeners);
+                
+                transmitData[key] = valueListenerJSON;
+                emitterChangeLog.clearValues();
+            }
+        }
+        let socketRequest = Request(target: "socket", action: "send_inspector_data", data: transmitData, requester: RequestHandler.sharedInstance)
+        RequestHandler.addRequest(requestData: socketRequest)
+    }
+    
+     private func emitterChangeHandler(data:(String,Float,Float),key:String){
+        RequestHandler.emitters[key]!.addValue(value:data.2);
+        
+       
+    }
+    
     
     
     
 }
 
+//stores the
+class ObservableChangeLog{
+    
+    let observableId:String
+    private var registeredListeners = [String]();
+    private var storedValues = [Float]();
+    var hasNewValues = false;
+    
+    init(observableId:String){
+        self.observableId = observableId;
+    }
+    
+     func registerListener(listenerId:String){
+        self.registeredListeners.append(listenerId)
+    }
+    
+    func getListeners()->[String]{
+        return self.registeredListeners
+    }
+    
+    func clearListeners(){
+        self.registeredListeners.removeAll()
+    }
+    
+     func addValue(value:Float){
+        self.storedValues.append(value);
+        self.hasNewValues = true;
+    }
+    
+     func getValues()->[Float]{
+        return self.storedValues;
+    }
+    
+     func clearValues(){
+        self.storedValues.removeAll();
+        hasNewValues = false;
+    }
+    
+    func destroy(){
+        self.clearValues();
+        self.clearListeners();
+    }
+    
+}
 
 struct Request{
     
