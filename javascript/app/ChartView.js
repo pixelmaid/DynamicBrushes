@@ -1,10 +1,10 @@
 //ChartView     
 "use strict";
-define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "app/Emitter", "app/id", "hbs!app/templates/method", "hbs!app/templates/event", "hbs!app/templates/behavior", "hbs!app/templates/state", "hbs!app/templates/start", "hbs!app/templates/transition", "hbs!app/templates/mapping"],
+define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "app/Emitter", "app/id", "app/InspectorModel","hbs!app/templates/method", "hbs!app/templates/event", "hbs!app/templates/behavior", "hbs!app/templates/state", "hbs!app/templates/start", "hbs!app/templates/transition", "hbs!app/templates/mapping"],
 
 
 
-    function($, panzoom, contextmenu, ui, jsPlumb, EditableSelect, Expression, Emitter, ID, methodTemplate, eventTemplate, behaviorTemplate, stateTemplate, startTemplate, transitionTemplate, mappingTemplate) {
+    function($, panzoom, contextmenu, ui, jsPlumb, EditableSelect, Expression, Emitter, ID, InspectorModel, methodTemplate, eventTemplate, behaviorTemplate, stateTemplate, startTemplate, transitionTemplate, mappingTemplate) {
 
         var block_was_dragged = null;
         var conditionalEvents = ["TIME_INTERVAL", "DISTANCE_INTERVAL", "STYLUS_MOVE_BY", "STYLUS_X_MOVE_BY", "STYLUS_Y_MOVE_BY", "INTERSECTION"];
@@ -753,14 +753,16 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
             }
 
             addInspector(target){
+                var inspectorModel = new InspectorModel(this.id,target.attr("id"));
+                var el = inspectorModel.view.el;
                 target.hover(
                     function() {
                         var position = $(this).offset(); 
-                        $("#inspector").css({left:position.left, top:position.top+30,visibility:"visible"});
+                        el.css({left:position.left, top:position.top+30,visibility:"visible"});
                     },
                     function() {
                        
-                          $("#inspector").css({visibility:"hidden"});
+                          el.css({visibility:"hidden"});
 
                     });
             }

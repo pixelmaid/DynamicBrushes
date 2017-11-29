@@ -32,11 +32,11 @@ class Stylus: TimeSeries, WebTransmitter {
     var prevTime = Float(0);
     var penDown = Observable<Float>(0);
     var forceSub = Float(1);
-    var id = NSUUID().uuidString;
     var transmitEvent = Event<(String)>()
     var initEvent = Event<(WebTransmitter,String)>()
     var moveCounter  = 0;
     var constraintTransmitComplete = true;
+    
     //var moveDist = Float(0);
     
     // var testCount = 4;
@@ -49,8 +49,8 @@ class Stylus: TimeSeries, WebTransmitter {
         self.x = position.x;
         self.y = position.y
         
-        RequestHandler.registerObservable(observableId: "stylus_x", observable: self.x, target: nil)
-        RequestHandler.registerObservable(observableId: "stylus_y", observable: self.y, target: nil)
+        RequestHandler.registerObservable(observableId: "stylus_x", observable: self.x)
+        RequestHandler.registerObservable(observableId: "stylus_y", observable: self.y)
 
         self.x.printname = "stylus_position_x"
         self.y.printname = "stylus_position_y"
@@ -63,6 +63,7 @@ class Stylus: TimeSeries, WebTransmitter {
         self.xDistance = Observable<Float>(0);
         self.yDistance = Observable<Float>(0);
         super.init()
+        self.id = "stylus";
         self.name = "stylus"
         self.position.name = "stylus_position"
         position.set(x: x, y:y)

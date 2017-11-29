@@ -22,8 +22,9 @@ final class RequestHandler: Requester{
 
     static let sharedInstance = RequestHandler()
     static var activeItem:Request?
-    static var emitters = [String:ObservableChangeLog]();
-    static var emitterTimer:Timer!
+    static var inspectorObservables = [String:ObservableChangeLog]();
+    static var inspectorEventDisposables = [String:Disposable]();
+    static var inspectorTimer:Timer!
     
     static func addRequest(requestData:Request){
         requestQueue.append(requestData);
@@ -240,54 +241,68 @@ final class RequestHandler: Requester{
             #if DEBUG
            // print("socket data handler called \(data.0,data.1?["type"].stringValue,RequestHandler.activeItem == nil )")
             #endif
-
         }
-        
         RequestHandler.dataQueue.append(data);
         RequestHandler.checkRequest();
     }
     
     
-    static func registerObservable(observableId:String,observable:Observable<Float>,target:String?){
-        if(RequestHandler.emitters[observableId]==nil){
-            RequestHandler.emitters[observableId] = ObservableChangeLog(observableId:observableId);
-            _ = observable.didChange.addHandler(target: sharedInstance, handler: RequestHandler.emitterChangeHandler, key: observableId)
-
+    static func registerObservable(observableId:String,observable:Observable<Float>){
+        if(RequestHandler.inspectorObservables[observableId]==nil){
+            RequestHandler.inspectorObservables[observableId] = ObservableChangeLog(observableId:observableId);
+           let disposable = observable.didChange.addHandler(target: sharedInstance, handler: RequestHandler.observableChangeHandler, key: observableId)
+            RequestHandler.inspectorEventDisposables[observableId] = disposable
         }
-        if(target != nil){
-            RequestHandler.emitters[observableId]!.registerListener(listenerId: target!);
+    }
+    
+    static func registerObservableTarget(observableId:String,behaviorId:String, target:String){
+        RequestHandler.inspectorObservables[observableId]!.registerListener(behaviorId:behaviorId, listenerId: target);
+        if(inspectorTimer == nil){
+            inspectorTimer = Timer.scheduledTimer(timeInterval:1, target: RequestHandler.sharedInstance, selector: #selector(RequestHandler.emitterLogCallback), userInfo: nil, repeats: true)
         }
-        if(emitterTimer == nil){
-            emitterTimer = Timer.scheduledTimer(timeInterval:1, target: RequestHandler.sharedInstance, selector: #selector(RequestHandler.emitterLogCallback), userInfo: nil, repeats: true)
+    }
+    
+    static func clearAllObservableListenersForBehavior(behaviorId:String){
+        for (_,observableChangeLog) in RequestHandler.inspectorObservables{
+            observableChangeLog.clearListenersForBehavior(behaviorId:behaviorId)
         }
+    }
+    
+    static func clearAllObservables(){
+        for (key,observableChangeLog) in RequestHandler.inspectorObservables{
+            RequestHandler.inspectorEventDisposables[key]?.dispose();
+            observableChangeLog.destroy()
+        }
+        RequestHandler.inspectorEventDisposables.removeAll();
+        RequestHandler.inspectorObservables.removeAll();
+        inspectorTimer = nil;
     }
     
     @objc private func emitterLogCallback(){
         var transmitData:JSON = [:];
-        for (key, emitterChangeLog) in RequestHandler.emitters{
+        for (key, observableChangeLog) in RequestHandler.inspectorObservables{
             
-            if emitterChangeLog.hasNewValues{
-                let values = emitterChangeLog.getValues();
-                let registeredListeners = emitterChangeLog.getListeners();
+            if observableChangeLog.hasNewValues{
+                let values = observableChangeLog.getValues();
+                let registeredListeners = observableChangeLog.getListeners();
                 var valueListenerJSON:JSON = [:];
                 valueListenerJSON["values"] = JSON(values);
                 valueListenerJSON["listeners"] = JSON(registeredListeners);
                 
                 transmitData[key] = valueListenerJSON;
-                emitterChangeLog.clearValues();
+                observableChangeLog.clearValues();
             }
         }
-        let socketRequest = Request(target: "socket", action: "send_inspector_data", data: transmitData, requester: RequestHandler.sharedInstance)
-        RequestHandler.addRequest(requestData: socketRequest)
+        if(!transmitData.isEmpty){
+            let socketRequest = Request(target: "socket", action: "send_inspector_data", data: transmitData, requester: RequestHandler.sharedInstance)
+            RequestHandler.addRequest(requestData: socketRequest)
+        }
     }
     
-     private func emitterChangeHandler(data:(String,Float,Float),key:String){
-        RequestHandler.emitters[key]!.addValue(value:data.2);
-        
+     private func observableChangeHandler(data:(String,Float,Float),key:String){
+        RequestHandler.inspectorObservables[key]!.addValue(value:data.2);
        
     }
-    
-    
     
     
 }
@@ -296,7 +311,7 @@ final class RequestHandler: Requester{
 class ObservableChangeLog{
     
     let observableId:String
-    private var registeredListeners = [String]();
+    private var registeredListeners = [String:[String]]();
     private var storedValues = [Float]();
     var hasNewValues = false;
     
@@ -304,16 +319,21 @@ class ObservableChangeLog{
         self.observableId = observableId;
     }
     
-     func registerListener(listenerId:String){
-        self.registeredListeners.append(listenerId)
+    func registerListener(behaviorId:String, listenerId:String){
+        if(registeredListeners[behaviorId] == nil){
+            registeredListeners[behaviorId] = [String]();
+        }
+        self.registeredListeners[behaviorId]!.append(listenerId)
     }
     
-    func getListeners()->[String]{
+    func getListeners()->[String:[String]]{
         return self.registeredListeners
     }
     
-    func clearListeners(){
-        self.registeredListeners.removeAll()
+    func clearListenersForBehavior(behaviorId:String){
+        if(self.registeredListeners[behaviorId] != nil){
+            self.registeredListeners[behaviorId]!.removeAll()
+        }
     }
     
      func addValue(value:Float){
@@ -332,7 +352,8 @@ class ObservableChangeLog{
     
     func destroy(){
         self.clearValues();
-        self.clearListeners();
+        self.registeredListeners.removeAll();
+        
     }
     
 }

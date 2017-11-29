@@ -15,7 +15,8 @@ class Emitter: Observable<Float>, Equatable  {
     
     var events =  [String]()
     var keyStorage=[String:[(String,Condition!,Brush)]]()
-
+    var id:String = NSUUID().uuidString;
+    
     init(){
         super.init(0);
         self.name = "default"

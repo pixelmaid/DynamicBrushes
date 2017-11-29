@@ -15,7 +15,6 @@ class Drawing: TimeSeries, WebTransmitter, Hashable{
     //check for if segments need drawing;
     var dirty = false
     
-    var id = NSUUID().uuidString;
     private var activeStrokes = [String:[Stroke]]();
     var allStrokes = [Stroke]();
     var transmitEvent = Event<(String)>()

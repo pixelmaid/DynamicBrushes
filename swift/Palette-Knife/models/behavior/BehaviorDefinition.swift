@@ -305,6 +305,7 @@ class BehaviorDefinition {
     }
     
     func parseExpressionJSON(data:JSON){
+        
         let expressionId = data["expressionId"].stringValue;
         
         let expressionPropertyList = data["expressionPropertyList"];
@@ -316,6 +317,7 @@ class BehaviorDefinition {
         if(expressionPropertyList != JSON.null){
             let dataExpressionDictionary = expressionPropertyList.dictionaryValue;
             for (key,value) in dataExpressionDictionary{
+                let observableID:String
                 var dataEmitterValue = (value.arrayValue)[0].stringValue;
                 let emitter:Any?
                 #if DEBUG
@@ -324,7 +326,6 @@ class BehaviorDefinition {
                     
                     #endif
                 if (dataEmitterValue == "stylus"){
-                
                     emitter = stylus;
                     
                 }
@@ -369,6 +370,7 @@ class BehaviorDefinition {
                 
                 
                 emitterOperandList[key]=(emitter,propertyList,displayNameList);
+
             }
         }
         
@@ -1214,6 +1216,14 @@ class BehaviorDefinition {
         for (key,value) in data.0 {
             let emitter = value.0;
             let propList = value.1;
+            let observableId :String;
+            if(emitter != nil){
+                observableId = ((emitter as! Emitter).id+"_"+propList![0]);
+            }
+            else{
+                 observableId = propList![0];
+            }
+            RequestHandler.registerObservableTarget(observableId: observableId, behaviorId: self.id, target: key)
             let operand = self.generateSingleOperand(targetBrush: targetBrush, emitter: emitter, propList: propList)
             operands[key] = operand;
         }
@@ -1277,6 +1287,7 @@ class BehaviorDefinition {
 
     
     func clearBehavior(){
+        RequestHandler.clearAllObservableListenersForBehavior(behaviorId: self.id)
         for (_,value) in self.storedExpressions{
             for (_,v) in value{
                 v.destroy();

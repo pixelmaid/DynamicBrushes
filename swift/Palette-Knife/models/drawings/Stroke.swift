@@ -176,7 +176,6 @@ class Stroke:TimeSeries, Geometry {
    /* var xBuffer = CircularBuffer();
     var yBuffer = CircularBuffer();
     var weightBuffer = CircularBuffer();*/
-    let id = NSUUID().uuidString;
     var parentID: String;
     var selected = false;
     

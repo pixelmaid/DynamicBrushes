@@ -1,8 +1,8 @@
 //ChartViewManager.js
 'use strict';
-define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspector", "hbs!app/templates/behavioritem"],
+define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel", "hbs!app/templates/behavioritem", "app/InspectorDataController"],
 
-    function($, ID, Emitter, ChartView, GeneratorInspector, BehaviorItemTemplate) {
+    function($, ID, Emitter, ChartView, GeneratorModel, BehaviorItemTemplate, InspectorDataController) {
         var behavior_counter = 1;
         var spaceDown = false;
         var cmmd_down = false;
@@ -16,10 +16,11 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
 
 
             constructor(model, element) {
+
                 super();
                 this.el = $(element);
                 this.model = model;
-                this.generatorInspector = new GeneratorInspector();
+                this.generatorModel = new GeneratorModel();
                 this.views = {};
                 this.currentView = null;
                 this.lastAuthoringRequest = null;
@@ -424,9 +425,9 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
             }
 
             processInspectorData(data){
-                console.log("chart manager process inspector data", data);
-
+                  InspectorDataController.setData(data);
             }
+
 
             processAuthoringResponse(data) {
                 console.log("chart manager process authoring response", data, this.lastAuthoringRequest, data.result);
@@ -843,7 +844,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                     expressionPropertyList: expressionPropertyList,
                     type: "generator_added"
                 };
-                this.generatorInspector.addDefaultValues(generator_type, transmit_data);
+                this.generatorModel.addDefaultValues(generator_type, transmit_data);
                 this.lastAuthoringRequest = {
                     data: transmit_data
                 };
@@ -868,7 +869,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorInspec
                     expressionPropertyList: expressionPropertyList,
                     type: "dataset_added"
                 };
-                this.generatorInspector.addDefaultValues(datasetType, transmit_data);
+                this.generatorModel.addDefaultValues(datasetType, transmit_data);
                 this.lastAuthoringRequest = {
                     data: transmit_data
                 };

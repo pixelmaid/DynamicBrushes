@@ -13,7 +13,6 @@ class UIInput: TimeSeries, WebTransmitter {
    
     var transmitEvent = Event<(String)>()
     var initEvent = Event<(WebTransmitter,String)>()
-    var id = NSUUID().uuidString;
     
     
     let hue:Observable<Float>
@@ -33,6 +32,8 @@ class UIInput: TimeSeries, WebTransmitter {
         super.init();
         
         self.name = "uiinput"
+        self.id = "ui";
+
         self.events = []
         self.createKeyStorage();
 

@@ -18,7 +18,7 @@ define(['emitter'],
 
 			trigger(eventName, args){
 
-				console.log('trigger called',eventName,args, this.emitter.parent,this.emitter.getListeners());
+				//console.log('trigger called',eventName,args, this.emitter.parent,this.emitter.getListeners());
 				this.emitter.trigger(eventName, args);
 			}
 

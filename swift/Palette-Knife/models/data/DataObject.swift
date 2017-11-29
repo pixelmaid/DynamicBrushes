@@ -26,10 +26,10 @@ class Table:Emitter {
     var limit = 0
     var columns = [String:Column]()
     var data:[JSON]?
-    let id:String
     var metadataRowOffset:Int = 0;
     
     init(id:String){
+        super.init();
         self.id = id;
     }
     func loadDataFromJSON(data:JSON){

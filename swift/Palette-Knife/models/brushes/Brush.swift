@@ -107,7 +107,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     //Events
     
     
-    var id = NSUUID().uuidString;
+   
     var behavior_id:String?
     var behaviorDef:BehaviorDefinition?
     var matrix = Matrix();

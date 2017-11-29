@@ -42,7 +42,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
 
             }  else if (data.type == "inspector_data") {
 
-                chartViewManager.processInspectorData(data);
+                chartViewManager.processInspectorData(data.data);
 
             }
 
