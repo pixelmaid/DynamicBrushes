@@ -10,7 +10,7 @@ define(["jquery", "jquery-ui", "handlebars", "app/id","hbs!app/templates/propert
             constructor(model) {
                 this.model = model;
                 this.el = $(propertyInspectorTemplate({id:this.model.targetId,value:this.model.currentValue}));
-                $("body").append(this.el);
+                $("#canvas").append(this.el);
                 var self = this;
                
                 this.model.addListener("DATA_UPDATED", function() {

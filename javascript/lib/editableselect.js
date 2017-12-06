@@ -96,7 +96,7 @@ define(["jquery"],
 				if (navigator.userAgent.indexOf('MSIE') >= 0) {
 					document.getElementById('selectBoxIframe' + parentNode.id.replace(/[^\d]/g, '')).style.display = 'none';
 				}
-				$('#' + textInput.id).trigger("change");
+				$('#' + textInput.id).trigger("change",[true]);
 
 			}
 			static highlightSelectBoxOption() {
@@ -182,6 +182,16 @@ define(["jquery"],
 					optionDiv.style.display = 'none';
 					optionDiv.style.visibility = 'visible';
 				}
+				
+			
+				$('#' + dest.id).change(function(event,isSelect){
+					if(!isSelect){
+						console.log("method destination changed",dest.id);
+						$('#' + dest.id).attr("argumentId", "nil");
+						$('#' + dest.id).attr("value", $('#' + dest.id).val());
+
+					}
+				});
 
 				selectBoxIds = selectBoxIds + 1;
 			}

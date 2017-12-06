@@ -728,6 +728,9 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 var methodHTML = $('#' + methodId);
 
                 var currentArgument = $('#' + methodId + "_text").attr('argumentid');
+                if(currentArgument == "nil"){
+                    currentArgument = $('#' + methodId + "_text").attr("value");
+                }
                 console.log("method argument changed for ", methodId, currentArgument);
                 var args = [currentArgument];
                 if (targetMethod == "spawn") {

@@ -27,7 +27,7 @@ class Table:Emitter {
     var columns = [String:Column]()
     var data:[JSON]?
     var metadataRowOffset:Int = 0;
-    
+    var columnSubscribers = [String:ColumnSynchronizer]()
     init(id:String){
         super.init();
         self.id = id;
@@ -39,14 +39,14 @@ class Table:Emitter {
             //print("dataset loaded",columns,data)
         #endif
         for i in 0..<columns.count{
-            let fieldName = columns[i]["fieldName"].stringValue;
-            let position = columns[i]["position"].intValue-1; //NOTE: assumes position count starts from 1 not zero
+            let fieldName = columns[i]["item_name"].stringValue;
+            let position = columns[i]["position"].intValue;
             let dataTypeName = columns[i]["dataTypeName"].stringValue;
             let description = columns[i]["description"].stringValue;
             //let largest = columns[i]["cachedContents"]["largest"].stringValue;
            // let smallest = columns[i]["cachedContents"]["smallest"].stringValue;
            // let width = columns[i]["width"].intValue;
-            let id = String(columns[i]["id"].intValue);
+            let id = columns[i]["id"].stringValue;
             let c:Column?
             if(dataTypeName == "meta_data"){
                 metadataRowOffset+=1;
@@ -81,10 +81,19 @@ class Table:Emitter {
     }
     
     func resetColumns(){
-        for (key,column) in self.columns{
+        for (_,column) in self.columns{
             column.reset();
             
         }
+        self.columnSubscribers.removeAll();
+    }
+    
+    func subscribeColumnTo(brushId:String,fieldName:String){
+        if(self.columnSubscribers[brushId] == nil){
+            self.columnSubscribers[brushId] = ColumnSynchronizer();
+            
+        }
+        self.columnSubscribers[brushId]?.registerColumn(fieldName:fieldName)
     }
     
     func getData(position:Int,row:Int)->Float{
@@ -93,6 +102,11 @@ class Table:Emitter {
         return val;
         
     }
+    
+    func getTargetRow(brushId:String, fieldName:String)->Int{
+        return 0;
+    }
+}
     
     /*func subscribe(fieldName:String,subscriberId:String){
      subscribers[fieldName]?.append(subscriberId);
@@ -106,9 +120,23 @@ class Table:Emitter {
      }
      }
      }*/
+
+
+class ColumnSynchronizer {
+    var target:Int = 0;
+    var registeredColumns = [String]();
     
+    func registerColumn(fieldName:String){
+        registeredColumns.append(fieldName);
+    }
+    func step(){
+        target += 1;
+    }
     
-    class Column:DataObject{
+  
+}
+    
+class Column:DataObject{
         let fieldName:String
         let position:Int
         let table:Table
@@ -117,7 +145,8 @@ class Table:Emitter {
        // let largest:String
       //  let smallest:String
         var currentRow = 0;
-        var dataSubscribers = [String:Observable<Float>]()
+        var dataSubscribers = [String:Observable<Float>]();
+        private var isGenerator = false;
         init(table:Table,id:String, fieldName:String,position:Int,dataTypeName:String){
             self.fieldName = fieldName
             self.position = position
@@ -126,6 +155,9 @@ class Table:Emitter {
             self.id = id
    
             super.init(0)
+            print("registering column with id:",self.id);
+            RequestHandler.registerObservable(observableId: table.id+"_"+self.fieldName, observable: self);
+
         }
         
         override func subscribe(id: String, brushId:String, brushIndex:Observable<Float>?) {
@@ -134,14 +166,22 @@ class Table:Emitter {
             #endif
             subscribers[id] = currentRow; //Int(brushIndex!.get(id: nil));
             dataSubscribers[brushId] = brushIndex!
+            self.table.subscribeColumnTo(brushId: brushId, fieldName: self.fieldName);
             
         }
         
         
         
         override func get(id:String?)->Float{
-            let row = Int(dataSubscribers[id!]!.get(id:nil));
+            let row:Int;
+            if(self.isGenerator){
+                row = self.table.getTargetRow(brushId: id!, fieldName:self.fieldName)
+            }
+            else{
+                row = Int(dataSubscribers[id!]!.get(id:nil));
+            }
             let val = self.table.getData(position:self.position,row:row)
+            self.didChange.raise(data:(name, 0, val) );
             #if DEBUG
                 print("column being accessed",id,fieldName,position,row,val)
             #endif
@@ -206,4 +246,4 @@ class Table:Emitter {
         
         
     }
-}
+

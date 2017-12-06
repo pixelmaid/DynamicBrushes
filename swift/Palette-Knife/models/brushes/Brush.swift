@@ -628,6 +628,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                         }
                     }
                 }else {
+                    
                     self.setOrigin(p: method.arguments![0] as! Point)
                 }
                 

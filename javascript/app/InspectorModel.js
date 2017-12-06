@@ -36,7 +36,7 @@ define(["jquery", "jquery-ui", "app/Emitter", "handlebars", 'app/id',"app/Inspec
                         if (data.hasOwnProperty(key)) {
                             var listeners = data[key]["listeners"];
                             var values = data[key]["values"];
-                            if (listeners[this.behaviorId] !== null) {
+                            if (listeners[this.behaviorId] !== undefined) {
                                 if (listeners[this.behaviorId].indexOf(this.targetId) != -1) {
                                     console.log("found self as listener",values);
                                     this.currentData = values;

@@ -66,8 +66,11 @@ class TextExpression:Observable<Float>{
             }
             value.subscribe(id: self.id,brushId:subscriberId,brushIndex:brushIndex);
             let operandKey = NSUUID().uuidString;
-            let handler = value.didChange.addHandler(target: self, handler: TextExpression.setHandler,key:operandKey)
-           eventHandlers.append(handler)
+            if(value.getActiveStatus() == true){
+                let handler = value.didChange.addHandler(target: self, handler: TextExpression.setHandler,key:operandKey)
+                eventHandlers.append(handler)
+
+            }
         }
         self.setActiveStatus(status: hasActive);
     }

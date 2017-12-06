@@ -29,6 +29,13 @@ class UIInput: TimeSeries, WebTransmitter {
         self.diameter.printname = "ui_diameter"
         self.alpha = Observable<Float>(1.0)
         
+        
+        RequestHandler.registerObservable(observableId: "ui_hue", observable: self.hue)
+        RequestHandler.registerObservable(observableId: "ui_lightness", observable: self.lightness)
+        RequestHandler.registerObservable(observableId: "ui_saturation", observable: self.saturation)
+        RequestHandler.registerObservable(observableId: "ui_diameter", observable: self.diameter)
+        RequestHandler.registerObservable(observableId: "ui_alpha", observable: self.alpha)
+        
         super.init();
         
         self.name = "uiinput"

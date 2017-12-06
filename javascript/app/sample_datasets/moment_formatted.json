@@ -1,0 +1,57 @@
+{
+
+	"meta": {
+		"view": {
+			"id": "344g-12fh",
+			"name": "Moment",
+
+			"columns": [{
+				"id": "7010af42",
+				"item_name": "minutecount",
+				"dataTypeName": "number",
+				"name": "minute count",
+				"position": 0
+			}, {
+				"id": "7010c5d6",
+				"item_name": "pickupcount",
+				"dataTypeName": "number",
+				"name": "pickup count",
+				"position": 1
+			}, {
+				"id": "7010c518",
+				"item_name": "pickups",
+				"dataTypeName": "array",
+				"name": "pickups",
+				"position": 2
+			}, {
+				"id": "7010c450",
+				"item_name": "appusage",
+				"dataTypeName": "array",
+				"name": "app usage",
+				"position": 3
+			}, {
+				"id": "7010c392",
+				"item_name": "date",
+				"dataTypeName": "calendar_data",
+				"name": "date",
+				"position": 4
+			}]
+		}
+	},
+
+
+	"data": [
+		["38", "16", "", "", "2017-12-05T00:00:00-08:00"],
+		["89", "31", "", "", "2017-12-04T00:00:00-08:00"],
+		["66", "18", "", "", "2017-12-03T00:00:00-08:00"],
+		["111", "52", "", "", "2017-12-02T00:00:00-08:00"],
+		["74", "59", "", "", "2017-12-01T00:00:00-08:00"],
+		["111", "34", "", "Chrome|39|Home & Lock Screen|20|Mail|16|Phone|9|Messages|8|Google Maps|8|Podcasts|7|Safari|3|Camera|2|NYT Cooking|2|iBooks|0", "2017-11-30T00:00:00-08:00"],
+		["65", "45", "", "Chrome|101|Home & Lock Screen|51|Mail|42|Phone|24|Messages|21|Google Maps|20|Podcasts|19|Safari|7|Camera|6|NYT Cooking|4|iBooks|0", "2017-11-29T00:00:00-08:00"],
+		["105", "0", "", "Chrome|39|Home & Lock Screen|20|Mail|16|Phone|9|Messages|8|Google Maps|8|Podcasts|7|Safari|3|Camera|2|NYT Cooking|2|iBooks|0", "2017-11-28T00:00:00-08:00"],
+		["105", "0", "", "Chrome|39|Home & Lock Screen|20|Mail|16|Phone|9|Messages|8|Google Maps|8|Podcasts|7|Safari|3|Camera|2|NYT Cooking|2|iBooks|0", "2017-11-27T00:00:00-08:00"],
+		["105", "0", "", "Chrome|39|Home & Lock Screen|20|Mail|16|Phone|9|Messages|8|Google Maps|8|Podcasts|7|Safari|3|Camera|2|NYT Cooking|2|iBooks|0", "2017-11-26T00:00:00-08:00"],
+		["105", "0", "", "Chrome|39|Home & Lock Screen|20|Mail|16|Phone|9|Messages|8|Google Maps|8|Podcasts|7|Safari|3|Camera|2|NYT Cooking|2|iBooks|0", "2017-11-25T00:00:00-08:00"],
+		["105", "0", "", "Chrome|39|Home & Lock Screen|20|Mail|16|Phone|9|Messages|8|Google Maps|8|Podcasts|7|Safari|3|Camera|2|NYT Cooking|2|iBooks|0", "2017-11-24T00:00:00-08:00"]
+	]
+}

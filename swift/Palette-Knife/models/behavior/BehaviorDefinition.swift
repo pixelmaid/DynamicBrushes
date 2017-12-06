@@ -1073,6 +1073,7 @@ class BehaviorDefinition {
         default:
             break;
         }
+        RequestHandler.registerObservable(observableId: name, observable: storedGenerators[id]![name]!);
     }
     
     func generateSingleOperand(targetBrush:Brush, emitter:Any?,propList:[String]?)->Observable<Float>{
@@ -1223,6 +1224,9 @@ class BehaviorDefinition {
             else{
                  observableId = propList![0];
             }
+            #if DEBUG
+                print("registering observable target with id:",observableId);
+            #endif
             RequestHandler.registerObservableTarget(observableId: observableId, behaviorId: self.id, target: key)
             let operand = self.generateSingleOperand(targetBrush: targetBrush, emitter: emitter, propList: propList)
             operands[key] = operand;

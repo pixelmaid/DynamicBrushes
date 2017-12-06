@@ -7,11 +7,10 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 	function($, EventEmitter, ID, Emitter) {
 		var DatasetLoader = class extends Emitter {
 
-			constructor() {
+			constructor(	) {
 				super();
 				 //todo: should read this dynamically from the file folder
-
-				this.filenames = ["BrainDrain.json","meteor.json"];
+				this.filenames = ["BrainDrain.json","meteor.json","moment_formatted.json"];
 			}
 
 			loadDataset(filename){
@@ -26,7 +25,7 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 							//if (c["fieldName"] == "mass" || c["fieldName"] == "reclat" || c["fieldName"] == "reclong" || c["fieldName"] == "year") {
 								items.push({
 									item_class: "block data palette",
-									item_name:  id+"_"+columns[i]["name"],
+									item_name:  id+"_"+columns[i]["item_name"],
 									name:columns[i]["name"],
 									type: "dataset"
 

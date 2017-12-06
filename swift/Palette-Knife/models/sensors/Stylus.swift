@@ -48,10 +48,6 @@ class Stylus: TimeSeries, WebTransmitter {
         self.prevAngle.set(newValue: angle)
         self.x = position.x;
         self.y = position.y
-        
-        RequestHandler.registerObservable(observableId: "stylus_x", observable: self.x)
-        RequestHandler.registerObservable(observableId: "stylus_y", observable: self.y)
-
         self.x.printname = "stylus_position_x"
         self.y.printname = "stylus_position_y"
         self.speed.set(newValue: 0)
@@ -62,6 +58,12 @@ class Stylus: TimeSeries, WebTransmitter {
         self.distance = Observable<Float>(0);
         self.xDistance = Observable<Float>(0);
         self.yDistance = Observable<Float>(0);
+        RequestHandler.registerObservable(observableId: "stylus_x", observable: self.x)
+        RequestHandler.registerObservable(observableId: "stylus_y", observable: self.y)
+        RequestHandler.registerObservable(observableId: "stylus_dx", observable: self.dx)
+        RequestHandler.registerObservable(observableId: "stylus_dy", observable: self.dy)
+        RequestHandler.registerObservable(observableId: "stylus_force", observable: self.force)
+        RequestHandler.registerObservable(observableId: "stylus_angle", observable: self.angle)
         super.init()
         self.id = "stylus";
         self.name = "stylus"

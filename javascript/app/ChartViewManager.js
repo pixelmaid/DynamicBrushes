@@ -146,7 +146,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                             self.currentView.enablePan();
                         }
                         spaceDown = true;
-                    } else if (e.keyCode == 187) {
+                    } /*else if (e.keyCode == 187) {
                         if (self.currentView) {
                             if (zoomAmount < 1) {
                                 zoomAmount += 0.1;
@@ -159,7 +159,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                             zoomAmount -= 0.1;
                             self.currentView.zoom(zoomAmount, mousePosition);
                         }
-                    }
+                    }*/
 
                 };
 

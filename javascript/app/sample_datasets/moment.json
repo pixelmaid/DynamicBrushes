@@ -1,0 +1,473 @@
+{
+  "days" : [
+    {
+      "sessions" : [
+
+      ],
+      "minuteCount" : 38,
+      "pickupCount" : 16,
+      "pickups" : [
+
+      ],
+      "appUsages" : [
+
+      ],
+      "date" : "2017-12-05T00:00:00-08:00"
+    },
+    {
+      "sessions" : [
+
+      ],
+      "minuteCount" : 89,
+      "pickupCount" : 31,
+      "pickups" : [
+
+      ],
+      "appUsages" : [
+
+      ],
+      "date" : "2017-12-04T00:00:00-08:00"
+    },
+    {
+      "sessions" : [
+
+      ],
+      "minuteCount" : 66,
+      "pickupCount" : 18,
+      "pickups" : [
+
+      ],
+      "appUsages" : [
+
+      ],
+      "date" : "2017-12-03T00:00:00-08:00"
+    },
+    {
+      "sessions" : [
+
+      ],
+      "minuteCount" : 111,
+      "pickupCount" : 52,
+      "pickups" : [
+
+      ],
+      "appUsages" : [
+
+      ],
+      "date" : "2017-12-02T00:00:00-08:00"
+    },
+    {
+      "sessions" : [
+
+      ],
+      "minuteCount" : 74,
+      "pickupCount" : 59,
+      "pickups" : [
+
+      ],
+      "appUsages" : [
+
+      ],
+      "date" : "2017-12-01T00:00:00-08:00"
+    },
+    {
+      "sessions" : [
+
+      ],
+      "minuteCount" : 111,
+      "pickupCount" : 34,
+      "pickups" : [
+
+      ],
+      "appUsages" : [
+        {
+          "appName" : "Chrome",
+          "onScreen" : 39
+        },
+        {
+          "appName" : "Home & Lock Screen",
+          "onScreen" : 20
+        },
+        {
+          "appName" : "Mail",
+          "onScreen" : 16
+        },
+        {
+          "appName" : "Phone",
+          "onScreen" : 9
+        },
+        {
+          "appName" : "Messages",
+          "onScreen" : 8
+        },
+        {
+          "appName" : "Google Maps",
+          "onScreen" : 8
+        },
+        {
+          "appName" : "Podcasts",
+          "onScreen" : 7
+        },
+        {
+          "appName" : "Safari",
+          "onScreen" : 3
+        },
+        {
+          "appName" : "Camera",
+          "onScreen" : 2
+        },
+        {
+          "appName" : "NYT Cooking",
+          "onScreen" : 2
+        },
+        {
+          "appName" : "iBooks",
+          "onScreen" : 0
+        }
+      ],
+      "date" : "2017-11-30T00:00:00-08:00"
+    },
+    {
+      "sessions" : [
+
+      ],
+      "minuteCount" : 65,
+      "pickupCount" : 45,
+      "pickups" : [
+
+      ],
+      "appUsages" : [
+        {
+          "appName" : "Chrome",
+          "onScreen" : 101
+        },
+        {
+          "appName" : "Home & Lock Screen",
+          "onScreen" : 51
+        },
+        {
+          "appName" : "Mail",
+          "onScreen" : 42
+        },
+        {
+          "appName" : "Phone",
+          "onScreen" : 24
+        },
+        {
+          "appName" : "Messages",
+          "onScreen" : 21
+        },
+        {
+          "appName" : "Google Maps",
+          "onScreen" : 20
+        },
+        {
+          "appName" : "Podcasts",
+          "onScreen" : 19
+        },
+        {
+          "appName" : "Safari",
+          "onScreen" : 7
+        },
+        {
+          "appName" : "Camera",
+          "onScreen" : 6
+        },
+        {
+          "appName" : "NYT Cooking",
+          "onScreen" : 4
+        },
+        {
+          "appName" : "iBooks",
+          "onScreen" : 0
+        }
+      ],
+      "date" : "2017-11-29T00:00:00-08:00"
+    },
+    {
+      "sessions" : [
+
+      ],
+      "minuteCount" : 105,
+      "pickupCount" : 0,
+      "pickups" : [
+
+      ],
+      "appUsages" : [
+        {
+          "appName" : "Chrome",
+          "onScreen" : 39
+        },
+        {
+          "appName" : "Home & Lock Screen",
+          "onScreen" : 20
+        },
+        {
+          "appName" : "Mail",
+          "onScreen" : 16
+        },
+        {
+          "appName" : "Phone",
+          "onScreen" : 9
+        },
+        {
+          "appName" : "Messages",
+          "onScreen" : 8
+        },
+        {
+          "appName" : "Google Maps",
+          "onScreen" : 8
+        },
+        {
+          "appName" : "Podcasts",
+          "onScreen" : 7
+        },
+        {
+          "appName" : "Safari",
+          "onScreen" : 3
+        },
+        {
+          "appName" : "Camera",
+          "onScreen" : 2
+        },
+        {
+          "appName" : "NYT Cooking",
+          "onScreen" : 2
+        },
+        {
+          "appName" : "iBooks",
+          "onScreen" : 0
+        }
+      ],
+      "date" : "2017-11-28T00:00:00-08:00"
+    },
+    {
+      "sessions" : [
+
+      ],
+      "minuteCount" : 105,
+      "pickupCount" : 0,
+      "pickups" : [
+
+      ],
+      "appUsages" : [
+        {
+          "appName" : "Chrome",
+          "onScreen" : 39
+        },
+        {
+          "appName" : "Home & Lock Screen",
+          "onScreen" : 20
+        },
+        {
+          "appName" : "Mail",
+          "onScreen" : 16
+        },
+        {
+          "appName" : "Phone",
+          "onScreen" : 9
+        },
+        {
+          "appName" : "Messages",
+          "onScreen" : 8
+        },
+        {
+          "appName" : "Google Maps",
+          "onScreen" : 8
+        },
+        {
+          "appName" : "Podcasts",
+          "onScreen" : 7
+        },
+        {
+          "appName" : "Safari",
+          "onScreen" : 3
+        },
+        {
+          "appName" : "Camera",
+          "onScreen" : 2
+        },
+        {
+          "appName" : "NYT Cooking",
+          "onScreen" : 2
+        },
+        {
+          "appName" : "iBooks",
+          "onScreen" : 0
+        }
+      ],
+      "date" : "2017-11-27T00:00:00-08:00"
+    },
+    {
+      "sessions" : [
+
+      ],
+      "minuteCount" : 105,
+      "pickupCount" : 0,
+      "pickups" : [
+
+      ],
+      "appUsages" : [
+        {
+          "appName" : "Chrome",
+          "onScreen" : 39
+        },
+        {
+          "appName" : "Home & Lock Screen",
+          "onScreen" : 20
+        },
+        {
+          "appName" : "Mail",
+          "onScreen" : 16
+        },
+        {
+          "appName" : "Phone",
+          "onScreen" : 9
+        },
+        {
+          "appName" : "Messages",
+          "onScreen" : 8
+        },
+        {
+          "appName" : "Google Maps",
+          "onScreen" : 8
+        },
+        {
+          "appName" : "Podcasts",
+          "onScreen" : 7
+        },
+        {
+          "appName" : "Safari",
+          "onScreen" : 3
+        },
+        {
+          "appName" : "Camera",
+          "onScreen" : 2
+        },
+        {
+          "appName" : "NYT Cooking",
+          "onScreen" : 2
+        },
+        {
+          "appName" : "iBooks",
+          "onScreen" : 0
+        }
+      ],
+      "date" : "2017-11-26T00:00:00-08:00"
+    },
+    {
+      "sessions" : [
+
+      ],
+      "minuteCount" : 105,
+      "pickupCount" : 0,
+      "pickups" : [
+
+      ],
+      "appUsages" : [
+        {
+          "appName" : "Chrome",
+          "onScreen" : 39
+        },
+        {
+          "appName" : "Home & Lock Screen",
+          "onScreen" : 20
+        },
+        {
+          "appName" : "Mail",
+          "onScreen" : 16
+        },
+        {
+          "appName" : "Phone",
+          "onScreen" : 9
+        },
+        {
+          "appName" : "Messages",
+          "onScreen" : 8
+        },
+        {
+          "appName" : "Google Maps",
+          "onScreen" : 8
+        },
+        {
+          "appName" : "Podcasts",
+          "onScreen" : 7
+        },
+        {
+          "appName" : "Safari",
+          "onScreen" : 3
+        },
+        {
+          "appName" : "Camera",
+          "onScreen" : 2
+        },
+        {
+          "appName" : "NYT Cooking",
+          "onScreen" : 2
+        },
+        {
+          "appName" : "iBooks",
+          "onScreen" : 0
+        }
+      ],
+      "date" : "2017-11-25T00:00:00-08:00"
+    },
+    {
+      "sessions" : [
+
+      ],
+      "minuteCount" : 105,
+      "pickupCount" : 0,
+      "pickups" : [
+
+      ],
+      "appUsages" : [
+        {
+          "appName" : "Chrome",
+          "onScreen" : 39
+        },
+        {
+          "appName" : "Home & Lock Screen",
+          "onScreen" : 20
+        },
+        {
+          "appName" : "Mail",
+          "onScreen" : 16
+        },
+        {
+          "appName" : "Phone",
+          "onScreen" : 9
+        },
+        {
+          "appName" : "Messages",
+          "onScreen" : 8
+        },
+        {
+          "appName" : "Google Maps",
+          "onScreen" : 8
+        },
+        {
+          "appName" : "Podcasts",
+          "onScreen" : 7
+        },
+        {
+          "appName" : "Safari",
+          "onScreen" : 3
+        },
+        {
+          "appName" : "Camera",
+          "onScreen" : 2
+        },
+        {
+          "appName" : "NYT Cooking",
+          "onScreen" : 2
+        },
+        {
+          "appName" : "iBooks",
+          "onScreen" : 0
+        }
+      ],
+      "date" : "2017-11-24T00:00:00-08:00"
+    }
+  ]
+}
