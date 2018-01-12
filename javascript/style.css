@@ -142,6 +142,8 @@ h1{
 
 .state, .expression{
   border:solid 1px #cccccc;
+  background: #000;
+  border-radius: 6px;
 }
 
 .state{
@@ -194,7 +196,11 @@ h1{
   text-align: center;
 }
 
-.expression {
+.methodName{
+  margin-top:8px;
+}
+
+.expression, .selectBox {
   height: 30px;
   min-width: 75px;
   width: auto;
@@ -281,7 +287,8 @@ span.block {
 .method{
   background-color:#eb4a63;
   width:100px;
-  margin:5px auto;
+  margin:8px auto;
+  height:35px;
 }
 
 .condition{

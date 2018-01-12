@@ -14,7 +14,7 @@ define(["app/Emitter"],
 			}
 
 			setData(data) {
-				console.log("inspector reveived data")
+				console.log("inspector received data")
 				this.inspectorData.push(data);
 				this.trigger("DATA_UPDATED");
 			}

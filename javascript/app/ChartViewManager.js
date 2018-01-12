@@ -332,8 +332,8 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                     this.onMappingAdded(mappingId, name, item_name, type, expressionId, stateId, behaviorId);
                 }.bind(this));
 
-                chartView.addListener("ON_METHOD_ADDED", function(behaviorId, transitionId, methodId, targetMethod, args) {
-                    this.onMethodAdded(behaviorId, transitionId, methodId, targetMethod, args);
+                chartView.addListener("ON_METHOD_ADDED", function(behaviorId, transitionId, methodId, expressionId, targetMethod, args) {
+                    this.onMethodAdded(behaviorId, transitionId, methodId, expressionId, targetMethod, args);
                 }.bind(this));
 
                 chartView.addListener("ON_METHOD_ARGUMENT_CHANGE", function(behaviorId, transitionId, methodId, targetMethod, args) {
@@ -344,9 +344,6 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                     this.onMethodRemoved(behaviorId, methodId);
                 }.bind(this));
 
-                chartView.addListener("ON_GENERATOR_ADDED", function(mappingId, generatorId, generator_type, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList) {
-                    this.onGeneratorAdded(mappingId, generatorId, generator_type, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList);
-                }.bind(this));
 
                 chartView.addListener("ON_DATASET_ADDED", function(mappingId, datasetId, datasetType, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList) {
                     this.onDatasetAdded(mappingId, datasetId, datasetType, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList);
@@ -365,21 +362,13 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                 }.bind(this));
 
 
-                chartView.addListener("ON_EXPRESSION_TEXT_UPDATE", function(behaviorId, expressionId, expressionText, propertyList) {
-                    this.onExpressionTextModified(behaviorId, expressionId, expressionText, propertyList);
-                }.bind(this));
-
-                chartView.addListener("ON_MAPPING_REFERENCE_UPDATE", function(mappingId, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList, constraint_type) {
-                    this.onMappingReferenceUpdate(mappingId, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList, constraint_type);
-                }.bind(this));
-
-                chartView.addListener("ON_MAPPING_REFERENCE_REMOVED", function(behaviorId, mappingId, expressionId, expressionPropertyList, expressionText, containsActive) {
-                    this.onMappingReferenceRemoved(behaviorId, mappingId, expressionId, expressionPropertyList, expressionText, containsActive);
+                chartView.addListener("ON_EXPRESSION_MODIFIED", function(behaviorId, expressionId, expressionText, propertyList,generatorId,generatorType) {
+                    this.onExpressionModified(behaviorId, expressionId, expressionText, propertyList,generatorId,generatorType);
                 }.bind(this));
 
 
-                chartView.addListener("ON_MAPPING_RELATIVE_REMOVED", function(behaviorId, mappingId, stateId) {
-                    this.onMappingRelativeRemoved(behaviorId, mappingId, stateId);
+                chartView.addListener("ON_MAPPING_REMOVED", function(behaviorId, mappingId, stateId) {
+                    this.onMappingRemoved(behaviorId, mappingId, stateId);
                 }.bind(this));
 
 
@@ -493,20 +482,12 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                         case "method_removed":
                             this.views[behaviorId].removeMethod(this.lastAuthoringRequest.data);
                             break;
-                        case "mapping_updated":
-                            console.log("mapping updated called");
-                            this.views[behaviorId].updateMapping(this.lastAuthoringRequest.data);
+                        case "expression_modified":
+                            console.log("expression_modified updated called");  
                             this.lastAuthoringRequest = null;
-
-
                             break;
-                        case "generator_added":
-                            console.log("generator added succesfully");
-
-                            var generator_data = this.lastAuthoringRequest.data;
-                            this.views[behaviorId].trigger("ON_MAPPING_REFERENCE_UPDATE", [generator_data.mappingId, generator_data.behaviorId, generator_data.stateId, generator_data.relativePropertyName, generator_data.relativePropertyItemName, generator_data.expressionId, generator_data.expressionText, generator_data.expressionPropertyList, "passive"]);
-                            break;
-                        case "mapping_relative_removed":
+                        
+                        case "mapping_removed":
                             console.log("mapping relative removed called");
                             this.views[behaviorId].removeMapping(this.lastAuthoringRequest.data);
                             this.lastAuthoringRequest = null;
@@ -764,21 +745,19 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
 
                 this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
             }
+    
 
-            onMappingReferenceUpdate(mappingId, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList, constraint_type) {
-                console.log("mapping reference update", mappingId, stateId);
+            onMethodAdded(behaviorId, transitionId, methodId, expressionId, targetMethod, args) {
+                console.log("method added", methodId, targetMethod);
 
                 var transmit_data = {
-                    mappingId: mappingId,
                     behaviorId: behaviorId,
-                    relativePropertyName: relativePropertyName,
-                    relativePropertyItemName: relativePropertyItemName,
-                    stateId: stateId,
+                    targetTransition: transitionId,
+                    methodId: methodId,
                     expressionId: expressionId,
-                    expressionText: expressionText,
-                    expressionPropertyList: expressionPropertyList,
-                    constraintType: constraint_type,
-                    type: "mapping_updated"
+                    targetMethod: targetMethod,
+                    args: args,
+                    type: "method_added"
                 };
 
                 this.lastAuthoringRequest = {
@@ -787,39 +766,28 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
 
                 this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
             }
+            
 
-            //TODO: will need to re-enabled passive constraint here?
-            onMappingReferenceRemoved(behaviorId, mappingId, expressionId, expressionPropertyList, expressionText, containsActive) {
-                console.log("mapping reference removed", expressionId, expressionPropertyList);
+         
 
-                var transmit_data = {
-                    behaviorId: behaviorId,
-                    mappingId: mappingId,
-                    expressionId: expressionId,
-                    expressionText: expressionText,
-                    expressionPropertyList: expressionPropertyList,
-                    containsActive: containsActive,
-                    type: "mapping_reference_removed"
-                };
-
-                this.lastAuthoringRequest = {
-                    data: transmit_data
-                };
-
-                this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
-
-            }
-
-            onExpressionTextModified(behaviorId, expressionId, expressionText, propertyList) {
+            onExpressionModified(behaviorId, expressionId, expressionText, propertyList, generatorId, generatorType) {
 
                 var transmit_data = {
                     behaviorId: behaviorId,
                     expressionId: expressionId,
                     expressionText: expressionText,
                     expressionPropertyList: propertyList,
-                    type: "expression_text_modified"
+                     generatorId:generatorId,
+                    generatorType:generatorType,
+                    type: "expression_modified"
+                   
 
                 };
+                //TODO: This is sloppy- find a fix
+                if(generatorId!= undefined || generatorId!= null){
+                    this.generatorModel.addDefaultValues(generatorType, transmit_data);
+
+                }
                 this.lastAuthoringRequest = {
                     data: transmit_data
                 };
@@ -828,29 +796,6 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
 
             }
 
-            onGeneratorAdded(mappingId, generatorId, generator_type, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList) {
-                console.log("generator added called", generatorId, generator_type, stateId);
-
-                var transmit_data = {
-                    mappingId: mappingId,
-                    generatorId: generatorId,
-                    generator_type: generator_type,
-                    behaviorId: behaviorId,
-                    stateId: stateId,
-                    relativePropertyName: relativePropertyName,
-                    relativePropertyItemName: relativePropertyItemName,
-                    expressionId: expressionId,
-                    expressionText: expressionText,
-                    expressionPropertyList: expressionPropertyList,
-                    type: "generator_added"
-                };
-                this.generatorModel.addDefaultValues(generator_type, transmit_data);
-                this.lastAuthoringRequest = {
-                    data: transmit_data
-                };
-
-                this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
-            }
 
 
  onDatasetAdded(mappingId, datasetId, datasetType, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList) {
@@ -879,24 +824,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
 
 
 
-            onMethodAdded(behaviorId, transitionId, methodId, targetMethod, args) {
-                console.log("method added", methodId, targetMethod);
-
-                var transmit_data = {
-                    behaviorId: behaviorId,
-                    targetTransition: transitionId,
-                    methodId: methodId,
-                    targetMethod: targetMethod,
-                    args: args,
-                    type: "method_added"
-                };
-
-                this.lastAuthoringRequest = {
-                    data: transmit_data
-                };
-
-                this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
-            }
+       
 
             onMethodArgumentChanged(behaviorId, transitionId, methodId, targetMethod, args) {
                 console.log("method argument changed", methodId, targetMethod, transitionId);
@@ -933,14 +861,14 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                 this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
             }
 
-            onMappingRelativeRemoved(behaviorId, mappingId, stateId) {
+            onMappingRemoved(behaviorId, mappingId, stateId) {
                 console.log("mapping relative removed", mappingId, stateId, behaviorId);
 
                 var transmit_data = {
                     mappingId: mappingId,
                     behaviorId: behaviorId,
                     stateId: stateId,
-                    type: "mapping_relative_removed"
+                    type: "mapping_removed"
                 };
 
                 this.lastAuthoringRequest = {

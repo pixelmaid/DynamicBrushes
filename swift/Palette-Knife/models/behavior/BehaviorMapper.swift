@@ -15,14 +15,7 @@ typealias BehaviorConfig = (target: Brush, action: String, emitter:Emitter, even
 class BehaviorMapper{
     
       
-    func createMapping(id:String, reference:Observable<Float>, relative:Brush, relativeProperty:Observable<Float>,stateId:String, type:String){
-        relative.addConstraint(id: id, reference:reference, relative: relativeProperty, stateId: stateId)
-    
-    }
-    
-    func createState(target:Brush,stateId:String,stateName:String){
-        target.createState(id: stateId, name:stateName);
-    }
+    //TODO: remove so that behavior mapper class can be removed, also should remove event listener structure and replace with Event Class
     
     func createStateTransition(id:String,name:String,reference:Emitter,relative:Brush, eventName:String, fromStateId:String, toStateId:String, condition:Condition!){
         reference.assignKey(eventType: eventName,key:id,condition: condition,brush:relative)
@@ -33,10 +26,7 @@ class BehaviorMapper{
         
     }
     
-    func addMethod(relative:Brush,transitionName:String,methodId:String,methodName:String, arguments:[Any]?){
-       
-        relative.addMethod(transitionId: transitionName,methodId:methodId,methodName:methodName, arguments:arguments)
-    }
+   
 }
 
 

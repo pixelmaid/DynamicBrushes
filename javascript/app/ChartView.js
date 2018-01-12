@@ -147,7 +147,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                             var stateId = $(options.$trigger[0]).attr("stateid");
 
                             console.log("mappping", mappingId);
-                            self.trigger("ON_MAPPING_RELATIVE_REMOVED", [self.id, mappingId, stateId]);
+                            self.trigger("ON_MAPPING_REMOVED", [self.id, mappingId, stateId]);
                         }
                     },
                     items: {
@@ -243,7 +243,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                                 console.log("state found", stateId);
                                 $(ui.helper).remove(); //destroy clone
                                 $(ui.draggable).remove(); //remove from list
-                                self.trigger("ON_MAPPING_RELATIVE_REMOVED", [mappingId, stateId, data.id]);
+                                self.trigger("ON_MAPPING_REMOVED", [mappingId, stateId, data.id]);
 
                             }
 
@@ -429,28 +429,6 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
             }
 
-            expressionModified(expression, removedReferences) {
-                var self = this;
-                if (removedReferences.length > 0) {
-                    removedReferences.forEach(function(r) {
-                        self.mappingReferenceRemoved(r, expression.id);
-                    });
-                }
-                this.trigger("ON_EXPRESSION_TEXT_UPDATE", [this.id, expression.id, expression.getText(), expression.getPropertyList()]);
-                this.instance.repaintEverything();
-
-
-            }
-
-            addReferenceToExpression(mappingId, referenceType, referenceName, referenceProperties, referencePropertiesDisplayNames, referenceId, referenceDisplayName, name) {
-                var expression = this.expressions[mappingId];
-                var el = expression.addReference(referenceType, referenceName, referenceProperties, referencePropertiesDisplayNames, referenceId, referenceDisplayName, name);
-                console.log("el to make draggable");
-                this.makeDraggable(el);
-                this.addInspector(el);
-                return expression;
-            }
-
             addMapping(mapping_data) {
                 console.log("add mapping", mapping_data);
                 var target_state = mapping_data.stateId;
@@ -464,103 +442,68 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                 var expression = this.initializeExpression(mapping_data.expressionId, mapping_data.mappingId);
 
-                //this.makeDraggable(target);
-                var self = this;
-
                 console.log("target droppable", $('#' + mapping_data.mappingId).find(".reference_expression"));
-                $($('#' + mapping_data.mappingId).find(".reference_expression")[0]).droppable({
-                    greedy: true,
-                    drop: function(event, ui) {
-                        var type = $(ui.draggable).attr('type');
-                        var name = $(ui.draggable).attr('name');
-                        var displayName = $(ui.draggable).html();
-                        var relativePropertyName = mapping_data.relativePropertyName;
-                        var relativePropertyItemName = mapping_data.relativePropertyItemName;
-
-                        var referenceProperty = name.split("_")[0];
-                        var referenceNames = name.split("_");
-                        referenceNames.shift();
-
-                        console.log("drop on expression", type);
-
-                        var drop_id = ID();
-                        var constraint_type;
-                        var data = {
-                            type: type,
-                            id: drop_id,
-                            behaviorId: self.id
-
-                        };
-                        var referenceName, referenceProperties, referencePropertiesDisplayNames;
-                        if (type == 'sensor_prop') {
-                            referenceName = 'stylus';
-                            constraint_type = "active";
-                            console.log("sensor prop dropped on mapping", displayName);
-                            $(ui.helper).remove(); //destroy cloneit'
-                            referenceProperties = [name.split("_")[1]];
-
-                            //TODO: Should set constraint active or passive in palette model, not here
-                            if (referenceProperties[0] == "speed") {
-                                constraint_type = "passive";
-                            }
-                            referencePropertiesDisplayNames = [displayName];
-
-                            console.log("reference properties =", referenceProperties, name.split("_"));
-                            expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, referencePropertiesDisplayNames, drop_id, displayName, name);
-
-                            console.log('reference properties set', expression.getPropertyList());
-
-                            self.trigger("ON_MAPPING_REFERENCE_UPDATE", [mapping_data.mappingId, self.id, target_state, relativePropertyName, relativePropertyItemName, expression.id, expression.getText(), expression.getPropertyList(), constraint_type]);
-
-                        } else if (type == 'ui_prop') {
-                            referenceName = 'ui';
-                            console.log("ui prop dropped on mapping", displayName);
-                            $(ui.helper).remove(); //destroy cloneit'
-                            referenceProperties = [name.split("_")[1]];
-                            referencePropertiesDisplayNames = [displayName];
-
-                            console.log("reference properties =", referenceProperties, name.split("_"));
-                            expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, referencePropertiesDisplayNames, drop_id, displayName, name);
-
-                            console.log('reference properties set', expression.getPropertyList());
-                            self.trigger("ON_MAPPING_REFERENCE_UPDATE", [mapping_data.mappingId, self.id, target_state, relativePropertyName, relativePropertyItemName, expression.id, expression.getText(), expression.getPropertyList(), "passive"]);
-
-                        } else if (type == 'generator') {
-
-                            console.log("generator dropped on mapping");
-                            $(ui.helper).remove(); //destroy clone
-                            //$(ui.draggable).remove(); //remove from list
-                            referenceName = null;
-                            var generatorId = drop_id;
-                            var generatorType = name;
-                            referenceProperties = [generatorId];
-                            referencePropertiesDisplayNames = [displayName];
-                            expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, referencePropertiesDisplayNames, generatorId, displayName, name);
-                            self.trigger("ON_GENERATOR_ADDED", [mapping_data.mappingId, generatorId, generatorType, self.id, target_state, relativePropertyName, relativePropertyItemName, expression.id, expression.getText(), expression.getPropertyList()]);
-
-                        } else if (type == 'dataset') {
-
-                            referenceName = "dataset_" + name.split("_")[0];
-                            constraint_type = "passive";
-                            console.log("dataset prop dropped on mapping", displayName);
-                            $(ui.helper).remove(); //destroy cloneit'
-                            referenceProperties = [name.split("_")[1]];
-
-
-                            referencePropertiesDisplayNames = [displayName];
-
-                            expression = self.addReferenceToExpression(mapping_data.mappingId, type, referenceName, referenceProperties, referencePropertiesDisplayNames, drop_id, displayName, name);
-
-
-                            self.trigger("ON_MAPPING_REFERENCE_UPDATE", [mapping_data.mappingId, self.id, target_state, relativePropertyName, relativePropertyItemName, expression.id, expression.getText(), expression.getPropertyList(), constraint_type]);
-
-                        }
-                    }
-                });
-
+                var el =  $($('#' + mapping_data.mappingId).find(".reference_expression")[0]);
+                this.setDropFunctionsForExpression(el,mapping_data.mappingId);
                 this.instance.repaintEverything();
 
             }
+
+            setDropFunctionsForExpression(el, expressionTargetId){
+                var self = this;
+              el.droppable({
+                    greedy: true,
+                    drop: function(event, ui) {
+                        var type = $(ui.draggable).attr('type');
+                        var dropName = $(ui.draggable).attr('name');
+                        var displayName = $(ui.draggable).html();
+                      
+                        var drop_id = ID();
+                        var referenceName, referenceProperties, referencePropertiesDisplayNames,eventString,generatorType,generatorId;
+                        referencePropertiesDisplayNames = [displayName];
+                         $(ui.helper).remove(); //destroy clone
+                        if (type == 'stylus' || type == 'ui' || type == 'dataset') {
+                            referenceName = type == "dataset"? "dataset_" + dropName.split("_")[0]:type;
+                            referenceProperties = [dropName.split("_")[1]];
+                            
+
+                        }  else if (type == 'generator') {
+                            referenceName = null;
+                            generatorType = dropName;
+                            generatorId = drop_id;
+                            referenceProperties = [generatorId];
+                        } 
+
+                        var expression = self.addReferenceToExpression(expressionTargetId, type, referenceName, referenceProperties, referencePropertiesDisplayNames, drop_id, displayName, dropName);
+                      var eventArgs = [self.id, expression.id, expression.getText(), expression.getPropertyList(), generatorId, generatorType];
+
+                        self.trigger("ON_EXPRESSION_MODIFIED", eventArgs);
+                    }
+                });
+            }
+
+
+            expressionModified(expression, removedReferences) {
+                var self = this;
+                if (removedReferences.length > 0) {
+                    removedReferences.forEach(function(r) {
+                        self.expressionReferenceRemoved(r, expression.id);
+                    });
+                }
+                this.trigger("ON_EXPRESSION_MODIFIED", [this.id, expression.id, expression.getText(), expression.getPropertyList()]);
+                this.instance.repaintEverything();
+
+            }
+
+            addReferenceToExpression(mappingId, referenceType, referenceName, referenceProperties, referencePropertiesDisplayNames, referenceId, referenceDisplayName, name) {
+                var expression = this.expressions[mappingId];
+                var el = expression.addReference(referenceType, referenceName, referenceProperties, referencePropertiesDisplayNames, referenceId, referenceDisplayName, name);
+                console.log("el to make draggable");
+                this.makeDraggable(el);
+                this.addInspector(el);
+                return expression;
+            }
+
 
             addTransitionEvent(data, generator_data, condition_data) {
                 console.log("adding transition event", data);
@@ -703,8 +646,8 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 // this.makeDraggable($("#" + data.methodId));
                 if (data.hasArguments) {
                     console.log("get text box by id", document.getElementById(methodTemplateData.methodTextId), methodTemplateData.methodTextId);
-                    EditableSelect.createEditableSelect(document.getElementById(methodTemplateData.methodTextId));
-
+                    //EditableSelect.createEditableSelect(document.getElementById(methodTemplateData.methodTextId));
+                var expression = this.initializeExpression(data.expressionId, data.methodId);
                     console.log("method added event", $("#" + data.targetTransition + " .methods .block"), data, $('#' + methodTemplateData.methodTextId));
                     $('#' + methodTemplateData.methodTextId).change(function() {
                         console.log("change!");
@@ -740,9 +683,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 this.trigger("ON_METHOD_ARGUMENT_CHANGE", [behaviorId, transitionId, methodId, targetMethod, args]);
             }
 
-            updateMapping(data) {
-
-            }
+           
 
             //TODO: I think remove unbinds events of child elements but need to confirm here
             removeMapping(data) {
@@ -834,7 +775,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                         case "sensor_prop":
                         case "generator":
                         case "ui_prop":
-                            this.mappingReferenceRemoved(target.attr("id"), target.attr("parent_id"));
+                            this.expressionReferenceRemoved(target.attr("id"), target.attr("parent_id"));
                             break;
                         case "transition":
                             this.trigger("ON_TRANSITION_EVENT_REMOVED", [this.id, target.attr("parent_id")]);
@@ -844,16 +785,14 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 }
             }
 
-            mappingReferenceRemoved(referenceId, expressionId) {
-                console.log("sensor prop or generator dropped");
+            expressionReferenceRemoved(referenceId, expressionId) {
                 if (expressionId) {
                     var mappingId = $("#" + expressionId).attr("parent_id");
                     var expression = this.expressions[mappingId];
                     expression.removeReference(referenceId);
                     var expressionPropertyList = expression.getPropertyList();
                     var expressionText = expression.getText();
-                    var containsActive = expression.containsActive();
-                    this.trigger("ON_MAPPING_REFERENCE_REMOVED", [this.id, mappingId, expressionId, expressionPropertyList, expressionText, containsActive]);
+                    this.trigger("ON_EXPRESSION_MODIFIED", [this.id, expression.id, expression.getText(), expression.getPropertyList()]);
                 }
             }
 
@@ -1004,13 +943,14 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                         var behaviorId = self.id;
                         var transitionId = id;
                         var methodId = ID();
+                         var expressionId = ID();
                         var targetMethod = $(ui.draggable).attr('name');
                         console.log("type=", type);
 
                         if (type == 'action') {
 
                             //data.name = name;
-                            self.trigger("ON_METHOD_ADDED", [behaviorId, transitionId, methodId, targetMethod, null]);
+                            self.trigger("ON_METHOD_ADDED", [behaviorId, transitionId, methodId, expressionId, targetMethod, null]);
                             $(ui.helper).remove(); //destroy clone
                             $(ui.draggable).remove(); //remove from list
 

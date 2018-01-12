@@ -141,11 +141,12 @@ class Method{
     var name: String;
     var id: String;
     var arguments: [Any]?
-    
-    init(id:String,name:String,arguments:[Any]?){
+    var expressionId: String
+    init(id:String,name:String,expressionId:String,arguments:[Any]?){
         self.name = name;
         self.id = id;
         self.arguments = arguments;
+        self.expressionId = expressionId;
     }
     
     func toJSON()->String{
@@ -170,8 +171,8 @@ class StateTransition{
         self.id = id;
     }
     
-    func addMethod(id:String, name:String, arguments:[Any]?){
-        methods.append(Method(id:id, name:name,arguments:arguments));
+    func addMethod(id:String, name:String, expressionId:String, arguments:[Any]?){
+        methods.append(Method(id:id, name:name,expressionId:expressionId, arguments:arguments));
     }
     
     func toJSON()->String{

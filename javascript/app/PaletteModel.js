@@ -41,7 +41,7 @@ define(['emitter', 'app/id', 'app/Emitter', 'app/DatasetLoader'],
               item_class: "palette block property sensor",
               item_name: "stylus_dx",
               name: "stylus delta x",
-              type: "sensor_prop",
+              type: "stylus",
               help_text: "returns the change in stylus x position each time the stylus is moved"
             }, {
               item_class: "block property palette sensor",
@@ -98,28 +98,28 @@ define(['emitter', 'app/id', 'app/Emitter', 'app/DatasetLoader'],
               item_class: "palette block property ui",
               item_name: "ui_hue",
               name: "hue",
-              type: "ui_prop"
+              type: "ui"
             }, {
               item_class: "block property palette ui",
               item_name: "ui_saturation",
               name: "saturation",
-              type: "ui_prop"
+              type: "ui"
             }, {
               item_class: "block property palette ui",
               item_name: "ui_lightness",
               name: "lightness",
-              type: "ui_prop"
+              type: "ui"
             }, {
               item_class: " block property palette ui",
               item_name: "ui_diameter",
               name: "diameter",
-              type: "ui_prop"
+              type: "ui"
 
             }, {
               item_class: " block property palette ui",
               item_name: "ui_alpha",
               name: "alpha",
-              type: "ui_prop"
+              type: "ui"
 
             }]
           },  

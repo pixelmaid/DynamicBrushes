@@ -774,9 +774,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         data.2.removeKey(key: data.1)
     }
     
-    func addMethod(transitionId:String, methodId:String, methodName:String, arguments:[Any]?){
+    func addMethod(transitionId:String, methodId:String, methodName:String, expressionId:String, arguments:[Any]?){
         
-        (transitions[transitionId]!).addMethod(id: methodId, name:methodName,arguments:arguments)
+        (transitions[transitionId]!).addMethod(id: methodId, name:methodName, expressionId:expressionId, arguments:arguments)
         
         
     }
