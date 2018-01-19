@@ -41,17 +41,17 @@
 
 
 	"data": [
-		["38", "16", "", "", "2017-12-05T00:00:00-08:00"],
-		["89", "31", "", "", "2017-12-04T00:00:00-08:00"],
-		["66", "18", "", "", "2017-12-03T00:00:00-08:00"],
-		["111", "52", "", "", "2017-12-02T00:00:00-08:00"],
-		["74", "59", "", "", "2017-12-01T00:00:00-08:00"],
-		["111", "34", "", "Chrome|39|Home & Lock Screen|20|Mail|16|Phone|9|Messages|8|Google Maps|8|Podcasts|7|Safari|3|Camera|2|NYT Cooking|2|iBooks|0", "2017-11-30T00:00:00-08:00"],
-		["65", "45", "", "Chrome|101|Home & Lock Screen|51|Mail|42|Phone|24|Messages|21|Google Maps|20|Podcasts|19|Safari|7|Camera|6|NYT Cooking|4|iBooks|0", "2017-11-29T00:00:00-08:00"],
-		["105", "0", "", "Chrome|39|Home & Lock Screen|20|Mail|16|Phone|9|Messages|8|Google Maps|8|Podcasts|7|Safari|3|Camera|2|NYT Cooking|2|iBooks|0", "2017-11-28T00:00:00-08:00"],
-		["105", "0", "", "Chrome|39|Home & Lock Screen|20|Mail|16|Phone|9|Messages|8|Google Maps|8|Podcasts|7|Safari|3|Camera|2|NYT Cooking|2|iBooks|0", "2017-11-27T00:00:00-08:00"],
-		["105", "0", "", "Chrome|39|Home & Lock Screen|20|Mail|16|Phone|9|Messages|8|Google Maps|8|Podcasts|7|Safari|3|Camera|2|NYT Cooking|2|iBooks|0", "2017-11-26T00:00:00-08:00"],
-		["105", "0", "", "Chrome|39|Home & Lock Screen|20|Mail|16|Phone|9|Messages|8|Google Maps|8|Podcasts|7|Safari|3|Camera|2|NYT Cooking|2|iBooks|0", "2017-11-25T00:00:00-08:00"],
-		["105", "0", "", "Chrome|39|Home & Lock Screen|20|Mail|16|Phone|9|Messages|8|Google Maps|8|Podcasts|7|Safari|3|Camera|2|NYT Cooking|2|iBooks|0", "2017-11-24T00:00:00-08:00"]
+		[38, 16, "", "", "2017-12-05T00:00:00-08:00"],
+		[89, 31, "", "", "2017-12-04T00:00:00-08:00"],
+		[66, 18, "", "", "2017-12-03T00:00:00-08:00"],
+		[111, 52, "", "", "2017-12-02T00:00:00-08:00"],
+		[74, 59, "", "", "2017-12-01T00:00:00-08:00"],
+		[111, 34, "", [["Chrome",39],["Home & Lock Screen",20],["Mail",26],["Phone",9],["Messages",8],["Google Maps",8],["Podcasts",7]["Safari",3],["Camera",2],["NYT Cooking",2]["iBooks",0]], "2017-11-30T00:00:00-08:00"],
+		[65, 45, "", ["Chrome|101|Home & Lock Screen|51|Mail|42|Phone|24|Messages|21|Google Maps|20|Podcasts|19|Safari|7|Camera|6|NYT Cooking|4|iBooks|0"], "2017-11-29T00:00:00-08:00"],
+		[105, 0, "", ["Chrome|39|Home & Lock Screen|20|Mail|16|Phone|9|Messages|8|Google Maps|8|Podcasts|7|Safari|3|Camera|2|NYT Cooking|2|iBooks|0"], "2017-11-28T00:00:00-08:00"],
+		[105, 0, "", ["Chrome|39|Home & Lock Screen|20|Mail|16|Phone|9|Messages|8|Google Maps|8|Podcasts|7|Safari|3|Camera|2|NYT Cooking|2|iBooks|0"], "2017-11-27T00:00:00-08:00"],
+		[105, 0, "", ["Chrome|39|Home & Lock Screen|20|Mail|16|Phone|9|Messages|8|Google Maps|8|Podcasts|7|Safari|3|Camera|2|NYT Cooking|2|iBooks|0"], "2017-11-26T00:00:00-08:00"],
+		[105, 0, "", ["Chrome|39|Home & Lock Screen|20|Mail|16|Phone|9|Messages|8|Google Maps|8|Podcasts|7|Safari|3|Camera|2|NYT Cooking|2|iBooks|0"], "2017-11-25T00:00:00-08:00"],
+		[105, 0, "", ["Chrome|39|Home & Lock Screen|20|Mail|16|Phone|9|Messages|8|Google Maps|8|Podcasts|7|Safari|3|Camera|2|NYT Cooking|2|iBooks|0"], "2017-11-24T00:00:00-08:00"]
 	]
 }
