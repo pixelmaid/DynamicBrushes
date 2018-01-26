@@ -59,7 +59,7 @@
 		5F90F5671E9D5BCC006BB9FE /* BehaviorMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5601E9D5BCC006BB9FE /* BehaviorMapper.swift */; };
 		5F90F5681E9D5BCC006BB9FE /* Condition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5611E9D5BCC006BB9FE /* Condition.swift */; };
 		5F90F5691E9D5BCC006BB9FE /* Expression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5621E9D5BCC006BB9FE /* Expression.swift */; };
-		5F90F56A1E9D5BCC006BB9FE /* Generator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5631E9D5BCC006BB9FE /* Generator.swift */; };
+		5F90F56A1E9D5BCC006BB9FE /* Signal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5631E9D5BCC006BB9FE /* Signal.swift */; };
 		5F90F56B1E9D5BCC006BB9FE /* State.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5641E9D5BCC006BB9FE /* State.swift */; };
 		5F90F56E1E9D5BE3006BB9FE /* Stylus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F56D1E9D5BE3006BB9FE /* Stylus.swift */; };
 		5F9118D81DEE345100A6B247 /* draw_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F9118D61DEE345100A6B247 /* draw_icon.png */; };
@@ -216,7 +216,7 @@
 		5F90F5601E9D5BCC006BB9FE /* BehaviorMapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BehaviorMapper.swift; sourceTree = "<group>"; };
 		5F90F5611E9D5BCC006BB9FE /* Condition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Condition.swift; sourceTree = "<group>"; };
 		5F90F5621E9D5BCC006BB9FE /* Expression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Expression.swift; sourceTree = "<group>"; };
-		5F90F5631E9D5BCC006BB9FE /* Generator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Generator.swift; sourceTree = "<group>"; };
+		5F90F5631E9D5BCC006BB9FE /* Signal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Signal.swift; sourceTree = "<group>"; };
 		5F90F5641E9D5BCC006BB9FE /* State.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = State.swift; sourceTree = "<group>"; };
 		5F90F56D1E9D5BE3006BB9FE /* Stylus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stylus.swift; sourceTree = "<group>"; };
 		5F90F5731E9D5CE8006BB9FE /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
@@ -470,7 +470,7 @@
 				5F90F5601E9D5BCC006BB9FE /* BehaviorMapper.swift */,
 				5F90F5611E9D5BCC006BB9FE /* Condition.swift */,
 				5F90F5621E9D5BCC006BB9FE /* Expression.swift */,
-				5F90F5631E9D5BCC006BB9FE /* Generator.swift */,
+				5F90F5631E9D5BCC006BB9FE /* Signal.swift */,
 				5F90F5641E9D5BCC006BB9FE /* State.swift */,
 			);
 			path = behavior;
@@ -1135,7 +1135,7 @@
 				5F90F56E1E9D5BE3006BB9FE /* Stylus.swift in Sources */,
 				5F90F55C1E9D5A5C006BB9FE /* Brush.swift in Sources */,
 				5F5CED2C1ED10AED00A253A0 /* SelectedColorView.swift in Sources */,
-				5F90F56A1E9D5BCC006BB9FE /* Generator.swift in Sources */,
+				5F90F56A1E9D5BCC006BB9FE /* Signal.swift in Sources */,
 				5FE32F651ECE638B00ADC01E /* LayerPanelViewController.swift in Sources */,
 				5FE32F631ECE535100ADC01E /* LayerContainerView.swift in Sources */,
 				5FFC45781EE5C473007B7597 /* BehaviorPanelViewController.swift in Sources */,

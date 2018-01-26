@@ -17,8 +17,7 @@ enum FloatParsingError: Error {
 }
 
 class DataObject:Observable<Float>{
-    
-    
+
 }
 
 class Table:Emitter {
@@ -26,6 +25,7 @@ class Table:Emitter {
     var limit = 0
     var columns = [String:Column]()
     var data:[JSON]?
+    var columnizedData = [[Float]]();
     var metadataRowOffset:Int = 0;
     var columnSubscribers = [String:ColumnSynchronizer]()
     init(id:String){
@@ -38,7 +38,17 @@ class Table:Emitter {
         #if DEBUG
             //print("dataset loaded",columns,data)
         #endif
+        self.data = data["data"].arrayValue;
+        
         for i in 0..<columns.count{
+            var columnData = [Float]();
+            for j in 0..<self.data!.count{
+                let row = self.data![j].arrayValue;
+                let v = row[i+metadataRowOffset].floatValue;
+                columnData.append(v);
+            }
+            self.columnizedData.append(columnData);
+            
             let fieldName = columns[i]["item_name"].stringValue;
             let position = columns[i]["position"].intValue;
             let dataTypeName = columns[i]["dataTypeName"].stringValue;
@@ -54,18 +64,14 @@ class Table:Emitter {
             if(dataTypeName == "number"){
                 
                 let average = Float(columns[i]["cachedContents"]["average"].stringValue)
-                c = NumberColumn(table:self,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName)
+                c = NumberColumn(table:self,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName, data:columnData)
             }
                 
             else if(dataTypeName == "calendar_data"){
-                c = CalendarDateColumn(table:self,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName)
-            }
-                
-            else if( fieldName == "reclat" || fieldName == "reclong"){
-                c = GeoColumn(table:self,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName)
+                c = GeoColumn(table:self,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName, data:columnData)
             }
             else{
-                c = TextColumn(table:self,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName)
+                c = TextColumn(table:self,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName, data:columnData)
                 
             }
             #if DEBUG
@@ -74,7 +80,11 @@ class Table:Emitter {
             self.columns[fieldName] = c;
             
         }
-        self.data = data["data"].arrayValue;
+        
+        for i in 0..<columns.count{
+           
+        }
+        
         #if DEBUG
             print("metadata offset",metadataRowOffset);
         #endif
@@ -135,25 +145,27 @@ class ColumnSynchronizer {
     
   
 }
-    
+
 class Column:DataObject{
         let fieldName:String
         let position:Int
         let table:Table
         let dataTypeName:String
         let id:String
+        let generator:Signal
        // let largest:String
       //  let smallest:String
         var currentRow = 0;
         var dataSubscribers = [String:Observable<Float>]();
         private var isGenerator = false;
-        init(table:Table,id:String, fieldName:String,position:Int,dataTypeName:String){
+    init(table:Table,id:String, fieldName:String,position:Int,dataTypeName:String, data:[Float]){
             self.fieldName = fieldName
             self.position = position
             self.dataTypeName = dataTypeName
             self.table = table
             self.id = id
-   
+            self.generator = Signal(id:id)
+            self.generator.setSignal(s:data)
             super.init(0)
             print("registering column with id:",self.id);
             RequestHandler.registerObservable(observableId: table.id+"_"+self.fieldName, observable: self);
@@ -207,9 +219,9 @@ class Column:DataObject{
     class GeoColumn:Column{
         
         
-        override init(table: Table, id: String, fieldName: String, position: Int, dataTypeName: String) {
+        override init(table: Table, id: String, fieldName: String, position: Int, dataTypeName: String, data:[Float] ) {
             
-            super.init(table:table,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName);
+            super.init(table:table,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName,data:data);
         }
         
         override func get(id:String?)->Float{
@@ -236,7 +248,6 @@ class Column:DataObject{
         }
         
     }
-    
     
     class NumberColumn:Column{
         //let average:Float

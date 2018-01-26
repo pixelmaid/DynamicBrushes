@@ -85,11 +85,11 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     let lightness:Observable<Float>
     let saturation:Observable<Float>
     
-    let xBuffer:CircularBuffer
+  /*  let xBuffer:CircularBuffer
     let yBuffer:CircularBuffer
     let weightBuffer:CircularBuffer
     let bufferLimitX:Observable<Float>
-    let bufferLimitY:Observable<Float>
+    let bufferLimitY:Observable<Float>*/
     
     //list of obeservables (for later disposal)
     
@@ -174,12 +174,12 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.lightness = Observable<Float>(100)
         self.saturation = Observable<Float>(100)
         
-        self.xBuffer = CircularBuffer()
-        self.yBuffer = CircularBuffer()
-        self.weightBuffer = CircularBuffer()
-        
-        self.bufferLimitX = Observable<Float>(0)
-        self.bufferLimitY = Observable<Float>(0)
+        /*self.xBuffer = CircularBuffer(id:id+"_xBuffer")
+        self.yBuffer = CircularBuffer(id:id+"_yBuffer")
+        self.weightBuffer = CircularBuffer(id:id+"_weightBuffer")
+ 
+       self.bufferLimitX = Observable<Float>(0)
+        self.bufferLimitY = Observable<Float>(0)*/
         //==END OBSERVABLES==//
         
         
@@ -217,12 +217,12 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         observables.append(lightness)
         observables.append(saturation)
         
-        observables.append(xBuffer);
+       /* observables.append(xBuffer);
         observables.append(yBuffer);
         observables.append(weightBuffer);
         
         observables.append(bufferLimitX)
-        observables.append(bufferLimitY)
+        observables.append(bufferLimitY)*/
         //==END APPEND OBSERVABLES==//
         
         
@@ -242,7 +242,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         _ = self.position.didChange.addHandler(target: self, handler:Brush.positionChange, key:deltaKey)
         _ = self.polarPosition.didChange.addHandler(target: self, handler:Brush.polarPositionChange, key:deltaKey)
 
-        _ = self.xBuffer.bufferEvent.addHandler(target: self, handler: Brush.deltaBufferLimitReached, key: bufferKey)
+       // _ = self.xBuffer.bufferEvent.addHandler(target: self, handler: Brush.deltaBufferLimitReached, key: bufferKey)
         
         
         self.setCanvasTarget(canvas: canvas)
@@ -300,7 +300,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     
     func deltaBufferLimitReached(data:(String), key:String){
-        bufferLimitX.set(newValue: 1)
+       // bufferLimitX.set(newValue: 1)
     }
     
     func positionChange(data:(String,(Float,Float),(Float,Float)),key:String){
@@ -421,8 +421,8 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         // xBuffer.push(v: xDelt);
         // yBuffer.push(v: yDelt);
         
-        bufferLimitX.set(newValue: 0)
-        bufferLimitY.set(newValue: 0)
+        //bufferLimitX.set(newValue: 0)
+       // bufferLimitY.set(newValue: 0)
         
         let cweight = ds.d;
           

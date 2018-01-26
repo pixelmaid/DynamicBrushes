@@ -29,8 +29,7 @@ class Observable<T>:Object, DisposableObservable {
     func set(newValue: T) {
         let oldValue = value
         value = newValue
-        self.invalidate(oldValue: oldValue, newValue: newValue)
-       
+        self.invalidate(oldValue: oldValue, newValue: newValue);
     }
     
     func getActiveStatus()->Bool{

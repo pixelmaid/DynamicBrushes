@@ -15,7 +15,7 @@ class Stylus: TimeSeries, WebTransmitter {
     var force = Observable<Float>(0)
     var prevForce = Observable<Float>(0)
     var angle = Observable<Float>(0)
-    var speed = MovingAverage()
+    var speed = MovingAverage(id:"stylus_speed");
     var prevAngle = Observable<Float>(0)
     var deltaAngle = Observable<Float>(0)
     var position = LinkedPoint(x:0,y:0)
