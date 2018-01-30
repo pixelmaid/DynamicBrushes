@@ -32,7 +32,7 @@ class Observable<T>:Object, DisposableObservable {
         self.invalidate(oldValue: oldValue, newValue: newValue);
     }
     
-    func getActiveStatus()->Bool{
+    func isLive()->Bool{
         return active;
     }
     

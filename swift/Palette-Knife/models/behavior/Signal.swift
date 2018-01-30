@@ -18,24 +18,26 @@ class Signal:Observable<Float>{
     init(id:String){
         self.id = id;
         super.init(0)
-        
+        RequestHandler.registerObservable(observableId: id, observable: self)
     }
     
     override func get(id:String?) -> Float {
         let i = Int(index.get(id: nil));
+        let v:Float;
         if i>signalBuffer.count{
             if(circular){
                 let r = signalBuffer.count%i;
-                return signalBuffer[r];
+                v = signalBuffer[r];
             }
             else{
-                return signalBuffer[signalBuffer.count-1];
+               v = signalBuffer[signalBuffer.count-1];
             }
         }
         else{
-            return signalBuffer[i];
+            v = signalBuffer[i];
         }
-        RequestHandler.registerObservable(observableId: self.id, observable: self)
+        self.setSilent(newValue: v);
+        return super.get(id: id);
 
         
     }
@@ -46,6 +48,20 @@ class Signal:Observable<Float>{
     
     func incrementIndex(){
         index.set(newValue: index.get(id: nil)+1);
+    }
+    
+    override func set(newValue:Float){
+        self.pushValue(v: newValue)
+        super.set(newValue: newValue);
+        #if DEBUG
+            print("set signal value",id,newValue);
+        #endif
+    }
+    
+    override func setSilent(newValue:Float){
+        self.pushValue(v: newValue)
+        super.setSilent(newValue: newValue);
+
     }
     
     func pushValue(v:Float){
@@ -59,7 +75,10 @@ class Signal:Observable<Float>{
     func clearSignal(){
         signalBuffer.removeAll();
     }
-  
+}
+
+
+class LiveSignal:Signal{
     
 }
 

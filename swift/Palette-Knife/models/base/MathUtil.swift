@@ -33,18 +33,26 @@ struct MathUtil{
         }
     }
     
+    static func sub(x1:Float,y1:Float,x2:Float,y2:Float)->(Float,Float){
+        return (x1-x2,y1-y2);
+    }
+    
     static func polarToCart(r:Float, theta:Float)->(Float,Float){
         let x = cos(theta * (Float.pi / 180.0)) * r;
         let y = sin(theta * (Float.pi / 180.0)) * r;
         return (x,y)
     }
     
+    
     static func cartToPolar(p1:Point, p2:Point)->(Float,Float) {
-        
+        return MathUtil.cartToPolar(x1: p1.x.get(id: nil), y1: p1.y.get(id: nil), x2: p2.x.get(id: nil), y2: p2.y.get(id:nil))
+    }
+    
+    static func cartToPolar(x1:Float,y1:Float,x2:Float,y2:Float)->(Float,Float){
         var r = Float(0.0);
         var theta = Float(0.0);
-        let x = p2.x.get(id:nil) - p1.x.get(id:nil)
-        let y = p2.y.get(id:nil) - p1.y.get(id:nil)
+        let x = x2 - x1;
+        let y = y2 - y1;
         r = sqrt((x * x) + (y * y));
         
         var type = 0;

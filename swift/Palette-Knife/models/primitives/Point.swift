@@ -89,7 +89,8 @@ class Point:Observable<(Float,Float)>,Geometry{
     }
     
     func sub(point:Point)->Point {
-        return Point(x:self.x.get(id: nil)-point.x.get(id: nil),y:self.y.get(id: nil)-point.y.get(id: nil));
+        let v = MathUtil.sub(x1:self.x.get(id: nil),y1:self.y.get(id: nil),x2:point.x.get(id: nil),y2:point.y.get(id: nil));
+        return Point(x:v.0,y:v.1);
     }
     
     func div(val:Float) ->Point{
@@ -224,6 +225,7 @@ class Point:Observable<(Float,Float)>,Geometry{
 //point with an internal listener
 //be careful when using. will cause memory leaks if not destroyed
 //should never be initialized inside a function.
+
 class LinkedPoint:Point{
     override init(x: Float, y: Float) {
         super.init(x: x, y: y);

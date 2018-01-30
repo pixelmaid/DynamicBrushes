@@ -16,9 +16,7 @@ enum FloatParsingError: Error {
     case invalidInput(String)
 }
 
-class DataObject:Observable<Float>{
 
-}
 
 class Table:Emitter {
     var i = 0
@@ -146,14 +144,12 @@ class ColumnSynchronizer {
   
 }
 
-class Column:DataObject{
+class Column:Signal{
         let fieldName:String
         let position:Int
         let table:Table
         let dataTypeName:String
-        let id:String
-        let generator:Signal
-       // let largest:String
+        // let largest:String
       //  let smallest:String
         var currentRow = 0;
         var dataSubscribers = [String:Observable<Float>]();
@@ -163,10 +159,8 @@ class Column:DataObject{
             self.position = position
             self.dataTypeName = dataTypeName
             self.table = table
-            self.id = id
-            self.generator = Signal(id:id)
-            self.generator.setSignal(s:data)
-            super.init(0)
+            super.init(id:id)
+           self.setSignal(s:data)
             print("registering column with id:",self.id);
             RequestHandler.registerObservable(observableId: table.id+"_"+self.fieldName, observable: self);
 

@@ -492,9 +492,11 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     }
     
     
-    func setOrigin(p:Point){
-        self.origin.set(val:p);
-        let pol = MathUtil.cartToPolar(p1: Point(x:0,y:0), p2: p);
+  
+        
+    func setOrigin(x:Float,y:Float){
+        self.origin.set(x:x,y:y);
+        let pol = MathUtil.cartToPolar(x1: 0, y1: 0, x2: x, y2: y)
         self.polarPosition.x.setSilent(newValue: pol.0);
         self.polarPosition.y.setSilent(newValue: pol.1);
         self.position.x.setSilent(newValue: self.origin.x.get(id: nil))
@@ -608,7 +610,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 if  let arg_string = arg as? String {
                     if(arg_string  == "parent_position"){
                         if(self.parent != nil){
-                            self.setOrigin(p: self.parent!.bPosition)
+                            self.setOrigin(x: self.parent!.bPosition.x.get(id: nil),y: self.parent!.bPosition.y.get(id: nil))
                         }
                         else{
                             #if DEBUG
@@ -619,7 +621,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                     else if(arg_string  == "parent_origin"){
                         if(self.parent != nil){
                             
-                            self.setOrigin(p: self.parent!.origin)
+                            self.setOrigin(x: self.parent!.origin.x.get(id: nil),y: self.parent!.origin.y.get(id: nil))
                         }
                         else{
                             #if DEBUG
@@ -627,9 +629,14 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                             #endif
                         }
                     }
-                }else {
+                 else if(arg_string  == "stylus_position"){
+                      self.setOrigin(x: stylus.x.get(id: nil),y: stylus.y.get(id: nil))
+                }
+                }
                     
-                    self.setOrigin(p: method.arguments![0] as! Point)
+                else {
+                    print("WARNING!!!: UNABLE TO PARSE POSITION ARGUMENT FOR NEW STROKE");
+                   
                 }
                 
                 self.newStroke();
@@ -644,13 +651,13 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                 let arg = method.arguments![0];
                 if  let arg_string = arg as? String {
                     if(arg_string  == "parent_position"){
-                        self.setOrigin(p: self.parent!.bPosition)
+                        self.setOrigin(x: self.parent!.bPosition.x.get(id: nil),y: self.parent!.bPosition.y.get(id: nil))
                     }
                     else if(arg_string  == "parent_origin"){
-                        self.setOrigin(p: self.parent!.origin)
+                        self.setOrigin(x: self.parent!.origin.x.get(id: nil),y: self.parent!.origin.y.get(id: nil))
                     }
                 }else {
-                    self.setOrigin(p: method.arguments![0] as! Point)
+                    self.setOrigin(x: stylus.x.get(id: nil),y: stylus.y.get(id: nil))
                 }
             case "destroy":
                 self.destroy();
@@ -703,7 +710,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             }
         #endif*/
         reference.subscribe(id: self.id,brushId:self.id,brushIndex:nil);
-        let active = reference.getActiveStatus()
+        let active = reference.isLive()
         let type:String
         if(active){
            type = "active"

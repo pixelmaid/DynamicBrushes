@@ -44,35 +44,34 @@ class Expression: Observable<Float>{
     
 }
 
-class TextExpression:Observable<Float>{
-    var operandList:[String:Observable<Float>];
+class TextExpression:Signal{
+    var operandList:[String:Signal];
     var text:String;
-    var id: String;
     var eventHandlers = [Disposable]();
     var brushIndex:Observable<Float>
     var subscriberId:String
-    init(id:String,subscriberId:String,brushIndex:Observable<Float>,operandList:[String:Observable<Float>],text:String){
-        self.id = id;
+    init(id:String,subscriberId:String,brushIndex:Observable<Float>,operandList:[String:Signal],text:String){
+       
         self.text = text;
         self.operandList = operandList;
         self.brushIndex = brushIndex;
         self.subscriberId = subscriberId;
-        super.init(0);
-        var hasActive = false;
+        super.init(id:id);
+        var containsLive = false;
         for (_,value) in self.operandList{
             
-            if(!hasActive){
-                hasActive = value.getActiveStatus();
+            if(!containsLive){
+                containsLive = value.isLive();
             }
             value.subscribe(id: self.id,brushId:subscriberId,brushIndex:brushIndex);
             let operandKey = NSUUID().uuidString;
-            if(value.getActiveStatus() == true){
+            if(value.isLive() == true){
                 let handler = value.didChange.addHandler(target: self, handler: TextExpression.setHandler,key:operandKey)
                 eventHandlers.append(handler)
 
             }
         }
-        self.setActiveStatus(status: hasActive);
+        self.setActiveStatus(status: containsLive);
     }
     
     override func get(id:String?) -> Float {
@@ -92,6 +91,9 @@ class TextExpression:Observable<Float>{
         
         for (key,value) in self.operandList{
             currentVals[key] = value.get(id:subscriberId);
+            if(value.isLive()==false){
+                value.incrementIndex();
+            }
             
         }
         #if DEBUG
