@@ -13,7 +13,7 @@ class Observable<T>:Object, DisposableObservable {
     
     var name = "observable"
     var printname = "observable"
-    private var active = false;
+    private var live = false;
     var invalidated = false;
     var constrained = false;
     var subscribers = [String:Int]();
@@ -33,11 +33,11 @@ class Observable<T>:Object, DisposableObservable {
     }
     
     func isLive()->Bool{
-        return active;
+        return live;
     }
     
-    func setActiveStatus(status:Bool){
-        self.active = status;
+    func setLiveStatus(status:Bool){
+        self.live = status;
     }
     
     func constrainedAndActive()->Bool{

@@ -50,7 +50,6 @@
 		5F90F54E1E9D5A16006BB9FE /* Point.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F54C1E9D5A16006BB9FE /* Point.swift */; };
 		5F90F5551E9D5A41006BB9FE /* Canvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5501E9D5A41006BB9FE /* Canvas.swift */; };
 		5F90F5561E9D5A41006BB9FE /* Drawing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5511E9D5A41006BB9FE /* Drawing.swift */; };
-		5F90F5571E9D5A41006BB9FE /* Fabricator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5521E9D5A41006BB9FE /* Fabricator.swift */; };
 		5F90F5581E9D5A41006BB9FE /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5531E9D5A41006BB9FE /* Line.swift */; };
 		5F90F5591E9D5A41006BB9FE /* Stroke.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5541E9D5A41006BB9FE /* Stroke.swift */; };
 		5F90F55C1E9D5A5C006BB9FE /* Brush.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F55B1E9D5A5C006BB9FE /* Brush.swift */; };
@@ -80,6 +79,7 @@
 		5FA4C72E1CDA7B5B004A728C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5FA4C72C1CDA7B5B004A728C /* LaunchScreen.storyboard */; };
 		5FA4C7391CDA7B5B004A728C /* Palette_KnifeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7381CDA7B5B004A728C /* Palette_KnifeTests.swift */; };
 		5FA4C7441CDA7B5B004A728C /* Palette_KnifeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7431CDA7B5B004A728C /* Palette_KnifeUITests.swift */; };
+		5FB74959202128FE007D9E12 /* StylusManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FB74958202128FD007D9E12 /* StylusManager.swift */; };
 		5FBDF0E71ED8D95300022B07 /* quad.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 5FBDF0E11ED8D95300022B07 /* quad.vsh */; };
 		5FBDF0E81ED8D95300022B07 /* coloredpoint.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 5FBDF0E21ED8D95300022B07 /* coloredpoint.vsh */; };
 		5FBDF0E91ED8D95300022B07 /* colorlesspoint.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 5FBDF0E31ED8D95300022B07 /* colorlesspoint.vsh */; };
@@ -207,7 +207,6 @@
 		5F90F54C1E9D5A16006BB9FE /* Point.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Point.swift; sourceTree = "<group>"; };
 		5F90F5501E9D5A41006BB9FE /* Canvas.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Canvas.swift; sourceTree = "<group>"; };
 		5F90F5511E9D5A41006BB9FE /* Drawing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Drawing.swift; sourceTree = "<group>"; };
-		5F90F5521E9D5A41006BB9FE /* Fabricator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fabricator.swift; sourceTree = "<group>"; };
 		5F90F5531E9D5A41006BB9FE /* Line.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
 		5F90F5541E9D5A41006BB9FE /* Stroke.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stroke.swift; sourceTree = "<group>"; };
 		5F90F55B1E9D5A5C006BB9FE /* Brush.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Brush.swift; sourceTree = "<group>"; };
@@ -245,6 +244,7 @@
 		5FA4C73F1CDA7B5B004A728C /* DynamicBrushes.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DynamicBrushes.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FA4C7431CDA7B5B004A728C /* Palette_KnifeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette_KnifeUITests.swift; sourceTree = "<group>"; };
 		5FA4C7451CDA7B5B004A728C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5FB74958202128FD007D9E12 /* StylusManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StylusManager.swift; sourceTree = "<group>"; };
 		5FBDF0E11ED8D95300022B07 /* quad.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = quad.vsh; sourceTree = "<group>"; };
 		5FBDF0E21ED8D95300022B07 /* coloredpoint.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = coloredpoint.vsh; sourceTree = "<group>"; };
 		5FBDF0E31ED8D95300022B07 /* colorlesspoint.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = colorlesspoint.vsh; sourceTree = "<group>"; };
@@ -447,7 +447,6 @@
 			children = (
 				5F90F5501E9D5A41006BB9FE /* Canvas.swift */,
 				5F90F5511E9D5A41006BB9FE /* Drawing.swift */,
-				5F90F5521E9D5A41006BB9FE /* Fabricator.swift */,
 				5F90F5531E9D5A41006BB9FE /* Line.swift */,
 				5F90F5541E9D5A41006BB9FE /* Stroke.swift */,
 			);
@@ -480,6 +479,7 @@
 			isa = PBXGroup;
 			children = (
 				5F90F56D1E9D5BE3006BB9FE /* Stylus.swift */,
+				5FB74958202128FD007D9E12 /* StylusManager.swift */,
 			);
 			path = sensors;
 			sourceTree = "<group>";
@@ -1128,6 +1128,7 @@
 				5F90F5551E9D5A41006BB9FE /* Canvas.swift in Sources */,
 				5F5CED301ED1132600A253A0 /* UIInput.swift in Sources */,
 				5F90F5691E9D5BCC006BB9FE /* Expression.swift in Sources */,
+				5FB74959202128FE007D9E12 /* StylusManager.swift in Sources */,
 				5F90F5491E9D59D4006BB9FE /* WebTransmitter.swift in Sources */,
 				5F50371B1EA9533A004ABAC1 /* shaderUtil.swift in Sources */,
 				5F90F56B1E9D5BCC006BB9FE /* State.swift in Sources */,
@@ -1163,7 +1164,6 @@
 				5F90F5651E9D5BCC006BB9FE /* BehaviorDefinition.swift in Sources */,
 				5F90F5471E9D59D4006BB9FE /* SVGGenerator.swift in Sources */,
 				5F90F5581E9D5A41006BB9FE /* Line.swift in Sources */,
-				5F90F5571E9D5A41006BB9FE /* Fabricator.swift in Sources */,
 				5FFC457A1EE5C6D6007B7597 /* BehaviorCell.swift in Sources */,
 				5F90F5441E9D59D4006BB9FE /* Matrix.swift in Sources */,
 				5F2CF3D71ED32EC00066AC8E /* FileCell.swift in Sources */,

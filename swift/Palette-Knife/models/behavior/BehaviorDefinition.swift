@@ -145,9 +145,7 @@ class BehaviorDefinition {
     
     
     func parseGeneratorJSON(data:JSON){
-        let type = data["generatorType"].stringValue;
-        print("parse generator JSON",data,type);
-
+        let type = data["generator_type"].stringValue;
         switch(type){
         case "random":
             self.addRandomGenerator(name: data["generatorId"].stringValue, min: data["min"].floatValue, max: data["max"].floatValue)
@@ -350,7 +348,7 @@ class BehaviorDefinition {
                 let arg = (dataArguments.arrayValue)[0].stringValue;
                 switch(arg){
                 case "stylus_position":
-                    arguments = ["stylus_position"];
+                    arguments = [stylus.position];
                     break;
                 case "parent_position":
                     arguments = ["parent_position"];
@@ -364,7 +362,7 @@ class BehaviorDefinition {
                 }
             }
             else{
-                arguments = ["stylus_position"];
+                arguments = [stylus.position];
             }
             methodJSON["methodArguments"] = JSON(["stylus_position":"stylus_position","parent_position":"parent_position","parent_origin":"parent_origin" ])
             methodJSON["defaultArgument"] = JSON("stylus_position");
@@ -684,7 +682,18 @@ class BehaviorDefinition {
                     if let methodArgs = method.3{
                         let pointString:String;
                         let methodPoint = methodArgs[0]
-                       if let def = methodPoint as? String{
+                        if let def = methodPoint as? Point{
+                            if(def == stylus.position){
+                                pointString = "stylus_position"
+                                methodJSON["currentArguments"]=JSON(["stylus_position"])
+                                
+                            }
+                            else{
+                                //TODO: handle arbitrary point values here
+                                
+                            }
+                        }
+                        else if let def = methodPoint as? String{
                             pointString = def;
                             methodJSON["currentArguments"] = JSON([pointString]);
                             
@@ -1008,6 +1017,8 @@ class BehaviorDefinition {
         expressions[id]=(emitterOperandList,expressionText);
     }
     
+    
+    
     //TODO: add in cases for other generators
     func generateGenerator(name:String, data:(String,[Any?]),targetBrush:Brush){
         let id = targetBrush.id;
@@ -1021,7 +1032,6 @@ class BehaviorDefinition {
            storedGenerators[id]![name] = range;
         case "sine":
             let sine = Sine(id:name, freq: data.1[0] as! Float, amp: data.1[1] as! Float, phase: data.1[2] as! Float);
-
             storedGenerators[id]![name] = sine;
         case "square":
             let square = Square(id:name, min: data.1[0] as! Float, max: data.1[1] as! Float, freq: data.1[2] as! Float);
@@ -1055,10 +1065,10 @@ class BehaviorDefinition {
         RequestHandler.registerObservable(observableId: name, observable: storedGenerators[id]![name]!);
     }
     
-    func generateSingleOperand(targetBrush:Brush, emitter:Any?,propList:[String]?)->Signal{
+    func generateSingleOperand(targetBrush:Brush, emitter:Any?,propList:[String]?)->Observable<Float>{
         let id = targetBrush.id;
 
-        var operand:Signal
+        var operand:Observable<Float>
        
         if(propList != nil){
             if(storedGenerators[id]![propList![0]]) != nil{
@@ -1068,28 +1078,28 @@ class BehaviorDefinition {
                 operand = storedExpressions[id]![propList![0]]!;
                 
             }
-            /*else if(storedConditions[id]![propList![0]] != nil){
+            else if(storedConditions[id]![propList![0]] != nil){
                 operand = storedConditions[id]![propList![0]]!;
                 
-            }*/
+            }
             else{
                 if let table = emitter as? Table{
-                    operand = table.columns[propList![0]]!;
+                     operand = table.columns[propList![0]]! as Observable<Float>
                 }
                 else{
-                operand = (emitter as! Object)[propList![0]]! as! Signal
+                operand = (emitter as! Object)[propList![0]]! as! Observable<Float>
                 }
             }
             
             if(propList!.count > 1){
                 
                 for i in 1..<propList!.count{
-                    operand = operand[propList![i]] as! Signal
+                    operand = operand[propList![i]] as! Observable<Float>
                 }
             }
         }
         else{
-            operand = emitter as! Signal
+            operand = emitter as! Observable<Float>
         }
         return operand;
     }
@@ -1192,7 +1202,7 @@ class BehaviorDefinition {
     
     func generateExpression(targetBrush:Brush, name:String, data:([String:(Any?,[String]?,[String]?)],String)){
         let id = targetBrush.id
-        var operands = [String:Signal]();
+        var operands = [String:Observable<Float>]();
         for (key,value) in data.0 {
             let emitter = value.0;
             let propList = value.1;
@@ -1324,6 +1334,7 @@ class BehaviorDefinition {
         storedGenerators[id] = [String:Signal]();
         storedConditions[id] = [String:Condition]();
         storedExpressions[id] = [String:TextExpression]();
+        
         for (key, generator_data) in generators{
             self.generateGenerator(name: key,data:generator_data,targetBrush:targetBrush)
         }

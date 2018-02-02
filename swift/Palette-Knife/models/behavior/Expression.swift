@@ -44,24 +44,25 @@ class Expression: Observable<Float>{
     
 }
 
-class TextExpression:Signal{
-    var operandList:[String:Signal];
+class TextExpression:Observable<Float>{
+    var operandList:[String:Observable<Float>];
     var text:String;
+    var id: String;
     var eventHandlers = [Disposable]();
     var brushIndex:Observable<Float>
     var subscriberId:String
-    init(id:String,subscriberId:String,brushIndex:Observable<Float>,operandList:[String:Signal],text:String){
-       
+    init(id:String,subscriberId:String,brushIndex:Observable<Float>,operandList:[String:Observable<Float>],text:String){
+        self.id = id;
         self.text = text;
         self.operandList = operandList;
         self.brushIndex = brushIndex;
         self.subscriberId = subscriberId;
-        super.init(id:id);
-        var containsLive = false;
+        super.init(0);
+        var hasLive = false;
         for (_,value) in self.operandList{
             
-            if(!containsLive){
-                containsLive = value.isLive();
+            if(!hasLive){
+                hasLive = value.isLive()
             }
             value.subscribe(id: self.id,brushId:subscriberId,brushIndex:brushIndex);
             let operandKey = NSUUID().uuidString;
@@ -71,7 +72,7 @@ class TextExpression:Signal{
 
             }
         }
-        self.setActiveStatus(status: containsLive);
+        self.setLiveStatus(status: hasLive);
     }
     
     override func get(id:String?) -> Float {
@@ -91,9 +92,6 @@ class TextExpression:Signal{
         
         for (key,value) in self.operandList{
             currentVals[key] = value.get(id:subscriberId);
-            if(value.isLive()==false){
-                value.incrementIndex();
-            }
             
         }
         #if DEBUG

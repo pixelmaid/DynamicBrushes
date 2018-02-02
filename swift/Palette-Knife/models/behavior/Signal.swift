@@ -9,9 +9,10 @@
 import Foundation
 
 
+
 class Signal:Observable<Float>{
-    private var index = Observable<Float>(0);
-    private var signalBuffer = [Float]();
+    private var index:Float = -1;
+    private var signalBuffer = [Float:Float]();
     private var circular = true;
     var id:String
 //    var param = Observable<Float>(1.0);
@@ -22,54 +23,39 @@ class Signal:Observable<Float>{
     }
     
     override func get(id:String?) -> Float {
-        let i = Int(index.get(id: nil));
+       
         let v:Float;
-        if i>signalBuffer.count{
-            if(circular){
-                let r = signalBuffer.count%i;
-                v = signalBuffer[r];
-            }
-            else{
-               v = signalBuffer[signalBuffer.count-1];
-            }
-        }
-        else{
-            v = signalBuffer[i];
-        }
+        
+        v = signalBuffer[index]!;
+        
         self.setSilent(newValue: v);
         return super.get(id: id);
-
         
     }
     
-    func setIndex(y:Float){
-        self.index.set(newValue: y);
+    override func getSilent()->Float{
+        return signalBuffer[index]!
     }
     
-    func incrementIndex(){
-        index.set(newValue: index.get(id: nil)+1);
-    }
-    
-    override func set(newValue:Float){
-        self.pushValue(v: newValue)
-        super.set(newValue: newValue);
-        #if DEBUG
-            print("set signal value",id,newValue);
-        #endif
-    }
-    
-    override func setSilent(newValue:Float){
-        self.pushValue(v: newValue)
-        super.setSilent(newValue: newValue);
-
-    }
-    
-    func pushValue(v:Float){
-        signalBuffer.append(v);
+    func setHash(h:Float){
+        self.index = h;
     }
     
     func setSignal(s:[Float]){
-        signalBuffer = s;
+        self.signalBuffer.removeAll();
+        for i in 0..<s.count{
+            signalBuffer[Float(i)] = s[i];
+        }
+    }
+    
+    
+    func pushValue(h:Float,v:Float){
+        signalBuffer[h] = v;
+        self.setHash(h:h);
+    }
+    
+    func incrementIndex(){
+        index = index+1.0;
     }
     
     func clearSignal(){
@@ -82,6 +68,44 @@ class LiveSignal:Signal{
     
 }
 
+
+class Recording:Signal{
+    private var next:Recording?
+    private var prev:Recording?
+    
+    func getNext()->Recording?{
+        if(next != nil){
+            return next!;
+        }
+        return nil;
+    }
+    
+    func getPrev()->Recording?{
+        if(prev != nil){
+            return prev!;
+        }
+        return nil;
+    }
+    
+    func setNext(r:Recording){
+        next = r;
+    }
+    
+    func setPrev(r:Recording){
+        prev = r;
+    }
+}
+
+
+class EventRecording:Signal{
+    
+}
+
+class StylusEventRecording:EventRecording{
+    let stylusUp = 0.0;
+    let stylusMove = 1.0;
+    let stylusDown = 2.0;
+}
 
 class Sine:Signal{
     var freq:Float
@@ -161,14 +185,11 @@ class Interval:Signal{
         }
         else{
             infinite = true;
-            self.incrementIndex();
-            
         }
     }
  
     func reset(){
         self.index = 0;
-        self.incrementIndex();
     }
     
     override func get(id:String?) -> Float {

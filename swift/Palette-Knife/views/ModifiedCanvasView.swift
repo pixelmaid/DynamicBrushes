@@ -253,7 +253,8 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
                     let y = Float(point.y)
                     let force = Float(touch.force);
                     let angle = Float(touch.azimuthAngle(in: self))
-                    stylus.onStylusDown(x: x, y:y, force:force, angle:angle)
+                    StylusManager.onStylusDown(x: x, y: y, force: force, angle: angle);
+
                 }
         
         //}
@@ -348,8 +349,8 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
                 let force = Float(touch.force);
                 let angle = Float(touch.azimuthAngle(in: self))
                 //let mappedAngle = MathUtil.map(value: angle, low1: 0, high1: 2*Float.pi, low2: 0, high2: 1);
-                stylus.onStylusMove(x: x, y:y, force:force, angle:angle);
-                
+                StylusManager.onStylusMove(x: x, y: y, force: force, angle: angle)
+
             }
         
     // }
@@ -375,7 +376,14 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
     
     
     func layerTouchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        stylus.onStylusUp()
+        if let touch = touches.first  {
+            let point = touch.location(in: self)
+            let x = Float(point.x)
+            let y = Float(point.y)
+            let force = Float(touch.force);
+            let angle = Float(touch.azimuthAngle(in: self))
+            StylusManager.onStylusUp(x: x, y: y, force: force, angle: angle)
+        }
         
     }
     

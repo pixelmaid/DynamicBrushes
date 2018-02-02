@@ -28,6 +28,7 @@ class ToolbarViewController: UIViewController {
     
     @IBOutlet weak var backupLabel: UILabel!
     @IBOutlet weak var programViewToggle: UIButton!
+    @IBOutlet weak var LoopToggle: UIButton!
     
     var toolEvent = Event<(String)>();
     var activePanel:String?
@@ -81,7 +82,7 @@ class ToolbarViewController: UIViewController {
 
         diameterSlider.addTarget(self, action: #selector(ToolbarViewController.diameterSliderChanged), for: .valueChanged)
           alphaSlider.addTarget(self, action: #selector(ToolbarViewController.alphaSliderChanged), for: .valueChanged)
-
+ LoopToggle.addTarget(self, action: #selector(ToolbarViewController.loopToggled), for: .touchUpInside)
         penToggled();
     }
     
@@ -117,7 +118,12 @@ class ToolbarViewController: UIViewController {
         
     }
 
-    
+    func loopToggled(sender: AnyObject){
+        let target = (sender as! UIButton);
+        if(target == LoopToggle){
+            toolEvent.raise(data: ("TOGGLE_LOOP"));
+        }
+    }
     func panelToggled(sender: AnyObject){
         let target = (sender as! UIButton);
         if(target == layerPanelButton){

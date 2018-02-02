@@ -47,6 +47,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     let fileEventKey = NSUUID().uuidString
     let behaviorEventKey = NSUUID().uuidString
     let programmingEventKey = NSUUID().uuidString
+    let stylusManagerKey = NSUUID().uuidString
 
     let brushEventKey = NSUUID().uuidString
     let dataEventKey = NSUUID().uuidString
@@ -94,6 +95,8 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     required init?(coder: NSCoder) {
         layerContainerView = LayerContainerView(width:pX,height:pY);
         super.init(coder: coder);
+        _ = StylusManager.stylusManagerEvent.addHandler(target: self, handler: DrawingViewController.stylusManagerEventHandler, key: stylusManagerKey)
+
     }
     
     
@@ -133,9 +136,29 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
         uiInput.setColor(color:data);
     }
     
+    func stylusManagerEventHandler(data:(String,[String:[String]]),key:String){
+       switch(data){
+            case "ERASE_REQUEST":
+                layerContainerView.activeLayer?.eraseAll();
+            break;
+            default:
+            break;
+        }
+
+    }
+    
     func toolEventHandler(data: (String), key: String){
         print("tool event handler",data)
         switch(data){
+        case "TOGGLE_LOOP":
+            if(StylusManager.liveStatus()){
+            StylusManager.setToLastRecording();
+            }
+            else{
+                StylusManager.setToLive();
+            }
+            
+            break;
         case "PROGRAMMING_VIEW_REQUEST":
             Router.createProgrammingModule();
             break;
@@ -321,6 +344,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     
     func strokeGeneratedHandler(data:(String),key:String){
         self.layerContainerView.addStroke(id:data);
+        StylusManager.addResultantStroke(id:data);
     }
     
     func strokeRemovedHandler(data:([String]),key:String){
@@ -411,7 +435,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
         
         
         var templateJSON:JSON = [:]
-        templateJSON["filename"] = "templates/dataset_template.json"
+        templateJSON["filename"] = "templates/recording_template.json"
         templateJSON["type"] = JSON("load")
         let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: self)
         RequestHandler.addRequest(requestData:behaviorDownloadRequest);
@@ -927,6 +951,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
      
             let id = self.layerContainerView.newLayer(name: (self.layerPanelController?.getNextName())!,id:nil, size:self.targetSize);
         self.layerPanelController?.addLayer(layerId: id);
+        StylusManager.setLayerId(layerId:id);
         
     }
     
