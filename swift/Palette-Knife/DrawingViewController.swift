@@ -95,7 +95,6 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     required init?(coder: NSCoder) {
         layerContainerView = LayerContainerView(width:pX,height:pY);
         super.init(coder: coder);
-        _ = StylusManager.stylusManagerEvent.addHandler(target: self, handler: DrawingViewController.stylusManagerEventHandler, key: stylusManagerKey)
 
     }
     
@@ -137,9 +136,11 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     }
     
     func stylusManagerEventHandler(data:(String,[String:[String]]),key:String){
-       switch(data){
+       switch(data.0){
             case "ERASE_REQUEST":
-                layerContainerView.activeLayer?.eraseAll();
+               
+                //_ = layerContainerView.activeLayer?.jotView.undo();
+                 layerContainerView.activeLayer?.eraseAll();
             break;
             default:
             break;
@@ -344,7 +345,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     
     func strokeGeneratedHandler(data:(String),key:String){
         self.layerContainerView.addStroke(id:data);
-        StylusManager.addResultantStroke(id:data);
+        StylusManager.addResultantStroke(layerId: layerContainerView.activeLayer!.id, strokeId: data)
     }
     
     func strokeRemovedHandler(data:([String]),key:String){
@@ -1304,7 +1305,11 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
         behaviorManager = BehaviorManager(canvas: currentCanvas!);
         currentCanvas!.initDrawing();
         _ = currentCanvas!.currentDrawing?.strokeGeneratedEvent.addHandler(target: self, handler: DrawingViewController.strokeGeneratedHandler, key: strokeGeneratedKey)
+        
         _ = currentCanvas!.currentDrawing?.strokeRemovedEvent.addHandler(target: self, handler: DrawingViewController.strokeRemovedHandler, key: strokeRemovedKey)
+        
+        _ = StylusManager.stylusManagerEvent.addHandler(target: self, handler: DrawingViewController.stylusManagerEventHandler, key: stylusManagerKey)
+
     }
     
     

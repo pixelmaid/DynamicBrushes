@@ -235,7 +235,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
         autoreleasepool {
             currentStroke.lock();
             jotView.state.currentStroke =  currentStroke;
-            jotView.state.finishCurrentStroke();
+            jotView.state.addUndoLevelAndFinishStroke();
             currentStroke.unlock();
         }
         JotGLContext.validateEmptyStack();

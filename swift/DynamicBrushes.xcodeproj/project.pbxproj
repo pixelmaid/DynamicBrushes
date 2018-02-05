@@ -298,7 +298,7 @@
 		5FFC456E1EE4C648007B7597 /* airbrush_button2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = airbrush_button2x.png; sourceTree = "<group>"; };
 		5FFC45711EE4C855007B7597 /* airbrush_button_active.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = airbrush_button_active.png; sourceTree = "<group>"; };
 		5FFC45721EE4C855007B7597 /* airbrush_button_active2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = airbrush_button_active2x.png; sourceTree = "<group>"; };
-		5FFC45771EE5C473007B7597 /* BehaviorPanelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BehaviorPanelViewController.swift; path = "Palette-Knife/BehaviorPanelViewController.swift"; sourceTree = SOURCE_ROOT; };
+		5FFC45771EE5C473007B7597 /* BehaviorPanelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BehaviorPanelViewController.swift; path = "Palette-Knife/views/BehaviorPanelViewController.swift"; sourceTree = SOURCE_ROOT; };
 		5FFC45791EE5C6D6007B7597 /* BehaviorCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BehaviorCell.swift; sourceTree = "<group>"; };
 		5FFDAB081D21B5C400632A26 /* SocketManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketManager.swift; sourceTree = "<group>"; };
 		76DB207CD163015E13C1998B /* Pods_PaletteKnife.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PaletteKnife.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -530,17 +530,12 @@
 				5FA4C7561CDB9EAF004A728C /* views */,
 				5FA4C7551CDB9E9A004A728C /* models */,
 				5FA4C7231CDA7B5B004A728C /* AppDelegate.swift */,
-				5FFC45771EE5C473007B7597 /* BehaviorPanelViewController.swift */,
-				5F13B6991FC3A40C00E37A37 /* ProgrammingViewController.swift */,
 				5FA4C7251CDA7B5B004A728C /* DrawingViewController.swift */,
 				5F13B69B1FC3AEBF00E37A37 /* Router.swift */,
-				5FE32F601ECE2EBB00ADC01E /* ToolbarViewController.swift */,
 				5FA4C7271CDA7B5B004A728C /* Main.storyboard */,
-				5FE32F641ECE638B00ADC01E /* LayerPanelViewController.swift */,
 				5FA4C72A1CDA7B5B004A728C /* Assets.xcassets */,
 				5FA4C72C1CDA7B5B004A728C /* LaunchScreen.storyboard */,
 				5FA4C72F1CDA7B5B004A728C /* Info.plist */,
-				5F2CF3D41ED32D0B0066AC8E /* SavedFilesPanelViewController.swift */,
 			);
 			name = PaletteKnife;
 			path = "Palette-Knife";
@@ -584,6 +579,11 @@
 		5FA4C7561CDB9EAF004A728C /* views */ = {
 			isa = PBXGroup;
 			children = (
+				5FE32F601ECE2EBB00ADC01E /* ToolbarViewController.swift */,
+				5FFC45771EE5C473007B7597 /* BehaviorPanelViewController.swift */,
+				5F13B6991FC3A40C00E37A37 /* ProgrammingViewController.swift */,
+				5FE32F641ECE638B00ADC01E /* LayerPanelViewController.swift */,
+				5F2CF3D41ED32D0B0066AC8E /* SavedFilesPanelViewController.swift */,
 				5F5CED231ED10AED00A253A0 /* ColorPicker */,
 				5F0EB6611EB5775100225A6E /* ModifiedCanvasView.swift */,
 				5FE32F621ECE535100ADC01E /* LayerContainerView.swift */,

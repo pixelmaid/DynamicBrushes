@@ -76,7 +76,6 @@ class LayerContainerView: UIView {
     func saveHandler(data:(String,String,UIImage?,UIImage?,JotViewImmutableState?),key:String){
         if(data.0 == "COMPLETE"){
         
-            
         let layer_id =  data.1
             let layer = layers.filter({$0.id == layer_id})[0]
             let strokeData = layer.getSavedStrokes();
@@ -253,6 +252,16 @@ class LayerContainerView: UIView {
     func addStroke(id:String){
         if(self.activeLayer != nil){
             self.activeLayer?.beginStroke(id: id)
+        }
+    }
+    
+    func removeStrokesfromLayer(id:String, strokes:[String]){
+        for i in 0..<layers.count{
+            if layers[i].id == id {
+                let layer = layers[i];
+                //layer.removeStrokesById(strokes:strokes);
+                break;
+            }
         }
     }
     
