@@ -139,8 +139,8 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
        switch(data.0){
             case "ERASE_REQUEST":
                
-                //_ = layerContainerView.activeLayer?.jotView.undo();
-                 layerContainerView.activeLayer?.eraseAll();
+              //  _ = layerContainerView.activeLayer?.jotView.undo();
+            layerContainerView.activeLayer?.eraseAll();
             break;
             default:
             break;

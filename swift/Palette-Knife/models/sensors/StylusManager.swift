@@ -26,12 +26,11 @@ final class StylusManager{
     static private var currentStartDate:Date!
     //producer consumer props
     static private let queue = DispatchQueue(label: "stylus-queue")
-    static private var buffer: UInt = 0
-    static private var size: UInt = 10000;
     static private var producer = StylusDataProducer()
     static private var consumer = StylusDataConsumer()
-    
-    
+    static private var samples = [Sample]();
+    static var startTime:DispatchTime!
+    static var prevTime:UInt64 = 0;
     
     init(){
         
@@ -70,6 +69,7 @@ final class StylusManager{
         self.isLive = true;
         if playbackTimer != nil {
             playbackTimer.invalidate()
+            prevTime = 0;
             playbackTimer = nil
         }
         
@@ -84,32 +84,55 @@ final class StylusManager{
         currentLoopingPackage = recordingPackages[idStart];
         currentStartDate = Date();
         stylusManagerEvent.raise(data:("ERASE_REQUEST",currentLoopingPackage.resultantStrokes));
-        
-        playbackTimer = Timer.scheduledTimer(timeInterval: 1.0/1000.0, target: self, selector: #selector(advanceRecording), userInfo: nil, repeats: true)
+        startTime = DispatchTime.now()
+
+        playbackTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(advanceRecording), userInfo: nil, repeats: true)
         
     }
     
     @objc static func advanceRecording(){
         /*if buffer < size {*/
-            buffer += 1
-            let currentTime = Date();
-            let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000))-1;
+       
+     
+     queue.sync {
+        let firedTime =  DispatchTime.now();
+        let elapsedTime =   firedTime.uptimeNanoseconds - startTime.uptimeNanoseconds;
+        
+        let targetTime = elapsedTime - prevTime;
+        let targetTimeMS = Int(targetTime/1000000);
+        let prevTimeMS = Int(prevTime/1000000);
+        //print("recording time target time MS",elapsedTime,targetTimeMS,targetTime)
+        for i in 0..<targetTimeMS{
+            let hash = i+prevTimeMS;
+            let sample = producer.produce(hash: Float(hash), recordingPackage: currentRecordingPackage);
+            if sample != nil{
+                samples.append(sample!);
+                print("advance recording", hash,samples.count);
+
+            }
+        }
+          print("====advance recording break====");
+         prevTime = elapsedTime;
+    
+
+        }
+        
+        queue.sync {
+            if(samples.count>0){
+            let currentSample = samples.remove(at: 0);
             
-            let sample = producer.produce(hash: elapsedTime, recordingPackage: currentRecordingPackage)
-        if(sample != nil){
+            self.consumer.consume(sample:currentSample);
+    
+          //  print(currentSample.stylusEvent,"sample hash, last hash",currentSample.hash,currentSample.lastHash)
             
-            queue.async {
-                self.consumer.consume(sample:sample!)
-                self.buffer -= 1
-                if(sample!.hash > sample!.lastHash){
+                if(currentSample.hash >= currentSample.lastHash){
                     stylusManagerEvent.raise(data:("ERASE_REQUEST",currentLoopingPackage.resultantStrokes));
-                    currentStartDate = Date();
+                    startTime =  DispatchTime.now();
+                    prevTime = 0;
                 }
             }
         }
-            
-            
-        /*}*/
+  
     }
     
     
@@ -167,7 +190,7 @@ class StylusDataProducer{
     
     
     func produce(hash:Float,recordingPackage:StylusRecordingPackage)->Sample?{
-        
+     
         let sample = recordingPackage.getRecording(hash:hash);
        // print("sample found at time",hash);
         return sample;
@@ -291,6 +314,18 @@ class StylusDataConsumer{
         }
         
         func endRecording(){
+            var sampleList = [Float:Float]();
+            var hashValue:Float  = 0;
+            while(hashValue <= self.lastSample){
+                if(self.samples.contains(hashValue)){
+                  stylusEvent.setHash(h: hashValue);
+                let sE = stylusEvent.get(id:nil);
+              
+                    sampleList[hashValue] = sE;
+                   print(" recording at:",hashValue,sE);
+                }
+                hashValue+=1.0;
+            }
             
         }
         
