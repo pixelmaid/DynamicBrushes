@@ -16,23 +16,11 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     
     var strokes = [String]()
     
-    private let cellReuseID = "cell"
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //collectionView?.register(RecordingFrameCell.self, forCellWithReuseIdentifier: cellReuseID)
-        //collectionView?.delegate = self
-        //collectionView?.dataSource = self
-        //collectionView?.backgroundColor = UIColor.cyan;
-        
-//        var layout = UICollectionViewFlowLayout()
-//        layout.scrollDirection = .horizontal
-//        let screenWidth = UIScreen.main.bounds.width
-//        collectionView?.contentSize = CGSize(width: screenWidth, height: 220)
-//
-        strokes = ["1", "2", "3", "4"]
-       // _ = StylusManager.recordEvent.addHandler(target:self, handler: RecordingViewController.RecordingCreatedHandler, key: recordingKey)
+        strokes = ["1", "2", "3", "4", "5"]
+        _ = StylusManager.recordEvent.addHandler(target:self, handler: RecordingViewController.recordingCreatedHandler, key: recordingKey)
 
     }
     
@@ -50,18 +38,20 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RecordingFrameCell", for: indexPath) as! RecordingFrameCell
 //        cell.recordingThumbnail.image =
+        print ("*** RECORDING MADE NEW FRAME")
         cell.backgroundColor = UIColor.blue
-        print("cell inflate")
         return cell
     }
     
+//    
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//        return CGSize(width: 400, height: 200)
+//    }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 400, height: 200)
-    }
-    
-    func RecordingCreatedHandler (data:(String, StylusRecordingPackage), key:String) {
+    func recordingCreatedHandler (data:(String, StylusRecordingPackage), key:String) {
         //get data here
+        print ("****** RECORDING NEW DATA!")
+        print (data)
     }
 
 }
