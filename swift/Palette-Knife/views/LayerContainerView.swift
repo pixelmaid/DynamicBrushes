@@ -356,6 +356,11 @@ class LayerContainerView: UIView {
             activeLayer!.eraseAll();
         }
     }
+    func eraseAllLayers(){
+        for l in self.layers{
+            l.eraseAll();
+        }
+    }
     
     func drawIntoCurrentLayer(currentCanvas:Canvas){
         if(self.activeLayer != nil ){

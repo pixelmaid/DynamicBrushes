@@ -21,24 +21,36 @@ final class StylusManager{
     static private var playbackTimer:Timer!
     //todo: get rid of this and use linked list structure
     static private var recordingPackages = [String:StylusRecordingPackage]()
-    static var stylusManagerEvent = Event<(String,[String:[String]])>();
     static var layerId:String!
     static private var currentStartDate:Date!
     //producer consumer props
     static private let queue = DispatchQueue(label: "stylus-queue")
-    static private var buffer: UInt = 0
-    static private var size: UInt = 10000;
     static private var producer = StylusDataProducer()
     static private var consumer = StylusDataConsumer()
-    
-    
+    static private var samples = [Sample]();
+    static private var usedSamples = [Sample]();
+    static private var firstRecording:String!
+    static private var lastRecording:String!
+
+    //events
+    static public let eraseEvent = Event<(String,[String:[String]])>();
+    static public let recordEvent = Event<(String,StylusRecordingPackage)>();
+    static public let layerEvent = Event<(String,String)>();
+
     
     init(){
         
     }
     
+    
+    
     static private func beginRecording(start:Date)->StylusRecordingPackage{
-        let rPackage = StylusRecordingPackage(id: NSUUID().uuidString,start:start,layerId:StylusManager.layerId)
+        
+        let rPackage = StylusRecordingPackage(id: NSUUID().uuidString,start:start,targetLayer:StylusManager.layerId)
+        if(firstRecording == nil){
+            firstRecording = rPackage.id;
+        }
+        lastRecording = rPackage.id;
         recordingPackages[rPackage.id] = rPackage;
         
         if(currentRecordingPackage != nil){
@@ -53,13 +65,39 @@ final class StylusManager{
     static private func endRecording()->StylusRecordingPackage?{
         if(currentRecordingPackage != nil){
             currentRecordingPackage.endRecording();
+            recordEvent.raise(data:("END_RECORDING",currentRecordingPackage));
             return currentRecordingPackage;
         }
         return nil
     }
     
+    
+    @objc static private func advanceRecording(){
+        /*if buffer < size {*/
+        
+        queue.sync {
+            if(samples.count>0){
+                let currentSample = samples.remove(at: 0);
+                
+                self.consumer.consume(sample:currentSample);
+                
+                //  print(currentSample.stylusEvent,"sample hash, last hash",currentSample.hash,currentSample.lastHash)
+                usedSamples.append(currentSample);
+                if(currentSample.isLastinRecording){
+                    samples.append(contentsOf:usedSamples);
+                    usedSamples.removeAll();
+                    eraseEvent.raise(data:("ERASE_REQUEST",currentLoopingPackage.resultantStrokes));
+                }
+            }
+        }
+        
+    }
+    
     static func setToLastRecording(){
-        setToRecording(idStart: currentRecordingPackage.id, idEnd: "foo")
+        if(firstRecording != nil){
+            print("set to recording",firstRecording!,lastRecording!)
+            setToRecording(idStart: firstRecording!, idEnd: lastRecording!)
+        }
     }
     
     static func liveStatus()->Bool{
@@ -71,47 +109,52 @@ final class StylusManager{
         if playbackTimer != nil {
             playbackTimer.invalidate()
             playbackTimer = nil
+            
+            samples.removeAll();
+            usedSamples.removeAll();
+            
         }
         
-    }
-    
-    static func setLayerId(layerId:String){
-        StylusManager.layerId = layerId;
     }
     
     static func setToRecording(idStart:String,idEnd:String){
         self.isLive = false;
-        currentLoopingPackage = recordingPackages[idStart];
+        
         currentStartDate = Date();
-        stylusManagerEvent.raise(data:("ERASE_REQUEST",currentLoopingPackage.resultantStrokes));
-        
-        playbackTimer = Timer.scheduledTimer(timeInterval: 1.0/1000.0, target: self, selector: #selector(advanceRecording), userInfo: nil, repeats: true)
-        
-    }
-    
-    @objc static func advanceRecording(){
-        /*if buffer < size {*/
-            buffer += 1
-            let currentTime = Date();
-            let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000))-1;
-            
-            let sample = producer.produce(hash: elapsedTime, recordingPackage: currentRecordingPackage)
-        if(sample != nil){
-            
-            queue.async {
-                self.consumer.consume(sample:sample!)
-                self.buffer -= 1
-                if(sample!.hash > sample!.lastHash){
-                    stylusManagerEvent.raise(data:("ERASE_REQUEST",currentLoopingPackage.resultantStrokes));
-                    currentStartDate = Date();
+        currentLoopingPackage = recordingPackages[idStart];
+
+            eraseEvent.raise(data:("ERASE_REQUEST",currentLoopingPackage.resultantStrokes));
+
+        queue.sync {
+            while (true){
+                print("====advance recording start====",currentLoopingPackage.id);
+            for i in 0..<Int(currentLoopingPackage.lastSample+1){
+                let hash = i;
+                let sample = producer.produce(hash: Float(hash), recordingPackage: currentLoopingPackage);
+                if sample != nil{
+                    samples.append(sample!);
+                    print("advance recording", hash,samples.count);
+                    
+                }
+            }
+            print("====advance recording break====");
+            //prevTime = elapsedTime;
+                if(currentLoopingPackage.id == idEnd){
+                    samples[samples.count-1].isLastinRecording = true;
+                    break;
+
+                }
+                else{
+                    currentLoopingPackage = currentLoopingPackage.next;
                 }
             }
         }
-            
-            
-        /*}*/
+        
+        playbackTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(advanceRecording), userInfo: nil, repeats: true)
+        
     }
     
+   
     
     static func onStylusMove(x:Float,y:Float,force:Float,angle:Float){
         if(isLive){
@@ -160,6 +203,36 @@ final class StylusManager{
             currentLoopingPackage.addResultantStroke(layerId: layerId, strokeId: strokeId);
         }
     }
+    
+    static func setLayerId(layerId:String){
+        StylusManager.layerId = layerId;
+    }
+    
+    static func  handleDeletedLayer(deletedId: String){
+        if(firstRecording != nil){
+            var targetRecordingPackage = recordingPackages[firstRecording]
+            while(true){
+                if(targetRecordingPackage!.targetLayer == layerId ){
+                    recordingPackages.removeValue(forKey:targetRecordingPackage!.id);
+
+                    
+                    if(targetRecordingPackage!.prev != nil){
+                        targetRecordingPackage!.prev!.next = targetRecordingPackage!.next;
+                    }
+                    if(targetRecordingPackage!.next != nil){
+                        targetRecordingPackage!.next!.prev = targetRecordingPackage!.prev;
+                        targetRecordingPackage = targetRecordingPackage!.next
+                    }
+                    else{
+                        break;
+                    }
+                    
+                }
+            }
+            
+        }
+    }
+   
 }
 
 
@@ -167,7 +240,7 @@ class StylusDataProducer{
     
     
     func produce(hash:Float,recordingPackage:StylusRecordingPackage)->Sample?{
-        
+     
         let sample = recordingPackage.getRecording(hash:hash);
        // print("sample found at time",hash);
         return sample;
@@ -187,6 +260,7 @@ class StylusDataConsumer{
             stylus.onStylusUp();
             break;
         case StylusManager.stylusDown:
+            StylusManager.layerEvent.raise(data:("REQUEST_CORRECT_LAYER",sample.targetLayer));
             stylus.onStylusDown(x: sample.x, y: sample.y, force: sample.force, angle: sample.angle);
             break;
         case StylusManager.stylusMove:
@@ -215,8 +289,8 @@ class StylusDataConsumer{
         var lastSample:Float = 0;
         var start:Date;
         var resultantStrokes = [String:[String]]();
-        
-        init(id:String,start:Date,layerId:String){
+        var targetLayer:String
+        init(id:String,start:Date,targetLayer:String){
             self.id = id;
             dx = Recording(id: "dx_"+id);
             dy = Recording(id: "dy_"+id);
@@ -226,6 +300,7 @@ class StylusDataConsumer{
             angle = Recording(id: "angle_"+id);
             stylusEvent = EventRecording(id: "events_"+id);
             self.start = start;
+            self.targetLayer = targetLayer;
         }
         
         func addResultantStroke(layerId:String,strokeId:String){
@@ -262,7 +337,7 @@ class StylusDataConsumer{
                 angle.setHash(h: hash);
                 stylusEvent.setHash(h: hash);
                 
-                let sample = Sample(dx: dx.get(id:nil), dy: dy.get(id:nil), x: x.get(id:nil), y: y.get(id:nil), force: force.get(id:nil), angle: angle.get(id:nil), stylusEvent: stylusEvent.get(id:nil),hash:hash,lastHash:self.lastSample)
+                let sample = Sample(dx: dx.get(id:nil), dy: dy.get(id:nil), x: x.get(id:nil), y: y.get(id:nil), force: force.get(id:nil), angle: angle.get(id:nil), targetLayer:self.targetLayer, stylusEvent: stylusEvent.get(id:nil),hash:hash,lastHash:self.lastSample)
                 return sample;
             }
             return nil;
@@ -291,6 +366,18 @@ class StylusDataConsumer{
         }
         
         func endRecording(){
+            var sampleList = [Float:Float]();
+            var hashValue:Float  = 0;
+            while(hashValue <= self.lastSample){
+                if(self.samples.contains(hashValue)){
+                  stylusEvent.setHash(h: hashValue);
+                let sE = stylusEvent.get(id:nil);
+              
+                    sampleList[hashValue] = sE;
+                   print(" recording at:",hashValue,sE);
+                }
+                hashValue+=1.0;
+            }
             
         }
         
@@ -308,8 +395,10 @@ class StylusDataConsumer{
         let angle:Float
         let hash:Float
         let lastHash:Float
+        let targetLayer:String
+        var isLastinRecording:Bool = false;
         
-        init(dx:Float,dy:Float,x:Float,y:Float,force:Float,angle:Float,stylusEvent:Float, hash:Float, lastHash:Float){
+        init(dx:Float,dy:Float,x:Float,y:Float,force:Float,angle:Float,targetLayer:String,stylusEvent:Float, hash:Float, lastHash:Float){
             self.dx=dx;
             self.dy=dy;
             self.x=x;
@@ -317,6 +406,7 @@ class StylusDataConsumer{
             self.force=force;
             self.angle=angle;
             self.stylusEvent=stylusEvent;
+            self.targetLayer = targetLayer;
             self.hash = hash;
             self.lastHash = lastHash;
         }

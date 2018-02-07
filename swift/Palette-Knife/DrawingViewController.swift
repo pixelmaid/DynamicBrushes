@@ -135,12 +135,15 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
         uiInput.setColor(color:data);
     }
     
-    func stylusManagerEventHandler(data:(String,[String:[String]]),key:String){
+    func stylusManagerEventHandler(data:(String,Any),key:String){
        switch(data.0){
             case "ERASE_REQUEST":
                
-                //_ = layerContainerView.activeLayer?.jotView.undo();
-                 layerContainerView.activeLayer?.eraseAll();
+              //  _ = layerContainerView.activeLayer?.jotView.undo();
+                layerContainerView.eraseAllLayers();
+            break;
+            case "REQUEST_CORRECT_LAYER":
+                layerContainerView.selectActiveLayer(id:data.1 as! String);
             break;
             default:
             break;
@@ -161,7 +164,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
             
             break;
         case "PROGRAMMING_VIEW_REQUEST":
-            Router.createProgrammingModule();
+            _ = Router.createProgrammingModule();
             break;
         case "VIEW_LOADED":
             toolbarController?.exportButton.addTarget(self, action: #selector(DrawingViewController.exportImage), for: .touchUpInside)
@@ -245,6 +248,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
         switch(data.0){
         case "LAYER_SELECTED":
             layerContainerView.selectActiveLayer(id:data.1);
+            StylusManager.setLayerId(layerId: data.1)
             break;
         case "LAYER_ADDED":
             self.userInitLayer();
@@ -344,8 +348,8 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     }
     
     func strokeGeneratedHandler(data:(String),key:String){
-        self.layerContainerView.addStroke(id:data);
         StylusManager.addResultantStroke(layerId: layerContainerView.activeLayer!.id, strokeId: data)
+        self.layerContainerView.addStroke(id:data);
     }
     
     func strokeRemovedHandler(data:([String]),key:String){
@@ -543,8 +547,10 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
         let confirmAction = UIAlertAction(title: "Confirm", style: .default) { (_) in
             let activeId = self.layerContainerView.deleteLayer(id: layerId)
             self.layerPanelController?.removeLayer(layerId: layerId)
+            StylusManager.handleDeletedLayer(deletedId: layerId);
             if(activeId != nil){
                 self.layerPanelController?.setActive(layerId:activeId!);
+                StylusManager.setLayerId(layerId: activeId!)
             }
         }
         
@@ -1308,7 +1314,9 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
         
         _ = currentCanvas!.currentDrawing?.strokeRemovedEvent.addHandler(target: self, handler: DrawingViewController.strokeRemovedHandler, key: strokeRemovedKey)
         
-        _ = StylusManager.stylusManagerEvent.addHandler(target: self, handler: DrawingViewController.stylusManagerEventHandler, key: stylusManagerKey)
+        _ = StylusManager.eraseEvent.addHandler(target: self, handler: DrawingViewController.stylusManagerEventHandler, key: stylusManagerKey)
+        
+        _ = StylusManager.layerEvent.addHandler(target: self, handler: DrawingViewController.stylusManagerEventHandler, key: stylusManagerKey)
 
     }
     

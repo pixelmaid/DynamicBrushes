@@ -261,7 +261,7 @@ class BehaviorManager{
             let generatorId = data["generatorId"];
             print("generatorId",generatorId,generatorId == JSON.null)
             if(generatorId != JSON.null){
-              BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseGeneratorJSON(data:data)
+            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseGeneratorJSON(data:data)
             }
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseExpressionJSON(data:data)
             
