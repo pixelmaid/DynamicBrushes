@@ -22,7 +22,7 @@ class BehaviorDefinition {
     var behaviorMapper = BehaviorMapper()
     var mappings = [String:(Any?,[String]?,String,String,String,String)]()
     
-    var storedExpressions = [String:[String:TextExpression]]()
+    var storedExpressions = [String:[String:Expression]]()
     var storedConditions =  [String:[String:Condition]]()
     var storedGenerators = [String:[String:Signal]]()
 
@@ -145,7 +145,7 @@ class BehaviorDefinition {
     
     
     func parseGeneratorJSON(data:JSON){
-        let type = data["generator_type"].stringValue;
+        let type = data["generatorType"].stringValue;
         switch(type){
         case "random":
             self.addRandomGenerator(name: data["generatorId"].stringValue, min: data["min"].floatValue, max: data["max"].floatValue)
@@ -1216,11 +1216,12 @@ class BehaviorDefinition {
             #if DEBUG
                 print("registering observable target with id:",observableId);
             #endif
-            RequestHandler.registerObservableTarget(observableId: observableId, behaviorId: self.id, target: key)
+            
             let operand = self.generateSingleOperand(targetBrush: targetBrush, emitter: emitter, propList: propList)
             operands[key] = operand;
+            RequestHandler.registerObservableTarget(observableId: observableId, behaviorId: self.id, target: key)
         }
-        let expression = TextExpression(id:name,subscriberId:id,brushIndex:targetBrush.index,operandList: operands, text: data.1);
+        let expression = Expression(id:name,subscriberId:id,brushIndex:targetBrush.index,operandList: operands, text: data.1);
         self.storedExpressions[id]![name] = expression;
     }
     
@@ -1333,7 +1334,7 @@ class BehaviorDefinition {
         let id = targetBrush.id
         storedGenerators[id] = [String:Signal]();
         storedConditions[id] = [String:Condition]();
-        storedExpressions[id] = [String:TextExpression]();
+        storedExpressions[id] = [String:Expression]();
         
         for (key, generator_data) in generators{
             self.generateGenerator(name: key,data:generator_data,targetBrush:targetBrush)

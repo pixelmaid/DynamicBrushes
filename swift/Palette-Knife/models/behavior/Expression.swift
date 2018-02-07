@@ -8,43 +8,7 @@
 
 import Foundation
 
-
-class Expression: Observable<Float>{
-    var operand1:Observable<Float>
-    var operand2:Observable<Float>
-    var operand1Key = NSUUID().uuidString;
-    var operand2Key = NSUUID().uuidString;
-    var id = NSUUID().uuidString;
-    
-   required init(operand1:Observable<Float>,operand2:Observable<Float>){
-        self.operand1 = operand1;
-        self.operand2 = operand2;
-        super.init(0)
-        
-        
-      //  operand1.didChange.addHandler(self, handler: Expression.setHandler,key:operand1Key)
-       // operand2.didChange.addHandler(self, handler: Expression.setHandler, key:operand2Key)
-    //operand1.subscribe(id: self.id, brushId:String,brushIndex: nil);
-       // operand2.subscribe(id: self.id,brushIndex: nil);
-
-        //initial set after intialize
-        //TODO: check if this causes errors...
-        self.setHandler(data: (name,0,0),key:"_")
-
-    }
-    
-    
-    
-   //placeholder sethandler does nothing
-    func setHandler(data:(String,Float,Float),key:String){
-       
-    }
-
-    
-    
-}
-
-class TextExpression:Observable<Float>{
+class Expression:Observable<Float>{
     var operandList:[String:Observable<Float>];
     var text:String;
     var id: String;
@@ -67,7 +31,7 @@ class TextExpression:Observable<Float>{
             value.subscribe(id: self.id,brushId:subscriberId,brushIndex:brushIndex);
             let operandKey = NSUUID().uuidString;
             if(value.isLive() == true){
-                let handler = value.didChange.addHandler(target: self, handler: TextExpression.setHandler,key:operandKey)
+                let handler = value.didChange.addHandler(target: self, handler: Expression.setHandler,key:operandKey)
                 eventHandlers.append(handler)
 
             }
@@ -91,6 +55,7 @@ class TextExpression:Observable<Float>{
         
         
         for (key,value) in self.operandList{
+            
             currentVals[key] = value.get(id:subscriberId);
             
         }
@@ -139,75 +104,10 @@ class TextExpression:Observable<Float>{
 }
 
 
-class AddExpression:Expression{
-    
-    override func setHandler(data:(String,Float,Float),key:String){
-       self.set(newValue: operand1.get(id:nil) + operand2.get(id:nil))
-    }
-    
-}
 
-class SubExpression:Expression{
     
-    override func setHandler(data:(String,Float,Float),key:String){
     
-        self.set(newValue: operand1.get(id:nil) - operand2.get(id:nil))
-    }
-    
-}
 
-class MultExpression:Expression{
-    
-    override func setHandler(data:(String,Float,Float),key:String){
-        let a = operand1.get(id:self.id);
-        let b = operand2.get(id:self.id);
-        let c = a*b
-        self.set(newValue: c)
-    }
-    
-    //TODO: need to fix this- expressions should either be push or pull but not both...
-    override func get(id:String?)->Float{
-        let a = operand1.get(id:self.id);
-        let b = operand2.get(id:self.id);
-        let c = a*b
-        return c;
-    }
-    
-    
-    
- 
-}
-
-class LogExpression:Expression{
-    
-    override func setHandler(data:(String,Float,Float),key:String){
-     self.set(newValue: log(operand1.get(id:nil)+1)/20 + operand2.get(id:nil));
-    }
-    
-}
-
-class ExpExpression:Expression{
-    
-    override func setHandler(data:(String,Float,Float),key:String){
-        self.set(newValue: pow(operand1.get(id:nil),2)/10 + operand2.get(id:nil));
-    }
-    
-}
-
-class LogiGrowthExpression:Expression{
-    
-    override func setHandler(data:(String,Float,Float),key:String){
-        let a = Float(3);
-        let b = Float(10000);
-        let k = Float(-3.8);
-        let x = operand1.get(id:nil)
-        let val = a/(1+b*pow(2.7182818284590451,x*k))
-        self.set(newValue: val + operand2.get(id:nil));
-    }
-    
-    
-    
-}
 
 
 
