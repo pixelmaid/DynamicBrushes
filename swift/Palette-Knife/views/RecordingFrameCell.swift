@@ -11,4 +11,5 @@ import UIKit
 
 class RecordingFrameCell: UICollectionViewCell {
     
+    @IBOutlet weak var recordingThumbnail: UIImageView!
 }

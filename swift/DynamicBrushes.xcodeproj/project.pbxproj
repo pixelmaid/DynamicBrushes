@@ -593,6 +593,7 @@
 			isa = PBXGroup;
 			children = (
 				7267DCC020290D9E0093245A /* RecordingViewController.swift */,
+				7267DCC4202A8ECF0093245A /* RecordingFrameCell.swift */,
 				5FE32F601ECE2EBB00ADC01E /* ToolbarViewController.swift */,
 				5FFC45771EE5C473007B7597 /* BehaviorPanelViewController.swift */,
 				5F13B6991FC3A40C00E37A37 /* ProgrammingViewController.swift */,
@@ -604,7 +605,6 @@
 				5FE32F661ECE66AE00ADC01E /* LayerCell.swift */,
 				5F2CF3D61ED32EC00066AC8E /* FileCell.swift */,
 				5FFC45791EE5C6D6007B7597 /* BehaviorCell.swift */,
-				7267DCC4202A8ECF0093245A /* RecordingFrameCell.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
