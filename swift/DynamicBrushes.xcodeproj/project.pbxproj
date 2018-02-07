@@ -136,6 +136,11 @@
 		5FFC45781EE5C473007B7597 /* BehaviorPanelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFC45771EE5C473007B7597 /* BehaviorPanelViewController.swift */; };
 		5FFC457A1EE5C6D6007B7597 /* BehaviorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFC45791EE5C6D6007B7597 /* BehaviorCell.swift */; };
 		5FFDAB091D21B5C400632A26 /* SocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFDAB081D21B5C400632A26 /* SocketManager.swift */; };
+		72478CDD2029043800D24C92 /* Palette-Knife in Resources */ = {isa = PBXBuildFile; fileRef = 72478CDA2029043700D24C92 /* Palette-Knife */; };
+		72478CDE2029043800D24C92 /* Palette-KnifeUITests in Resources */ = {isa = PBXBuildFile; fileRef = 72478CDB2029043800D24C92 /* Palette-KnifeUITests */; };
+		72478CDF2029043800D24C92 /* Palette-KnifeTests in Resources */ = {isa = PBXBuildFile; fileRef = 72478CDC2029043800D24C92 /* Palette-KnifeTests */; };
+		7267DCC120290D9F0093245A /* RecordingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7267DCC020290D9E0093245A /* RecordingViewController.swift */; };
+		7267DCC5202A8ECF0093245A /* RecordingFrameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7267DCC4202A8ECF0093245A /* RecordingFrameCell.swift */; };
 		86D9E5D4C68732BC03AD249A /* Pods_PaletteKnife.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76DB207CD163015E13C1998B /* Pods_PaletteKnife.framework */; };
 		AD28AABCDC9E1C7118844AC4 /* Pods_PaletteKnifeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC68E1A2193A02A54E663498 /* Pods_PaletteKnifeTests.framework */; };
 		ADF25B9F9CD566668F3ECB27 /* Pods_PaletteKnifeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 498164694B9DBA035C9503A9 /* Pods_PaletteKnifeUITests.framework */; };
@@ -301,6 +306,11 @@
 		5FFC45771EE5C473007B7597 /* BehaviorPanelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BehaviorPanelViewController.swift; path = "Palette-Knife/views/BehaviorPanelViewController.swift"; sourceTree = SOURCE_ROOT; };
 		5FFC45791EE5C6D6007B7597 /* BehaviorCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BehaviorCell.swift; sourceTree = "<group>"; };
 		5FFDAB081D21B5C400632A26 /* SocketManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketManager.swift; sourceTree = "<group>"; };
+		72478CDA2029043700D24C92 /* Palette-Knife */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Palette-Knife"; sourceTree = "<group>"; };
+		72478CDB2029043800D24C92 /* Palette-KnifeUITests */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Palette-KnifeUITests"; sourceTree = "<group>"; };
+		72478CDC2029043800D24C92 /* Palette-KnifeTests */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Palette-KnifeTests"; sourceTree = "<group>"; };
+		7267DCC020290D9E0093245A /* RecordingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordingViewController.swift; sourceTree = "<group>"; };
+		7267DCC4202A8ECF0093245A /* RecordingFrameCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingFrameCell.swift; sourceTree = "<group>"; };
 		76DB207CD163015E13C1998B /* Pods_PaletteKnife.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PaletteKnife.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7CCD589D0593142C66540CEB /* Pods-PaletteKnifeUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeUITests/Pods-PaletteKnifeUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		B6B77515AB3FB205C8F75A30 /* Pods-PaletteKnifeUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeUITests/Pods-PaletteKnifeUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -496,6 +506,9 @@
 		5FA4C7171CDA7B5B004A728C = {
 			isa = PBXGroup;
 			children = (
+				72478CDA2029043700D24C92 /* Palette-Knife */,
+				72478CDC2029043800D24C92 /* Palette-KnifeTests */,
+				72478CDB2029043800D24C92 /* Palette-KnifeUITests */,
 				5F90F5721E9D5CE8006BB9FE /* objc_headers */,
 				5FA4C7221CDA7B5B004A728C /* PaletteKnife */,
 				5FA4C7371CDA7B5B004A728C /* PaletteKnifeTests */,
@@ -579,6 +592,7 @@
 		5FA4C7561CDB9EAF004A728C /* views */ = {
 			isa = PBXGroup;
 			children = (
+				7267DCC020290D9E0093245A /* RecordingViewController.swift */,
 				5FE32F601ECE2EBB00ADC01E /* ToolbarViewController.swift */,
 				5FFC45771EE5C473007B7597 /* BehaviorPanelViewController.swift */,
 				5F13B6991FC3A40C00E37A37 /* ProgrammingViewController.swift */,
@@ -590,6 +604,7 @@
 				5FE32F661ECE66AE00ADC01E /* LayerCell.swift */,
 				5F2CF3D61ED32EC00066AC8E /* FileCell.swift */,
 				5FFC45791EE5C6D6007B7597 /* BehaviorCell.swift */,
+				7267DCC4202A8ECF0093245A /* RecordingFrameCell.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -930,6 +945,7 @@
 				5FE32F9B1ECF6DC900ADC01E /* trash_button2x.png in Resources */,
 				5F4D8CEC1DEE072A008042FE /* shopbot_position_active.png in Resources */,
 				5FE32F941ECF6DC900ADC01E /* layeradd_button.png in Resources */,
+				72478CDD2029043800D24C92 /* Palette-Knife in Resources */,
 				5FE32F981ECF6DC900ADC01E /* save_button.png in Resources */,
 				5F9F25A21DEFE38B005CB5D8 /* radial2x.png in Resources */,
 				5FA4C7291CDA7B5B004A728C /* Main.storyboard in Resources */,
@@ -937,6 +953,7 @@
 				5FE32F841ECF6D5300ADC01E /* brush_button.png in Resources */,
 				5FE32F951ECF6DC900ADC01E /* layeradd_button2x.png in Resources */,
 				5F2CF3DA1ED333AD0066AC8E /* fileList_button.png in Resources */,
+				72478CDE2029043800D24C92 /* Palette-KnifeUITests in Resources */,
 				5F4D8CED1DEE072A008042FE /* shopbot_position_inactive.png in Resources */,
 				5FE32F691ECF61A500ADC01E /* layer_button.png in Resources */,
 				5FE32F891ECF6D5300ADC01E /* erase_button2x.png in Resources */,
@@ -949,6 +966,7 @@
 				5FD6CD121DE0EE0E007D94AA /* sm_pen_blue.png in Resources */,
 				5FE32F881ECF6D5300ADC01E /* erase_button.png in Resources */,
 				5FFC455A1EE1B133007B7597 /* Particle.png in Resources */,
+				72478CDF2029043800D24C92 /* Palette-KnifeTests in Resources */,
 				5FBDF0E71ED8D95300022B07 /* quad.vsh in Resources */,
 				5FE32F991ECF6DC900ADC01E /* save_button2x.png in Resources */,
 				5FEE2ACA1DE127D800080095 /* lg_pen_blue.png in Resources */,
@@ -1130,6 +1148,7 @@
 				5F90F5691E9D5BCC006BB9FE /* Expression.swift in Sources */,
 				5FB74959202128FE007D9E12 /* StylusManager.swift in Sources */,
 				5F90F5491E9D59D4006BB9FE /* WebTransmitter.swift in Sources */,
+				7267DCC5202A8ECF0093245A /* RecordingFrameCell.swift in Sources */,
 				5F50371B1EA9533A004ABAC1 /* shaderUtil.swift in Sources */,
 				5F90F56B1E9D5BCC006BB9FE /* State.swift in Sources */,
 				5F50371A1EA9533A004ABAC1 /* fileUtil.swift in Sources */,
@@ -1170,6 +1189,7 @@
 				5FA4C7241CDA7B5B004A728C /* AppDelegate.swift in Sources */,
 				5F13B69A1FC3A40C00E37A37 /* ProgrammingViewController.swift in Sources */,
 				5F6903361FBBB75F00EB3437 /* MapFunctions.swift in Sources */,
+				7267DCC120290D9F0093245A /* RecordingViewController.swift in Sources */,
 				5F90F5461E9D59D4006BB9FE /* Observable.swift in Sources */,
 				5F90F5421E9D59D4006BB9FE /* Event.swift in Sources */,
 				5F90F5591E9D5A41006BB9FE /* Stroke.swift in Sources */,
@@ -1403,6 +1423,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: JENNIFER MARY JACOBS (R3G633C4P2)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1453,6 +1474,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: JENNIFER MARY JACOBS (R3G633C4P2)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
