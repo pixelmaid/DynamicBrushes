@@ -494,7 +494,6 @@
         <!--Recording View Controller-->
         <scene sceneID="tdM-RS-MUG">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="UOW-KF-bWn" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="De9-TT-PM2" customClass="RecordingViewController" customModule="DynamicBrushes" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="KZ8-GV-4fg"/>
@@ -549,7 +548,11 @@
                             <constraint firstItem="uhk-ji-BLM" firstAttribute="top" secondItem="lly-UO-TPG" secondAttribute="top" id="Gpe-PP-gu5"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="collectionView" destination="uhk-ji-BLM" id="jEB-oo-ic6"/>
+                    </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UOW-KF-bWn" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="188.87262079062955" y="400.78125"/>
         </scene>

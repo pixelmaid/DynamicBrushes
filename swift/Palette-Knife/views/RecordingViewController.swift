@@ -18,24 +18,34 @@ class GestureRecording {
     }
 }
 
+extension CGFloat {
+    static var random: CGFloat {
+        return CGFloat(arc4random()) / CGFloat(UInt32.max)
+    }
+}
+
+extension UIColor {
+    static var random: UIColor {
+        return UIColor(red: .random, green: .random, blue: .random, alpha: 1.0)
+    }
+}
+
 class RecordingViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+
     
-    @IBOutlet var collectionView: UICollectionView!
-    
-    let recordingKey = NSUUID().uuidString
+    //data source
     var gestures = [GestureRecording]()
     
+    @IBOutlet weak var collectionView: UICollectionView!
+    
+
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        let recordingKey = NSUUID().uuidString
+
         _ = StylusManager.recordEvent.addHandler(target:self, handler: RecordingViewController.recordingCreatedHandler, key: recordingKey)
         collectionView?.register(RecordingFrameCell.self, forCellWithReuseIdentifier: "cell")
-        
-        self.gestures.append(GestureRecording(id:"hi", resultantStrokes:["":[""]]))
-        self.gestures.append(GestureRecording(id:"test", resultantStrokes:["":[""]]))
-        self.gestures.append(GestureRecording(id:"test2", resultantStrokes:["":[""]]))
-        self.gestures.append(GestureRecording(id:"test3", resultantStrokes:["":[""]]))
-        self.gestures.append(GestureRecording(id:"test4", resultantStrokes:["":[""]]))
-
         
     }
     
@@ -44,7 +54,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.gestures.count
+        return gestures.count
     }
 
     func collectionView(_ collectionView: UICollectionView,
@@ -53,9 +63,9 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RecordingFrameCell", for: indexPath) as! RecordingFrameCell
 //        cell.recordingThumbnail.image =
-        print ("*** RECORDING MADE NEW FRAME")
+        print ("recording now has ", collectionView.numberOfItems(inSection:0))
 
-        cell.backgroundColor = UIColor.blue
+        cell.backgroundColor = UIColor.random
         return cell
     }
     
@@ -68,14 +78,15 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         //get data here
         print ("****** RECORDING NEW DATA!")
         let stylusdata = data.1
-        self.gestures.append(GestureRecording(id: stylusdata.id, resultantStrokes: stylusdata.resultantStrokes))
-        print (self.gestures.count-1)
-        let IndexPath = NSIndexPath(item: self.gestures.count-1, section:0)
-        print (IndexPath)
-        self.collectionView?.insertItems(at: [IndexPath as IndexPath])
-        print ("recording tried inserting")
-        print ("recording gestures len", self.gestures.count)
-        self.collectionView?.reloadData()
+        gestures.append(GestureRecording(id: stylusdata.id, resultantStrokes: stylusdata.resultantStrokes))
+//        let IndexPath = NSIndexPath(item: self.gestures.count-1, section:0)
+//        print (IndexPath)
+//        collectionView.insertItems(at: [IndexPath as IndexPath])
+        
+        collectionView?.reloadData()
+        //print ("recording tried inserting now len ", collectionView?.numberOfItems(inSection:0))
+
+        //        self.collectionView?.reloadData()
     }
 
 }
