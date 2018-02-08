@@ -34,10 +34,11 @@ extension UIColor {
 }
 
 class RecordingViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
-
-    
     //data source
     var gestures = [GestureRecording]()
+    //selection handling
+    var recording_start = Int.max
+    var recording_end = -1
     
     @IBOutlet weak var collectionView: UICollectionView!
     
@@ -71,23 +72,65 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         return cell
     }
     
+    // ====== selection handling ======
+    //select start and end ranges
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath)
+        let idx = indexPath[1]
+        print("^^ recording selected index", indexPath[1])
+        //set starting point
+        if idx < recording_start {
+            recording_start = idx
+        }
+        if idx > recording_end {
+            recording_end = idx
+        }
+        highlightCells(start: recording_start, end: recording_end)
+    }
+    //if click on any cell in range, deselect range
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        let idx = indexPath[1]
+        print("^^ recording deselected index", indexPath[1])
+//        if idx >= recording_start && idx <= recording_end {
+            resetSelection()
+//        }
+    }
+    
+    func highlightCells(start:Int, end:Int) {
+        print("^^ highlighting from", start, " to ", end+1)
+        for i in stride(from:start, to:end+1, by:1) {
+            let indexPath = NSIndexPath(item:i, section:0)
+            let cell = collectionView?.cellForItem(at: indexPath as IndexPath)
+            cell?.layer.borderWidth = 4.0
+            cell?.layer.borderColor = UIColor.green.cgColor
+            collectionView?.selectItem(at: indexPath as IndexPath, animated: false, scrollPosition: UICollectionViewScrollPosition.right)
+        }
+    }
+    
+    func resetSelection() {
+        print ("^^ reseting selection")
+        for i in stride(from:recording_start, to:recording_end+1, by:1) {
+            let indexPath = NSIndexPath(item:i, section:0)
+            let cell = collectionView?.cellForItem(at: indexPath as IndexPath)
+            cell?.layer.borderWidth = 0.0
+            collectionView?.deselectItem(at: indexPath as IndexPath, animated: false)
+        }
+        recording_start = Int.max
+        recording_end = -1
+    }
+
+    //from an index, go to a gesture stringid
+    func getGestureId(index:Int) -> String {
+        return gestures[index].id
+    }
+    
     func recordingCreatedHandler (data:(String, StylusRecordingPackage), key:String) {
         let stylusdata = data.1
         gestures.append(GestureRecording(id: stylusdata.id, resultantStrokes: stylusdata.resultantStrokes))
         let IndexPath = NSIndexPath(item: self.gestures.count-1, section:0)
-        print (IndexPath)
         collectionView?.insertItems(at: [IndexPath as IndexPath])
-        scrollToEnd()
-//        collectionView?.reloadData()
-        //print ("recording tried inserting now len ", collectionView?.numberOfItems(inSection:0))
-
-        //        self.collectionView?.reloadData()
+        collectionView?.scrollToItem(at: IndexPath as IndexPath, at: UICollectionViewScrollPosition.right, animated: false)
     }
 
-    func scrollToEnd () {
-        let item = self.collectionView(self.collectionView!, numberOfItemsInSection: 0) - 1
-        let lastItemIndex = NSIndexPath(item: item, section: 0)
-        self.collectionView?.scrollToItem(at: lastItemIndex as IndexPath, at: UICollectionViewScrollPosition.right, animated: false)
-    }
 }
 
