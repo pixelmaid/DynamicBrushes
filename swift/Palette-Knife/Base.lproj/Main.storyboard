@@ -60,7 +60,7 @@
                                 </connections>
                             </containerView>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WGd-jR-wVv" userLabel="recording_container_view">
-                                <rect key="frame" x="0.0" y="854" width="1366" height="170"/>
+                                <rect key="frame" x="-1" y="834" width="1366" height="190"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <connections>
@@ -500,15 +500,15 @@
                         <viewControllerLayoutGuide type="bottom" id="GIh-X3-dMo"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="lly-UO-TPG">
-                        <rect key="frame" x="0.0" y="0.0" width="1366" height="170"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1366" height="190"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="uhk-ji-BLM">
-                                <rect key="frame" x="0.0" y="0.0" width="1366" height="170"/>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="uhk-ji-BLM">
+                                <rect key="frame" x="0.0" y="40" width="1366" height="150"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="1366" id="dpu-oP-b0W"/>
-                                    <constraint firstAttribute="height" constant="170" id="xNf-XK-ELn"/>
+                                    <constraint firstAttribute="height" constant="150" id="xNf-XK-ELn"/>
                                 </constraints>
                                 <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="6" id="FxW-0w-oz6">
                                     <size key="itemSize" width="200" height="150"/>
@@ -518,20 +518,19 @@
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="RecordingFrameCell" id="VTa-MM-KTY" customClass="RecordingFrameCell" customModule="DynamicBrushes" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="10" width="200" height="150"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="200" height="150"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
                                             <rect key="frame" x="0.0" y="0.0" width="200" height="150"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ypN-hG-Xnn">
                                                     <rect key="frame" x="0.0" y="0.0" width="200" height="150"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                 </imageView>
                                             </subviews>
                                         </view>
                                         <color key="backgroundColor" red="1" green="0.034920876080000003" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                        <edgeInsets key="layoutMargins" top="15" left="8" bottom="0.0" right="8"/>
                                         <connections>
                                             <outlet property="recordingThumbnail" destination="ypN-hG-Xnn" id="sV6-mM-Thw"/>
                                         </connections>
@@ -542,8 +541,33 @@
                                     <outlet property="delegate" destination="De9-TT-PM2" id="4Fe-cT-kUu"/>
                                 </connections>
                             </collectionView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Erz-hD-wCT">
+                                <rect key="frame" x="1276" y="6" width="30" height="25"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <accessibility key="accessibilityConfiguration" label="Loop">
+                                    <accessibilityTraits key="traits" button="YES" image="YES"/>
+                                    <bool key="isElement" value="YES"/>
+                                </accessibility>
+                                <state key="normal" title="LoopRecording" image="refresh_button.png"/>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eb9-8V-RuG">
+                                <rect key="frame" x="1320" y="3" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <accessibility key="accessibilityConfiguration" label="Loop">
+                                    <accessibilityTraits key="traits" button="YES" image="YES"/>
+                                    <bool key="isElement" value="YES"/>
+                                </accessibility>
+                                <state key="normal" title="ExportRecording" image="recording_export_button.png"/>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Recordings" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8tG-Oj-fd8">
+                                <rect key="frame" x="14" y="8" width="104" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="uhk-ji-BLM" firstAttribute="leading" secondItem="lly-UO-TPG" secondAttribute="leading" id="34P-Wh-cTd"/>
                             <constraint firstItem="uhk-ji-BLM" firstAttribute="top" secondItem="lly-UO-TPG" secondAttribute="top" id="Gpe-PP-gu5"/>
@@ -551,6 +575,8 @@
                     </view>
                     <connections>
                         <outlet property="collectionView" destination="uhk-ji-BLM" id="jEB-oo-ic6"/>
+                        <outlet property="exportRecording" destination="eb9-8V-RuG" id="jME-AB-WL6"/>
+                        <outlet property="loopRecording" destination="Erz-hD-wCT" id="nQK-YH-tNr"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UOW-KF-bWn" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -569,6 +595,8 @@
         <image name="layerVisible_button_active2x.png" width="105" height="62"/>
         <image name="layer_button2x.png" width="121" height="120"/>
         <image name="layeradd_button.png" width="33" height="33"/>
+        <image name="recording_export_button.png" width="60" height="60"/>
+        <image name="refresh_button.png" width="61" height="51"/>
         <image name="refresh_button2x.png" width="121" height="101"/>
         <image name="save_button2x.png" width="121" height="120"/>
         <image name="trash_button.png" width="44" height="48"/>

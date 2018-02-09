@@ -41,6 +41,8 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     var recording_end = -1
     
     @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var exportRecording: UIButton!
+    @IBOutlet weak var loopRecording: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,6 +50,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
          collectionView?.allowsMultipleSelection = true
         _ = StylusManager.recordEvent.addHandler(target:self, handler: RecordingViewController.recordingCreatedHandler, key: recordingKey)
         collectionView?.register(RecordingFrameCell.self, forCellWithReuseIdentifier: "cell")
+        loopRecording.addTarget(self, action: #selector(RecordingViewController.loopInitialized), for: .touchUpInside)
         
     }
     
@@ -75,7 +78,6 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     // ====== selection handling ======
     //select start and end ranges
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let cell = collectionView.cellForItem(at: indexPath)
         let idx = indexPath[1]
         print("^^ recording selected index", indexPath[1])
         //set starting point
@@ -87,13 +89,11 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         }
         highlightCells(start: recording_start, end: recording_end)
     }
+    
     //if click on any cell in range, deselect range
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        let idx = indexPath[1]
         print("^^ recording deselected index", indexPath[1])
-//        if idx >= recording_start && idx <= recording_end {
-            resetSelection()
-//        }
+        resetSelection()
     }
     
     func highlightCells(start:Int, end:Int) {
@@ -103,7 +103,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
             let cell = collectionView?.cellForItem(at: indexPath as IndexPath)
             cell?.layer.borderWidth = 4.0
             cell?.layer.borderColor = UIColor.green.cgColor
-            collectionView?.selectItem(at: indexPath as IndexPath, animated: false, scrollPosition: UICollectionViewScrollPosition.right)
+            collectionView?.selectItem(at: indexPath as IndexPath, animated: false, scrollPosition: [])
         }
     }
     
@@ -122,6 +122,13 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     //from an index, go to a gesture stringid
     func getGestureId(index:Int) -> String {
         return gestures[index].id
+    }
+    
+    func loopInitialized() {
+        print ("^^ going to loop from ", recording_start, " to ", recording_end)
+        let start_id = getGestureId(index: recording_start)
+        let end_id = getGestureId(index: recording_end)
+        StylusManager.setToRecording(idStart: start_id, idEnd: end_id)
     }
     
     func recordingCreatedHandler (data:(String, StylusRecordingPackage), key:String) {
