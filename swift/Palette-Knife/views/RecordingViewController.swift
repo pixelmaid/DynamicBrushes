@@ -41,8 +41,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     var recording_end = -1
     
     @IBOutlet weak var collectionView: UICollectionView!
-    @IBOutlet weak var exportRecording: UIButton!
-    @IBOutlet weak var loopRecording: UIButton!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,7 +49,6 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
          collectionView?.allowsMultipleSelection = true
         _ = StylusManager.recordEvent.addHandler(target:self, handler: RecordingViewController.recordingCreatedHandler, key: recordingKey)
         collectionView?.register(RecordingFrameCell.self, forCellWithReuseIdentifier: "cell")
-        loopRecording.addTarget(self, action: #selector(RecordingViewController.loopInitialized), for: .touchUpInside)
         
     }
     
@@ -125,10 +123,18 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     }
     
     func loopInitialized() {
-        print ("^^ going to loop from ", recording_start, " to ", recording_end)
-        let start_id = getGestureId(index: recording_start)
-        let end_id = getGestureId(index: recording_end)
-        StylusManager.setToRecording(idStart: start_id, idEnd: end_id)
+        if (recording_start >= 0 && recording_end >= recording_start) {
+            print ("^^ going to loop from ", recording_start, " to ", recording_end)
+            let start_id = getGestureId(index: recording_start)
+            let end_id = getGestureId(index: recording_end)
+            if (StylusManager.liveStatus()) {
+                StylusManager.setToRecording(idStart: start_id, idEnd: end_id)
+            } else { //stop recording
+                StylusManager.setToLive()
+                //clear selection
+                resetSelection()
+            }
+        }
     }
     
     func recordingCreatedHandler (data:(String, StylusRecordingPackage), key:String) {

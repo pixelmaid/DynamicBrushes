@@ -93,13 +93,6 @@ final class StylusManager{
         
     }
     
-    static func setToLastRecording(){
-        if(firstRecording != nil){
-            print("set to recording",firstRecording!,lastRecording!)
-            setToRecording(idStart: firstRecording!, idEnd: lastRecording!)
-        }
-    }
-    
     static func liveStatus()->Bool{
         return self.isLive
     }

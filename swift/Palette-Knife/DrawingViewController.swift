@@ -154,15 +154,6 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     func toolEventHandler(data: (String), key: String){
         print("tool event handler",data)
         switch(data){
-        case "TOGGLE_LOOP":
-            if(StylusManager.liveStatus()){
-            StylusManager.setToLastRecording();
-            }
-            else{
-                StylusManager.setToLive();
-            }
-            
-            break;
         case "PROGRAMMING_VIEW_REQUEST":
             _ = Router.createProgrammingModule();
             break;

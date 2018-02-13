@@ -60,11 +60,19 @@
                                 </connections>
                             </containerView>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WGd-jR-wVv" userLabel="recording_container_view">
-                                <rect key="frame" x="-1" y="834" width="1366" height="190"/>
+                                <rect key="frame" x="0.0" y="874" width="1366" height="150"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <connections>
                                     <segue destination="De9-TT-PM2" kind="embed" id="egQ-jJ-kbz"/>
+                                </connections>
+                            </containerView>
+                            <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f9T-gG-pJC" userLabel="recording_toolbar">
+                                <rect key="frame" x="0.0" y="834" width="1366" height="40"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <connections>
+                                    <segue destination="ZBa-mz-4L4" kind="embed" id="OKe-t1-Gf0"/>
                                 </connections>
                             </containerView>
                         </subviews>
@@ -177,11 +185,6 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="program"/>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="77V-ju-Scb">
-                                <rect key="frame" x="1166" y="9" width="46" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Loop"/>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -189,7 +192,6 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
-                        <outlet property="LoopToggle" destination="77V-ju-Scb" id="YVO-W8-PQr"/>
                         <outlet property="addLayerButton" destination="b9f-FX-vgT" id="58C-xh-PN8"/>
                         <outlet property="airbrushButton" destination="LW3-Ue-dhe" id="YGY-5n-j9h"/>
                         <outlet property="alphaSlider" destination="soS-Q4-Hj5" id="9R3-dT-Orn"/>
@@ -303,6 +305,54 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UR4-HB-PTJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="731" y="346"/>
+        </scene>
+        <!--RecordingToolbarVC-->
+        <scene sceneID="k8S-Pm-DVT">
+            <objects>
+                <viewController title="RecordingToolbarVC" id="ZBa-mz-4L4" customClass="RecordingToolbarVC" customModule="DynamicBrushes" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="yAA-xS-4LQ"/>
+                        <viewControllerLayoutGuide type="bottom" id="MF0-Pq-Li9"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="gLU-Ue-gFm">
+                        <rect key="frame" x="0.0" y="0.0" width="1366" height="40"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hvQ-ec-DtD">
+                                <rect key="frame" x="668" y="7" width="30" height="25"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <accessibility key="accessibilityConfiguration" label="Loop">
+                                    <accessibilityTraits key="traits" button="YES" image="YES"/>
+                                    <bool key="isElement" value="YES"/>
+                                </accessibility>
+                                <state key="normal" title="LoopRecording" image="refresh_button.png"/>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Recordings" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8tG-Oj-fd8">
+                                <rect key="frame" x="0.0" y="9" width="104" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AX5-sg-QJz">
+                                <rect key="frame" x="1209" y="5" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <accessibility key="accessibilityConfiguration" label="Loop">
+                                    <accessibilityTraits key="traits" button="YES" image="YES"/>
+                                    <bool key="isElement" value="YES"/>
+                                </accessibility>
+                                <state key="normal" title="ExportRecording" image="recording_export_button.png"/>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </view>
+                    <connections>
+                        <outlet property="loopRecording" destination="hvQ-ec-DtD" id="QjT-jz-RR3"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UQj-iB-RqS" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1119" y="-69"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="cKC-Jg-eaX">
@@ -500,10 +550,10 @@
                         <viewControllerLayoutGuide type="bottom" id="GIh-X3-dMo"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="lly-UO-TPG">
-                        <rect key="frame" x="0.0" y="0.0" width="1366" height="190"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1366" height="150"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="uhk-ji-BLM">
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="uhk-ji-BLM">
                                 <rect key="frame" x="0.0" y="40" width="1366" height="150"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
@@ -527,6 +577,7 @@
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ypN-hG-Xnn">
                                                     <rect key="frame" x="0.0" y="0.0" width="200" height="150"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 </imageView>
                                             </subviews>
                                         </view>
@@ -541,42 +592,11 @@
                                     <outlet property="delegate" destination="De9-TT-PM2" id="4Fe-cT-kUu"/>
                                 </connections>
                             </collectionView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Erz-hD-wCT">
-                                <rect key="frame" x="1276" y="6" width="30" height="25"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <accessibility key="accessibilityConfiguration" label="Loop">
-                                    <accessibilityTraits key="traits" button="YES" image="YES"/>
-                                    <bool key="isElement" value="YES"/>
-                                </accessibility>
-                                <state key="normal" title="LoopRecording" image="refresh_button.png"/>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eb9-8V-RuG">
-                                <rect key="frame" x="1320" y="3" width="30" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <accessibility key="accessibilityConfiguration" label="Loop">
-                                    <accessibilityTraits key="traits" button="YES" image="YES"/>
-                                    <bool key="isElement" value="YES"/>
-                                </accessibility>
-                                <state key="normal" title="ExportRecording" image="recording_export_button.png"/>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Recordings" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8tG-Oj-fd8">
-                                <rect key="frame" x="14" y="8" width="104" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <constraints>
-                            <constraint firstItem="uhk-ji-BLM" firstAttribute="leading" secondItem="lly-UO-TPG" secondAttribute="leading" id="34P-Wh-cTd"/>
-                            <constraint firstItem="uhk-ji-BLM" firstAttribute="top" secondItem="lly-UO-TPG" secondAttribute="top" id="Gpe-PP-gu5"/>
-                        </constraints>
                     </view>
                     <connections>
                         <outlet property="collectionView" destination="uhk-ji-BLM" id="jEB-oo-ic6"/>
-                        <outlet property="exportRecording" destination="eb9-8V-RuG" id="jME-AB-WL6"/>
-                        <outlet property="loopRecording" destination="Erz-hD-wCT" id="nQK-YH-tNr"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UOW-KF-bWn" userLabel="First Responder" sceneMemberID="firstResponder"/>

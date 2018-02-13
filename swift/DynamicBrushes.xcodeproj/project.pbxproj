@@ -141,6 +141,9 @@
 		72478CDF2029043800D24C92 /* Palette-KnifeTests in Resources */ = {isa = PBXBuildFile; fileRef = 72478CDC2029043800D24C92 /* Palette-KnifeTests */; };
 		7267DCC120290D9F0093245A /* RecordingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7267DCC020290D9E0093245A /* RecordingViewController.swift */; };
 		7267DCC5202A8ECF0093245A /* RecordingFrameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7267DCC4202A8ECF0093245A /* RecordingFrameCell.swift */; };
+		72FD3370203256ED00CD4FAF /* recording_export_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 72FD336E203256EC00CD4FAF /* recording_export_button.png */; };
+		72FD3371203256ED00CD4FAF /* recording_export_button2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 72FD336F203256EC00CD4FAF /* recording_export_button2x.png */; };
+		72FD33732032AE3D00CD4FAF /* RecordingToolbarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72FD33722032AE3D00CD4FAF /* RecordingToolbarVC.swift */; };
 		86D9E5D4C68732BC03AD249A /* Pods_PaletteKnife.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76DB207CD163015E13C1998B /* Pods_PaletteKnife.framework */; };
 		AD28AABCDC9E1C7118844AC4 /* Pods_PaletteKnifeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC68E1A2193A02A54E663498 /* Pods_PaletteKnifeTests.framework */; };
 		ADF25B9F9CD566668F3ECB27 /* Pods_PaletteKnifeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 498164694B9DBA035C9503A9 /* Pods_PaletteKnifeUITests.framework */; };
@@ -311,6 +314,9 @@
 		72478CDC2029043800D24C92 /* Palette-KnifeTests */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Palette-KnifeTests"; sourceTree = "<group>"; };
 		7267DCC020290D9E0093245A /* RecordingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordingViewController.swift; sourceTree = "<group>"; };
 		7267DCC4202A8ECF0093245A /* RecordingFrameCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingFrameCell.swift; sourceTree = "<group>"; };
+		72FD336E203256EC00CD4FAF /* recording_export_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = recording_export_button.png; sourceTree = "<group>"; };
+		72FD336F203256EC00CD4FAF /* recording_export_button2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = recording_export_button2x.png; sourceTree = "<group>"; };
+		72FD33722032AE3D00CD4FAF /* RecordingToolbarVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingToolbarVC.swift; sourceTree = "<group>"; };
 		76DB207CD163015E13C1998B /* Pods_PaletteKnife.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PaletteKnife.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7CCD589D0593142C66540CEB /* Pods-PaletteKnifeUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeUITests/Pods-PaletteKnifeUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		B6B77515AB3FB205C8F75A30 /* Pods-PaletteKnifeUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeUITests/Pods-PaletteKnifeUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -605,6 +611,7 @@
 				5FE32F661ECE66AE00ADC01E /* LayerCell.swift */,
 				5F2CF3D61ED32EC00066AC8E /* FileCell.swift */,
 				5FFC45791EE5C6D6007B7597 /* BehaviorCell.swift */,
+				72FD33722032AE3D00CD4FAF /* RecordingToolbarVC.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -620,6 +627,8 @@
 		5FD6CD101DE0EE0E007D94AA /* image_assets */ = {
 			isa = PBXGroup;
 			children = (
+				72FD336E203256EC00CD4FAF /* recording_export_button.png */,
+				72FD336F203256EC00CD4FAF /* recording_export_button2x.png */,
 				5FFC45711EE4C855007B7597 /* airbrush_button_active.png */,
 				5FFC45721EE4C855007B7597 /* airbrush_button_active2x.png */,
 				5FFC456D1EE4C648007B7597 /* airbrush_button.png */,
@@ -952,8 +961,10 @@
 				5F2CF3DB1ED333AD0066AC8E /* fileList_button2x.png in Resources */,
 				5FE32F841ECF6D5300ADC01E /* brush_button.png in Resources */,
 				5FE32F951ECF6DC900ADC01E /* layeradd_button2x.png in Resources */,
+				72FD3371203256ED00CD4FAF /* recording_export_button2x.png in Resources */,
 				5F2CF3DA1ED333AD0066AC8E /* fileList_button.png in Resources */,
 				72478CDE2029043800D24C92 /* Palette-KnifeUITests in Resources */,
+				72FD3370203256ED00CD4FAF /* recording_export_button.png in Resources */,
 				5F4D8CED1DEE072A008042FE /* shopbot_position_inactive.png in Resources */,
 				5FE32F691ECF61A500ADC01E /* layer_button.png in Resources */,
 				5FE32F891ECF6D5300ADC01E /* erase_button2x.png in Resources */,
@@ -1149,6 +1160,7 @@
 				5FB74959202128FE007D9E12 /* StylusManager.swift in Sources */,
 				5F90F5491E9D59D4006BB9FE /* WebTransmitter.swift in Sources */,
 				7267DCC5202A8ECF0093245A /* RecordingFrameCell.swift in Sources */,
+				72FD33732032AE3D00CD4FAF /* RecordingToolbarVC.swift in Sources */,
 				5F50371B1EA9533A004ABAC1 /* shaderUtil.swift in Sources */,
 				5F90F56B1E9D5BCC006BB9FE /* State.swift in Sources */,
 				5F50371A1EA9533A004ABAC1 /* fileUtil.swift in Sources */,
