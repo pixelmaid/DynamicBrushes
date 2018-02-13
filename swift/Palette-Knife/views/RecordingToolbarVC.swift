@@ -12,9 +12,16 @@ import UIKit
 class RecordingToolbarVC: UIViewController {
     @IBOutlet weak var loopRecording: UIButton!
     
-    override func viewDidLoad() {
+    public let loopEvent = Event<(String)>();
 
-        loopRecording.addTarget(self, action: #selector(RecordingViewController.loopInitialized), for: .touchUpInside)
+    override func viewDidLoad() {
+        loopRecording.addTarget(self, action: #selector(RecordingToolbarVC.loop), for: .touchUpInside)
+    }
+    
+    
+    func loop() {
+        print("inside toolbar loop ^^")
+        loopEvent.raise(data: ("LOOP"));
     }
     
 

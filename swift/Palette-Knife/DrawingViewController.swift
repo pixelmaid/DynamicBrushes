@@ -36,6 +36,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     
     
     var layerContainerView:LayerContainerView!
+    var recordingViewController:RecordingViewController!
     
     var behaviorManager: BehaviorManager?
     var currentCanvas: Canvas?
@@ -56,10 +57,12 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     let exportKey = NSUUID().uuidString
     let backupKey = NSUUID().uuidString
     let saveEventKey = NSUUID().uuidString
+    let loopEventKey = NSUUID().uuidString
     
     var toolbarController: ToolbarViewController?
     var layerPanelController: LayerPanelViewController?
     var behaviorPanelController: BehaviorPanelViewController?
+    var recordingToolbarVC: RecordingToolbarVC?
 
     var fileListController: SavedFilesPanelViewController?
     let targetSize = CGSize(width:CGFloat(pX),height:CGFloat(pY))
@@ -94,10 +97,9 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     @IBOutlet weak var behaviorPanelContainerView: UIView!
     required init?(coder: NSCoder) {
         layerContainerView = LayerContainerView(width:pX,height:pY);
+        recordingViewController = RecordingViewController();
         super.init(coder: coder);
-
     }
-    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if(segue.identifier == "toolbarSegue"){
@@ -125,6 +127,10 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
         else if(segue.identifier == "behaviorPanelSegue"){
             behaviorPanelController = segue.destination as? BehaviorPanelViewController;
             _ =  behaviorPanelController?.behaviorEvent.addHandler(target: self, handler: DrawingViewController.behaviorEventHandler, key: behaviorEventKey)
+        }
+        else if(segue.identifier == "recordingToolbarSegue"){
+            recordingToolbarVC = segue.destination as? RecordingToolbarVC;
+            _ =  recordingToolbarVC?.loopEvent.addHandler(target: self, handler: DrawingViewController.recordingEventHandler, key: loopEventKey)
         }
         
         
@@ -332,6 +338,17 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
                 }
             }
             self.loadProject(projectName: data.2!, artistName: artistName!);
+            break;
+        default:
+            break;
+        }
+    }
+
+    
+    func recordingEventHandler(data: (String), key: String){
+        switch(data){
+        case "LOOP":
+            recordingViewController.loopInitialized()
             break;
         default:
             break;

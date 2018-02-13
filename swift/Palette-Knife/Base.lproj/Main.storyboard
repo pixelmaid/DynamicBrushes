@@ -72,7 +72,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <connections>
-                                    <segue destination="ZBa-mz-4L4" kind="embed" id="OKe-t1-Gf0"/>
+                                    <segue destination="ZBa-mz-4L4" kind="embed" identifier="recordingToolbarSegue" id="OKe-t1-Gf0"/>
                                 </connections>
                             </containerView>
                         </subviews>

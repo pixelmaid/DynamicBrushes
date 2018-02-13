@@ -35,10 +35,11 @@ extension UIColor {
 
 class RecordingViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     //data source
-    var gestures = [GestureRecording]()
+    public static var gestures = [GestureRecording]()
     //selection handling
-    var recording_start = Int.max
-    var recording_end = -1
+    public static var recording_start = Int.max
+    public static var recording_end = -1
+    
     
     @IBOutlet weak var collectionView: UICollectionView!
     
@@ -57,7 +58,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return gestures.count
+        return RecordingViewController.gestures.count
     }
 
     func collectionView(_ collectionView: UICollectionView,
@@ -79,13 +80,13 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         let idx = indexPath[1]
         print("^^ recording selected index", indexPath[1])
         //set starting point
-        if idx < recording_start {
-            recording_start = idx
+        if idx < RecordingViewController.recording_start {
+            RecordingViewController.recording_start = idx
         }
-        if idx > recording_end {
-            recording_end = idx
+        if idx > RecordingViewController.recording_end {
+            RecordingViewController.recording_end = idx
         }
-        highlightCells(start: recording_start, end: recording_end)
+        highlightCells()
     }
     
     //if click on any cell in range, deselect range
@@ -94,9 +95,9 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         resetSelection()
     }
     
-    func highlightCells(start:Int, end:Int) {
-        print("^^ highlighting from", start, " to ", end+1)
-        for i in stride(from:start, to:end+1, by:1) {
+    func highlightCells() {
+        print("^^ highlighting from", RecordingViewController.recording_start, " to ", RecordingViewController.recording_end+1)
+        for i in stride(from:RecordingViewController.recording_start, to:RecordingViewController.recording_end+1, by:1) {
             let indexPath = NSIndexPath(item:i, section:0)
             let cell = collectionView?.cellForItem(at: indexPath as IndexPath)
             cell?.layer.borderWidth = 4.0
@@ -107,26 +108,28 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     
     func resetSelection() {
         print ("^^ reseting selection")
-        for i in stride(from:recording_start, to:recording_end+1, by:1) {
+        for i in stride(from:RecordingViewController.recording_start, to:RecordingViewController.recording_end+1, by:1) {
             let indexPath = NSIndexPath(item:i, section:0)
             let cell = collectionView?.cellForItem(at: indexPath as IndexPath)
             cell?.layer.borderWidth = 0.0
             collectionView?.deselectItem(at: indexPath as IndexPath, animated: false)
         }
-        recording_start = Int.max
-        recording_end = -1
+        RecordingViewController.recording_start = Int.max
+        RecordingViewController.recording_end = -1
     }
 
     //from an index, go to a gesture stringid
     func getGestureId(index:Int) -> String {
-        return gestures[index].id
+        return RecordingViewController.gestures[index].id
     }
     
     func loopInitialized() {
-        if (recording_start >= 0 && recording_end >= recording_start) {
-            print ("^^ going to loop from ", recording_start, " to ", recording_end)
-            let start_id = getGestureId(index: recording_start)
-            let end_id = getGestureId(index: recording_end)
+        print ("called loop init! ^^")
+        print (RecordingViewController.recording_start, RecordingViewController.recording_end)
+        if (RecordingViewController.recording_start >= 0 && RecordingViewController.recording_end >= RecordingViewController.recording_start) {
+            print ("^^ going to loop from ", RecordingViewController.recording_start, " to ", RecordingViewController.recording_end)
+            let start_id = getGestureId(index: RecordingViewController.recording_start)
+            let end_id = getGestureId(index: RecordingViewController.recording_end)
             if (StylusManager.liveStatus()) {
                 StylusManager.setToRecording(idStart: start_id, idEnd: end_id)
             } else { //stop recording
@@ -139,8 +142,8 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     
     func recordingCreatedHandler (data:(String, StylusRecordingPackage), key:String) {
         let stylusdata = data.1
-        gestures.append(GestureRecording(id: stylusdata.id, resultantStrokes: stylusdata.resultantStrokes))
-        let IndexPath = NSIndexPath(item: self.gestures.count-1, section:0)
+        RecordingViewController.gestures.append(GestureRecording(id: stylusdata.id, resultantStrokes: stylusdata.resultantStrokes))
+        let IndexPath = NSIndexPath(item: RecordingViewController.gestures.count-1, section:0)
         collectionView?.insertItems(at: [IndexPath as IndexPath])
         collectionView?.scrollToItem(at: IndexPath as IndexPath, at: UICollectionViewScrollPosition.right, animated: false)
     }
