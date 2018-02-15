@@ -11,11 +11,13 @@ import UIKit
 
 class GestureRecording {
     var id:String;
-    var resultantStrokes = [String:[String]]();
-    //add a thumbnail thing
-    init(id:String, resultantStrokes:[String:[String]]) {
+    var x:Recording;
+    var y:Recording;
+
+    init(id:String,x:Recording,y:Recording) {
         self.id = id;
-        self.resultantStrokes = resultantStrokes;
+        self.x = x;
+        self.y = y;
     }
 }
 
@@ -66,12 +68,39 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     {
 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RecordingFrameCell", for: indexPath) as! RecordingFrameCell
-        //set thumbnail
-        //cell.recordingThumbnail.image =
         print ("recording now has ", collectionView.numberOfItems(inSection:0))
-
-        cell.backgroundColor = UIColor.random
+        
+        
+        //creating img view
+//        let imageView: UIImageView = {
+//            let theImageView = UIImageView()
+//            theImageView.image = UIImage(named: "placeholder.png")
+//            theImageView.translatesAutoresizingMaskIntoConstraints = false //You need to call this property so the image is added to your view
+//            return theImageView
+//        }()
+//
+//        cell.contentView.addSubview(imageView)
+//        setImageViewConstraints(someImageView: imageView)
+//
+//        print("^^ inserting img view", imageView)
+        
+        //now draw on it...
+        let lastGesture = RecordingViewController.gestures.last
+        let x = lastGesture?.x
+        let y = lastGesture?.y
+        
+        print("^^ x1, y1 is ", x!.get(id: nil) , y!.get(id: nil))
+        print("^^ x2, y2 is ", x!.getNext()?.get(id:nil) , y!.getNext()?.get(id:nil))
+        //how to iterate??
+        print ("^^ cell is " , cell)
+        
         return cell
+    }
+    
+    func setImageViewConstraints(someImageView:UIImageView) {
+        someImageView.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        someImageView.heightAnchor.constraint(equalToConstant: 150).isActive = true
+        someImageView.backgroundColor = UIColor.white
     }
     
     // ====== selection handling ======
@@ -145,11 +174,40 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     
     func recordingCreatedHandler (data:(String, StylusRecordingPackage), key:String) {
         let stylusdata = data.1
-        RecordingViewController.gestures.append(GestureRecording(id: stylusdata.id, resultantStrokes: stylusdata.resultantStrokes))
+        RecordingViewController.gestures.append(GestureRecording(id: stylusdata.id, x:stylusdata.x, y:stylusdata.y))
+        print("^^ appended new stylus data")
         let IndexPath = NSIndexPath(item: RecordingViewController.gestures.count-1, section:0)
         collectionView?.insertItems(at: [IndexPath as IndexPath])
         collectionView?.scrollToItem(at: IndexPath as IndexPath, at: UICollectionViewScrollPosition.right, animated: false)
     }
 
+    func drawLine(from fromPoint: CGPoint, to toPoint: CGPoint, image imageView:UIImageView) {
+
+        var lastPoint = CGPoint.zero
+  
+        var brushWidth: CGFloat = 10.0
+        var opacity: CGFloat = 1.0
+        var swiped = false
+        
+        UIGraphicsBeginImageContextWithOptions(view.bounds.size, false, 0)
+        
+        imageView.image?.draw(in: view.bounds)
+        
+        let context = UIGraphicsGetCurrentContext()
+        
+        context?.move(to: fromPoint)
+        context?.addLine(to: toPoint)
+        
+        context?.setLineCap(CGLineCap.round)
+        context?.setLineWidth(brushWidth)
+        context?.setStrokeColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1.0)
+        context?.setBlendMode(CGBlendMode.normal)
+        context?.strokePath()
+        
+        imageView.image = UIGraphicsGetImageFromCurrentImageContext()
+        imageView.alpha = opacity
+        UIGraphicsEndImageContext()
+    }
+    
 }
 

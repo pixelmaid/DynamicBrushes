@@ -11,5 +11,18 @@ import UIKit
 
 class RecordingFrameCell: UICollectionViewCell {
     
-    @IBOutlet weak var recordingThumbnail: UIImageView!
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height))
+        imageView.backgroundColor = UIColor.white
+        imageView.contentMode = UIViewContentMode.scaleAspectFit
+        let gestureIdx = RecordingViewController.gestures.count
+        imageView.tag = gestureIdx
+        contentView.addSubview(imageView)
+        print ("^^ add img in cell with tag ", imageView.tag)
+    }
 }
