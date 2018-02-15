@@ -132,6 +132,9 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
             let end_id = getGestureId(index: RecordingViewController.recording_end)
             if (StylusManager.liveStatus()) {
                 StylusManager.setToRecording(idStart: start_id, idEnd: end_id)
+                //erase strokes associated with the recording
+                StylusManager.eraseStrokesForLooping(idStart:start_id, idEnd:end_id)
+                
             } else { //stop recording
                 StylusManager.setToLive()
                 //clear selection

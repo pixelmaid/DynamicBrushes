@@ -110,12 +110,18 @@ final class StylusManager{
         
     }
     
+    static func eraseStrokesForLooping(idStart:String,idEnd:String) {
+        //jl - TODO write code that only erases the strokes between idStart and idEnd
+        //jl - i changed the args to be an idStart and idEnd, same as setToRecording, since we would only ever temporarily erase the strokes we are concerned with in the looping
+        
+    }
+    
     static func setToRecording(idStart:String,idEnd:String){
         self.isLive = false;
         
         currentStartDate = Date();
         currentLoopingPackage = recordingPackages[idStart];
-
+        //jl - TODO - delete bottom line? (eraseStrokesForLooping called now in recording controller)
             eraseEvent.raise(data:("ERASE_REQUEST",currentLoopingPackage.resultantStrokes));
 
         queue.sync {
