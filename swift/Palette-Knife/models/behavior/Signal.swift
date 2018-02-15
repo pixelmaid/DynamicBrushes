@@ -12,7 +12,7 @@ import Foundation
 
 class Signal:Observable<Float>{
     private var index:Float = -1;
-    private var signalBuffer = [Float:Float]();
+    internal var signalBuffer = [Float:Float]();
     private var circular = true;
     var id:String
 //    var param = Observable<Float>(1.0);
@@ -33,9 +33,12 @@ class Signal:Observable<Float>{
         
     }
     
+    
     override func getSilent()->Float{
         return signalBuffer[index]!
     }
+    
+    
     
     func setHash(h:Float){
         self.index = h;
@@ -72,6 +75,8 @@ class LiveSignal:Signal{
 class Recording:Signal{
     private var next:Recording?
     private var prev:Recording?
+    private var lastSample:Float = 0;
+    
     
     func getNext()->Recording?{
         if(next != nil){
@@ -93,6 +98,24 @@ class Recording:Signal{
     
     func setPrev(r:Recording){
         prev = r;
+    }
+    
+    override func pushValue(h:Float,v:Float){
+        super.pushValue(h: h, v: v);
+        self.lastSample = h;
+    }
+    
+    func getTimeOrderedList()->[Float]{
+        var orderedList = [Float]();
+        var hashValue = Float(0);
+        while(hashValue <= self.lastSample){
+            if(self.signalBuffer[hashValue] != nil){
+                orderedList.append(signalBuffer[hashValue]!);
+            }
+            hashValue+=1.0;
+        }
+        
+        return orderedList;
     }
 }
 
