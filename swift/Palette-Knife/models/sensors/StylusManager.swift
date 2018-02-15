@@ -65,6 +65,7 @@ final class StylusManager{
     static private func endRecording()->StylusRecordingPackage?{
         if(currentRecordingPackage != nil){
             currentRecordingPackage.endRecording();
+            print("ordered x list =",currentRecordingPackage.x.getTimeOrderedList());
             recordEvent.raise(data:("END_RECORDING",currentRecordingPackage));
             return currentRecordingPackage;
         }

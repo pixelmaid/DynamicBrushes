@@ -1,0 +1,225 @@
+[{
+    "name" : "child",
+    "methods" : [
+      {
+        "targetTransition" : "_jsplumb_c_1492035672042",
+        "hasArguments" : true,
+        "currentArguments" : [
+          "stylus_position"
+        ],
+        "targetMethod" : "newStroke",
+        "defaultArgument" : "stylus_position",
+        "methodArguments" : {
+          "parent_origin" : "parent_origin",
+          "stylus_position" : "stylus_position",
+          "parent_position" : "parent_position"
+        },
+        "methodId" : "_y9981vzdi"
+      }
+    ],
+    "generators" : [
+
+    ],
+    "id" : "_iuk2tant5",
+    "states" : [
+      {
+        "name" : "die",
+        "x" : 1018,
+        "id" : "_jupcoyws8",
+        "y" : 221
+      },
+      {
+        "name" : "setup",
+        "x" : 20,
+        "id" : "_y5p6lqn2a",
+        "y" : 229
+      },
+      {
+        "name" : "myState",
+        "x" : 388.991455078125,
+        "id" : "_uerji92qt",
+        "y" : 211.98863220214844
+      }
+    ],
+    "auto_spawn_num" : 0,
+    "active_status" : false,
+    "transitions" : [
+      {
+        "name" : "setup",
+        "eventName" : "STATE_COMPLETE",
+        "transitionId" : "_jsplumb_c_1492035672042",
+        "fromStateId" : "_y5p6lqn2a",
+        "toStateId" : "_uerji92qt",
+        "parentFlag" : false,
+        "displayName" : "stateComplete"
+      },
+      {
+        "name" : "myState",
+        "emitter" : "stylus",
+        "eventName" : "STYLUS_UP",
+        "transitionId" : "_jsplumb_c_1495729376173",
+        "fromStateId" : "_uerji92qt",
+        "toStateId" : "_jupcoyws8",
+        "parentFlag" : false,
+        "displayName" : "stylusUp"
+      }
+    ],
+    "mappings" : [
+      {
+        "stateId" : "_uerji92qt",
+        "constraintType" : "active",
+        "mappingId" : "_txxe8xrxz",
+        "expressionId" : "_gzay587i7",
+        "expressionText" : "%_oli72we8u%",
+        "relativePropertyName" : "y",
+        "expressionPropertyList" : {
+          "_oli72we8u" : [
+            "stylus",
+            [
+              "y"
+            ],
+            [
+              "stylus y"
+            ]
+          ]
+        },
+        "relativePropertyItemName" : "y"
+      },
+      {
+        "stateId" : "_uerji92qt",
+        "constraintType" : "active",
+        "mappingId" : "_l04559b91",
+        "expressionId" : "_9v92eojoy",
+        "expressionText" : "%_6yn3vrt25%+100",
+        "relativePropertyName" : "x",
+        "expressionPropertyList" : {
+          "_6yn3vrt25" : [
+            "stylus",
+            [
+              "x"
+            ],
+            [
+              "stylus x"
+            ]
+          ]
+        },
+        "relativePropertyItemName" : "x"
+      }
+    ],
+    "conditions" : [
+
+    ]
+  },
+ {
+    "name" : "behavior_2",
+    "methods" : [
+      {
+        "targetTransition" : "_jsplumb_c_1495732428373",
+        "hasArguments" : true,
+        "currentArguments" : [
+          "stylus_position"
+        ],
+        "targetMethod" : "newStroke",
+        "defaultArgument" : "stylus_position",
+        "methodArguments" : {
+          "parent_origin" : "parent_origin",
+          "stylus_position" : "stylus_position",
+          "parent_position" : "parent_position"
+        },
+        "methodId" : "_qfasrll2z"
+      }
+    ],
+    "generators" : [
+
+    ],
+    "id" : "_8x0thh4ay",
+    "states" : [
+      {
+        "name" : "state 1",
+        "x" : 347.99716186523438,
+        "id" : "_s865vlzry",
+        "y" : 325
+      },
+      {
+        "name" : "setup",
+        "x" : 71.988632202148438,
+        "id" : "_y5p6lqn2a",
+        "y" : 335.99429321289062
+      },
+      {
+        "name" : "die",
+        "x" : 1018,
+        "id" : "_jupcoyws8",
+        "y" : 221
+      }
+    ],
+    "auto_spawn_num" : 1,
+    "active_status" : true,
+    "transitions" : [
+      {
+        "name" : "setup",
+        "eventName" : "STATE_COMPLETE",
+        "transitionId" : "_jsplumb_c_1495732354038",
+        "fromStateId" : "_y5p6lqn2a",
+        "toStateId" : "_s865vlzry",
+        "parentFlag" : false,
+        "displayName" : "stateComplete"
+      },
+      {
+        "name" : "jen",
+        "emitter" : "stylus",
+        "eventName" : "STYLUS_DOWN",
+        "transitionId" : "_jsplumb_c_1495732428373",
+        "fromStateId" : "_s865vlzry",
+        "toStateId" : "_s865vlzry",
+        "parentFlag" : false,
+        "displayName" : "stylusDown"
+      }
+    ],
+    "mappings" : [
+      {
+        "stateId" : "_s865vlzry",
+        "constraintType" : "active",
+        "mappingId" : "_2y32e7fft",
+        "expressionId" : "_m3ia4r48s",
+        "expressionText" : "%_5s58td6h4%",
+        "relativePropertyName" : "y",
+        "expressionPropertyList" : {
+          "_5s58td6h4" : [
+            "stylus",
+            [
+              "y"
+            ],
+            [
+              "stylus y"
+            ]
+          ]
+        },
+        "relativePropertyItemName" : "y"
+      },
+      {
+        "stateId" : "_s865vlzry",
+        "constraintType" : "active",
+        "mappingId" : "_bj4z3hiuo",
+        "expressionId" : "_a6fsic64i",
+        "expressionText" : "%_cafuyduxm%",
+        "relativePropertyName" : "x",
+        "expressionPropertyList" : {
+          "_cafuyduxm" : [
+            "stylus",
+            [
+              "x"
+            ],
+            [
+              "stylus x"
+            ]
+          ]
+        },
+        "relativePropertyItemName" : "x"
+      }
+    ],
+    "conditions" : [
+
+    ]
+  }
+]

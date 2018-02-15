@@ -13,11 +13,23 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
         var saveView = new SaveView(saveManager, "#save-menu");
         var codename;
         var dataView = new DatasetView(paletteModel.datasetLoader, "#dataset_select");
-
+        var testingMode = true;
         //sets up interface by initializing palette, removing overlay etc.
         var setupInterface = function(){
+            if(testingMode){
+                loadDummyData();
+            }
+            else{
             requestFileList(codename);
             requestExampleFileList();
+            }
+        };
+
+        var loadDummyData = function(){
+            $.getJSON("app/behavior_templates/dummy_data/recording_template.json", function(data) {
+                    var sync_data = {data:data,type:"synchronize"};
+                    onMessage(sync_data);
+                });
         };
 
         var onMessage = function(data) {
@@ -51,6 +63,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
                 var currentBehaviorName = data["currentBehaviorName"];
                 var currentBehaviorFile = data["currentFile"];
                 console.log("currentBehaviorName=",currentBehaviorName,currentBehaviorFile);
+                console.log("get dummy data",data);
+
                 chartViewManager.synchronize(data);
                 saveManager.setCurrentFilename(currentBehaviorName,currentBehaviorFile);
 
@@ -59,6 +73,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
             }
 
         };  
+
+
 
         var onConnection = function() {
             console.log("connection made");
