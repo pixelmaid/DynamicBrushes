@@ -20,7 +20,7 @@ class RecordingFrameCell: UICollectionViewCell {
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height))
         imageView.backgroundColor = UIColor.white
         imageView.contentMode = UIViewContentMode.scaleAspectFit
-        let gestureIdx = RecordingViewController.gestures.count
+        let gestureIdx = RecordingViewController.gestures.count //tag starts at 1
         imageView.tag = gestureIdx
         contentView.addSubview(imageView)
         print ("^^ add img in cell with tag ", imageView.tag)

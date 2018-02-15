@@ -43,6 +43,8 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     public static var recording_end = -1
     
     
+    let divisor = 6.83 //canvas size / divisor = thumbnail size; 1366 / 6.83 = 200
+    
     @IBOutlet weak var collectionView: UICollectionView!
     
     
@@ -70,32 +72,38 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RecordingFrameCell", for: indexPath) as! RecordingFrameCell
         print ("recording now has ", collectionView.numberOfItems(inSection:0))
         
-        
-        //creating img view
-//        let imageView: UIImageView = {
-//            let theImageView = UIImageView()
-//            theImageView.image = UIImage(named: "placeholder.png")
-//            theImageView.translatesAutoresizingMaskIntoConstraints = false //You need to call this property so the image is added to your view
-//            return theImageView
-//        }()
-//
-//        cell.contentView.addSubview(imageView)
-//        setImageViewConstraints(someImageView: imageView)
-//
-//        print("^^ inserting img view", imageView)
-        
         //now draw on it...
         let lastGesture = RecordingViewController.gestures.last
         let x = lastGesture?.x
         let y = lastGesture?.y
-        
-        print("^^ x1, y1 is ", x!.get(id: nil) , y!.get(id: nil))
-        print("^^ x2, y2 is ", x!.getNext()?.get(id:nil) , y!.getNext()?.get(id:nil))
-        //how to iterate??
+        let xstrokes = x?.getTimeOrderedList()
+        let ystrokes = y?.getTimeOrderedList()
+        print("^^ x, y lists are len ", xstrokes!.count, ystrokes!.count)
+        //get imgview corresponding to this thumb
+        let imgTag = RecordingViewController.gestures.count
+        let img = cell.contentView.viewWithTag(imgTag) as! UIImageView
+        print ("^^ found img ", img)
+        test(image:img)
         print ("^^ cell is " , cell)
-        
         return cell
     }
+    
+    func test(image:UIImageView) {
+        let pt1 = CGPoint(x:0,y:0)
+        let pt2 = CGPoint(x:50,y:50)
+        let pt3 = CGPoint(x:200,y:150)
+        
+        drawLine(from: pt1, to: pt2, image: image)
+        drawLine(from: pt2, to: pt3, image: image)
+    }
+//
+//    func drawThumbnail(xStrokes:[Float],yStrokes:[Float]) {
+//        for idx in stride(from:0, to:strokes.count, by:1) {
+//            let c1 = stride[idx]
+//            let c2 =
+//            print(" ^^ c " ,coord)
+//        }
+//    }
     
     func setImageViewConstraints(someImageView:UIImageView) {
         someImageView.widthAnchor.constraint(equalToConstant: 200).isActive = true
@@ -183,15 +191,12 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
 
     func drawLine(from fromPoint: CGPoint, to toPoint: CGPoint, image imageView:UIImageView) {
 
-        var lastPoint = CGPoint.zero
-  
-        var brushWidth: CGFloat = 10.0
-        var opacity: CGFloat = 1.0
-        var swiped = false
+        let brushWidth: CGFloat = 1.0
+        let opacity: CGFloat = 1.0
+
+        UIGraphicsBeginImageContextWithOptions(imageView.frame.size, false, 0)
         
-        UIGraphicsBeginImageContextWithOptions(view.bounds.size, false, 0)
-        
-        imageView.image?.draw(in: view.bounds)
+        imageView.image?.draw(in: imageView.frame)
         
         let context = UIGraphicsGetCurrentContext()
         
