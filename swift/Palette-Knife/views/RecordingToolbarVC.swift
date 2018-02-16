@@ -32,6 +32,7 @@ class RecordingToolbarVC: UIViewController {
         speedLabel.text = "\(speed)x"
         
         //TODO hook this up to the playback speed now
+        StylusManager.setPlaybackRate(v: speed);
 
     }
     

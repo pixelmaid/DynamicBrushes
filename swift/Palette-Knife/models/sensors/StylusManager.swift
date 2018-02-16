@@ -77,25 +77,27 @@ final class StylusManager{
     
 
     
-    static func liveStatus()->Bool{
+    static public func liveStatus()->Bool{
         return self.isLive
     }
     
-    static func setToLive(){
+    static public func setToLive(){
         self.isLive = true;
-        if playbackTimer != nil {
-            playbackTimer.invalidate()
-            playbackTimer = nil
+        killLoopTimer();
+        samples.removeAll();
+        usedSamples.removeAll();
             
-            samples.removeAll();
-            usedSamples.removeAll();
-            
-        }
+        
+        
+    }
+    
+    static public func setPlaybackRate(v:Float){
+        playbackRate = v;
         
     }
     
 
-    static func eraseStrokesForLooping(idStart:String,idEnd:String) {
+    static public func eraseStrokesForLooping(idStart:String,idEnd:String) {
         //jl - TODO write code that only erases the strokes between idStart and idEnd
         //jl - i changed the args to be an idStart and idEnd, same as setToRecording, since we would only ever temporarily erase the strokes we are concerned with in the looping
         
@@ -103,17 +105,18 @@ final class StylusManager{
 
 
     
-    static func setToRecording(idStart:String,idEnd:String){
+    static public func setToRecording(idStart:String,idEnd:String){
         self.isLive = false;
         
         currentStartDate = Date();
         currentLoopingPackage = recordingPackages[idStart];
         prevHash = 0;
         var resultantStrokes = [[String:[String]]]();
-
+        var recordingPackageCount = 0;
         queue.sync {
             var hashAdd:Float = 0;
             while (true){
+                recordingPackageCount += 1;
                 print("====advance recording start====",currentLoopingPackage.id);
                 resultantStrokes.append(currentLoopingPackage.resultantStrokes);
             for i in 0..<Int(currentLoopingPackage.lastSample+1){
@@ -143,13 +146,20 @@ final class StylusManager{
         startTime = Date();
         prevTriggerTime = startTime;
         //jl - TODO - delete bottom line? (eraseStrokesForLooping called now in recording controller)
-
+        print("total recording packages to loop",recordingPackageCount,samples.count);
         eraseEvent.raise(data:("ERASE_REQUEST",resultantStrokes));
 
         playbackTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(advanceRecording), userInfo: nil, repeats: true)
         
     }
     
+    
+    static private func killLoopTimer(){
+        if playbackTimer != nil {
+            playbackTimer.invalidate()
+            playbackTimer = nil
+        }
+    }
     
     @objc static private func advanceRecording(){
       
@@ -159,7 +169,17 @@ final class StylusManager{
         let elapsedTime = currentTime.timeIntervalSince(prevTriggerTime);
      
         var timeDifferenceCounter = Float(0);
-        let timeDifferenceMS = Float(elapsedTime)*1000*playbackRate;
+        let timeDifferenceMS:Float;
+        
+        if(playbackRate >= 10.0){
+            timeDifferenceMS = Float(samples.count);
+        }
+            
+        else{
+            timeDifferenceMS = Float(elapsedTime)*1000*playbackRate;
+            killLoopTimer();
+
+        }
         
         while timeDifferenceCounter<timeDifferenceMS{
                 
@@ -169,15 +189,14 @@ final class StylusManager{
                     print("sample hash",currentSample.hash);
                     self.consumer.consume(sample:currentSample);
                     
-                    //  print(currentSample.stylusEvent,"sample hash, last hash",currentSample.hash,currentSample.lastHash)
+                    print(currentSample.stylusEvent,"sample hash, last hash",currentSample.hash,currentSample.lastHash)
                     usedSamples.append(currentSample);
                         if(currentSample.isLastinRecording){
                             samples.append(contentsOf:usedSamples);
                             usedSamples.removeAll();
                           //  eraseEvent.raise(data:("ERASE_REQUEST",currentLoopingPackage.resultantStrokes));
                             prevHash = 0;
-                            playbackTimer.invalidate();
-                            playbackTimer = nil;
+                            killLoopTimer();
                             break;
                             
                         }
@@ -192,7 +211,7 @@ final class StylusManager{
     
    
     
-    static func onStylusMove(x:Float,y:Float,force:Float,angle:Float){
+    static public func onStylusMove(x:Float,y:Float,force:Float,angle:Float){
         if(isLive){
             let currentTime = Date();
             let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
@@ -209,7 +228,7 @@ final class StylusManager{
         }
     }
     
-    static func onStylusUp(x:Float,y:Float,force:Float,angle:Float){
+    static public func onStylusUp(x:Float,y:Float,force:Float,angle:Float){
         if(isLive){
             let currentTime = Date();
             let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
@@ -221,7 +240,7 @@ final class StylusManager{
         }
     }
     
-    static func onStylusDown(x:Float,y:Float,force:Float,angle:Float){
+    static public func onStylusDown(x:Float,y:Float,force:Float,angle:Float){
         if(isLive){
             currentStartDate = Date();
             let currentTime = Date();
@@ -231,7 +250,7 @@ final class StylusManager{
             stylus.onStylusDown(x: x, y: y, force: force, angle: angle);
         }
     }
-    static func addResultantStroke(layerId:String, strokeId:String){
+    static public func addResultantStroke(layerId:String, strokeId:String){
         if(isLive){
             currentRecordingPackage.addResultantStroke(layerId: layerId, strokeId: strokeId);
         }
@@ -240,11 +259,11 @@ final class StylusManager{
         }
     }
     
-    static func setLayerId(layerId:String){
+    static public func setLayerId(layerId:String){
         StylusManager.layerId = layerId;
     }
     
-    static func  handleDeletedLayer(deletedId: String){
+    static public func  handleDeletedLayer(deletedId: String){
         if(firstRecording != nil){
             var targetRecordingPackage = recordingPackages[firstRecording]
             while(true){
