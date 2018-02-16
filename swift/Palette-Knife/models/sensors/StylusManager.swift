@@ -41,6 +41,8 @@ final class StylusManager{
     static private var prevTriggerTime:Date!
     static private var prevHash:Float = 0;
     static private var playbackRate:Float = 1;
+    static private var revertToLiveOnLoopEnd = false;
+    
     
     init(){
         
@@ -82,14 +84,16 @@ final class StylusManager{
     }
     
     static public func setToLive(){
-        self.isLive = true;
-        killLoopTimer();
-        samples.removeAll();
-        usedSamples.removeAll();
+        
+        revertToLiveOnLoopEnd = true;
+        
+      
             
         
         
     }
+    
+   
     
     static public func setPlaybackRate(v:Float){
         playbackRate = v;
@@ -112,12 +116,10 @@ final class StylusManager{
         currentLoopingPackage = recordingPackages[idStart];
         prevHash = 0;
         var resultantStrokes = [[String:[String]]]();
-        var recordingPackageCount = 0;
         queue.sync {
             var hashAdd:Float = 0;
             while (true){
-                recordingPackageCount += 1;
-                print("====advance recording start====",currentLoopingPackage.id);
+                print("====advance recording start====",currentLoopingPackage.id,currentLoopingPackage.dx.signalBuffer.count);
                 resultantStrokes.append(currentLoopingPackage.resultantStrokes);
             for i in 0..<Int(currentLoopingPackage.lastSample+1){
                 let hash = i;
@@ -143,28 +145,52 @@ final class StylusManager{
                 }
             }
         }
-        startTime = Date();
-        prevTriggerTime = startTime;
+      
         //jl - TODO - delete bottom line? (eraseStrokesForLooping called now in recording controller)
-        print("total recording packages to loop",recordingPackageCount,samples.count);
-        eraseEvent.raise(data:("ERASE_REQUEST",resultantStrokes));
 
-        playbackTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(advanceRecording), userInfo: nil, repeats: true)
+        delayTimerReinit();
         
     }
     
     
-    static private func killLoopTimer(){
+   
+    static private func killLiveMode(){
+        self.isLive = true;
+        killLoopTimer(delayRestart: false);
+        samples.removeAll();
+        usedSamples.removeAll();
+    }
+    
+    
+    static private func killLoopTimer(delayRestart:Bool){
         if playbackTimer != nil {
             playbackTimer.invalidate()
             playbackTimer = nil
         }
+        if(delayRestart){
+         
+            playbackTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(delayTimerReinit), userInfo: nil, repeats: false)
+
+        }
+    }
+    
+    @objc static private func delayTimerReinit(){
+        if(playbackTimer != nil){
+            playbackTimer.invalidate()
+            playbackTimer = nil
+        }
+        eraseEvent.raise(data:("ERASE_REQUEST",[currentLoopingPackage.resultantStrokes]));
+        startTime = Date();
+        prevTriggerTime = startTime;
+        playbackTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(advanceRecording), userInfo: nil, repeats: true)
+
     }
     
     @objc static private func advanceRecording(){
       
         
-       // queue.sync {
+        queue.sync {
+        print("total num samples",samples.count)
         let currentTime = Date();
         let elapsedTime = currentTime.timeIntervalSince(prevTriggerTime);
      
@@ -173,40 +199,50 @@ final class StylusManager{
         
         if(playbackRate >= 10.0){
             timeDifferenceMS = Float(samples.count);
+            killLoopTimer(delayRestart: false);
+
         }
             
         else{
             timeDifferenceMS = Float(elapsedTime)*1000*playbackRate;
-            killLoopTimer();
 
         }
         
         while timeDifferenceCounter<timeDifferenceMS{
                 
                 if(samples.count>0){
-                    if(samples[0].sequenceHash == timeDifferenceCounter+prevHash){
-                    let currentSample = samples.remove(at: 0);
-                    print("sample hash",currentSample.hash);
-                    self.consumer.consume(sample:currentSample);
                     
-                    print(currentSample.stylusEvent,"sample hash, last hash",currentSample.hash,currentSample.lastHash)
-                    usedSamples.append(currentSample);
-                        if(currentSample.isLastinRecording){
-                            samples.append(contentsOf:usedSamples);
-                            usedSamples.removeAll();
-                          //  eraseEvent.raise(data:("ERASE_REQUEST",currentLoopingPackage.resultantStrokes));
-                            prevHash = 0;
-                            killLoopTimer();
-                            break;
-                            
-                        }
+                    if(samples[0].sequenceHash == timeDifferenceCounter+prevHash){
+                    
+                        let currentSample = samples.remove(at: 0);
+                        print("sample hash",currentSample.hash);
+                        self.consumer.consume(sample:currentSample);
+                        
+                        print(currentSample.stylusEvent,"sample hash, last hash",currentSample.hash,currentSample.lastHash)
+                        usedSamples.append(currentSample);
+                            if(currentSample.isLastinRecording){
+                                samples.append(contentsOf:usedSamples);
+                                usedSamples.removeAll();
+                                prevHash = 0;
+
+                                if(revertToLiveOnLoopEnd == true){
+                                    killLiveMode();
+                                }
+                                else if(playbackRate<10.0){
+                                    killLoopTimer(delayRestart:true);
+
+                                }
+                                
+                                break;
+                                
+                            }
                     }
                     timeDifferenceCounter += 1;
 
                 }
             }
             
-        //}
+        }
     }
     
    
