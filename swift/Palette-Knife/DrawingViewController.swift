@@ -36,7 +36,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     
     
     var layerContainerView:LayerContainerView!
-    var recordingViewController:RecordingViewController!
+
     
     var behaviorManager: BehaviorManager?
     var currentCanvas: Canvas?
@@ -63,7 +63,8 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     var layerPanelController: LayerPanelViewController?
     var behaviorPanelController: BehaviorPanelViewController?
     var recordingToolbarVC: RecordingToolbarVC?
-
+    var recordingViewController:RecordingViewController?
+    
     var fileListController: SavedFilesPanelViewController?
     let targetSize = CGSize(width:CGFloat(pX),height:CGFloat(pY))
     var blockAlert:UIAlertController!
@@ -132,7 +133,10 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
             recordingToolbarVC = segue.destination as? RecordingToolbarVC;
             _ =  recordingToolbarVC?.loopEvent.addHandler(target: self, handler: DrawingViewController.recordingEventHandler, key: loopEventKey)
         }
-        
+        else if(segue.identifier == "recordingViewControllerSegue"){
+            recordingViewController = segue.destination as? RecordingViewController;
+            print ("hooked up recording vc ^^")
+        }
         
     }
     
@@ -348,7 +352,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     func recordingEventHandler(data: (String), key: String){
         switch(data){
         case "LOOP":
-            recordingViewController.loopInitialized()
+            recordingViewController?.loopInitialized()
             break;
         default:
             break;

@@ -78,10 +78,8 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     {
 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RecordingFrameCell", for: indexPath) as! RecordingFrameCell
-        print ("^^ calling cell for itemat at ", indexPath.item)
         //only draw if last cell
         let last_item = RecordingViewController.gestures.count - 1
-        print ("^^ last item ", last_item)
         if indexPath.item == last_item {
             let lastGesture = RecordingViewController.gestures.last
             let x = lastGesture?.x
@@ -97,7 +95,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
             print ("^^ added imageview ")
             drawThumbnail(xStrokes: xstrokes!, yStrokes: ystrokes!, image: imageView)
             
-            collectionView.reloadData()
+            //collectionView.reloadData()
         }
         return cell
     }
