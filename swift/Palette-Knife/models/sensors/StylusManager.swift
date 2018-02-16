@@ -33,10 +33,14 @@ final class StylusManager{
     static private var lastRecording:String!
 
     //events
-    static public let eraseEvent = Event<(String,[String:[String]])>();
+    static public let eraseEvent = Event<(String,[[String:[String]]])>();
     static public let recordEvent = Event<(String,StylusRecordingPackage)>();
     static public let layerEvent = Event<(String,String)>();
-
+    static private var playbackMultiplier = 10;
+    static private var startTime:Date!
+    static private var prevTriggerTime:Date!
+    static private var prevHash:Float = 0;
+    static private var playbackRate:Float = 1;
     
     init(){
         
@@ -71,27 +75,7 @@ final class StylusManager{
         return nil
     }
     
-    
-    @objc static private func advanceRecording(){
-        /*if buffer < size {*/
-        
-        queue.sync {
-            if(samples.count>0){
-                let currentSample = samples.remove(at: 0);
-                
-                self.consumer.consume(sample:currentSample);
-                
-                //  print(currentSample.stylusEvent,"sample hash, last hash",currentSample.hash,currentSample.lastHash)
-                usedSamples.append(currentSample);
-                if(currentSample.isLastinRecording){
-                    samples.append(contentsOf:usedSamples);
-                    usedSamples.removeAll();
-                    eraseEvent.raise(data:("ERASE_REQUEST",currentLoopingPackage.resultantStrokes));
-                }
-            }
-        }
-        
-    }
+
     
     static func setToLastRecording(){
         if(firstRecording != nil){
@@ -117,21 +101,25 @@ final class StylusManager{
         
     }
     
+    
     static func setToRecording(idStart:String,idEnd:String){
         self.isLive = false;
         
         currentStartDate = Date();
         currentLoopingPackage = recordingPackages[idStart];
-
-            eraseEvent.raise(data:("ERASE_REQUEST",currentLoopingPackage.resultantStrokes));
+        prevHash = 0;
+        var resultantStrokes = [[String:[String]]]();
 
         queue.sync {
+            var hashAdd:Float = 0;
             while (true){
                 print("====advance recording start====",currentLoopingPackage.id);
+                resultantStrokes.append(currentLoopingPackage.resultantStrokes);
             for i in 0..<Int(currentLoopingPackage.lastSample+1){
                 let hash = i;
-                let sample = producer.produce(hash: Float(hash), recordingPackage: currentLoopingPackage);
+                var sample = producer.produce(hash: Float(hash), recordingPackage: currentLoopingPackage);
                 if sample != nil{
+                    sample!.sequenceHash = sample!.hash+hashAdd;
                     samples.append(sample!);
                     print("advance recording", hash,samples.count);
                     
@@ -145,13 +133,58 @@ final class StylusManager{
 
                 }
                 else{
+                    samples[samples.count-1].isLastInSeries = true;
+                    hashAdd = samples[samples.count-1].sequenceHash;
                     currentLoopingPackage = currentLoopingPackage.next;
                 }
             }
         }
-        
+        startTime = Date();
+        prevTriggerTime = startTime;
+        eraseEvent.raise(data:("ERASE_REQUEST",resultantStrokes));
+
         playbackTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(advanceRecording), userInfo: nil, repeats: true)
         
+    }
+    
+    
+    @objc static private func advanceRecording(){
+      
+        
+       // queue.sync {
+        let currentTime = Date();
+        let elapsedTime = currentTime.timeIntervalSince(prevTriggerTime);
+     
+        var timeDifferenceCounter = Float(0);
+        let timeDifferenceMS = Float(elapsedTime)*1000*playbackRate;
+        
+        while timeDifferenceCounter<timeDifferenceMS{
+                
+                if(samples.count>0){
+                    if(samples[0].sequenceHash == timeDifferenceCounter+prevHash){
+                    let currentSample = samples.remove(at: 0);
+                    print("sample hash",currentSample.hash);
+                    self.consumer.consume(sample:currentSample);
+                    
+                    //  print(currentSample.stylusEvent,"sample hash, last hash",currentSample.hash,currentSample.lastHash)
+                    usedSamples.append(currentSample);
+                        if(currentSample.isLastinRecording){
+                            samples.append(contentsOf:usedSamples);
+                            usedSamples.removeAll();
+                          //  eraseEvent.raise(data:("ERASE_REQUEST",currentLoopingPackage.resultantStrokes));
+                            prevHash = 0;
+                            playbackTimer.invalidate();
+                            playbackTimer = nil;
+                            break;
+                            
+                        }
+                    }
+                    timeDifferenceCounter += 1;
+
+                }
+            }
+            
+        //}
     }
     
    
@@ -395,8 +428,10 @@ class StylusDataConsumer{
         let angle:Float
         let hash:Float
         let lastHash:Float
+        var sequenceHash:Float = 0;
         let targetLayer:String
         var isLastinRecording:Bool = false;
+        var isLastInSeries:Bool = false;
         
         init(dx:Float,dy:Float,x:Float,y:Float,force:Float,angle:Float,targetLayer:String,stylusEvent:Float, hash:Float, lastHash:Float){
             self.dx=dx;
