@@ -13,16 +13,24 @@ class RecordingFrameCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        print ("^^ in init cell1")
+        initCell()
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height))
-        imageView.backgroundColor = UIColor.white
-        imageView.contentMode = UIViewContentMode.scaleAspectFit
-        let gestureIdx = RecordingViewController.gestures.count //tag starts at 1
-        imageView.tag = gestureIdx
-        contentView.addSubview(imageView)
-        print ("^^ add img in cell with tag ", imageView.tag)
+        print ("^^ in init cell2")
+        initCell()
+    }
+    
+    func initCell() {
+//            self.itemSize = CGSize(width: 200, height: 150)
+//        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height))
+//        imageView.backgroundColor = UIColor.blue
+//        imageView.contentMode = UIViewContentMode.scaleAspectFit
+//        let gestureIdx = RecordingViewController.gestures.count //tag starts at 1
+//        imageView.tag = gestureIdx
+//        contentView.addSubview(imageView)
+//        print ("^^ == init added img ", imageView.tag)
     }
 }
