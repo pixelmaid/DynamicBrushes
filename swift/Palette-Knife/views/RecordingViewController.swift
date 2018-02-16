@@ -43,15 +43,23 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     public static var recording_end = -1
     
     
-    let divisor = 6.83 //canvas size / divisor = thumbnail size; 1366 / 6.83 = 200
+    let divisor:Float = 6.83 //canvas size / divisor = thumbnail size; 1366 / 6.83 = 200
     
     @IBOutlet weak var collectionView: UICollectionView!
     
-    
+    func shouldInvalidateLayoutForBoundsChange(newBounds: CGRect) -> Bool {
+        return true
+    }
+    func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
+        let indexPath = NSIndexPath(item:0, section:0)
+        let attrib = collectionView?.layoutAttributesForItem(at: indexPath as IndexPath)
+        return [attrib!]
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         let recordingKey = NSUUID().uuidString
-         collectionView?.allowsMultipleSelection = true
+        collectionView?.allowsMultipleSelection = true
+        collectionView?.isPrefetchingEnabled = true
         _ = StylusManager.recordEvent.addHandler(target:self, handler: RecordingViewController.recordingCreatedHandler, key: recordingKey)
         collectionView?.register(RecordingFrameCell.self, forCellWithReuseIdentifier: "cell")
         
@@ -70,45 +78,50 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     {
 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RecordingFrameCell", for: indexPath) as! RecordingFrameCell
-        print ("recording now has ", collectionView.numberOfItems(inSection:0))
-        
-        //now draw on it...
-        let lastGesture = RecordingViewController.gestures.last
-        let x = lastGesture?.x
-        let y = lastGesture?.y
-        let xstrokes = x?.getTimeOrderedList()
-        let ystrokes = y?.getTimeOrderedList()
-        print("^^ x, y lists are len ", xstrokes!.count, ystrokes!.count)
-        //get imgview corresponding to this thumb
-        let imgTag = RecordingViewController.gestures.count
-        let img = cell.contentView.viewWithTag(imgTag) as! UIImageView
-        print ("^^ found img ", img)
-        test(image:img)
-        print ("^^ cell is " , cell)
+        //only draw if last cell
+        let last_item = RecordingViewController.gestures.count - 1
+        if indexPath.item == last_item {
+            let lastGesture = RecordingViewController.gestures.last
+            let x = lastGesture?.x
+            let y = lastGesture?.y
+            let xstrokes = x?.getTimeOrderedList()
+            let ystrokes = y?.getTimeOrderedList()
+            let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 200, height: 150))
+            imageView.backgroundColor = UIColor.white
+            imageView.contentMode = UIViewContentMode.scaleAspectFit
+
+            
+            cell.contentView.addSubview(imageView)
+            print ("^^ added imageview ")
+            drawThumbnail(xStrokes: xstrokes!, yStrokes: ystrokes!, image: imageView)
+            
+            //collectionView.reloadData()
+        }
         return cell
     }
     
-    func test(image:UIImageView) {
-        let pt1 = CGPoint(x:0,y:0)
-        let pt2 = CGPoint(x:50,y:50)
-        let pt3 = CGPoint(x:200,y:150)
-        
-        drawLine(from: pt1, to: pt2, image: image)
-        drawLine(from: pt2, to: pt3, image: image)
+    func collectionView(_ collectionView: UICollectionView,
+                                 willDisplay cell: UICollectionViewCell,
+                                 forItemAt indexPath: IndexPath) {
+
+        //now draw on it...
+
     }
-//
-//    func drawThumbnail(xStrokes:[Float],yStrokes:[Float]) {
-//        for idx in stride(from:0, to:strokes.count, by:1) {
-//            let c1 = stride[idx]
-//            let c2 =
-//            print(" ^^ c " ,coord)
-//        }
-//    }
-    
-    func setImageViewConstraints(someImageView:UIImageView) {
-        someImageView.widthAnchor.constraint(equalToConstant: 200).isActive = true
-        someImageView.heightAnchor.constraint(equalToConstant: 150).isActive = true
-        someImageView.backgroundColor = UIColor.white
+
+    func drawThumbnail(xStrokes:[Float],yStrokes:[Float],image:UIImageView) {
+        //assert xStrokes.count == yStrokes.count
+        print ("^^ in draw thumb")
+        for idx in stride(from:0, to:xStrokes.count, by:1) {
+            let c1x = xStrokes[idx] / divisor
+            let c1y = yStrokes[idx] / divisor
+            var idx2 = idx + 1
+            if idx == xStrokes.count - 1 { idx2 = idx }
+            let c2x = xStrokes[idx2] / divisor
+            let c2y = yStrokes[idx2] / divisor
+            let p1 = CGPoint(x:Int(c1x), y:Int(c1y))
+            let p2 = CGPoint(x:Int(c2x), y:Int(c2y))
+            drawLine(from:p1, to:p2, image:image)
+        }
     }
     
     // ====== selection handling ======
@@ -144,10 +157,12 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     }
     
     func resetSelection() {
-        print ("^^ reseting selection")
+        print ("^^ reseting selection from ", RecordingViewController.recording_start, " to ", RecordingViewController.recording_end+1)
         for i in stride(from:RecordingViewController.recording_start, to:RecordingViewController.recording_end+1, by:1) {
             let indexPath = NSIndexPath(item:i, section:0)
+            print ("^^ total cells in collectionview ", collectionView?.numberOfItems(inSection: 0))
             let cell = collectionView?.cellForItem(at: indexPath as IndexPath)
+            print("^^inside reset found cell ", cell)
             cell?.layer.borderWidth = 0.0
             collectionView?.deselectItem(at: indexPath as IndexPath, animated: false)
         }
@@ -161,7 +176,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     }
     
     func loopInitialized() {
-        print ("called loop init! ^^")
+        print ("^^ loop button pressed")
         print (RecordingViewController.recording_start, RecordingViewController.recording_end)
         if (RecordingViewController.recording_start >= 0 && RecordingViewController.recording_end >= RecordingViewController.recording_start) {
             print ("^^ going to loop from ", RecordingViewController.recording_start, " to ", RecordingViewController.recording_end)
@@ -190,7 +205,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     }
 
     func drawLine(from fromPoint: CGPoint, to toPoint: CGPoint, image imageView:UIImageView) {
-
+//        print("^^ drawing from ", fromPoint, toPoint)
         let brushWidth: CGFloat = 1.0
         let opacity: CGFloat = 1.0
 

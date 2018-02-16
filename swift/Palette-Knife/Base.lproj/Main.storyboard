@@ -64,7 +64,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <connections>
-                                    <segue destination="De9-TT-PM2" kind="embed" id="egQ-jJ-kbz"/>
+                                    <segue destination="De9-TT-PM2" kind="embed" identifier="recordingViewControllerSegue" id="egQ-jJ-kbz"/>
                                 </connections>
                             </containerView>
                             <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f9T-gG-pJC" userLabel="recording_toolbar">
