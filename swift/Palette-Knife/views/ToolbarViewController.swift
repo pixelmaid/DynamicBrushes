@@ -28,6 +28,7 @@ class ToolbarViewController: UIViewController {
     
     @IBOutlet weak var backupLabel: UILabel!
     @IBOutlet weak var programViewToggle: UIButton!
+    @IBOutlet weak var undoButton: UIButton!
     
     var toolEvent = Event<(String)>();
     var activePanel:String?
@@ -66,7 +67,7 @@ class ToolbarViewController: UIViewController {
         shapeLayer?.lineWidth = 1.0
 
         colorPickerButton.layer.addSublayer(shapeLayer!)
-        
+          undoButton.addTarget(self, action: #selector(ToolbarViewController.undoToggled), for: .touchUpInside)
         eraseButton.addTarget(self, action: #selector(ToolbarViewController.eraseToggled), for: .touchUpInside)
         
         penButton.addTarget(self, action: #selector(ToolbarViewController.penToggled), for: .touchUpInside)
@@ -176,6 +177,14 @@ class ToolbarViewController: UIViewController {
             toolEvent.raise(data: ("AIRBRUSH_MODE"));
             
             
+        
+    }
+    
+    func undoToggled(){
+  
+        toolEvent.raise(data: ("UNDO"));
+        
+        
         
     }
 

@@ -185,6 +185,11 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="program"/>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nds-iM-XVH">
+                                <rect key="frame" x="1164" y="10" width="35" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="undo"/>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -206,6 +211,7 @@
                         <outlet property="penButton" destination="QPW-J3-rUs" id="NpX-gX-qlq"/>
                         <outlet property="programViewToggle" destination="zj8-xR-5ec" id="z8o-5E-Frm"/>
                         <outlet property="saveButton" destination="8gS-nz-efH" id="Hzl-b5-jO9"/>
+                        <outlet property="undoButton" destination="Nds-iM-XVH" id="maY-IT-fwI"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cO4-mP-nr5" userLabel="First Responder" sceneMemberID="firstResponder"/>

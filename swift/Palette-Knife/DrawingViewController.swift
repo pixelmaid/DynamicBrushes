@@ -164,6 +164,9 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     func toolEventHandler(data: (String), key: String){
         print("tool event handler",data)
         switch(data){
+        case "UNDO":
+            layerContainerView.activeLayer?.jotView.undo();
+            break;
         case "PROGRAMMING_VIEW_REQUEST":
             _ = Router.createProgrammingModule();
             break;
