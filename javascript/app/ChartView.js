@@ -139,6 +139,38 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                 });
 
+
+//SAMPLE CONTEXT MENUL FOR PROPERTY ITEMS
+                $.contextMenu({
+                     trigger: 'left',
+                     className: "property_menu",
+                    selector: '#' + self.id + ' .state'+' .prop_button',
+                    callback: function(key, options) {
+                        
+                    },
+                    items: {
+                        "x": {
+                            name: "x"
+                        },
+                          "y": {
+                            name: "y"
+                        },
+                        "scale_x": {
+                            name: "y"
+                        },
+                        "scale_y": {
+                            name: "scale x"
+                        },
+                        "rotation": {
+                            name: "rotation"
+                        }
+                    
+                }
+                        
+                    
+
+                });
+
                 $.contextMenu({
                     selector: '#' + self.id + ' .mapping',
                     callback: function(key, options) {
@@ -369,7 +401,9 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     html = startTemplate(state_data);
                 } else {
                     html = stateTemplate(state_data);
-                }
+                    console.log('state html',html);
+
+                    }
                 d.id = id;
 
                 d.innerHTML = html;
