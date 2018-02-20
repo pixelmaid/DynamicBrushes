@@ -79,24 +79,26 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RecordingFrameCell", for: indexPath) as! RecordingFrameCell
         //only draw if last cell
-        let last_item = RecordingViewController.gestures.count - 1
-        if indexPath.item == last_item {
-            let lastGesture = RecordingViewController.gestures.last
-            let x = lastGesture?.x
-            let y = lastGesture?.y
-            let xstrokes = x?.getTimeOrderedList()
-            let ystrokes = y?.getTimeOrderedList()
-            let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 200, height: 150))
-            imageView.backgroundColor = UIColor.white
-            imageView.contentMode = UIViewContentMode.scaleAspectFit
+        print ("^^ cellforItemAt called for item ", indexPath.item)
+        let last_item = RecordingViewController.gestures.count //1 indexed!
+        let lastGesture = RecordingViewController.gestures[indexPath.item]
+        let x = lastGesture.x
+        let y = lastGesture.y
+        let xstrokes = x.getTimeOrderedList()
+        let ystrokes = y.getTimeOrderedList()
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 200, height: 150))
+        imageView.backgroundColor = UIColor.white
+        imageView.contentMode = UIViewContentMode.scaleAspectFit
+        imageView.tag = last_item
+        
 
-            
-            cell.contentView.addSubview(imageView)
-            print ("^^ added imageview ")
-            drawThumbnail(xStrokes: xstrokes!, yStrokes: ystrokes!, image: imageView)
-            
-            //collectionView.reloadData()
-        }
+        
+        cell.contentView.addSubview(imageView)
+        print ("^^ added imageview ")
+        drawThumbnail(xStrokes: xstrokes, yStrokes: ystrokes, image: imageView)
+        
+        //collectionView.reloadData()
+        
         return cell
     }
     

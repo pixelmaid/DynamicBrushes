@@ -135,8 +135,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
         }
         else if(segue.identifier == "recordingViewControllerSegue"){
             recordingViewController = segue.destination as? RecordingViewController;
-            print ("hooked up recording vc ^^")
-        }
+      }
         
     }
     

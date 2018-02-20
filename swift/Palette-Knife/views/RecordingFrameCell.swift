@@ -17,6 +17,11 @@ class RecordingFrameCell: UICollectionViewCell {
         initCell()
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        print ("^^ cell reused")
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         print ("^^ in init cell2")
