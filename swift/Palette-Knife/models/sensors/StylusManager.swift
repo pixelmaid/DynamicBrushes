@@ -33,7 +33,7 @@ final class StylusManager{
     static private var lastRecording:String!
 
     //events
-    static public let eraseEvent = Event<(String,[[String:[String]]])>();
+    static public let eraseEvent = Event<(String,[String:[String]])>();
     static public let recordEvent = Event<(String,StylusRecordingPackage)>();
     static public let layerEvent = Event<(String,String)>();
     static private var playbackMultiplier = 10;
@@ -42,7 +42,9 @@ final class StylusManager{
     static private var prevHash:Float = 0;
     static private var playbackRate:Float = 1;
     static private var revertToLiveOnLoopEnd = false;
-    
+    static private var idStart:String!
+    static private var idEnd:String!
+
     
     init(){
         
@@ -111,16 +113,15 @@ final class StylusManager{
     
     static public func setToRecording(idStart:String,idEnd:String){
         self.isLive = false;
-        
+        self.idStart = idStart;
+        self.idEnd = idEnd;
         currentStartDate = Date();
-        currentLoopingPackage = recordingPackages[idStart];
+        currentLoopingPackage = recordingPackages[self.idStart];
         prevHash = 0;
-        var resultantStrokes = [[String:[String]]]();
         queue.sync {
             var hashAdd:Float = 0;
             while (true){
                 print("====advance recording start====",currentLoopingPackage.id,currentLoopingPackage.dx.signalBuffer.count);
-                resultantStrokes.append(currentLoopingPackage.resultantStrokes);
             for i in 0..<Int(currentLoopingPackage.lastSample+1){
                 let hash = i;
                 var sample = producer.produce(hash: Float(hash), recordingPackage: currentLoopingPackage);
@@ -133,7 +134,7 @@ final class StylusManager{
             }
             print("====advance recording break====");
             //prevTime = elapsedTime;
-                if(currentLoopingPackage.id == idEnd){
+                if(currentLoopingPackage.id == self.idEnd){
                     samples[samples.count-1].isLastinRecording = true;
                     break;
 
@@ -156,9 +157,13 @@ final class StylusManager{
    
     static private func killLiveMode(){
         self.isLive = true;
+        self.idStart = nil;
+        self.idEnd = nil;
         killLoopTimer(delayRestart: false);
         samples.removeAll();
         usedSamples.removeAll();
+        currentLoopingPackage = nil;
+        
     }
     
     
@@ -168,7 +173,7 @@ final class StylusManager{
             playbackTimer = nil
         }
         if(delayRestart){
-         
+            
             playbackTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(delayTimerReinit), userInfo: nil, repeats: false)
 
         }
@@ -179,9 +184,28 @@ final class StylusManager{
             playbackTimer.invalidate()
             playbackTimer = nil
         }
-        eraseEvent.raise(data:("ERASE_REQUEST",[currentLoopingPackage.resultantStrokes]));
         startTime = Date();
         prevTriggerTime = startTime;
+        var strokesToErase = [String:[String]]();
+        currentLoopingPackage = recordingPackages[self.idStart];
+        while (true){
+            for (key,list) in currentLoopingPackage.resultantStrokes{
+                if(strokesToErase[key] == nil){
+                    strokesToErase[key] = [String]();
+                }
+                strokesToErase[key]?.append(contentsOf: list);
+            }
+                currentLoopingPackage.removeResultantStrokes();
+                if(currentLoopingPackage.id == self.idEnd){
+                    break;
+                }
+                else{
+                    currentLoopingPackage = currentLoopingPackage.next;
+                }
+            }
+        
+        eraseEvent.raise(data:("ERASE_REQUEST",strokesToErase));
+
         playbackTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(advanceRecording), userInfo: nil, repeats: true)
 
     }
@@ -213,8 +237,11 @@ final class StylusManager{
                 if(samples.count>0){
                     
                     if(samples[0].sequenceHash == timeDifferenceCounter+prevHash){
-                    
+                       
                         let currentSample = samples.remove(at: 0);
+                        if(currentSample.hash == Float(0)){
+                            currentLoopingPackage = recordingPackages[currentSample.recordingId];
+                        }
                         print("sample hash",currentSample.hash);
                         self.consumer.consume(sample:currentSample);
                         
@@ -428,7 +455,7 @@ class StylusDataConsumer{
                 angle.setHash(h: hash);
                 stylusEvent.setHash(h: hash);
                 
-                let sample = Sample(dx: dx.get(id:nil), dy: dy.get(id:nil), x: x.get(id:nil), y: y.get(id:nil), force: force.get(id:nil), angle: angle.get(id:nil), targetLayer:self.targetLayer, stylusEvent: stylusEvent.get(id:nil),hash:hash,lastHash:self.lastSample)
+                let sample = Sample(dx: dx.get(id:nil), dy: dy.get(id:nil), x: x.get(id:nil), y: y.get(id:nil), force: force.get(id:nil), angle: angle.get(id:nil), targetLayer:self.targetLayer, stylusEvent: stylusEvent.get(id:nil),hash:hash,lastHash:self.lastSample,recordingId:self.id)
                 return sample;
             }
             return nil;
@@ -490,8 +517,8 @@ class StylusDataConsumer{
         let targetLayer:String
         var isLastinRecording:Bool = false;
         var isLastInSeries:Bool = false;
-        
-        init(dx:Float,dy:Float,x:Float,y:Float,force:Float,angle:Float,targetLayer:String,stylusEvent:Float, hash:Float, lastHash:Float){
+        var recordingId:String;
+        init(dx:Float,dy:Float,x:Float,y:Float,force:Float,angle:Float,targetLayer:String,stylusEvent:Float, hash:Float, lastHash:Float, recordingId:String){
             self.dx=dx;
             self.dy=dy;
             self.x=x;
@@ -502,6 +529,7 @@ class StylusDataConsumer{
             self.targetLayer = targetLayer;
             self.hash = hash;
             self.lastHash = lastHash;
+            self.recordingId = recordingId;
         }
         
 }

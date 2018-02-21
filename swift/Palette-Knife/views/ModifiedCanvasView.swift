@@ -64,7 +64,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
     
     required init?(coder aDecoder: NSCoder) {
         self.name = "noname";
-        
+       
         super.init(coder: aDecoder)
         let size = self.frame.size
         jotView = JotView(frame:CGRect(x:0,y:0,width:size.width,height:size.height));
@@ -101,8 +101,9 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
                     texture = JotDefaultBrushTexture.sharedInstance()
                 }
                 let newStroke = JotStroke(texture: texture, andBufferManager: jotView.state.bufferManager());
+                newStroke!.setId(id)
                 newStroke!.delegate = jotView as JotStrokeDelegate;
-                
+                print("added stroke with id:",newStroke!.getId())
                 
                     activeStrokes[id] = newStroke!;
                     allStrokes.append(newStroke!)
@@ -110,6 +111,14 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
             }
             JotGLContext.validateEmptyStack()
         }
+    }
+    
+    func undoById(strokeIds:[String]){
+        self.endAllStrokes();
+        for id in strokeIds{
+            self.jotView.undo(byId: id);
+        }
+
     }
     
     func removeAllStrokes(){

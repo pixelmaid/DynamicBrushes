@@ -371,6 +371,14 @@ class LayerContainerView: UIView {
         
     }
     
+    func undoById(layerList:[String:[String]]){
+        for l in self.layers{
+            if layerList[l.id] != nil{
+                l.undoById(strokeIds: layerList[l.id]!);
+            }
+        }
+    }
+    
 
 
     

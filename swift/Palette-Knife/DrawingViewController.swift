@@ -150,7 +150,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
             case "ERASE_REQUEST":
                
               //  _ = layerContainerView.activeLayer?.jotView.undo();
-                layerContainerView.eraseAllLayers();
+                layerContainerView.undoById(layerList:data.1 as! [String:[String]])
             break;
             case "REQUEST_CORRECT_LAYER":
                 layerContainerView.selectActiveLayer(id:data.1 as! String);
@@ -165,7 +165,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
         print("tool event handler",data)
         switch(data){
         case "UNDO":
-            layerContainerView.activeLayer?.jotView.undo();
+            //layerContainerView.activeLayer!.undo();
             break;
         case "PROGRAMMING_VIEW_REQUEST":
             _ = Router.createProgrammingModule();
