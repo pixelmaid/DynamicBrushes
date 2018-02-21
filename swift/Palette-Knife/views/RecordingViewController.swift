@@ -78,10 +78,10 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     {
 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RecordingFrameCell", for: indexPath) as! RecordingFrameCell
-        //only draw if last cell
-        print ("^^ cellforItemAt called for item ", indexPath.item)
-        let last_item = RecordingViewController.gestures.count //1 indexed!
-        let lastGesture = RecordingViewController.gestures[indexPath.item]
+        
+        let idx = indexPath.item
+        print ("^^ cellforItemAt called for item ", idx)
+        let lastGesture = RecordingViewController.gestures[idx]
         let x = lastGesture.x
         let y = lastGesture.y
         let xstrokes = x.getTimeOrderedList()
@@ -89,28 +89,29 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 200, height: 150))
         imageView.backgroundColor = UIColor.white
         imageView.contentMode = UIViewContentMode.scaleAspectFit
-        imageView.tag = last_item
-        
-
-        
         cell.contentView.addSubview(imageView)
-        print ("^^ added imageview ")
-        drawThumbnail(xStrokes: xstrokes, yStrokes: ystrokes, image: imageView)
-        
-        //collectionView.reloadData()
-        
+        drawThumbnail(xStrokes: xstrokes, yStrokes: ystrokes, image: imageView, onion: false)
+
+        //sorry it would be better to use a queue but i'm lazy!!
+        if indexPath.item >= 1 {
+            let xstrokes1 = RecordingViewController.gestures[idx-1].x.getTimeOrderedList()
+            let ystrokes1 = RecordingViewController.gestures[idx-1].y.getTimeOrderedList()
+            drawThumbnail(xStrokes: xstrokes1, yStrokes: ystrokes1, image: imageView, onion: true, alpha: 0.3)
+            if indexPath.item >= 2 {
+                let xstrokes2 = RecordingViewController.gestures[idx-2].x.getTimeOrderedList()
+                let ystrokes2 = RecordingViewController.gestures[idx-2].y.getTimeOrderedList()
+                drawThumbnail(xStrokes: xstrokes2, yStrokes: ystrokes2, image: imageView, onion: true, alpha: 0.2)
+                if indexPath.item >= 3 {
+                    let xstrokes3 = RecordingViewController.gestures[idx-3].x.getTimeOrderedList()
+                    let ystrokes3 = RecordingViewController.gestures[idx-3].y.getTimeOrderedList()
+                    drawThumbnail(xStrokes: xstrokes3, yStrokes: ystrokes3, image: imageView, onion: true, alpha: 0.1)
+                }
+            }
+        }
         return cell
     }
-    
-    func collectionView(_ collectionView: UICollectionView,
-                                 willDisplay cell: UICollectionViewCell,
-                                 forItemAt indexPath: IndexPath) {
 
-        //now draw on it...
-
-    }
-
-    func drawThumbnail(xStrokes:[Float],yStrokes:[Float],image:UIImageView) {
+    func drawThumbnail(xStrokes:[Float],yStrokes:[Float],image:UIImageView, onion:Bool, alpha: CGFloat = 1.0) {
         //assert xStrokes.count == yStrokes.count
         print ("^^ in draw thumb")
         for idx in stride(from:0, to:xStrokes.count, by:1) {
@@ -122,8 +123,25 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
             let c2y = yStrokes[idx2] / divisor
             let p1 = CGPoint(x:Int(c1x), y:Int(c1y))
             let p2 = CGPoint(x:Int(c2x), y:Int(c2y))
-            drawLine(from:p1, to:p2, image:image)
+            
+            if !onion {
+                //draw first point in green, draw last point in red, draw everything else in blue
+                if idx == 0 {
+                    drawLine(from:p1, to:p2, image:image, r:0.0, g:1.0, b:0.0, a:alpha, width:3.0)
+                } else if idx == xStrokes.count - 1 {
+                    drawLine(from:p1, to:p2, image:image, r:1.0, g:0.0, b:0.0, a:alpha, width:3.0)
+                } else {
+                    drawLine(from:p1, to:p2, image:image, r:0.0, g:0.0, b:1.0, a:alpha, width:1.0)
+                }
+            } else {
+                //draw onionskin lines at alpha
+                drawLine(from:p1, to:p2, image:image, r:0.0, g:0.0, b:1.0, a:alpha, width:1.0)
+            }
         }
+    }
+    
+    func onionSkinStrokes(idx:Int) {
+        
     }
     
     // ====== selection handling ======
@@ -162,9 +180,8 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         print ("^^ reseting selection from ", RecordingViewController.recording_start, " to ", RecordingViewController.recording_end+1)
         for i in stride(from:RecordingViewController.recording_start, to:RecordingViewController.recording_end+1, by:1) {
             let indexPath = NSIndexPath(item:i, section:0)
-            print ("^^ total cells in collectionview ", collectionView?.numberOfItems(inSection: 0))
+//            print ("^^ total cells in collectionview ", collectionView?.numberOfItems(inSection: 0))
             let cell = collectionView?.cellForItem(at: indexPath as IndexPath)
-            print("^^inside reset found cell ", cell)
             cell?.layer.borderWidth = 0.0
             collectionView?.deselectItem(at: indexPath as IndexPath, animated: false)
         }
@@ -200,16 +217,12 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     func recordingCreatedHandler (data:(String, StylusRecordingPackage), key:String) {
         let stylusdata = data.1
         RecordingViewController.gestures.append(GestureRecording(id: stylusdata.id, x:stylusdata.x, y:stylusdata.y))
-        print("^^ appended new stylus data")
         let IndexPath = NSIndexPath(item: RecordingViewController.gestures.count-1, section:0)
         collectionView?.insertItems(at: [IndexPath as IndexPath])
         collectionView?.scrollToItem(at: IndexPath as IndexPath, at: UICollectionViewScrollPosition.right, animated: false)
     }
 
-    func drawLine(from fromPoint: CGPoint, to toPoint: CGPoint, image imageView:UIImageView) {
-//        print("^^ drawing from ", fromPoint, toPoint)
-        let brushWidth: CGFloat = 1.0
-        let opacity: CGFloat = 1.0
+    func drawLine(from fromPoint: CGPoint, to toPoint: CGPoint, image imageView:UIImageView, r red:CGFloat, g green:CGFloat, b blue:CGFloat, a alpha:CGFloat, width brushWidth:CGFloat) {
 
         UIGraphicsBeginImageContextWithOptions(imageView.frame.size, false, 0)
         
@@ -222,12 +235,12 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         
         context?.setLineCap(CGLineCap.round)
         context?.setLineWidth(brushWidth)
-        context?.setStrokeColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1.0)
+        context?.setStrokeColor(red: red, green: green, blue: blue, alpha: alpha)
         context?.setBlendMode(CGBlendMode.normal)
         context?.strokePath()
         
         imageView.image = UIGraphicsGetImageFromCurrentImageContext()
-        imageView.alpha = opacity
+        imageView.alpha = 1.0
         UIGraphicsEndImageContext()
     }
     
