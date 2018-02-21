@@ -92,7 +92,6 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         cell.contentView.addSubview(imageView)
         drawThumbnail(xStrokes: xstrokes, yStrokes: ystrokes, image: imageView, onion: false)
 
-        //sorry it would be better to use a queue but i'm lazy!!
         if indexPath.item >= 1 {
             let xstrokes1 = RecordingViewController.gestures[idx-1].x.getTimeOrderedList()
             let ystrokes1 = RecordingViewController.gestures[idx-1].y.getTimeOrderedList()
@@ -108,6 +107,16 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
                 }
             }
         }
+        //selected by default
+        if idx < RecordingViewController.recording_start {
+            RecordingViewController.recording_start = idx
+        }
+        if idx > RecordingViewController.recording_end {
+            RecordingViewController.recording_end = idx
+        }
+        highlightCells()
+        cell.layer.borderWidth = 4.0
+        cell.layer.borderColor = UIColor.green.cgColor
         return cell
     }
 
