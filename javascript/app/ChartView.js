@@ -158,13 +158,10 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                     build: function($trigger) {
                         var p_items = {};
-                        console.log(global_brush_properties.items.length);
                         for(var i = 0; i < global_brush_properties.items.length; i++){
-                            var p = global_brush_properties.items[i].item_name;
-                            p_items[p] = {className: 'property_menu_item', name: global_brush_properties.items[i].name};
-                            console.log(p_items[p]);
+                            var p_name = global_brush_properties.items[i].item_name;
+                            p_items[p_name] = {className: 'property_menu_item', name: global_brush_properties.items[i].name};
                         }
-                        console.log(p_items);
                         var options = {
                             items:p_items
                        };
@@ -172,34 +169,6 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     }             
 
                 });
-                function loadItems(){
-                    var item = {};
-                    //console.log(this.brush_properties);
-                    //var p = pr[10].item_name;
-                    //item.p = {className: 'property_menu_item', name: item.this.brush_properties[10].name};
-                    return {
-                        "x": {
-                            className: 'property_menu_item',
-                            name: "x"
-                        },
-                          "y": {
-                            className: 'property_menu_item',
-                            name: "y"
-                        },
-                        "scale_x": {
-                            className: 'property_menu_item',
-                            name: "scale x"
-                        },
-                        "scale_y": {
-                            className: 'property_menu_item',
-                            name: "scale y"
-                        },
-                        "rotation": {
-                            className: 'property_menu_item',
-                            name: "rotation"
-                        }
-                    }                 
-                }
 
                 $.contextMenu({
                     selector: '#' + self.id + ' .mapping',
