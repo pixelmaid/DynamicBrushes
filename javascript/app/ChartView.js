@@ -1,6 +1,6 @@
 //ChartView     
 "use strict";
-define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "app/Emitter", "app/id", "app/InspectorModel","hbs!app/templates/method", "hbs!app/templates/event", "hbs!app/templates/behavior", "hbs!app/templates/state", "hbs!app/templates/start", "hbs!app/templates/transition", "hbs!app/templates/mapping"],
+define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "app/Emitter", "app/id", "app/InspectorModel", "hbs!app/templates/method", "hbs!app/templates/event", "hbs!app/templates/behavior", "hbs!app/templates/state", "hbs!app/templates/start", "hbs!app/templates/transition", "hbs!app/templates/mapping"],
 
 
 
@@ -11,9 +11,10 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
         console.log("start template", startTemplate);
         console.log("state template", stateTemplate);
         var state_counter = 0;
+        var global_brush_properties;
         var ChartView = class extends Emitter {
 
-            constructor(id, name, active_status) {
+            constructor(id, name, active_status, brush_properties) {
                 super();
                 var behavior_data = {
                     id: id,
@@ -23,6 +24,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 this.dieId = null;
                 this.name = name;
                 this.active_status = active_status;
+                global_brush_properties = brush_properties;
                 this.expressions = {};
                 var self = this;
                 var last_dragged = null;
@@ -123,7 +125,8 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 });
 
                 $.contextMenu({
-                    selector: '#' + self.id + ' .state',
+                    selector: '#' + self.id + ' .stateContainer',
+                    reposition: false,
                     callback: function(key, options) {
                         if (key == "delete") {
                             var parent = $(options.$trigger[0]).parent();
@@ -140,36 +143,63 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 });
 
 
-//SAMPLE CONTEXT MENUL FOR PROPERTY ITEMS
+
+
+               //SAMPLE CONTEXT MENUL FOR PROPERTY ITEMS
+                var parent = this;
                 $.contextMenu({
-                     trigger: 'left',
-                     className: "property_menu",
-                    selector: '#' + self.id + ' .state'+' .prop_button',
+                    trigger: 'left',
+                    className: "property_menu",
+                    reposition: false,
+                    selector: '#' + self.id +' .prop_button',
                     callback: function(key, options) {
                         
                     },
-                    items: {
+
+                    build: function($trigger) {
+                        var p_items = {};
+                        console.log(global_brush_properties.items.length);
+                        for(var i = 0; i < global_brush_properties.items.length; i++){
+                            var p = global_brush_properties.items[i].item_name;
+                            p_items[p] = {className: 'property_menu_item', name: global_brush_properties.items[i].name};
+                            console.log(p_items[p]);
+                        }
+                        console.log(p_items);
+                        var options = {
+                            items:p_items
+                       };
+                        return options;
+                    }             
+
+                });
+                function loadItems(){
+                    var item = {};
+                    //console.log(this.brush_properties);
+                    //var p = pr[10].item_name;
+                    //item.p = {className: 'property_menu_item', name: item.this.brush_properties[10].name};
+                    return {
                         "x": {
+                            className: 'property_menu_item',
                             name: "x"
                         },
                           "y": {
+                            className: 'property_menu_item',
                             name: "y"
                         },
                         "scale_x": {
-                            name: "y"
-                        },
-                        "scale_y": {
+                            className: 'property_menu_item',
                             name: "scale x"
                         },
+                        "scale_y": {
+                            className: 'property_menu_item',
+                            name: "scale y"
+                        },
                         "rotation": {
+                            className: 'property_menu_item',
                             name: "rotation"
                         }
-                    
+                    }                 
                 }
-                        
-                    
-
-                });
 
                 $.contextMenu({
                     selector: '#' + self.id + ' .mapping',

@@ -1004,3 +1004,88 @@ span.refresh{
   border-width: 10px;
   margin-left: -10px;
 }
+
+/*Lawrence new code*/
+
+.prop_buttonContainer {
+  position: relative;
+  margin: 5px;
+  height: 20px;
+  width: 248px;
+}
+
+.prop_button {
+
+position: absolute;
+    right: 4px;
+    width: 118px;
+    height: 20px;
+    border: 1px dotted white;
+    border-radius: 5px;
+}
+
+.prop_button div {
+
+    position: absolute;
+    background: white;
+}
+
+.prop_button-vertical {
+
+    top: 5px;
+    left: 50%;
+    width: 1px;
+    height: 10px;
+}
+
+.prop_button-horizontal {
+
+    top: 50%;   
+    width: 10px;
+    height: 1px;
+    left: 54px;
+}
+
+
+.context-menu-list  {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+    list-style: none;
+    background: white;
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    width: 60px;
+    z-index: 10;
+}
+
+.context-menu-item .property_menu_item {
+  height: 16px;
+    text-align: left;
+    background: grey;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    padding-left: 5px;
+    color: white;
+    z-index: 10;
+}
+
+.triangleDown {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 10px solid white;
+  margin-top: 4px;
+  margin-right: 2px;
+}
+
+.triangleDownContainer{
+  float: right;
+  padding-left: 2px;
+  border-left: 1px solid white;
+  height: 100%;
+}
+
