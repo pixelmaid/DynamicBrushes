@@ -304,7 +304,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                 if (this.currentView) {
                     this.currentView.resetView();
                 }
-                console.log(this.model.data.brush_properties);
+
                 var chartView = new ChartView(data.id, data.name, data.active_status, this.model.data.brush_properties);
                 chartView.addListener("ON_STATE_CONNECTION", function(connectionId, sourceId, sourceName, targetId, behaviorId) {
                     this.onConnection(connectionId, sourceId, sourceName, targetId, behaviorId);
