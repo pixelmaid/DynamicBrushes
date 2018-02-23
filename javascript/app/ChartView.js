@@ -146,7 +146,6 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
 
                //SAMPLE CONTEXT MENUL FOR PROPERTY ITEMS
-                var parent = this;
                 $.contextMenu({
                     trigger: 'left',
                     className: "property_menu",
