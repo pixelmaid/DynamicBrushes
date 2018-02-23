@@ -328,8 +328,8 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                     this.onTransitionEventConditionChanged(behaviorId, transitionId, eventName, fromStateId, toStateId, displayName, name, conditions);
                 }.bind(this));
 
-                chartView.addListener("ON_MAPPING_ADDED", function(mappingId, name, item_name, type, expressionId, stateId, behaviorId) {
-                    this.onMappingAdded(mappingId, name, item_name, type, expressionId, stateId, behaviorId);
+                chartView.addListener("ON_MAPPING_ADDED", function(mappingId, name, fieldName, type, expressionId, stateId, behaviorId) {
+                    this.onMappingAdded(mappingId, name, fieldName, type, expressionId, stateId, behaviorId);
                 }.bind(this));
 
                 chartView.addListener("ON_METHOD_ADDED", function(behaviorId, transitionId, methodId, expressionId, targetMethod, args) {
@@ -345,8 +345,8 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                 }.bind(this));
 
 
-                chartView.addListener("ON_DATASET_ADDED", function(mappingId, datasetId, datasetType, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList) {
-                    this.onDatasetAdded(mappingId, datasetId, datasetType, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList);
+                chartView.addListener("ON_DATASET_ADDED", function(mappingId, datasetId, datasetType, behaviorId, stateId, relativePropertyName, relativePropertyFieldName, expressionId, expressionText, expressionPropertyList) {
+                    this.onDatasetAdded(mappingId, datasetId, datasetType, behaviorId, stateId, relativePropertyName, relativePropertyFieldName, expressionId, expressionText, expressionPropertyList);
                 }.bind(this));
 
                 chartView.addListener("ON_STATE_ADDED", function(x, y, data) {
@@ -724,13 +724,13 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
 
             }
 
-            onMappingAdded(mappingId, name, item_name, type, expressionId, stateId, behaviorId) {
+            onMappingAdded(mappingId, name, fieldName, type, expressionId, stateId, behaviorId) {
                 console.log("mapping added", mappingId, name, stateId);
 
                 var transmit_data = {
                     mappingId: mappingId,
                     behaviorId: behaviorId,
-                    relativePropertyItemName: item_name,
+                    relativePropertyFieldName: fieldName,
                     relativePropertyName: name,
                     stateId: stateId,
                     expressionId: expressionId,
@@ -798,7 +798,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
 
 
 
- onDatasetAdded(mappingId, datasetId, datasetType, behaviorId, stateId, relativePropertyName, relativePropertyItemName, expressionId, expressionText, expressionPropertyList) {
+ onDatasetAdded(mappingId, datasetId, datasetType, behaviorId, stateId, relativePropertyName, relativePropertyFieldName, expressionId, expressionText, expressionPropertyList) {
                 console.log("dataset added called", datasetId, datasetType, stateId);
 
                 var transmit_data = {
@@ -808,7 +808,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                     behaviorId: behaviorId,
                     stateId: stateId,
                     relativePropertyName: relativePropertyName,
-                    relativePropertyItemName: relativePropertyItemName,
+                    relativePropertyFieldName: relativePropertyFieldName,
                     expressionId: expressionId,
                     expressionText: expressionText,
                     expressionPropertyList: expressionPropertyList,

@@ -25,7 +25,7 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 							//if (c["fieldName"] == "mass" || c["fieldName"] == "reclat" || c["fieldName"] == "reclong" || c["fieldName"] == "year") {
 								items.push({
 									item_class: "block dataset palette",
-									item_name:  id+"_"+columns[i]["item_name"],
+									fieldName:  id+"_"+columns[i]["fieldName"],
 									name:columns[i]["name"],
 									type: "dataset"
 

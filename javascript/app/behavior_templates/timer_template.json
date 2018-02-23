@@ -101,7 +101,7 @@
         "expressionPropertyList" : {
 
         },
-        "relativePropertyItemName" : "delta x"
+        "relativePropertyFieldName" : "delta x"
       },
       {
         "stateId" : "_uerji92qt",
@@ -113,7 +113,7 @@
         "expressionPropertyList" : {
 
         },
-        "relativePropertyItemName" : "delta y"
+        "relativePropertyFieldName" : "delta y"
       }
     ],
     "conditions" : [

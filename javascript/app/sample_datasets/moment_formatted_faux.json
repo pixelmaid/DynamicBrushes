@@ -7,31 +7,31 @@
 
 			"columns": [{
 				"id": "7010af42",
-				"item_name": "minutecount",
+				"fieldName": "minutecount",
 				"dataTypeName": "number",
 				"name": "minute count",
 				"position": 0
 			}, {
 				"id": "7010c5d6",
-				"item_name": "pickupcount",
+				"fieldName": "pickupcount",
 				"dataTypeName": "number",
 				"name": "pickup count",
 				"position": 1
 			}, {
 				"id": "7010c518",
-				"item_name": "pickups",
+				"fieldName": "pickups",
 				"dataTypeName": "array",
 				"name": "pickups",
 				"position": 2
 			}, {
 				"id": "7010c450",
-				"item_name": "appusage",
+				"fieldName": "appusage",
 				"dataTypeName": "array",
 				"name": "app usage",
 				"position": 3
 			}, {
 				"id": "7010c392",
-				"item_name": "date",
+				"fieldName": "date",
 				"dataTypeName": "calendar_data",
 				"name": "date",
 				"position": 4
