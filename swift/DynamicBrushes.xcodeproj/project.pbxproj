@@ -127,7 +127,6 @@
 		5FEE2AC91DE127D800080095 /* dual_pen.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FEE2AC71DE127D800080095 /* dual_pen.png */; };
 		5FEE2ACA1DE127D800080095 /* lg_pen_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FEE2AC81DE127D800080095 /* lg_pen_blue.png */; };
 		5FFAC4D71E9D84040009DC5E /* SaveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFAC4D61E9D84040009DC5E /* SaveManager.swift */; };
-		5FFC455A1EE1B133007B7597 /* Particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FFC45581EE1B133007B7597 /* Particle.png */; };
 		5FFC455B1EE1B133007B7597 /* point.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 5FFC45591EE1B133007B7597 /* point.vsh */; };
 		5FFC456F1EE4C648007B7597 /* airbrush_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FFC456D1EE4C648007B7597 /* airbrush_button.png */; };
 		5FFC45701EE4C648007B7597 /* airbrush_button2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FFC456E1EE4C648007B7597 /* airbrush_button2x.png */; };
@@ -300,7 +299,6 @@
 		5FEE2AC71DE127D800080095 /* dual_pen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dual_pen.png; sourceTree = "<group>"; };
 		5FEE2AC81DE127D800080095 /* lg_pen_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lg_pen_blue.png; sourceTree = "<group>"; };
 		5FFAC4D61E9D84040009DC5E /* SaveManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SaveManager.swift; sourceTree = "<group>"; };
-		5FFC45581EE1B133007B7597 /* Particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Particle.png; sourceTree = SOURCE_ROOT; };
 		5FFC45591EE1B133007B7597 /* point.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = point.vsh; sourceTree = SOURCE_ROOT; };
 		5FFC456D1EE4C648007B7597 /* airbrush_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = airbrush_button.png; sourceTree = "<group>"; };
 		5FFC456E1EE4C648007B7597 /* airbrush_button2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = airbrush_button2x.png; sourceTree = "<group>"; };
@@ -540,7 +538,6 @@
 		5FA4C7221CDA7B5B004A728C /* PaletteKnife */ = {
 			isa = PBXGroup;
 			children = (
-				5FFC45581EE1B133007B7597 /* Particle.png */,
 				5FFC45591EE1B133007B7597 /* point.vsh */,
 				5F5037281EA95E27004ABAC1 /* Resources */,
 				5F5037231EA95DD0004ABAC1 /* Shaders */,
@@ -976,7 +973,6 @@
 				5FE32F7E1ECF6D5300ADC01E /* behavior_activate_button.png in Resources */,
 				5FD6CD121DE0EE0E007D94AA /* sm_pen_blue.png in Resources */,
 				5FE32F881ECF6D5300ADC01E /* erase_button.png in Resources */,
-				5FFC455A1EE1B133007B7597 /* Particle.png in Resources */,
 				72478CDF2029043800D24C92 /* Palette-KnifeTests in Resources */,
 				5FBDF0E71ED8D95300022B07 /* quad.vsh in Resources */,
 				5FE32F991ECF6DC900ADC01E /* save_button2x.png in Resources */,
