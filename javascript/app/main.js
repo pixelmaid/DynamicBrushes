@@ -13,7 +13,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
         var saveView = new SaveView(saveManager, "#save-menu");
         var codename;
         var dataView = new DatasetView(paletteModel.datasetLoader, "#dataset_select");
-        var testingMode = true;
+        var testingMode = false;
         //sets up interface by initializing palette, removing overlay etc.
         var setupInterface = function(){
             if(testingMode){
