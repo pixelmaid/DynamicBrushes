@@ -110,8 +110,13 @@ final class RequestHandler: Requester{
                 case "authoring_response":
                     let data = RequestHandler.activeItem!.data!
                     RequestHandler.socketManager.sendData(data: data);
-
                     break;
+                    
+                case "data_request_response":
+                    let data = RequestHandler.activeItem!.data!
+                    RequestHandler.socketManager.sendData(data: data);
+                    break;
+                    
                 case "synchronize":
                     let data = RequestHandler.activeItem!.data!
                     let requester = RequestHandler.activeItem!.requester as! DrawingViewController;
@@ -125,6 +130,8 @@ final class RequestHandler: Requester{
                     send_data["type"] = JSON("synchronize")
                     RequestHandler.socketManager.sendData(data: send_data);
                     break
+                    
+               
                 default:
                     break;
                 }

@@ -293,7 +293,7 @@ class BehaviorDefinition {
         
         let expressionId = data["expressionId"].stringValue;
         
-        self.addMapping(id: data["mappingId"].stringValue, referenceProperty:nil, referenceNames: [expressionId], relativePropertyName: data["relativePropertyName"].stringValue, stateId: data["stateId"].stringValue,type: data["constraintType"].stringValue,relativePropertyItemName: data["relativePropertyItemName"].stringValue)
+        self.addMapping(id: data["mappingId"].stringValue, referenceProperty:nil, referenceNames: [expressionId], relativePropertyName: data["relativePropertyName"].stringValue, stateId: data["stateId"].stringValue,type: data["constraintType"].stringValue,relativePropertyFieldName: data["relativePropertyFieldName"].stringValue)
     }
     
     func parseMethodJSON(data:JSON)->JSON{
@@ -724,7 +724,7 @@ class BehaviorDefinition {
             var mappingJSON:JSON = [:]
             
             let mappingId = key;
-            let relativePropertyItemName = data.5;
+            let relativePropertyFieldName = data.5;
             let expressionId = data.1![0]
             let expression = expressions[expressionId];
             let expressionText = expression?.1;
@@ -760,7 +760,7 @@ class BehaviorDefinition {
             mappingJSON["expressionText"] = JSON(expressionText!);
             mappingJSON["expressionPropertyList"] = expressionPropertyListJSON
             mappingJSON["constraintType"] = JSON(type)
-            mappingJSON["relativePropertyItemName"] = JSON(relativePropertyItemName);
+            mappingJSON["relativePropertyFieldName"] = JSON(relativePropertyFieldName);
             mappingsArray.append(mappingJSON);
             
         }
@@ -966,9 +966,22 @@ class BehaviorDefinition {
     }
     
     
-    func addMapping(id:String, referenceProperty:Any?, referenceNames:[String]?, relativePropertyName:String,stateId:String, type:String,relativePropertyItemName:String){
-        mappings[id] = ((referenceProperty,referenceNames,relativePropertyName,stateId,type,relativePropertyItemName))
+    func addMapping(id:String, referenceProperty:Any?, referenceNames:[String]?, relativePropertyName:String,stateId:String, type:String,relativePropertyFieldName:String){
+        mappings[id] = ((referenceProperty,referenceNames,relativePropertyName,stateId,type,relativePropertyFieldName))
         
+    }
+    
+   func getMappingsForState(stateId:String)->JSON{
+    var mappingJSON:JSON = [:];
+        for(key,mapping) in mappings{
+            if mapping.3 == stateId{
+                var mappingData:JSON = [:]
+                mappingData["relativePropertyName"] = JSON(mapping.2);
+                mappingData["relativePropertyFieldName"] = JSON(mapping.5);
+                mappingJSON[key] = mappingData;
+            }
+        }
+    return mappingJSON;
     }
     
     func removeMappingsForState(stateId:String){

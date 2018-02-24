@@ -47,7 +47,7 @@ class Table:Emitter {
             }
             self.columnizedData.append(columnData);
             
-            let fieldName = columns[i]["item_name"].stringValue;
+            let fieldName = columns[i]["fieldName"].stringValue;
             let position = columns[i]["position"].intValue;
             let dataTypeName = columns[i]["dataTypeName"].stringValue;
             let description = columns[i]["description"].stringValue;

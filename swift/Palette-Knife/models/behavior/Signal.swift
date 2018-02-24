@@ -15,7 +15,7 @@ class Signal:Observable<Float>{
     internal var signalBuffer = [Float:Float]();
     private var circular = true;
     var id:String
-//    var param = Observable<Float>(1.0);
+    //    var param = Observable<Float>(1.0);
     init(id:String){
         self.id = id;
         super.init(0)
@@ -23,7 +23,7 @@ class Signal:Observable<Float>{
     }
     
     override func get(id:String?) -> Float {
-       
+        
         let v:Float;
         
         v = signalBuffer[index]!;
@@ -144,7 +144,7 @@ class Sine:Signal{
         super.init(id:id);
     }
     
-   
+    
     override func get(id:String?) -> Float {
         let v =  sin(self.index.get(id: nil)*freq+phase)*amp/2+amp/2;
         return v;
@@ -165,7 +165,7 @@ class MovingAverage:Signal{
     }
     
     
-    func hardReset(val:Float){ 
+    func hardReset(val:Float){
         self.queue.removeAll();
     }
     
@@ -173,17 +173,17 @@ class MovingAverage:Signal{
         #if DEBUG
         #endif
         if(queue.count>averageCount){
-        var sum = Float(0.0)
+            var sum = Float(0.0)
             for i in 0..<averageCount{
                 sum += queue[i];
             }
-        let avg = sum/Float(averageCount)
-        //let _val = last_val*alpha + (1.0-alpha)*Float(index)
-        self.val = avg
-        self.queue.removeFirst();
+            let avg = sum/Float(averageCount)
+            //let _val = last_val*alpha + (1.0-alpha)*Float(index)
+            self.val = avg
+            self.queue.removeFirst();
         }
         print("moving average",self.val);
-
+        
         return self.val;
     }
 }
@@ -210,7 +210,7 @@ class Interval:Signal{
             infinite = true;
         }
     }
- 
+    
     func reset(){
         self.index = 0;
     }
@@ -238,7 +238,7 @@ class Buffer:Signal{
     func push(v: Float){
         val.append(v)
     }
-
+    
     
     override func get(id:String?) -> Float {
         let v = val[index]
@@ -263,7 +263,7 @@ class CircularBuffer:Signal{
         }
         else{
             index = 0;
-           // bufferEvent.raise("BUFFER_LIMIT_REACHED");
+            // bufferEvent.raise("BUFFER_LIMIT_REACHED");
         }
         subscribers[id] = index;
     }
@@ -310,15 +310,15 @@ class Ease: Signal{
     var val = Float(0);
     
     init(id:String,a:Float,b:Float, k:Float){
-       
-
+        
+        
         self.a = a;
         self.b = b;
         self.k = k;
         self.x = 0;
         super.init(id:id)
     }
-        
+    
     override func get(id:String?) -> Float {
         self.val = a/(1+pow(2.7182818284590451,(x-b)*k))
         #if DEBUG
@@ -327,7 +327,7 @@ class Ease: Signal{
         self.x += 1;
         return self.val
     }
-
+    
 }
 
 
@@ -336,7 +336,7 @@ class Index:Signal{
     var val:Observable<Float>
     init (id:String, val:Observable<Float>){
         self.val = val;
-         super.init(id:id)
+        super.init(id:id)
     }
     override func get(id:String?) -> Float {
         return self.val.get(id: nil);
@@ -347,7 +347,7 @@ class SiblingCount:Signal{
     var val:Observable<Float>
     init (id:String,val:Observable<Float>){
         self.val = val;
-         super.init(id:id)
+        super.init(id:id)
     }
     override func get(id:String?) -> Float {
         return self.val.get(id: nil);
@@ -366,10 +366,10 @@ class Triangle:Signal{
         self.freq = freq;
         self.min = min;
         self.max = max;
-         super.init(id:id)
+        super.init(id:id)
     }
     
-   
+    
     override func get(id:String?) -> Float {
         let ti = 2.0 * Float.pi * (880 / 44100);
         let theta = ti * self.index.get(id: nil)
@@ -398,13 +398,13 @@ class Square:Signal{
         self.min = min;
         self.max = max;
         self.currentVal = min;
-         super.init(id:id)
+        super.init(id:id)
     }
-  
+    
     override func get(id:String?) -> Float {
         let v:Float;
         self.incrementIndex();
-
+        
         if(index.get(id: nil) == 0.0){
             if(currentVal == min){
                 currentVal = max;
@@ -413,7 +413,7 @@ class Square:Signal{
                 currentVal = min;
             }
         }
-       
+        
         return currentVal;
         
     }
@@ -431,7 +431,7 @@ class RandomGenerator: Signal{
         self.start = start;
         self.end = end;
         val = Float(arc4random()) / Float(UINT32_MAX) * abs(self.start - self.end) + min(self.start, self.end)
-         super.init(id:id)
+        super.init(id:id)
         
     }
     
@@ -455,10 +455,10 @@ class easeInOut:Signal{
         self.stop = Observable<Float>(stop.get(id: nil));
         self.max = Observable<Float>(max.get(id: nil));
         self.range = Observable<Float>(stop.get(id: nil)-start.get(id: nil));
-         super.init(id:id)
+        super.init(id:id)
     }
     
-   
+    
     /*override func get() -> Float {
      let v = ((Float(index.get(nil))*inc.get(nil)) + start.get(nil));
      self.incrementIndex();
@@ -474,10 +474,10 @@ class Alternate:Signal{
     
     init(id:String, values:[Float]){
         val = values;
-         super.init(id:id)
+        super.init(id:id)
     }
     
-   
+    
     override func get(id:String?) -> Float {
         let v = val[index]
         self.incrementIndex();
@@ -487,3 +487,4 @@ class Alternate:Signal{
     
     
 }
+

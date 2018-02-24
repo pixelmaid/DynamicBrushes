@@ -10,7 +10,7 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 			constructor(	) {
 				super();
 				 //todo: should read this dynamically from the file folder
-				this.filenames = ["BrainDrain.json","meteor.json","moment_formatted.json"];
+				this.filenames = ["MapMyRun.json","BrainDrain.json","meteor.json","moment_formatted.json"];
 			}
 
 			loadDataset(filename){
@@ -24,8 +24,8 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 							if(columns[i]["dataTypeName"]!="meta_data"){
 							//if (c["fieldName"] == "mass" || c["fieldName"] == "reclat" || c["fieldName"] == "reclong" || c["fieldName"] == "year") {
 								items.push({
-									item_class: "block data palette",
-									item_name:  id+"_"+columns[i]["item_name"],
+									item_class: "block dataset palette",
+									fieldName:  id+"_"+columns[i]["fieldName"],
 									name:columns[i]["name"],
 									type: "dataset"
 

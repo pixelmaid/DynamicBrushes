@@ -59,6 +59,22 @@
                                     <segue destination="pkZ-4g-ASv" kind="embed" identifier="toolbarSegue" id="caa-Rq-pHd"/>
                                 </connections>
                             </containerView>
+                            <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WGd-jR-wVv" userLabel="recording_container_view">
+                                <rect key="frame" x="0.0" y="874" width="1366" height="150"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <connections>
+                                    <segue destination="De9-TT-PM2" kind="embed" identifier="recordingViewControllerSegue" id="egQ-jJ-kbz"/>
+                                </connections>
+                            </containerView>
+                            <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f9T-gG-pJC" userLabel="recording_toolbar">
+                                <rect key="frame" x="0.0" y="834" width="1366" height="40"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <connections>
+                                    <segue destination="ZBa-mz-4L4" kind="embed" identifier="recordingToolbarSegue" id="OKe-t1-Gf0"/>
+                                </connections>
+                            </containerView>
                         </subviews>
                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -77,7 +93,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="260" y="-284"/>
+            <point key="canvasLocation" x="259.59004392386527" y="-284.1796875"/>
         </scene>
         <!--Toolbar View Controller-->
         <scene sceneID="KeE-9Q-Jvn">
@@ -169,10 +185,10 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="program"/>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="77V-ju-Scb">
-                                <rect key="frame" x="1166" y="9" width="46" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nds-iM-XVH">
+                                <rect key="frame" x="1164" y="10" width="35" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Loop"/>
+                                <state key="normal" title="undo"/>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
@@ -181,7 +197,6 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
-                        <outlet property="LoopToggle" destination="77V-ju-Scb" id="YVO-W8-PQr"/>
                         <outlet property="addLayerButton" destination="b9f-FX-vgT" id="58C-xh-PN8"/>
                         <outlet property="airbrushButton" destination="LW3-Ue-dhe" id="YGY-5n-j9h"/>
                         <outlet property="alphaSlider" destination="soS-Q4-Hj5" id="9R3-dT-Orn"/>
@@ -196,6 +211,7 @@
                         <outlet property="penButton" destination="QPW-J3-rUs" id="NpX-gX-qlq"/>
                         <outlet property="programViewToggle" destination="zj8-xR-5ec" id="z8o-5E-Frm"/>
                         <outlet property="saveButton" destination="8gS-nz-efH" id="Hzl-b5-jO9"/>
+                        <outlet property="undoButton" destination="Nds-iM-XVH" id="maY-IT-fwI"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cO4-mP-nr5" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -295,6 +311,77 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UR4-HB-PTJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="731" y="346"/>
+        </scene>
+        <!--RecordingToolbarVC-->
+        <scene sceneID="k8S-Pm-DVT">
+            <objects>
+                <viewController title="RecordingToolbarVC" id="ZBa-mz-4L4" customClass="RecordingToolbarVC" customModule="DynamicBrushes" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="yAA-xS-4LQ"/>
+                        <viewControllerLayoutGuide type="bottom" id="MF0-Pq-Li9"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="gLU-Ue-gFm">
+                        <rect key="frame" x="0.0" y="0.0" width="1366" height="40"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hvQ-ec-DtD">
+                                <rect key="frame" x="1274" y="7" width="30" height="25"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <accessibility key="accessibilityConfiguration" label="Loop">
+                                    <accessibilityTraits key="traits" button="YES" image="YES"/>
+                                    <bool key="isElement" value="YES"/>
+                                </accessibility>
+                                <state key="normal" title="LoopRecording" image="refresh_button.png"/>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Recordings" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8tG-Oj-fd8">
+                                <rect key="frame" x="14" y="9" width="104" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AX5-sg-QJz">
+                                <rect key="frame" x="1326" y="5" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <accessibility key="accessibilityConfiguration" label="Loop">
+                                    <accessibilityTraits key="traits" button="YES" image="YES"/>
+                                    <bool key="isElement" value="YES"/>
+                                </accessibility>
+                                <state key="normal" title="ExportRecording" image="recording_export_button.png"/>
+                            </button>
+                            <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="4" minValue="0.0" maxValue="8" translatesAutoresizingMaskIntoConstraints="NO" id="dWt-v9-eke">
+                                <rect key="frame" x="1073" y="6" width="172" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <connections>
+                                    <action selector="sliderChanged:" destination="ZBa-mz-4L4" eventType="valueChanged" id="kdW-Xa-mct"/>
+                                </connections>
+                            </slider>
+                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Playback speed" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="jWB-k2-1oo">
+                                <rect key="frame" x="931" y="12" width="107" height="15"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="1.0x" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gfr-Pc-LZV">
+                                <rect key="frame" x="1029" y="9" width="42" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </view>
+                    <connections>
+                        <outlet property="loopRecording" destination="hvQ-ec-DtD" id="QjT-jz-RR3"/>
+                        <outlet property="playbackSpeed" destination="dWt-v9-eke" id="YWQ-eb-pyV"/>
+                        <outlet property="speedLabel" destination="gfr-Pc-LZV" id="9wC-AY-6U0"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UQj-iB-RqS" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1118.740849194729" y="-69.140625"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="cKC-Jg-eaX">
@@ -483,6 +570,58 @@
             </objects>
             <point key="canvasLocation" x="-831" y="476"/>
         </scene>
+        <!--Recording View Controller-->
+        <scene sceneID="tdM-RS-MUG">
+            <objects>
+                <viewController id="De9-TT-PM2" customClass="RecordingViewController" customModule="DynamicBrushes" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="KZ8-GV-4fg"/>
+                        <viewControllerLayoutGuide type="bottom" id="GIh-X3-dMo"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="lly-UO-TPG">
+                        <rect key="frame" x="0.0" y="0.0" width="1366" height="150"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="uhk-ji-BLM">
+                                <rect key="frame" x="0.0" y="40" width="1366" height="150"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="1366" id="dpu-oP-b0W"/>
+                                    <constraint firstAttribute="height" constant="150" id="xNf-XK-ELn"/>
+                                </constraints>
+                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="6" id="FxW-0w-oz6">
+                                    <size key="itemSize" width="200" height="150"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="RecordingFrameCell" id="VTa-MM-KTY" customClass="RecordingFrameCell" customModule="DynamicBrushes" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="200" height="150"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
+                                            <rect key="frame" x="0.0" y="0.0" width="200" height="150"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </view>
+                                        <color key="backgroundColor" red="1" green="0.034920876080000003" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </collectionViewCell>
+                                </cells>
+                                <connections>
+                                    <outlet property="dataSource" destination="De9-TT-PM2" id="l2z-jX-RT3"/>
+                                    <outlet property="delegate" destination="De9-TT-PM2" id="4Fe-cT-kUu"/>
+                                </connections>
+                            </collectionView>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </view>
+                    <connections>
+                        <outlet property="collectionView" destination="uhk-ji-BLM" id="jEB-oo-ic6"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UOW-KF-bWn" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="188.87262079062955" y="400.78125"/>
+        </scene>
     </scenes>
     <resources>
         <image name="airbrush_button2x.png" width="108" height="108"/>
@@ -495,6 +634,8 @@
         <image name="layerVisible_button_active2x.png" width="105" height="62"/>
         <image name="layer_button2x.png" width="121" height="120"/>
         <image name="layeradd_button.png" width="33" height="33"/>
+        <image name="recording_export_button.png" width="60" height="60"/>
+        <image name="refresh_button.png" width="61" height="51"/>
         <image name="refresh_button2x.png" width="121" height="101"/>
         <image name="save_button2x.png" width="121" height="120"/>
         <image name="trash_button.png" width="44" height="48"/>

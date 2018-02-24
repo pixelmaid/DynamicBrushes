@@ -84,7 +84,7 @@
             ]
           ]
         },
-        "relativePropertyItemName" : "delta y"
+        "relativePropertyFieldName" : "delta y"
       },
       {
         "stateId" : "_uerji92qt",
@@ -113,7 +113,7 @@
             ]
           ]
         },
-        "relativePropertyItemName" : "diameter"
+        "relativePropertyFieldName" : "diameter"
       },
       {
         "stateId" : "_uerji92qt",
@@ -133,7 +133,7 @@
             ]
           ]
         },
-        "relativePropertyItemName" : "hue"
+        "relativePropertyFieldName" : "hue"
       },
       {
         "stateId" : "_uerji92qt",
@@ -153,7 +153,7 @@
             ]
           ]
         },
-        "relativePropertyItemName" : "lightness"
+        "relativePropertyFieldName" : "lightness"
       },
       {
         "stateId" : "_uerji92qt",
@@ -173,7 +173,7 @@
             ]
           ]
         },
-        "relativePropertyItemName" : "delta x"
+        "relativePropertyFieldName" : "delta x"
       },
       {
         "stateId" : "_uerji92qt",
@@ -193,7 +193,7 @@
             ]
           ]
         },
-        "relativePropertyItemName" : "saturation"
+        "relativePropertyFieldName" : "saturation"
       },
       {
         "stateId" : "_uerji92qt",
@@ -213,7 +213,7 @@
             ]
           ]
         },
-        "relativePropertyItemName" : "alpha"
+        "relativePropertyFieldName" : "alpha"
       }
     ],
     "conditions" : [

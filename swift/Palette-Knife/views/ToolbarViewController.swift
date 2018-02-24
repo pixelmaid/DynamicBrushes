@@ -28,7 +28,7 @@ class ToolbarViewController: UIViewController {
     
     @IBOutlet weak var backupLabel: UILabel!
     @IBOutlet weak var programViewToggle: UIButton!
-    @IBOutlet weak var LoopToggle: UIButton!
+    @IBOutlet weak var undoButton: UIButton!
     
     var toolEvent = Event<(String)>();
     var activePanel:String?
@@ -67,7 +67,7 @@ class ToolbarViewController: UIViewController {
         shapeLayer?.lineWidth = 1.0
 
         colorPickerButton.layer.addSublayer(shapeLayer!)
-        
+          undoButton.addTarget(self, action: #selector(ToolbarViewController.undoToggled), for: .touchUpInside)
         eraseButton.addTarget(self, action: #selector(ToolbarViewController.eraseToggled), for: .touchUpInside)
         
         penButton.addTarget(self, action: #selector(ToolbarViewController.penToggled), for: .touchUpInside)
@@ -82,7 +82,6 @@ class ToolbarViewController: UIViewController {
 
         diameterSlider.addTarget(self, action: #selector(ToolbarViewController.diameterSliderChanged), for: .valueChanged)
           alphaSlider.addTarget(self, action: #selector(ToolbarViewController.alphaSliderChanged), for: .valueChanged)
- LoopToggle.addTarget(self, action: #selector(ToolbarViewController.loopToggled), for: .touchUpInside)
         penToggled();
     }
     
@@ -116,13 +115,6 @@ class ToolbarViewController: UIViewController {
         backupLabel.isHidden = true;
 
         
-    }
-
-    func loopToggled(sender: AnyObject){
-        let target = (sender as! UIButton);
-        if(target == LoopToggle){
-            toolEvent.raise(data: ("TOGGLE_LOOP"));
-        }
     }
     func panelToggled(sender: AnyObject){
         let target = (sender as! UIButton);
@@ -185,6 +177,14 @@ class ToolbarViewController: UIViewController {
             toolEvent.raise(data: ("AIRBRUSH_MODE"));
             
             
+        
+    }
+    
+    func undoToggled(){
+  
+        toolEvent.raise(data: ("UNDO"));
+        
+        
         
     }
 

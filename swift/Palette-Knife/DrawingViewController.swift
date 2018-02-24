@@ -36,6 +36,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     
     
     var layerContainerView:LayerContainerView!
+
     
     var behaviorManager: BehaviorManager?
     var currentCanvas: Canvas?
@@ -56,11 +57,14 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     let exportKey = NSUUID().uuidString
     let backupKey = NSUUID().uuidString
     let saveEventKey = NSUUID().uuidString
+    let loopEventKey = NSUUID().uuidString
     
     var toolbarController: ToolbarViewController?
     var layerPanelController: LayerPanelViewController?
     var behaviorPanelController: BehaviorPanelViewController?
-
+    var recordingToolbarVC: RecordingToolbarVC?
+    var recordingViewController:RecordingViewController?
+    
     var fileListController: SavedFilesPanelViewController?
     let targetSize = CGSize(width:CGFloat(pX),height:CGFloat(pY))
     var blockAlert:UIAlertController!
@@ -94,10 +98,9 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     @IBOutlet weak var behaviorPanelContainerView: UIView!
     required init?(coder: NSCoder) {
         layerContainerView = LayerContainerView(width:pX,height:pY);
+        recordingViewController = RecordingViewController();
         super.init(coder: coder);
-
     }
-    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if(segue.identifier == "toolbarSegue"){
@@ -126,7 +129,13 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
             behaviorPanelController = segue.destination as? BehaviorPanelViewController;
             _ =  behaviorPanelController?.behaviorEvent.addHandler(target: self, handler: DrawingViewController.behaviorEventHandler, key: behaviorEventKey)
         }
-        
+        else if(segue.identifier == "recordingToolbarSegue"){
+            recordingToolbarVC = segue.destination as? RecordingToolbarVC;
+            _ =  recordingToolbarVC?.loopEvent.addHandler(target: self, handler: DrawingViewController.recordingEventHandler, key: loopEventKey)
+        }
+        else if(segue.identifier == "recordingViewControllerSegue"){
+            recordingViewController = segue.destination as? RecordingViewController;
+      }
         
     }
     
@@ -140,7 +149,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
             case "ERASE_REQUEST":
                
               //  _ = layerContainerView.activeLayer?.jotView.undo();
-                layerContainerView.eraseAllLayers();
+                layerContainerView.undoById(layerList:data.1 as! [String:[String]])
             break;
             case "REQUEST_CORRECT_LAYER":
                 layerContainerView.selectActiveLayer(id:data.1 as! String);
@@ -154,14 +163,8 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     func toolEventHandler(data: (String), key: String){
         print("tool event handler",data)
         switch(data){
-        case "TOGGLE_LOOP":
-            if(StylusManager.liveStatus()){
-            StylusManager.setToLastRecording();
-            }
-            else{
-                StylusManager.setToLive();
-            }
-            
+        case "UNDO":
+            //layerContainerView.activeLayer!.undo();
             break;
         case "PROGRAMMING_VIEW_REQUEST":
             _ = Router.createProgrammingModule();
@@ -341,6 +344,17 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
                 }
             }
             self.loadProject(projectName: data.2!, artistName: artistName!);
+            break;
+        default:
+            break;
+        }
+    }
+
+    
+    func recordingEventHandler(data: (String), key: String){
+        switch(data){
+        case "LOOP":
+            recordingViewController?.loopInitialized()
             break;
         default:
             break;
@@ -1139,6 +1153,17 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
             break;
         case "synchronize_request", "authoring_client_connected":
             self.synchronizeWithAuthoringClient();
+            break;
+        case "data_request":
+            let requestData = data.1! as JSON;
+            
+            
+            
+            let data = behaviorManager!.handleDataRequest(requestData: requestData)
+            
+            let socketRequest = Request(target: "socket", action: "data_request_response", data: data, requester: self)
+            
+            RequestHandler.addRequest(requestData:socketRequest);
             break;
         case "authoring_request":
             do{

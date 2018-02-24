@@ -30,7 +30,7 @@ define(['emitter', 'app/id', 'app/Emitter', 'app/DatasetLoader'],
           "states": {
             items: [{
               item_class: "block palette state_palette",
-              item_name: "state",
+              fieldName: "state",
               name: "state",
               type: "state"
             }]
@@ -39,54 +39,54 @@ define(['emitter', 'app/id', 'app/Emitter', 'app/DatasetLoader'],
           "sensor_properties": {
             items: [{
               item_class: "palette block property sensor",
-              item_name: "stylus_dx",
+              fieldName: "stylus_dx",
               name: "stylus delta x",
               type: "stylus",
               help_text: "returns the change in stylus x position each time the stylus is moved"
             }, {
               item_class: "block property palette sensor",
-              item_name: "stylus_dy",
+              fieldName: "stylus_dy",
               name: "stylus delta y",
               type: "sensor_prop",
               help_text: "returns the change in stylus y position each time the stylus is moved"
 
             }, {
               item_class: "palette block property sensor",
-              item_name: "stylus_x",
+              fieldName: "stylus_x",
               name: "stylus x",
               type: "sensor_prop",
               help_text: "returns the change in stylus x position each time the stylus is moved"
             }, {
               item_class: "block property palette sensor",
-              item_name: "stylus_y",
+              fieldName: "stylus_y",
               name: "stylus y",
               type: "sensor_prop",
               help_text: "returns the change in stylus y position each time the stylus is moved"
 
             },{
               item_class: "block property palette sensor",
-              item_name: "stylus_force",
+              fieldName: "stylus_force",
               name: "force",
               type: "sensor_prop",
               help_text: "returns the current force (pressure) value of the stylus"
 
             }, {
               item_class: "block property palette sensor",
-              item_name: "stylus_angle",
+              fieldName: "stylus_angle",
               name: "angle",
               type: "sensor_prop",
               help_text: "returns the current angle of the stylus."
 
             }, {
               item_class: "block property palette sensor",
-              item_name: "stylus_speed",
+              fieldName: "stylus_speed",
               name: "speed",
               type: "sensor_prop",
               help_text: "returns the speed of the stylus."
 
             }, {
               item_class: "block property palette sensor",
-              item_name: "stylus_deltaAngle",
+              fieldName: "stylus_deltaAngle",
               name: "deltaAngle",
               type: "sensor_prop",
               help_text: "returns the angle of the direction the stylus is moving."
@@ -96,28 +96,28 @@ define(['emitter', 'app/id', 'app/Emitter', 'app/DatasetLoader'],
           "ui_properties": {
             items: [{
               item_class: "palette block property ui",
-              item_name: "ui_hue",
+              fieldName: "ui_hue",
               name: "hue",
               type: "ui"
             }, {
               item_class: "block property palette ui",
-              item_name: "ui_saturation",
+              fieldName: "ui_saturation",
               name: "saturation",
               type: "ui"
             }, {
               item_class: "block property palette ui",
-              item_name: "ui_lightness",
+              fieldName: "ui_lightness",
               name: "lightness",
               type: "ui"
             }, {
               item_class: " block property palette ui",
-              item_name: "ui_diameter",
+              fieldName: "ui_diameter",
               name: "diameter",
               type: "ui"
 
             }, {
               item_class: " block property palette ui",
-              item_name: "ui_alpha",
+              fieldName: "ui_alpha",
               name: "alpha",
               type: "ui"
 
@@ -129,52 +129,52 @@ define(['emitter', 'app/id', 'app/Emitter', 'app/DatasetLoader'],
             items: [{
                 item_class: "block property palette",
                 name: "delta x",
-                item_name: "dx",
+                fieldName: "dx",
                 type: "brush_prop"
               }, {
                 item_class: " block property palette",
                 name: "delta y",
-                item_name: "dy",
+                fieldName: "dy",
                 type: "brush_prop"
 
               }, {
                 item_class: "block property palette",
                 name: "x",
-                item_name: "x",
+                fieldName: "x",
                 type: "brush_prop"
               }, {
                 item_class: " block property palette",
                 name: "y",
-                item_name: "y",
+                fieldName: "y",
                 type: "brush_prop"
 
               },
                {
                 item_class: "block property palette",
                 name: "radius",
-                item_name: "radius",
+                fieldName: "radius",
                 type: "brush_prop"
               }, {
                 item_class: " block property palette",
                 name: "theta",
-                item_name: "theta",
+                fieldName: "theta",
                 type: "brush_prop"
               }, {
                 item_class: " block property palette",
                 name: "rotation",
-                item_name: "rotation",
+                fieldName: "rotation",
                 type: "brush_prop"
 
               }, {
                 item_class: " block property palette",
                 name: "scale x",
-                item_name: "sx",
+                fieldName: "sx",
                 type: "brush_prop"
 
               }, {
                 item_class: " block property palette",
                 name: "scale y",
-                item_name: "sy",
+                fieldName: "sy",
                 type: "brush_prop"
 
               },
@@ -182,39 +182,39 @@ define(['emitter', 'app/id', 'app/Emitter', 'app/DatasetLoader'],
               {
                 item_class: " block property palette",
                 name: "diameter",
-                item_name: "diameter",
+                fieldName: "diameter",
                 type: "brush_prop"
 
               },
               /*{
                            item_class: " block property palette",
                            name: "color",
-                           item_name: "color",
+                           fieldName: "color",
                            type:"brush_prop"
 
                          }*/
               {
                 item_class: " block property palette",
                 name: "hue",
-                item_name: "hue",
+                fieldName: "hue",
                 type: "brush_prop"
 
               }, {
                 item_class: " block property palette",
                 name: "lightness",
-                item_name: "lightness",
+                fieldName: "lightness",
                 type: "brush_prop"
 
               }, {
                 item_class: " block property palette",
                 name: "saturation",
-                item_name: "saturation",
+                fieldName: "saturation",
                 type: "brush_prop"
 
               }, {
                 item_class: " block property palette",
                 name: "alpha",
-                item_name: "alpha",
+                fieldName: "alpha",
                 type: "brush_prop"
 
               }
@@ -225,74 +225,74 @@ define(['emitter', 'app/id', 'app/Emitter', 'app/DatasetLoader'],
             items: [{
                 item_class: "block property generator palette",
                 name: "sine wave",
-                item_name: "sine",
+                fieldName: "sine",
                 type: "generator",
                 help_text: "<img src ='images/sine_wave.gif'/>"
               },
               {
                 item_class: "block property generator palette",
                 name: "square wave",
-                item_name: "square",
+                fieldName: "square",
                 type: "generator",
                 help_text: "<img src ='images/square_wave.gif'/>"
               },
                 {
                 item_class: "block property generator palette",
                 name: "triangle wave",
-                item_name: "triangle",
+                fieldName: "triangle",
                 type: "generator",
                 help_text: "<img src ='images/triangle_wave.gif'/>"
               },
               {
                 item_class: " block property generator palette",
                 name: "sawtooth wave",
-                item_name: "range",
+                fieldName: "range",
                 type: "generator",
                 help_text: "<img src ='images/sawtooth_wave.gif'/>"
               }, 
                {
                 item_class: " block property generator palette",
                 name: "random",
-                item_name: "random",
+                fieldName: "random",
                 type: "generator",
                 help_text: "returns a series of uniform random values"
               }, {
                 item_class: " block property generator palette",
                 name: "alternate",
-                item_name: "alternate",
+                fieldName: "alternate",
                 type: "generator",
                 help_text: "returns a series of alternating values"
               },
               /*{
                            item_class: " block property generator palette",
                            name: "random walk",
-                           item_name: "random_walk",
+                           fieldName: "random_walk",
                            type:"generator",
                            help_text: "returns a succession of random steps"
                          },*/
               {
                 item_class: " block property generator palette",
                 name: "spawn index",
-                item_name: "index",
+                fieldName: "index",
                 type: "generator",
                 help_text: "returns the index of the brush instance"
               }, {
                 item_class: " block property generator palette",
                 name: "sibling count",
-                item_name: "siblingcount",
+                fieldName: "siblingcount",
                 type: "generator",
                 help_text: "returns the number of siblings of the brush instance"
               },
               {
                 item_class: " block property generator palette",
                 name: "spawn level",
-                item_name: "level",
+                fieldName: "level",
                 type: "generator",
                 help_text: "returns the number of connections between the brush instance and the root brush"
               },
               /*({ item_class: " block property generator palette",
                 name: "ease",
-                item_name: "ease",
+                fieldName: "ease",
                 type:"generator",
                 help_text: "generator that eases in and out"
               }*/
@@ -303,31 +303,31 @@ define(['emitter', 'app/id', 'app/Emitter', 'app/DatasetLoader'],
             items: [{
               item_class: "block method palette",
               name: "spawn",
-              item_name: "spawn",
+              fieldName: "spawn",
               argument: true,
               type: "action"
             }, {
               item_class: " block method palette",
               name: "setOrigin",
-              item_name: "setOrigin",
+              fieldName: "setOrigin",
               argument: true,
               type: "action"
             }, {
               item_class: " block method palette",
               name: "newStroke",
-              item_name: "newStroke",
+              fieldName: "newStroke",
               argument: true,
               type: "action"
             }, {
               item_class: " block method palette",
               name: "startTimer",
-              item_name: "startTimer",
+              fieldName: "startTimer",
               argument: false,
               type: "action"
             }, {
               item_class: " block method palette",
               name: "stopTimer",
-              item_name: "stopTimer",
+              fieldName: "stopTimer",
               argument: false,
               type: "action"
             }, ]
@@ -336,42 +336,42 @@ define(['emitter', 'app/id', 'app/Emitter', 'app/DatasetLoader'],
           "transitions": {
             items: [{
               item_class: "block transition palette",
-              item_name: "STYLUS_DOWN",
+              fieldName: "STYLUS_DOWN",
               name: "stylusDown",
               type: "transition"
             }, {
               item_class: "block transition palette",
-              item_name: "STYLUS_UP",
+              fieldName: "STYLUS_UP",
               name: "stylusUp",
               type: "transition"
             }, {
               item_class: "block transition palette",
-              item_name: "STYLUS_MOVE_BY",
+              fieldName: "STYLUS_MOVE_BY",
               name: "stylusMoveBy",
               type: "transition"
             }, {
               item_class: "block transition palette",
-              item_name: "STYLUS_X_MOVE_BY",
+              fieldName: "STYLUS_X_MOVE_BY",
               name: "stylusXMoveBy",
               type: "transition"
             }, {
               item_class: "block transition palette",
-              item_name: "STYLUS_Y_MOVE_BY",
+              fieldName: "STYLUS_Y_MOVE_BY",
               name: "stylusYMoveBy",
               type: "transition"
             }, {
               item_class: "block transition palette",
-              item_name: "TIME_INTERVAL",
+              fieldName: "TIME_INTERVAL",
               name: "timeInterval",
               type: "transition"
             }, {
               item_class: "block transition palette",
-              item_name: "DISTANCE_INTERVAL",
+              fieldName: "DISTANCE_INTERVAL",
               name: "distanceInterval",
               type: "transition"
             }, {
               item_class: "block transition palette",
-              item_name: "INTERSECTION",
+              fieldName: "INTERSECTION",
               name: "intersection",
               type: "transition"
             }]
