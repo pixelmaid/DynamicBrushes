@@ -1156,8 +1156,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
             break;
         case "data_request":
             let requestData = data.1! as JSON;
-            
-            
+
             
             let data = behaviorManager!.handleDataRequest(requestData: requestData)
             

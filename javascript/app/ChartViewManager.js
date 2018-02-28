@@ -372,6 +372,10 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                     this.onMappingRemoved(behaviorId, mappingId, stateId);
                 }.bind(this));
 
+                 chartView.addListener("ON_MAPPING_DATA_REQUEST", function(behaviorId, stateId) {
+                    this.onMappingDataRequest(behaviorId, stateId);
+                }.bind(this));
+
 
                 chartView[data.id] = chartView;
                 chartView.initializeBehavior(data);
@@ -785,7 +789,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
 
                 };
                 //TODO: This is sloppy- find a fix
-                if(generatorId!= undefined || generatorId!= null){
+                if(generatorId!== undefined || generatorId!== null){
                     this.generatorModel.addDefaultValues(generatorType, transmit_data);
 
                 }
@@ -878,6 +882,22 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
 
                 this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
 
+            }
+
+            onMappingDataRequest(behaviorId, stateId){
+                  console.log("mapping data  request", stateId, behaviorId);
+
+                var transmit_data = {
+                    behaviorId: behaviorId,
+                    stateId: stateId,
+                    type: "request_existing_mappings"
+                };
+
+                this.lastAuthoringRequest = {
+                    data: transmit_data
+                };
+
+                this.trigger("ON_DATA_REQUEST_EVENT", [transmit_data]);
             }
 
             onStateAdded(x, y, data) {

@@ -34,6 +34,8 @@ final class StylusManager{
 
     //events
     static public let eraseEvent = Event<(String,[String:[String]])>();
+    static public let vizEraseEvent = Event<(String)>();
+
     static public let recordEvent = Event<(String,StylusRecordingPackage)>();
     static public let layerEvent = Event<(String,String)>();
     static private var playbackMultiplier = 10;

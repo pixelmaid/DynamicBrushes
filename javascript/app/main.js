@@ -144,6 +144,20 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
             socketController.sendMessage(transmit_data);
 
         };
+
+        var onDataRequestEvent = function(data) {
+            console.log("transmit_data", data);
+
+            var transmit_data = {
+                type: "data_request",
+                requester: "authoring",
+                data: data
+
+            };
+            socketController.sendMessage(transmit_data);
+
+        };
+
         var onStorageEvent = function(data) {
             console.log("storage_data", data);
 
@@ -235,6 +249,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
         socketController.addListener("ON_KEY_RECOGNIZED",onKeyRecognized);
 
         chartViewManager.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
+        chartViewManager.addListener("ON_DATA_REQUEST_EVENT", onDataRequestEvent);
+
         saveManager.addListener("ON_SAVE_EVENT", onStorageEvent);
         paletteModel.addListener("ON_DATASET_READY",onDataReady);
         promptConnect();

@@ -153,7 +153,9 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     reposition: false,
                     selector: '#' + self.id +' .prop_button',
                     callback: function(key, options) {
-                        
+                         var parent = $(options.$trigger[0]).parent().parent().parent();
+                        console.log("property callback",parent);
+                        self.trigger("ON_MAPPING_DATA_REQUEST", [self.id,parent[0].id]);
                     },
 
                     build: function($trigger) {
