@@ -6,16 +6,32 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Palette-Knife/models/behavior/BehaviorDefinition.swift"
-            timestampString = "533600256.954756"
+            timestampString = "541474600.554239"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1217"
-            endingLineNumber = "1217"
-            landmarkName = "generateExpression(targetBrush:name:data:)"
+            startingLineNumber = "1353"
+            endingLineNumber = "1353"
+            landmarkName = "initBrushBehavior(targetBrush:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Palette-Knife/models/behavior/BehaviorDefinition.swift"
+            timestampString = "541474600.5543"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "59"
+            endingLineNumber = "59"
+            landmarkName = "parseJSON(json:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
