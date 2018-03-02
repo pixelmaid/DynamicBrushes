@@ -37,6 +37,7 @@ final class StylusManager{
     static public let recordEvent = Event<(String,StylusRecordingPackage)>();
     static public let layerEvent = Event<(String,String)>();
     static public let stylusDataEvent = Event<(String, [Float])>();
+    static public let stylusEraseEvent = Event<String>();
     static private var playbackMultiplier = 10;
     static private var startTime:Date!
     static private var prevTriggerTime:Date!
@@ -87,13 +88,7 @@ final class StylusManager{
     }
     
     static public func setToLive(){
-        
         revertToLiveOnLoopEnd = true;
-        
-      
-            
-        
-        
     }
     
    
@@ -164,7 +159,6 @@ final class StylusManager{
         samples.removeAll();
         usedSamples.removeAll();
         currentLoopingPackage = nil;
-        
     }
     
     
@@ -178,6 +172,7 @@ final class StylusManager{
             playbackTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(delayTimerReinit), userInfo: nil, repeats: false)
 
         }
+        StylusManager.stylusEraseEvent.raise(data:"")
     }
     
     @objc static private func delayTimerReinit(){

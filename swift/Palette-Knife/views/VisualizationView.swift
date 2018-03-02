@@ -11,12 +11,15 @@ import UIKit
 
 class VisualizationView: ModifiedCanvasView {
     let drawingEventKey = NSUUID().uuidString
+    let eraseEventKey = NSUUID().uuidString
     let stylusDataEvent = Event<(String, [Float])>();
-
+    let stylusEraseEvent = Event<String>();
 
     override init(name:String,frame:CGRect) {
         super.init(name:name, frame:frame)
         _ = StylusManager.stylusDataEvent.addHandler(target: self, handler: VisualizationView.drawingEventHandler, key: drawingEventKey)
+        _ = StylusManager.stylusEraseEvent.addHandler(target: self, handler: VisualizationView.eraseEventHandler, key: eraseEventKey)
+
         print ("@@ init")
     }
     
@@ -24,24 +27,39 @@ class VisualizationView: ModifiedCanvasView {
         super.init(coder: aDecoder)
     }
     
+    func eraseEventHandler(data:String, key:String){
+        self.removeAllStrokes();
+        print("@@ erase called");
+        self.undoById(strokeIds: ["vstroke", "vstrokeU", "vstrokeD"])
+        print("@@ erase again");
+
+    }
+    
     func drawingEventHandler(data:(String,[Float]),key:String){
         let coords = data.1
-        let x:Double = Double(coords[0])
-        let y:Double = Double(coords[1])
+        let x:Double = Double(coords[0]) + 5
+        let y:Double = Double(coords[1]) + 5
         let point = CGPoint(x:x, y:y)
         
         switch(data.0){
         case "STYLUS_UP":
-            print ("@@ stylus up")
-            self.renderStrokeById(currentStrokeId:"vstroke", toPoint:point, toWidth:1.0, toColor:UIColor.blue)
+            self.beginStroke(id:"vstrokeU")
+            self.renderStrokeById(currentStrokeId:"vstrokeU", toPoint:point, toWidth:5.0, toColor:UIColor.red)
+            let point2 = CGPoint(x:x+1, y:y+1)
+            self.renderStrokeById(currentStrokeId:"vstrokeU", toPoint:point2, toWidth:5.0, toColor:UIColor.red)
             break
         case "STYLUS_DOWN":
-            print ("@@ stylus down")
+            //self.undoById(strokeIds: ["vstrokeStart", "vStrokeEnd"]) //undo start/end of older stroke
+
+            self.beginStroke(id:"vstrokeD")
+            self.renderStrokeById(currentStrokeId:"vstrokeD", toPoint:point, toWidth:5.0, toColor:UIColor.green)
+            let point2 = CGPoint(x:x+1, y:y+1)
+            self.renderStrokeById(currentStrokeId:"vstrokeD", toPoint:point2, toWidth:5.0, toColor:UIColor.red)
+            
             self.beginStroke(id:"vstroke")
             break
         case "STYLUS_MOVE":
-            print ("@@ stylus move")
-            self.renderStrokeById(currentStrokeId:"vstroke", toPoint:point, toWidth:1.0, toColor:UIColor.blue)
+            self.renderStrokeById(currentStrokeId:"vstroke", toPoint:point, toWidth:1.0, toColor:UIColor.cyan)
             break
         default:
             break
