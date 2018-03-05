@@ -39,7 +39,7 @@ class VisualizationView: ModifiedCanvasView {
         self.layer.addSublayer(endShapeLayer)
 
         self.jotView.alpha = 0.5;
-        print ("@@ init")
+
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -75,7 +75,7 @@ class VisualizationView: ModifiedCanvasView {
             self.beginStroke(id:currentStrokeID);
             self.startShapeLayer.isHidden = false;
             CATransaction.begin();
-           CATransaction.setValue(true, forKey: kCATransactionDisableActions)
+            CATransaction.setValue(true, forKey: kCATransactionDisableActions)
             startShapeLayer.position = point;
             CATransaction.commit();
 

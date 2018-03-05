@@ -16,11 +16,14 @@ class RecordingToolbarVC: UIViewController {
     @IBOutlet weak var loopRecording: UIButton!
     @IBOutlet weak var playbackSpeed: UISlider!
     @IBOutlet weak var speedLabel: UILabel!
+    @IBOutlet weak var recordImg: UIImageView!
+    var isLooping = false
     
     public let loopEvent = Event<(String)>();
 
     override func viewDidLoad() {
         loopRecording.addTarget(self, action: #selector(RecordingToolbarVC.loop), for: .touchUpInside)
+
     }
     
   
@@ -37,7 +40,15 @@ class RecordingToolbarVC: UIViewController {
     }
     
     func loop() {
-        print("inside toolbar loop ^^")
+        if (!isLooping) {
+            loopRecording.setImage(UIImage(named: "loop_button_on2x"), for: .normal)
+            recordImg.image = UIImage(named: "record_off2x")
+            isLooping = true
+        } else {
+            loopRecording.setImage(UIImage(named: "loop_button_off2x"), for: .normal)
+            recordImg.image = UIImage(named: "record_on2x")
+            isLooping = false
+        }
         loopEvent.raise(data: ("LOOP"));
     }
     

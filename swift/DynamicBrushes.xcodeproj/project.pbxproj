@@ -142,6 +142,10 @@
 		726443622045E00D005A2E9D /* VisualizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 726443612045E00D005A2E9D /* VisualizationView.swift */; };
 		7267DCC120290D9F0093245A /* RecordingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7267DCC020290D9E0093245A /* RecordingViewController.swift */; };
 		7267DCC5202A8ECF0093245A /* RecordingFrameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7267DCC4202A8ECF0093245A /* RecordingFrameCell.swift */; };
+		72F3CED4204DFD050010A3D0 /* record_off2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F3CED0204DFD040010A3D0 /* record_off2x.png */; };
+		72F3CED5204DFD050010A3D0 /* loop_button_on2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F3CED1204DFD040010A3D0 /* loop_button_on2x.png */; };
+		72F3CED6204DFD050010A3D0 /* loop_button_off2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F3CED2204DFD050010A3D0 /* loop_button_off2x.png */; };
+		72F3CED7204DFD050010A3D0 /* record_on2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F3CED3204DFD050010A3D0 /* record_on2x.png */; };
 		72FD3370203256ED00CD4FAF /* recording_export_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 72FD336E203256EC00CD4FAF /* recording_export_button.png */; };
 		72FD3371203256ED00CD4FAF /* recording_export_button2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 72FD336F203256EC00CD4FAF /* recording_export_button2x.png */; };
 		72FD33732032AE3D00CD4FAF /* RecordingToolbarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72FD33722032AE3D00CD4FAF /* RecordingToolbarVC.swift */; };
@@ -316,6 +320,10 @@
 		726443612045E00D005A2E9D /* VisualizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualizationView.swift; sourceTree = "<group>"; };
 		7267DCC020290D9E0093245A /* RecordingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordingViewController.swift; sourceTree = "<group>"; };
 		7267DCC4202A8ECF0093245A /* RecordingFrameCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingFrameCell.swift; sourceTree = "<group>"; };
+		72F3CED0204DFD040010A3D0 /* record_off2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = record_off2x.png; sourceTree = "<group>"; };
+		72F3CED1204DFD040010A3D0 /* loop_button_on2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = loop_button_on2x.png; sourceTree = "<group>"; };
+		72F3CED2204DFD050010A3D0 /* loop_button_off2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = loop_button_off2x.png; sourceTree = "<group>"; };
+		72F3CED3204DFD050010A3D0 /* record_on2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = record_on2x.png; sourceTree = "<group>"; };
 		72FD336E203256EC00CD4FAF /* recording_export_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = recording_export_button.png; sourceTree = "<group>"; };
 		72FD336F203256EC00CD4FAF /* recording_export_button2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = recording_export_button2x.png; sourceTree = "<group>"; };
 		72FD33722032AE3D00CD4FAF /* RecordingToolbarVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingToolbarVC.swift; sourceTree = "<group>"; };
@@ -630,6 +638,10 @@
 		5FD6CD101DE0EE0E007D94AA /* image_assets */ = {
 			isa = PBXGroup;
 			children = (
+				72F3CED2204DFD050010A3D0 /* loop_button_off2x.png */,
+				72F3CED1204DFD040010A3D0 /* loop_button_on2x.png */,
+				72F3CED0204DFD040010A3D0 /* record_off2x.png */,
+				72F3CED3204DFD050010A3D0 /* record_on2x.png */,
 				72FD336E203256EC00CD4FAF /* recording_export_button.png */,
 				72FD336F203256EC00CD4FAF /* recording_export_button2x.png */,
 				5FFC45711EE4C855007B7597 /* airbrush_button_active.png */,
@@ -929,6 +941,7 @@
 				5F9118D91DEE345100A6B247 /* select_icon.png in Resources */,
 				5F9F25AA1DEFE3A0005CB5D8 /* shopbot_position_active@2x.png in Resources */,
 				5FE32F831ECF6D5300ADC01E /* brush_button_active2x.png in Resources */,
+				72F3CED7204DFD050010A3D0 /* record_on2x.png in Resources */,
 				5FEE2AC91DE127D800080095 /* dual_pen.png in Resources */,
 				5F9F25AD1DEFE3A0005CB5D8 /* shopbot_position_inactive2x.png in Resources */,
 				5FFC455B1EE1B133007B7597 /* point.vsh in Resources */,
@@ -946,9 +959,11 @@
 				5FE32F801ECF6D5300ADC01E /* behavior_button.png in Resources */,
 				5FFC45731EE4C855007B7597 /* airbrush_button_active.png in Resources */,
 				5FE32F8B1ECF6D5300ADC01E /* export_button2x.png in Resources */,
+				72F3CED5204DFD050010A3D0 /* loop_button_on2x.png in Resources */,
 				5F9F25AF1DEFE3A0005CB5D8 /* lg_pen_blue2x.png in Resources */,
 				5FBDF0EB1ED8D95300022B07 /* quad.fsh in Resources */,
 				5FFC45741EE4C855007B7597 /* airbrush_button_active2x.png in Resources */,
+				72F3CED4204DFD050010A3D0 /* record_off2x.png in Resources */,
 				5F9F25B21DEFE490005CB5D8 /* radial.png in Resources */,
 				5F9F25AB1DEFE3A0005CB5D8 /* draw_icon2x.png in Resources */,
 				5FE32FA21ECF70BE00ADC01E /* layerVisible_button.png in Resources */,
@@ -976,6 +991,7 @@
 				5FE32F961ECF6DC900ADC01E /* refresh_button.png in Resources */,
 				5F9F25AE1DEFE3A0005CB5D8 /* dual_pen2x.png in Resources */,
 				5FE32FA11ECF70BE00ADC01E /* layerVisible_button_active2x.png in Resources */,
+				72F3CED6204DFD050010A3D0 /* loop_button_off2x.png in Resources */,
 				5FE32F7E1ECF6D5300ADC01E /* behavior_activate_button.png in Resources */,
 				5FD6CD121DE0EE0E007D94AA /* sm_pen_blue.png in Resources */,
 				5FE32F881ECF6D5300ADC01E /* erase_button.png in Resources */,
