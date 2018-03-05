@@ -138,7 +138,11 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
     }
     
     func renderStrokeById(currentStrokeId: String, toPoint:CGPoint,toWidth:CGFloat,toColor:UIColor!){
-        guard let currentStroke:JotStroke = activeStrokes[currentStrokeId] else {return}
+        guard let currentStroke:JotStroke = activeStrokes[currentStrokeId] else {
+            print("no stroke by id",currentStrokeId);
+            return;
+            
+        }
         let color:UIColor!
         if(drawActive){
             color = toColor
@@ -147,7 +151,9 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
             color = nil
         }
         //if(inBounds(point:toPoint)){
-
+        if(currentStrokeId  == "vstrokeG"){
+            print("rendering green stroke");
+        }
         self.renderStroke(currentStroke: currentStroke, toPoint: toPoint, toWidth: toWidth, toColor: color)
         /*}
         else{

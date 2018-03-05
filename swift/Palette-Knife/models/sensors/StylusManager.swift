@@ -37,7 +37,7 @@ final class StylusManager{
     static public let recordEvent = Event<(String,StylusRecordingPackage)>();
     static public let layerEvent = Event<(String,String)>();
     static public let stylusDataEvent = Event<(String, [Float])>();
-    static public let stylusEraseEvent = Event<String>();
+    static public let visualizationEvent = Event<String>();
     static private var playbackMultiplier = 10;
     static private var startTime:Date!
     static private var prevTriggerTime:Date!
@@ -111,6 +111,7 @@ final class StylusManager{
         self.isLive = false;
         self.idStart = idStart;
         self.idEnd = idEnd;
+        revertToLiveOnLoopEnd = false;
         currentStartDate = Date();
         currentLoopingPackage = recordingPackages[self.idStart];
         prevHash = 0;
@@ -168,11 +169,12 @@ final class StylusManager{
             playbackTimer = nil
         }
         if(delayRestart){
-            
             playbackTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(delayTimerReinit), userInfo: nil, repeats: false)
+        }
+        else{
+            StylusManager.visualizationEvent.raise(data:"ERASE_REQUEST")
 
         }
-        StylusManager.stylusEraseEvent.raise(data:"")
     }
     
     @objc static private func delayTimerReinit(){
@@ -201,6 +203,7 @@ final class StylusManager{
             }
         
         eraseEvent.raise(data:("ERASE_REQUEST",strokesToErase));
+        StylusManager.visualizationEvent.raise(data:"ERASE_REQUEST")
 
         playbackTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(advanceRecording), userInfo: nil, repeats: true)
 
