@@ -36,6 +36,8 @@ final class StylusManager{
     static public let eraseEvent = Event<(String,[String:[String]])>();
     static public let recordEvent = Event<(String,StylusRecordingPackage)>();
     static public let layerEvent = Event<(String,String)>();
+    static public let stylusDataEvent = Event<(String, [Float])>();
+    static public let stylusEraseEvent = Event<String>();
     static private var playbackMultiplier = 10;
     static private var startTime:Date!
     static private var prevTriggerTime:Date!
@@ -86,13 +88,7 @@ final class StylusManager{
     }
     
     static public func setToLive(){
-        
         revertToLiveOnLoopEnd = true;
-        
-      
-            
-        
-        
     }
     
    
@@ -163,7 +159,6 @@ final class StylusManager{
         samples.removeAll();
         usedSamples.removeAll();
         currentLoopingPackage = nil;
-        
     }
     
     
@@ -177,6 +172,7 @@ final class StylusManager{
             playbackTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(delayTimerReinit), userInfo: nil, repeats: false)
 
         }
+        StylusManager.stylusEraseEvent.raise(data:"")
     }
     
     @objc static private func delayTimerReinit(){
@@ -372,16 +368,18 @@ class StylusDataConsumer{
     func consume(sample:Sample){
         
         
-        
         switch(sample.stylusEvent){
         case StylusManager.stylusUp:
             stylus.onStylusUp();
+            StylusManager.stylusDataEvent.raise(data:("STYLUS_UP", [sample.x, sample.y]))
             break;
         case StylusManager.stylusDown:
+            StylusManager.stylusDataEvent.raise(data:("STYLUS_DOWN", [sample.x, sample.y]))
             StylusManager.layerEvent.raise(data:("REQUEST_CORRECT_LAYER",sample.targetLayer));
             stylus.onStylusDown(x: sample.x, y: sample.y, force: sample.force, angle: sample.angle);
             break;
         case StylusManager.stylusMove:
+            StylusManager.stylusDataEvent.raise(data:("STYLUS_MOVE", [sample.x, sample.y]))
             stylus.onStylusMove(x: sample.x, y: sample.y, force: sample.force, angle: sample.angle);
             break;
         default:

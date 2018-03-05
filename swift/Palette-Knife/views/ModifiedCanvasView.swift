@@ -126,8 +126,12 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
             value.lock();
             value.empty();
             value.unlock();
-            
+
         }
+        if self is VisualizationView {
+            print ("@@ activeStrokes are ", self.activeStrokes)
+        }
+        
         self.allStrokes.removeAll();
         self.activeStrokes.removeAll();
         JotGLContext.validateEmptyStack();
