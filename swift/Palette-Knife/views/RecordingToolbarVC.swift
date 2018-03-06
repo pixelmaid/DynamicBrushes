@@ -12,7 +12,8 @@ import UIKit
 
 class RecordingToolbarVC: UIViewController {
     let playbackSpeeds: [Float] = [0.1, 0.25, 0.5, 0.75, 1, 1.5, 2, 4, 10] //real playback speeds
-    
+    let recordImgEventKey = NSUUID().uuidString
+
     @IBOutlet weak var loopRecording: UIButton!
     @IBOutlet weak var playbackSpeed: UISlider!
     @IBOutlet weak var speedLabel: UILabel!
@@ -23,10 +24,16 @@ class RecordingToolbarVC: UIViewController {
 
     override func viewDidLoad() {
         loopRecording.addTarget(self, action: #selector(RecordingToolbarVC.loop), for: .touchUpInside)
+        _ = StylusManager.visualizationEvent.addHandler(target: self, handler: RecordingToolbarVC.recordImgOn, key: recordImgEventKey)
 
     }
     
-  
+    func recordImgOn(data:String, key:String){
+        if data == "RECORD_IMG_ON" {
+            recordImg.image = UIImage(named: "record_on2x") //set when full loop finishes
+        }
+    }
+   f
     @IBAction func sliderChanged(_ sender: UISlider) {
         let val = Int(sender.value);
         let speed = playbackSpeeds[val];
@@ -46,8 +53,8 @@ class RecordingToolbarVC: UIViewController {
             isLooping = true
         } else {
             loopRecording.setImage(UIImage(named: "loop_button_off2x"), for: .normal)
-            recordImg.image = UIImage(named: "record_on2x")
             isLooping = false
+            
         }
         loopEvent.raise(data: ("LOOP"));
     }

@@ -15,7 +15,7 @@ final class StylusManager{
     static let stylusUp = Float(0.0);
     static let stylusMove = Float(1.0);
     static let stylusDown = Float(2.0);
-    static private var isLive = true;
+    static public var isLive = true;
     static private var currentRecordingPackage:StylusRecordingPackage!
     static private var currentLoopingPackage:StylusRecordingPackage!
     static private var playbackTimer:Timer!
@@ -46,7 +46,6 @@ final class StylusManager{
     static private var revertToLiveOnLoopEnd = false;
     static private var idStart:String!
     static private var idEnd:String!
-
     
     init(){
         
@@ -160,6 +159,7 @@ final class StylusManager{
         samples.removeAll();
         usedSamples.removeAll();
         currentLoopingPackage = nil;
+        StylusManager.visualizationEvent.raise(data:"RECORD_IMG_ON")
     }
     
     

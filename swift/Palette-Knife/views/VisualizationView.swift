@@ -50,10 +50,13 @@ class VisualizationView: ModifiedCanvasView {
     
     
     func eraseEventHandler(data:String, key:String){
-        self.eraseAll();
-        self.endShapeLayer.isHidden = true;
-        self.startShapeLayer.isHidden = true;
+        if data == "ERASE_REQUEST" {
+            self.eraseAll();
+            self.endShapeLayer.isHidden = true;
+            self.startShapeLayer.isHidden = true;
 
+        }
+        
     }
     
     func drawingEventHandler(data:(String,[Float]),key:String){
