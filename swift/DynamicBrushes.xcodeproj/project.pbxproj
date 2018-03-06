@@ -138,6 +138,7 @@
 		72478CDD2029043800D24C92 /* Palette-Knife in Resources */ = {isa = PBXBuildFile; fileRef = 72478CDA2029043700D24C92 /* Palette-Knife */; };
 		72478CDE2029043800D24C92 /* Palette-KnifeUITests in Resources */ = {isa = PBXBuildFile; fileRef = 72478CDB2029043800D24C92 /* Palette-KnifeUITests */; };
 		72478CDF2029043800D24C92 /* Palette-KnifeTests in Resources */ = {isa = PBXBuildFile; fileRef = 72478CDC2029043800D24C92 /* Palette-KnifeTests */; };
+		726443622045E00D005A2E9D /* VisualizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 726443612045E00D005A2E9D /* VisualizationView.swift */; };
 		7267DCC120290D9F0093245A /* RecordingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7267DCC020290D9E0093245A /* RecordingViewController.swift */; };
 		7267DCC5202A8ECF0093245A /* RecordingFrameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7267DCC4202A8ECF0093245A /* RecordingFrameCell.swift */; };
 		72FD3370203256ED00CD4FAF /* recording_export_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 72FD336E203256EC00CD4FAF /* recording_export_button.png */; };
@@ -310,6 +311,7 @@
 		72478CDA2029043700D24C92 /* Palette-Knife */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Palette-Knife"; sourceTree = "<group>"; };
 		72478CDB2029043800D24C92 /* Palette-KnifeUITests */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Palette-KnifeUITests"; sourceTree = "<group>"; };
 		72478CDC2029043800D24C92 /* Palette-KnifeTests */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Palette-KnifeTests"; sourceTree = "<group>"; };
+		726443612045E00D005A2E9D /* VisualizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualizationView.swift; sourceTree = "<group>"; };
 		7267DCC020290D9E0093245A /* RecordingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordingViewController.swift; sourceTree = "<group>"; };
 		7267DCC4202A8ECF0093245A /* RecordingFrameCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingFrameCell.swift; sourceTree = "<group>"; };
 		72FD336E203256EC00CD4FAF /* recording_export_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = recording_export_button.png; sourceTree = "<group>"; };
@@ -609,6 +611,7 @@
 				5F2CF3D61ED32EC00066AC8E /* FileCell.swift */,
 				5FFC45791EE5C6D6007B7597 /* BehaviorCell.swift */,
 				72FD33722032AE3D00CD4FAF /* RecordingToolbarVC.swift */,
+				726443612045E00D005A2E9D /* VisualizationView.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -1193,6 +1196,7 @@
 				5F90F5581E9D5A41006BB9FE /* Line.swift in Sources */,
 				5FFC457A1EE5C6D6007B7597 /* BehaviorCell.swift in Sources */,
 				5F90F5441E9D59D4006BB9FE /* Matrix.swift in Sources */,
+				726443622045E00D005A2E9D /* VisualizationView.swift in Sources */,
 				5F2CF3D71ED32EC00066AC8E /* FileCell.swift in Sources */,
 				5FA4C7241CDA7B5B004A728C /* AppDelegate.swift in Sources */,
 				5F13B69A1FC3A40C00E37A37 /* ProgrammingViewController.swift in Sources */,

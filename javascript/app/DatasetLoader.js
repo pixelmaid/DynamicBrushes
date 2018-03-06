@@ -11,6 +11,7 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 				super();
 				 //todo: should read this dynamically from the file folder
 				this.filenames = ["MapMyRun.json","BrainDrain.json","meteor.json","moment_formatted.json"];
+
 			}
 
 			loadDataset(filename){
@@ -26,6 +27,7 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 								items.push({
 									item_class: "block dataset palette",
 									fieldName:  id+"_"+columns[i]["fieldName"],
+
 									name:columns[i]["name"],
 									type: "dataset"
 

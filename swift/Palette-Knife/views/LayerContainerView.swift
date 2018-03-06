@@ -11,7 +11,7 @@ import UIKit
 import SwiftyJSON
 
 class LayerContainerView: UIView {
-    
+    var visualizationLayer:VisualizationView?
     var activeLayer:ModifiedCanvasView?
     var layers = [ModifiedCanvasView]();
     var drawActive = true;
@@ -37,6 +37,7 @@ class LayerContainerView: UIView {
         self.targetSize = CGSize(width: CGFloat(width), height: CGFloat(height))
         super.init(frame: frame);
         self.backgroundColor = UIColor.white;
+        //init here instead
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -247,6 +248,13 @@ class LayerContainerView: UIView {
         self.enableLayer(layer: layer)
         return layer.id
         
+    }
+    
+    func addVisualizationLayer(name:String,id:String?,size:CGSize) {
+        let vlayer = VisualizationView(name:name,frame: CGRect(origin:CGPoint(x:0,y:0), size:(size)))
+        vlayer.center = CGPoint(x:size.width/2,y:size.height / 2);
+        self.addSubview(vlayer)
+        print("@@ added vis layer subview")
     }
     
     func addStroke(id:String){

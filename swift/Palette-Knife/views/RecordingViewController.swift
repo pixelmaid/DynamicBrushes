@@ -101,9 +101,13 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
                 let ystrokes2 = RecordingViewController.gestures[idx-2].y.getTimeOrderedList()
                 drawThumbnail(xStrokes: xstrokes2, yStrokes: ystrokes2, image: imageView, onion: true, alpha: 0.2)
                 if indexPath.item >= 3 {
-                    let xstrokes3 = RecordingViewController.gestures[idx-3].x.getTimeOrderedList()
-                    let ystrokes3 = RecordingViewController.gestures[idx-3].y.getTimeOrderedList()
-                    drawThumbnail(xStrokes: xstrokes3, yStrokes: ystrokes3, image: imageView, onion: true, alpha: 0.1)
+                    
+                    let upToStrokes = RecordingViewController.gestures.count - 3
+                    for i in 0 ..< upToStrokes {
+                        let xstrokes3 = RecordingViewController.gestures[i].x.getTimeOrderedList()
+                        let ystrokes3 = RecordingViewController.gestures[i].y.getTimeOrderedList()
+                        drawThumbnail(xStrokes: xstrokes3, yStrokes: ystrokes3, image: imageView, onion: true, alpha: 0.1)
+                    }
                 }
             }
         }
@@ -122,7 +126,6 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
 
     func drawThumbnail(xStrokes:[Float],yStrokes:[Float],image:UIImageView, onion:Bool, alpha: CGFloat = 1.0) {
         //assert xStrokes.count == yStrokes.count
-        print ("^^ in draw thumb")
         for idx in stride(from:0, to:xStrokes.count, by:1) {
             let c1x = xStrokes[idx] / divisor
             let c1y = yStrokes[idx] / divisor
@@ -157,7 +160,6 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     //select start and end ranges
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let idx = indexPath[1]
-        print("^^ recording selected index", indexPath[1])
         //set starting point
         if idx < RecordingViewController.recording_start {
             RecordingViewController.recording_start = idx
@@ -170,7 +172,6 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     
     //if click on any cell in range, deselect range
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        print("^^ recording deselected index", indexPath[1])
         resetSelection()
     }
     

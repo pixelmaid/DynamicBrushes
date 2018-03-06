@@ -154,6 +154,8 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
             case "REQUEST_CORRECT_LAYER":
                 layerContainerView.selectActiveLayer(id:data.1 as! String);
             break;
+            case "VIS_STROKE_DOWN":
+            break;
             default:
             break;
         }
@@ -411,7 +413,8 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
         layerPanelContainerView.layer.cornerRadius = 8.0
         layerPanelContainerView.clipsToBounds = true
         self.newLayer();
-        
+        self.newVisualizationLayer();
+
         layerPanelContainerView.isHidden = true;
         
         
@@ -974,6 +977,10 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
         self.layerPanelController?.addLayer(layerId: id);
         StylusManager.setLayerId(layerId:id);
         
+    }
+    
+    func newVisualizationLayer() {
+        self.layerContainerView.addVisualizationLayer(name: "Vis layer",id:nil, size:self.targetSize);
     }
     
     func onErase(sender: UIButton!) {

@@ -65,7 +65,7 @@ class Table:Emitter {
                 c = NumberColumn(table:self,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName, data:columnData)
             }
                 
-            else if(dataTypeName == "calendar_data"){
+            else if(dataTypeName == "date"){
                 c = GeoColumn(table:self,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName, data:columnData)
             }
             else{
