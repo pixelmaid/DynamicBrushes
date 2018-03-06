@@ -33,7 +33,7 @@ class RecordingToolbarVC: UIViewController {
             recordImg.image = UIImage(named: "record_on2x") //set when full loop finishes
         }
     }
-   f
+   
     @IBAction func sliderChanged(_ sender: UISlider) {
         let val = Int(sender.value);
         let speed = playbackSpeeds[val];
