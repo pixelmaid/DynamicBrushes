@@ -41,7 +41,8 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     //selection handling
     public static var recording_start = Int.max
     public static var recording_end = -1
-    
+    public static var currKeyframeOffset = 0
+
     
     let divisor:Float = 6.83 //canvas size / divisor = thumbnail size; 1366 / 6.83 = 200
     
@@ -58,11 +59,13 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     override func viewDidLoad() {
         super.viewDidLoad()
         let recordingKey = NSUUID().uuidString
+        let keyframeKey = NSUUID().uuidString
         collectionView?.allowsMultipleSelection = true
         collectionView?.isPrefetchingEnabled = true
         _ = StylusManager.recordEvent.addHandler(target:self, handler: RecordingViewController.recordingCreatedHandler, key: recordingKey)
         collectionView?.register(RecordingFrameCell.self, forCellWithReuseIdentifier: "cell")
-        
+        _ = StylusManager.visualizationEvent.addHandler(target: self, handler: RecordingViewController.highlightCellForPlayback, key: keyframeKey)
+
     }
     
     override func didReceiveMemoryWarning() {
@@ -152,10 +155,6 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         }
     }
     
-    func onionSkinStrokes(idx:Int) {
-        
-    }
-    
     // ====== selection handling ======
     //select start and end ranges
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -170,9 +169,47 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         highlightCells()
     }
     
+    
     //if click on any cell in range, deselect range
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         resetSelection()
+    }
+    
+    func highlightCellForPlayback(data:String, key:String) {
+        if data == "ADVANCE_KEYFRAME" {
+            print ("~ advancing keyframe with start ", RecordingViewController.recording_start, " end " , RecordingViewController.recording_end)
+            let offset:Int = RecordingViewController.recording_start + RecordingViewController.currKeyframeOffset
+            let totalFrames:Int = RecordingViewController.recording_end - RecordingViewController.recording_start + 1
+            let index = offset % totalFrames
+            let prev = (offset - 1) % totalFrames
+            print ("~ index is " , index)
+            print ("~ prev is " , prev)
+
+            highlightKeyframe(i: index, isYellow: true)
+            highlightKeyframe(i: prev, isYellow: false)
+            
+            RecordingViewController.currKeyframeOffset += 1
+
+        }
+    }
+    
+    func highlightKeyframe(i:Int, isYellow:Bool) {
+        print ("~highlighting ", i)
+        let indexPath = NSIndexPath(item:i, section:0)
+        let cell = collectionView?.cellForItem(at: indexPath as IndexPath)
+        cell?.layer.borderWidth = 4.0
+        if isYellow {
+            cell?.layer.borderColor = UIColor.blue.cgColor
+            collectionView?.scrollToItem(at: indexPath as IndexPath, at: UICollectionViewScrollPosition.right, animated: false)
+        } else {
+            cell?.layer.borderColor = UIColor.green.cgColor
+        }
+    }
+    
+    func deselectLastKeyframe(data:String, key:String){
+        if data == "DESELECT_LAST" {
+            highlightKeyframe(i:RecordingViewController.recording_end, isYellow:false)
+        }
     }
     
     func highlightCells() {
@@ -218,8 +255,6 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
                 
             } else { //stop recording
                 StylusManager.setToLive()
-                //clear selection
-                resetSelection()
             }
         }
     }

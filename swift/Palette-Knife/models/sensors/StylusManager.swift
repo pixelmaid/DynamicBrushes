@@ -35,6 +35,7 @@ final class StylusManager{
     //events
     static public let eraseEvent = Event<(String,[String:[String]])>();
     static public let recordEvent = Event<(String,StylusRecordingPackage)>();
+    static public let keyframeEvent = Event<(Int)>();
     static public let layerEvent = Event<(String,String)>();
     static public let stylusDataEvent = Event<(String, [Float])>();
     static public let visualizationEvent = Event<String>();
@@ -160,6 +161,8 @@ final class StylusManager{
         usedSamples.removeAll();
         currentLoopingPackage = nil;
         StylusManager.visualizationEvent.raise(data:"RECORD_IMG_ON")
+        StylusManager.visualizationEvent.raise(data:"DESELECT_LAST")
+
     }
     
     
@@ -173,7 +176,6 @@ final class StylusManager{
         }
         else{
             StylusManager.visualizationEvent.raise(data:"ERASE_REQUEST")
-
         }
     }
     
@@ -375,11 +377,14 @@ class StylusDataConsumer{
         case StylusManager.stylusUp:
             stylus.onStylusUp();
             StylusManager.stylusDataEvent.raise(data:("STYLUS_UP", [sample.x, sample.y]))
+
             break;
         case StylusManager.stylusDown:
             StylusManager.stylusDataEvent.raise(data:("STYLUS_DOWN", [sample.x, sample.y]))
             StylusManager.layerEvent.raise(data:("REQUEST_CORRECT_LAYER",sample.targetLayer));
             stylus.onStylusDown(x: sample.x, y: sample.y, force: sample.force, angle: sample.angle);
+            StylusManager.visualizationEvent.raise(data:"ADVANCE_KEYFRAME")
+
             break;
         case StylusManager.stylusMove:
             StylusManager.stylusDataEvent.raise(data:("STYLUS_MOVE", [sample.x, sample.y]))
