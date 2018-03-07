@@ -35,14 +35,14 @@ extension UIColor {
     }
 }
 
-class RecordingViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+class RecordingViewController: UIViewController, UIScrollViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     //data source
     public static var gestures = [GestureRecording]()
     //selection handling
     public static var recording_start = Int.max
     public static var recording_end = -1
     public static var currKeyframeOffset = 0
-
+    var firstLoopCompleted = false
     
     let divisor:Float = 6.83 //canvas size / divisor = thumbnail size; 1366 / 6.83 = 200
     
@@ -56,15 +56,24 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         let attrib = collectionView?.layoutAttributesForItem(at: indexPath as IndexPath)
         return [attrib!]
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.collectionView.delegate = self
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         let recordingKey = NSUUID().uuidString
         let keyframeKey = NSUUID().uuidString
         collectionView?.allowsMultipleSelection = true
         collectionView?.isPrefetchingEnabled = true
+        collectionView?.dataSource = self
+        collectionView?.delegate = self
+//        collectionView?.prefetchDataSource = self
         _ = StylusManager.recordEvent.addHandler(target:self, handler: RecordingViewController.recordingCreatedHandler, key: recordingKey)
         collectionView?.register(RecordingFrameCell.self, forCellWithReuseIdentifier: "cell")
         _ = StylusManager.visualizationEvent.addHandler(target: self, handler: RecordingViewController.highlightCellForPlayback, key: keyframeKey)
+        _ = StylusManager.visualizationEvent.addHandler(target: self, handler: RecordingViewController.deselectLastKeyframe, key: keyframeKey)
 
     }
     
@@ -75,15 +84,22 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return RecordingViewController.gestures.count
     }
+    
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        for indexPath in indexPaths {
+            print("called prefetching ^^ ", indexPath)
+        }
+    }
 
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RecordingFrameCell", for: indexPath) as! RecordingFrameCell
-        
         let idx = indexPath.item
         print ("^^ cellforItemAt called for item ", idx)
+
+        //draw thumbnail
         let lastGesture = RecordingViewController.gestures[idx]
         let x = lastGesture.x
         let y = lastGesture.y
@@ -94,7 +110,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         imageView.contentMode = UIViewContentMode.scaleAspectFit
         cell.contentView.addSubview(imageView)
         drawThumbnail(xStrokes: xstrokes, yStrokes: ystrokes, image: imageView, onion: false)
-
+        //draw onionskin
         if indexPath.item >= 1 {
             let xstrokes1 = RecordingViewController.gestures[idx-1].x.getTimeOrderedList()
             let ystrokes1 = RecordingViewController.gestures[idx-1].y.getTimeOrderedList()
@@ -114,16 +130,22 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
                 }
             }
         }
-        //selected by default
-        if idx < RecordingViewController.recording_start {
-            RecordingViewController.recording_start = idx
+        //selected by default but only the first time...
+        if !firstLoopCompleted {
+            if idx < RecordingViewController.recording_start {
+                RecordingViewController.recording_start = idx
+            }
+            if idx > RecordingViewController.recording_end {
+                RecordingViewController.recording_end = idx
+            }
+            highlightCells()
+            cell.layer.borderWidth = 4.0
+            cell.layer.borderColor = UIColor.green.cgColor
+        } else {
+            print ("^^ scrolling to old cell")
+            cell.layer.borderWidth = 0
         }
-        if idx > RecordingViewController.recording_end {
-            RecordingViewController.recording_end = idx
-        }
-        highlightCells()
-        cell.layer.borderWidth = 4.0
-        cell.layer.borderColor = UIColor.green.cgColor
+
         return cell
     }
 
@@ -177,43 +199,80 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     
     func highlightCellForPlayback(data:String, key:String) {
         if data == "ADVANCE_KEYFRAME" {
-            print ("~ advancing keyframe with start ", RecordingViewController.recording_start, " end " , RecordingViewController.recording_end)
-            let offset:Int = RecordingViewController.recording_start + RecordingViewController.currKeyframeOffset
+//            inHighlightingKeyframes = true
+            print ("^^ H start and end offset are " , RecordingViewController.recording_start, RecordingViewController.recording_end, RecordingViewController.currKeyframeOffset)
+
             let totalFrames:Int = RecordingViewController.recording_end - RecordingViewController.recording_start + 1
-            let index = offset % totalFrames
-            let prev = (offset - 1) % totalFrames
-            print ("~ index is " , index)
-            print ("~ prev is " , prev)
+            let index = RecordingViewController.currKeyframeOffset % totalFrames + RecordingViewController.recording_start
+            var prev = (index - 1) % totalFrames
+            if prev == -1 {
+                highlightKeyframe(i: RecordingViewController.recording_end, isYellow: false)
+            } //IDK WHY THIS HAPPENS cuz mod math should never be -???
+            print ("^^ H index is " , index)
+            print ("^^ H prev is " , prev)
+
+            if (prev != -1) {
+                highlightKeyframe(i: prev, isYellow: false)
+            }
 
             highlightKeyframe(i: index, isYellow: true)
-            highlightKeyframe(i: prev, isYellow: false)
-            
+
             RecordingViewController.currKeyframeOffset += 1
+            if RecordingViewController.currKeyframeOffset > RecordingViewController.recording_end {
+                RecordingViewController.currKeyframeOffset = 0
+            }
 
         }
     }
     
     func highlightKeyframe(i:Int, isYellow:Bool) {
-        print ("~highlighting ", i)
+        print("^^ higlighting" , i)
         let indexPath = NSIndexPath(item:i, section:0)
-        let cell = collectionView?.cellForItem(at: indexPath as IndexPath)
-        cell?.layer.borderWidth = 4.0
-        if isYellow {
-            cell?.layer.borderColor = UIColor.blue.cgColor
-            collectionView?.scrollToItem(at: indexPath as IndexPath, at: UICollectionViewScrollPosition.right, animated: false)
-        } else {
-            cell?.layer.borderColor = UIColor.green.cgColor
-        }
+        var sp = UICollectionViewScrollPosition.right
+        if i == 0 { sp = UICollectionViewScrollPosition.left}
+//        collectionView?.scrollToItem(at: indexPath as IndexPath, at: UICollectionViewScrollPosition.right, animated: false)
+        let layout = collectionView?.layoutAttributesForItem(at: indexPath as IndexPath)
+        let x = layout!.center.x - 500
+        let offset = CGPoint(x: x, y: 0)
+        collectionView?.setContentOffset(offset, animated: false)
+        
+
+            let cell = self.collectionView?.cellForItem(at: indexPath as IndexPath)
+            print("^^ cell is ", cell)
+            cell?.layer.borderWidth = 4.0
+            if isYellow {
+                cell?.layer.borderColor = UIColor.orange.cgColor
+            } else {
+                cell?.layer.borderColor = UIColor.green.cgColor
+            }
+        
+//        currentKeyframeIndexPath = indexPath
+//        isHighlighted = isYellow
+//        collectionView?.selectItem(at: indexPath as IndexPath, animated: false, scrollPosition: sp)
+
     }
+
     
     func deselectLastKeyframe(data:String, key:String){
-        if data == "DESELECT_LAST" {
-            highlightKeyframe(i:RecordingViewController.recording_end, isYellow:false)
+        if data == "DESELECT_LAST" { //recording has finished looping one last time
+            let totalFrames:Int = RecordingViewController.recording_end - RecordingViewController.recording_start + 1
+            let index = RecordingViewController.currKeyframeOffset % totalFrames + RecordingViewController.recording_start
+            var prev = (index - 1) % totalFrames
+            if prev == -1 {
+                highlightKeyframe(i: RecordingViewController.recording_end, isYellow: false)
+            } else {
+                 highlightKeyframe(i: prev, isYellow: false)
+            }
+            print("^^ deselecting last w prev" , prev)
+
+            
+            //reset offset
+            RecordingViewController.currKeyframeOffset = 0
         }
     }
     
     func highlightCells() {
-        print("^^ highlighting from", RecordingViewController.recording_start, " to ", RecordingViewController.recording_end+1)
+        print("^^ highlighting from", RecordingViewController.recording_start, " to ", RecordingViewController.recording_end)
         for i in stride(from:RecordingViewController.recording_start, to:RecordingViewController.recording_end+1, by:1) {
             let indexPath = NSIndexPath(item:i, section:0)
             let cell = collectionView?.cellForItem(at: indexPath as IndexPath)
@@ -224,7 +283,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     }
     
     func resetSelection() {
-        print ("^^ reseting selection from ", RecordingViewController.recording_start, " to ", RecordingViewController.recording_end+1)
+        print ("^^ reseting selection which was originally from ", RecordingViewController.recording_start, " to ", RecordingViewController.recording_end+1)
         for i in stride(from:RecordingViewController.recording_start, to:RecordingViewController.recording_end+1, by:1) {
             let indexPath = NSIndexPath(item:i, section:0)
 //            print ("^^ total cells in collectionview ", collectionView?.numberOfItems(inSection: 0))
@@ -234,6 +293,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         }
         RecordingViewController.recording_start = Int.max
         RecordingViewController.recording_end = -1
+        firstLoopCompleted = true //if they deselect, should only manually select
     }
 
     //from an index, go to a gesture stringid
@@ -242,7 +302,6 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     }
     
     func loopInitialized() {
-        print ("^^ loop button pressed")
         print (RecordingViewController.recording_start, RecordingViewController.recording_end)
         if (RecordingViewController.recording_start >= 0 && RecordingViewController.recording_end >= RecordingViewController.recording_start) {
             print ("^^ going to loop from ", RecordingViewController.recording_start, " to ", RecordingViewController.recording_end)
@@ -255,6 +314,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
                 
             } else { //stop recording
                 StylusManager.setToLive()
+                firstLoopCompleted = true
             }
         }
     }
