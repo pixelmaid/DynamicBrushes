@@ -224,7 +224,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         }
     }
     
-    func recordingCreatedHandler (data:(String, StylusRecordingPackage), key:String) {
+    func recordingCreatedHandler (data:(String, StylusRecordingCollection), key:String) {
         let stylusdata = data.1
         RecordingViewController.gestures.append(GestureRecording(id: stylusdata.id, x:stylusdata.x, y:stylusdata.y))
         let IndexPath = NSIndexPath(item: RecordingViewController.gestures.count-1, section:0)
