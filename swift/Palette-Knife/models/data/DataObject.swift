@@ -145,23 +145,23 @@ class ColumnSynchronizer {
 }
 
 class Column:Signal{
-        let fieldName:String
-        let position:Int
-        let table:Table
-        let dataTypeName:String
+        //let fieldName:String
+       // let position:Int
+      //  let table:Table
+      //  let dataTypeName:String
         // let largest:String
       //  let smallest:String
-        var currentRow = 0;
-        var dataSubscribers = [String:Observable<Float>]();
-        private var isGenerator = false;
-    init(table:Table,id:String, fieldName:String,position:Int,dataTypeName:String, data:[Float]){
-            self.fieldName = fieldName
-            self.position = position
-            self.dataTypeName = dataTypeName
-            self.table = table
+    //    var currentRow = 0;
+       // var dataSubscribers = [String:Observable<Float>]();
+   //     private var isGenerator = false;
+    
+    
+    init(id:String, fieldName:String,position:Int){
+            self.fieldName = fieldName;
+            self.position = position;
+        
             super.init(id:id)
-           self.setSignal(s:data)
-            print("registering column with id:",self.id);
+            print("registering column signal with id:",self.id);
             RequestHandler.registerObservable(observableId: table.id+"_"+self.fieldName, observable: self);
 
         }

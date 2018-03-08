@@ -13,6 +13,11 @@ import Foundation
 class Signal:Observable<Float>{
     private var index:Float = -1;
     internal var signalBuffer = [Float:Float]();
+    internal var fieldName:String!
+    internal var position:Int = 0
+    var dataSubscribers = [String:Observable<Float>]();
+    
+    
     private var circular = true;
     var id:String
     //    var param = Observable<Float>(1.0);
@@ -52,7 +57,7 @@ class Signal:Observable<Float>{
     }
     
     
-    func pushValue(h:Float,v:Float){
+    func addValue(h:Float,v:Float){
         signalBuffer[h] = v;
         self.setHash(h:h);
     }
@@ -100,8 +105,8 @@ class Recording:Signal{
         prev = r;
     }
     
-    override func pushValue(h:Float,v:Float){
-        super.pushValue(h: h, v: v);
+    override func addValue(h:Float,v:Float){
+        super.addValue(h: h, v: v);
         self.lastSample = h;
     }
     

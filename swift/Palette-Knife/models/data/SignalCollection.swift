@@ -15,44 +15,47 @@ class SignalCollection: Object{
     internal var samples:Set<Float> = [];
     internal var lastSample:Float = 0;
     internal var signals  = [String:Signal]();
-    public var id:String
+    public let id:String
     
     init(){
         self.id = NSUUID().uuidString;
     }
     
-  /*  public  func loadDataFromJSON(data:JSON){
-        
-        let columns = data["meta"]["view"]["columns"].arrayValue;
+    init(data:JSON){
+        self.id = data["meta"]["view"]["id"].stringValue;
+
+        self.loadDataFromJSON(data: data);
+    }
+    
+  public  func loadDataFromJSON(data:JSON){
+    
+        let allSignalData = data["meta"]["view"]["columns"].arrayValue;
         #if DEBUG
             //print("dataset loaded",columns,data)
         #endif
         let rawData = data["data"].arrayValue;
         
-        for i in 0..<columns.count{
-            var columnData = [Float]();
-            for j in 0..< self.data!.count{
-                let row = self.data![j].arrayValue;
-                let v = row[i+metadataRowOffset].floatValue;
-                columnData.append(v);
+        for i in 0..<allSignalData.count{
+            let fieldName = allSignalData[i]["fieldName"].stringValue;
+            let position = allSignalData[i]["position"].intValue;
+            let dataTypeName = allSignalData[i]["dataTypeName"].stringValue;
+            let description = allSignalData[i]["description"].stringValue;
+            var signal = Signal(id: self.id+"_"+fieldName);
+            for j in 0..<rawData.count{
+                let row = rawData[j].arrayValue;
+                let v = row[i].floatValue;
+                signal.addValue(h: Float(j), v: v);
             }
-            self.columnizedData.append(columnData);
-            
-            let fieldName = columns[i]["fieldName"].stringValue;
-            let position = columns[i]["position"].intValue;
-            let dataTypeName = columns[i]["dataTypeName"].stringValue;
-            let description = columns[i]["description"].stringValue;
-            //let largest = columns[i]["cachedContents"]["largest"].stringValue;
-            // let smallest = columns[i]["cachedContents"]["smallest"].stringValue;
-            // let width = columns[i]["width"].intValue;
-            let id = columns[i]["id"].stringValue;
+            self.addSignal(name: fieldName, signal: signal);
+          
+           
             let c:Column?
             if(dataTypeName == "meta_data"){
                 metadataRowOffset+=1;
             }
             if(dataTypeName == "number"){
                 
-                let average = Float(columns[i]["cachedContents"]["average"].stringValue)
+                let average = Float(allSignalData[i]["cachedContents"]["average"].stringValue)
                 c = NumberColumn(table:self,id:id, fieldName: fieldName, position: position, dataTypeName: dataTypeName, data:columnData)
             }
                 
@@ -70,14 +73,14 @@ class SignalCollection: Object{
             
         }
         
-        for i in 0..<columns.count{
+        for i in 0..<allSignalData.count{
             
         }
         
         #if DEBUG
             print("metadata offset",metadataRowOffset);
         #endif
-    }*/
+    }
     
     
     public func addSignal(name:String,signal:Signal){
@@ -98,7 +101,7 @@ class SignalCollection: Object{
         self.samples.insert(hash)
         self.lastSample  = hash;
          for (key,value) in data {
-           self.signals[key]?.pushValue(h: hash, v: value.floatValue)
+           self.signals[key]?.addValue(h: hash, v: value.floatValue)
         }
     }
     

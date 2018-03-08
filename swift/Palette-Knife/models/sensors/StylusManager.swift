@@ -118,7 +118,7 @@ final class StylusManager{
         queue.sync {
             var hashAdd:Float = 0;
             while (true){
-              //  print("====advance recording start====",currentLoopingPackage.id,currentLoopingPackage.dx.signalBuffer.count);
+                print("====advance recording start====",currentLoopingPackage.id,currentLoopingPackage.signals["dx"]!.signalBuffer.count);
             for i in 0..<Int(currentLoopingPackage.lastSample+1){
                 let hash = i;
                 var sample = producer.produce(hash: Float(hash), recordingPackage: currentLoopingPackage);
@@ -309,10 +309,10 @@ final class StylusManager{
             sample["y"] = JSON(y);
             sample["force"] = JSON(force);
             sample["angle"] = JSON(angle);
-            sample["stylusEvent"] = JSON(StylusManager.stylusMove);
+            sample["stylusEvent"] = JSON(StylusManager.stylusUp);
 
             currentRecordingPackage.addSample(hash:elapsedTime, data:sample);
-
+            _ = self.endRecording();
             stylus.onStylusUp();
             
         }
@@ -331,7 +331,7 @@ final class StylusManager{
             sample["y"] = JSON(y);
             sample["force"] = JSON(force);
             sample["angle"] = JSON(angle);
-            sample["stylusEvent"] = JSON(StylusManager.stylusMove);
+            sample["stylusEvent"] = JSON(StylusManager.stylusDown);
 
             currentRecordingPackage.addSample(hash:elapsedTime, data:sample);
 
@@ -395,7 +395,7 @@ class StylusDataProducer{
 class StylusDataConsumer{
     
     func consume(sample:JSON){
-        
+        print("consume sample",sample["x"].floatValue,sample["y"].floatValue,sample["force"].floatValue,sample["targetLayer"].stringValue)
         
         switch(sample["stylusEvent"].floatValue){
         case StylusManager.stylusUp:
