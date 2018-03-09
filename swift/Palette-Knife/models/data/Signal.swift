@@ -13,16 +13,23 @@ import Foundation
 class Signal:Observable<Float>{
     private var index:Float = -1;
     internal var signalBuffer = [Float:Float]();
-    internal var fieldName:String!
-    internal var position:Int = 0
+    
+    internal var position:Int = 0;
+    internal let fieldName:String!
+    internal let displayName:String!
+    internal let collectionId:String!;
+    public let groupId:String?
+    
+    
     var dataSubscribers = [String:Observable<Float>]();
-    
-    
-    private var circular = true;
     var id:String
     //    var param = Observable<Float>(1.0);
-    init(id:String){
+    required init(id:String,fieldName:String, displayName:String, collectionId:String, groupId:String?){
         self.id = id;
+        self.fieldName = fieldName;
+        self.collectionId = collectionId
+        self.groupId = groupId;
+        
         super.init(0)
         RequestHandler.registerObservable(observableId: id, observable: self)
     }
@@ -142,11 +149,12 @@ class Sine:Signal{
     
     var index = Observable<Float>(0);
     
+    
     init(id:String, freq:Float, amp:Float, phase:Float){
         self.freq = freq;
         self.phase = phase;
         self.amp = amp;
-        super.init(id:id);
+        super.init(id:id,fieldName: "sine",collectionId: "generator");
     }
     
     
@@ -205,7 +213,7 @@ class Interval:Signal{
     
     init(id:String,inc:Float,times:Int?){
         self.inc = inc;
-        super.init(id:id);
+        super.init(id:id, fieldName: "interval", collectionId: "generator");
         if(times != nil){
             for i in 1..<times!{
                 val.append(Float(i)*self.inc)
@@ -284,11 +292,11 @@ class CircularBuffer:Signal{
     
 }
 
-class Range:Signal{
+class Sawtooth:Signal{
     var val = [Float]();
     var index = Observable<Float>(0);
     init(id:String,min:Int,max:Int,start:Float,stop:Float){
-        super.init(id:id)
+        super.init(id:id,fieldName: "range", collectionId: "generator")
         let increment = (stop-start)/Float(max-min)
         for i in min...max-1{
             val.append(start+increment*Float(i))
@@ -321,7 +329,7 @@ class Ease: Signal{
         self.b = b;
         self.k = k;
         self.x = 0;
-        super.init(id:id)
+        super.init(id:id, fieldName: "ease", collectionId: "generator")
     }
     
     override func get(id:String?) -> Float {
@@ -341,7 +349,7 @@ class Index:Signal{
     var val:Observable<Float>
     init (id:String, val:Observable<Float>){
         self.val = val;
-        super.init(id:id)
+        super.init(id:id, fieldName: "index", collectionId: "generator")
     }
     override func get(id:String?) -> Float {
         return self.val.get(id: nil);
@@ -352,7 +360,7 @@ class SiblingCount:Signal{
     var val:Observable<Float>
     init (id:String,val:Observable<Float>){
         self.val = val;
-        super.init(id:id)
+        super.init(id:id, fieldName: "siblingcount", collectionId: "generator")
     }
     override func get(id:String?) -> Float {
         return self.val.get(id: nil);
@@ -371,7 +379,7 @@ class Triangle:Signal{
         self.freq = freq;
         self.min = min;
         self.max = max;
-        super.init(id:id)
+        super.init(id:id, fieldName: "triangle", collectionId: "generator")
     }
     
     
@@ -403,7 +411,7 @@ class Square:Signal{
         self.min = min;
         self.max = max;
         self.currentVal = min;
-        super.init(id:id)
+        super.init(id:id, fieldName: "square", collectionId: "generator")
     }
     
     override func get(id:String?) -> Float {
@@ -428,7 +436,7 @@ class Square:Signal{
 
 
 
-class RandomGenerator: Signal{
+class Random: Signal{
     let start:Float
     let end:Float
     var val:Float;
@@ -436,7 +444,7 @@ class RandomGenerator: Signal{
         self.start = start;
         self.end = end;
         val = Float(arc4random()) / Float(UINT32_MAX) * abs(self.start - self.end) + min(self.start, self.end)
-        super.init(id:id)
+        super.init(id:id, fieldName: "random", collectionId: "generator")
         
     }
     
@@ -460,7 +468,7 @@ class easeInOut:Signal{
         self.stop = Observable<Float>(stop.get(id: nil));
         self.max = Observable<Float>(max.get(id: nil));
         self.range = Observable<Float>(stop.get(id: nil)-start.get(id: nil));
-        super.init(id:id)
+        super.init(id:id, fieldName: "easeInOut", collectionId: "generator")
     }
     
     
@@ -479,7 +487,7 @@ class Alternate:Signal{
     
     init(id:String, values:[Float]){
         val = values;
-        super.init(id:id)
+        super.init(id:id, fieldName: "alternate", collectionId: "generator")
     }
     
     

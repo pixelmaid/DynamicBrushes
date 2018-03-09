@@ -19,7 +19,10 @@ enum BehaviorError: Error {
 
 class BehaviorManager{
     static var behaviors = [String:BehaviorDefinition]()
-    static var datasets = [String:Table]();
+    static var datasets = [String:SignalCollection]();
+    static var generatorCollection = GeneratorCollection();
+    static var stylusCollection = StylusCollection();
+    static var uiCollection = UICollection();
     var canvas:Canvas
     init(canvas:Canvas){
         self.canvas = canvas;
@@ -255,14 +258,16 @@ class BehaviorManager{
             
             resultJSON["result"] = "success";
             return resultJSON;*/
+       
+        case "signal_initialized":
+            self.parseSignalJSON(data:data);
+        break;
             
         case "expression_modified":
             let behaviorId = data["behaviorId"].stringValue;
-            let generatorId = data["generatorId"];
-            print("generatorId",generatorId,generatorId == JSON.null)
-            if(generatorId != JSON.null){
-            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseGeneratorJSON(data:data)
-            }
+            
+            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.(data:data)
+            
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseExpressionJSON(data:data)
             
             BehaviorManager.behaviors[behaviorId]!.createBehavior(canvas:canvas)
@@ -304,17 +309,86 @@ class BehaviorManager{
     }
     
     
+   static func parseSignalJSON(data:JSON){
+        let type = data["type"].stringValue;
+        switch(type){
+        case "random":
+            self.addRandomGenerator(name: data["generatorId"].stringValue, min: data["min"].floatValue, max: data["max"].floatValue)
+            break;
+        case "alternate":
+            let jsonValues =  data["values"].arrayValue;
+            var values = [Float]();
+            for i in jsonValues{
+                values.append(i.floatValue);
+            }
+            self.addAlternate(name: data["generatorId"].stringValue, values: values)
+            break;
+            
+            
+        case "range":
+            
+            self.addRange(name: data["generatorId"].stringValue, min: data["min"].intValue, max: data["max"].intValue, start: data["start"].floatValue, stop: data["stop"].floatValue)
+            break;
+            
+        case "sine":
+            self.addSine(name: data["generatorId"].stringValue, freq: data["freq"].floatValue, amp: data["amp"].floatValue, phase: data["phase"].floatValue);
+            
+            break;
+            
+        case "square":
+            self.addSquare(name: data["generatorId"].stringValue, min: data["min"].floatValue, max: data["max"].floatValue, freq: data["freq"].floatValue);
+            
+            break;
+            
+        case "triangle":
+            self.addTriangle(name: data["generatorId"].stringValue, min: data["min"].floatValue, max: data["max"].floatValue, freq: data["freq"].floatValue);
+            break;
+            
+            
+        case "ease":
+            self.addEaseGenerator(name: data["generatorId"].stringValue, a: data["a"].floatValue, b: data["b"].floatValue, k: data["k"].floatValue);
+            
+            break;
+        case "interval":
+            var  times:Int? = nil
+            if (data["times"] != JSON.null){
+                times = data["times"].intValue
+            }
+            self.addInterval(name: data["generatorId"].stringValue, inc: data["inc"].floatValue, times:times );
+            
+            break;
+            
+        case "index":
+            self.addIndex(name: data["generatorId"].stringValue);
+            
+            break;
+            
+        case "siblingcount":
+            self.addSiblingCount(name: data["generatorId"].stringValue);
+            
+            break;
+            
+            // case "random_walk":
+            
+            //return "success"
+            
+            
+        //  return "success";
+        default:
+            break;
+        }
+    }
+    
    static func parseDataset(data:JSON){
     let id = data["id"].stringValue;
-    let table = Table(id:id);
-        table.loadDataFromJSON(data: data["dataset"]);
-    BehaviorManager.datasets[id] = table;
+    let signalCollection = SignalCollection(data: data);
+    BehaviorManager.datasets[id] = signalCollection;
     }
     
     static func resetAllDatasets(){
         print("resetting all datasets")
         for (_,value) in BehaviorManager.datasets{
-            value.resetColumns();
+            value.syncSignalsTo(hash0:);
         }
     }
     

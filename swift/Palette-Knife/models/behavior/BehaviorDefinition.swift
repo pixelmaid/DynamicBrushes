@@ -56,7 +56,7 @@ class BehaviorDefinition {
         let generatorJSON = json["generators"].arrayValue;
         let conditionJSON = json["conditions"].arrayValue;
         for i in 0..<generatorJSON.count{
-            self.parseGeneratorJSON(data:generatorJSON[i])
+            self.parseSignalJSON(data:generatorJSON[i])
         }
         for i in 0..<conditionJSON.count{
             self.parseConditionJSON(data:conditionJSON[i])
@@ -141,77 +141,6 @@ class BehaviorDefinition {
         let relational = data["relational"].stringValue
         
         self.addCondition(name: name, reference: reference, referenceNames: referenceNames, relative: relative, relativeNames: relativeNames, relational: relational)
-    }
-    
-    
-    func parseGeneratorJSON(data:JSON){
-        let type = data["generatorType"].stringValue;
-        switch(type){
-        case "random":
-            self.addRandomGenerator(name: data["generatorId"].stringValue, min: data["min"].floatValue, max: data["max"].floatValue)
-            break;
-        case "alternate":
-            let jsonValues =  data["values"].arrayValue;
-            var values = [Float]();
-            for i in jsonValues{
-                values.append(i.floatValue);
-            }
-            self.addAlternate(name: data["generatorId"].stringValue, values: values)
-            break;
-            
-            
-        case "range":
-            
-            self.addRange(name: data["generatorId"].stringValue, min: data["min"].intValue, max: data["max"].intValue, start: data["start"].floatValue, stop: data["stop"].floatValue)
-            break;
-            
-        case "sine":
-            self.addSine(name: data["generatorId"].stringValue, freq: data["freq"].floatValue, amp: data["amp"].floatValue, phase: data["phase"].floatValue);
-            
-            break;
-            
-        case "square":
-            self.addSquare(name: data["generatorId"].stringValue, min: data["min"].floatValue, max: data["max"].floatValue, freq: data["freq"].floatValue);
-            
-            break;
-            
-        case "triangle":
-            self.addTriangle(name: data["generatorId"].stringValue, min: data["min"].floatValue, max: data["max"].floatValue, freq: data["freq"].floatValue);
-            break;
-            
-
-        case "ease":
-            self.addEaseGenerator(name: data["generatorId"].stringValue, a: data["a"].floatValue, b: data["b"].floatValue, k: data["k"].floatValue);
-            
-            break;
-        case "interval":
-            var  times:Int? = nil
-            if (data["times"] != JSON.null){
-                times = data["times"].intValue
-            }
-            self.addInterval(name: data["generatorId"].stringValue, inc: data["inc"].floatValue, times:times );
-            
-            break;
-        
-        case "index":
-            self.addIndex(name: data["generatorId"].stringValue);
-            
-            break;
-            
-        case "siblingcount":
-            self.addSiblingCount(name: data["generatorId"].stringValue);
-            
-            break;
-
-            // case "random_walk":
-            
-            //return "success"
-            
-            
-        //  return "success";
-        default:
-            break;
-        }
     }
     
     func parseExpressionJSON(data:JSON){
@@ -1028,7 +957,7 @@ class BehaviorDefinition {
             storedGenerators[id]![name] = interval;
             break;
         case "range":
-            let range = Range(id:name, min:data.1[0] as! Int, max:data.1[1] as! Int, start: data.1[2] as! Float, stop:data.1[3] as! Float)
+            let range = Sawtooth(id:name, min:data.1[0] as! Int, max:data.1[1] as! Int, start: data.1[2] as! Float, stop:data.1[3] as! Float)
            storedGenerators[id]![name] = range;
         case "sine":
             let sine = Sine(id:name, freq: data.1[0] as! Float, amp: data.1[1] as! Float, phase: data.1[2] as! Float);
@@ -1042,7 +971,7 @@ class BehaviorDefinition {
             storedGenerators[id]![name] = triangle;
 
         case "random":
-            let random = RandomGenerator(id:name, start:data.1[0] as! Float, end:data.1[1] as! Float)
+            let random = Random(id:name, start:data.1[0] as! Float, end:data.1[1] as! Float)
             storedGenerators[id]![name] = random;
         case "ease":
             let ease = Ease(id:name, a: data.1[0] as! Float, b:  data.1[1] as! Float, k:  data.1[2] as! Float)

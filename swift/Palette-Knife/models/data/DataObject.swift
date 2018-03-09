@@ -18,7 +18,7 @@ enum FloatParsingError: Error {
 
 
 
-class Table:Emitter {
+/*class Table:Emitter {
     var i = 0
     var limit = 0
     var columns = [String:Column]()
@@ -115,7 +115,7 @@ class Table:Emitter {
         return 0;
     }
 }
-    
+    */
     /*func subscribe(fieldName:String,subscriberId:String){
      subscribers[fieldName]?.append(subscriberId);
      }
@@ -144,7 +144,7 @@ class ColumnSynchronizer {
   
 }
 
-class Column:Signal{
+/*class Column:Signal{
         //let fieldName:String
        // let position:Int
       //  let table:Table
@@ -250,5 +250,5 @@ class Column:Signal{
         
         
         
-    }
+    }*/
 
