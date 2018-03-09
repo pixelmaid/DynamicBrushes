@@ -105,6 +105,7 @@ final class RequestHandler: Requester{
                     var send_data:JSON = [:]
                     send_data["data"] = data;
                     send_data["type"] = JSON("inspector_data")
+                    send_data["subData"] = "inspector";
                     RequestHandler.socketManager.sendData(data: send_data);
                     break;
                 case "authoring_response":
@@ -114,7 +115,14 @@ final class RequestHandler: Requester{
                     
                 case "data_request_response":
                     let data = RequestHandler.activeItem!.data!
-                    RequestHandler.socketManager.sendData(data: data);
+                    var send_data:JSON = [:]
+                    //send_data["type"] = JSON("abcdefg")
+                    send_data["type"] = JSON("inspector_data")
+                    send_data["subData"] = "mapping_info";
+                    send_data["data"] = data;
+                    RequestHandler.socketManager.sendData(data: send_data);
+                    print("why not show up?");
+                    print(send_data);
                     break;
                     
                 case "synchronize":
@@ -203,6 +211,7 @@ final class RequestHandler: Requester{
             
             RequestHandler.activeItem?.requester.processRequest(data:data)
             RequestHandler.activeItem = nil;
+            print(data);
 
             RequestHandler.checkRequest();
             

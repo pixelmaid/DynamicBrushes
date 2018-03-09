@@ -422,6 +422,11 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                   InspectorDataController.setData(data);
             }
 
+            //Lawrence new mapping process
+            processMappingData(data) {
+                
+            }
+
 
             processAuthoringResponse(data) {
                 console.log("chart manager process authoring response", data, this.lastAuthoringRequest, data.result);

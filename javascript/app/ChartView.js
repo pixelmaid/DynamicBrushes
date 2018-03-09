@@ -153,16 +153,21 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     reposition: false,
                     selector: '#' + self.id +' .prop_button',
                     callback: function(key, options) {
-                         var parent = $(options.$trigger[0]).parent().parent().parent();
+                        var parent = $(options.$trigger[0]).parent().parent().parent();
                         console.log("property callback",parent);
                         self.trigger("ON_MAPPING_DATA_REQUEST", [self.id,parent[0].id]);
                     },
 
                     build: function($trigger) {
                         var p_items = {};
+
+                        var parent = $trigger.parent().parent().parent();
+                        console.log("property callback",parent);
+                        self.trigger("ON_MAPPING_DATA_REQUEST", [self.id,parent[0].id]);
+
                         for(var i = 0; i < global_brush_properties.items.length; i++){
-                            var p_name = global_brush_properties.items[i].item_name;
-                            p_items[p_name] = {className: 'property_menu_item', name: global_brush_properties.items[i].name};
+                            var f_name = global_brush_properties.items[i].fieldName;
+                            p_items[f_name] = {className: 'property_menu_item', name: global_brush_properties.items[i].name};
                         }
                         var options = {
                             items:p_items

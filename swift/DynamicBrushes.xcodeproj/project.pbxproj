@@ -852,7 +852,7 @@
 					};
 					5FA4C71F1CDA7B5B004A728C = {
 						CreatedOnToolsVersion = 7.3;
-						DevelopmentTeam = R3G633C4P2;
+						DevelopmentTeam = L39943Z8L7;
 						LastSwiftMigration = 0820;
 						ProvisioningStyle = Automatic;
 					};
@@ -1432,7 +1432,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution: JENNIFER MARY JACOBS (R3G633C4P2)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = L39943Z8L7;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -1483,7 +1483,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution: JENNIFER MARY JACOBS (R3G633C4P2)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = L39943Z8L7;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
