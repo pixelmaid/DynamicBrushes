@@ -35,7 +35,7 @@ extension UIColor {
     }
 }
 
-class RecordingViewController: UIViewController, UIScrollViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+class RecordingViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     //data source
     public static var gestures = [GestureRecording]()
     //selection handling
@@ -43,6 +43,12 @@ class RecordingViewController: UIViewController, UIScrollViewDelegate, UICollect
     public static var recording_end = -1
     public static var currKeyframeOffset = 0
     var firstLoopCompleted = false
+    
+    var isRecordingLoop = false
+    var anyCellsSelected = true
+    var scrolledToCell = 0
+    var scrolledToColor = UIColor.white.cgColor
+    
     
     let divisor:Float = 6.83 //canvas size / divisor = thumbnail size; 1366 / 6.83 = 200
     
@@ -80,15 +86,30 @@ class RecordingViewController: UIViewController, UIScrollViewDelegate, UICollect
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
+    
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        print("^^^^^^^^ end scroll")
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        print("^^^^^ it scrolled ", scrolledToCell)
+        let indexPath = NSIndexPath(item: scrolledToCell, section:0)
+        let cell = self.collectionView?.cellForItem(at: indexPath as IndexPath)
+        print("^^^^^ cell is ", cell)
+        if isRecordingLoop {
+            cell?.layer.borderColor = scrolledToColor
+            print("^^^^ set color ", scrolledToColor)
+        } else {
+            if !anyCellsSelected {
+                cell?.layer.borderColor = UIColor.white.cgColor
+            } else if scrolledToCell >= RecordingViewController.recording_start && scrolledToCell <= RecordingViewController.recording_end {
+                cell?.layer.borderColor = UIColor.green.cgColor
+            }
+        }
+    }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return RecordingViewController.gestures.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        for indexPath in indexPaths {
-            print("called prefetching ^^ ", indexPath)
-        }
     }
 
     func collectionView(_ collectionView: UICollectionView,
@@ -204,7 +225,7 @@ class RecordingViewController: UIViewController, UIScrollViewDelegate, UICollect
 
             let totalFrames:Int = RecordingViewController.recording_end - RecordingViewController.recording_start + 1
             let index = RecordingViewController.currKeyframeOffset % totalFrames + RecordingViewController.recording_start
-            var prev = (index - 1) % totalFrames
+            let prev = (index - 1) % totalFrames
             if prev == -1 {
                 highlightKeyframe(i: RecordingViewController.recording_end, isYellow: false)
             } //IDK WHY THIS HAPPENS cuz mod math should never be -???
@@ -230,26 +251,28 @@ class RecordingViewController: UIViewController, UIScrollViewDelegate, UICollect
         let indexPath = NSIndexPath(item:i, section:0)
         var sp = UICollectionViewScrollPosition.right
         if i == 0 { sp = UICollectionViewScrollPosition.left}
-//        collectionView?.scrollToItem(at: indexPath as IndexPath, at: UICollectionViewScrollPosition.right, animated: false)
-        let layout = collectionView?.layoutAttributesForItem(at: indexPath as IndexPath)
-        let x = layout!.center.x - 500
-        let offset = CGPoint(x: x, y: 0)
-        collectionView?.setContentOffset(offset, animated: false)
+        collectionView?.scrollToItem(at: indexPath as IndexPath, at: UICollectionViewScrollPosition.right, animated: false)
+       
+//        let layout = collectionView?.layoutAttributesForItem(at: indexPath as IndexPath)
+//        let x = layout!.center.x - 500
+//        let offset = CGPoint(x: x, y: 0)
+//        collectionView?.setContentOffset(offset, animated: false)
+        
+        scrolledToCell = i
+        
         
 
             let cell = self.collectionView?.cellForItem(at: indexPath as IndexPath)
-            print("^^ cell is ", cell)
+////            print("^^ cell is ", cell)
             cell?.layer.borderWidth = 4.0
             if isYellow {
+                scrolledToColor = UIColor.orange.cgColor
                 cell?.layer.borderColor = UIColor.orange.cgColor
             } else {
+                scrolledToColor = UIColor.green.cgColor
                 cell?.layer.borderColor = UIColor.green.cgColor
             }
         
-//        currentKeyframeIndexPath = indexPath
-//        isHighlighted = isYellow
-//        collectionView?.selectItem(at: indexPath as IndexPath, animated: false, scrollPosition: sp)
-
     }
 
     
@@ -268,10 +291,12 @@ class RecordingViewController: UIViewController, UIScrollViewDelegate, UICollect
             
             //reset offset
             RecordingViewController.currKeyframeOffset = 0
+            isRecordingLoop = false
         }
     }
     
     func highlightCells() {
+        anyCellsSelected = true
         print("^^ highlighting from", RecordingViewController.recording_start, " to ", RecordingViewController.recording_end)
         for i in stride(from:RecordingViewController.recording_start, to:RecordingViewController.recording_end+1, by:1) {
             let indexPath = NSIndexPath(item:i, section:0)
@@ -279,10 +304,12 @@ class RecordingViewController: UIViewController, UIScrollViewDelegate, UICollect
             cell?.layer.borderWidth = 4.0
             cell?.layer.borderColor = UIColor.green.cgColor
             collectionView?.selectItem(at: indexPath as IndexPath, animated: false, scrollPosition: [])
+            scrolledToCell = i
         }
     }
     
     func resetSelection() {
+        anyCellsSelected = false
         print ("^^ reseting selection which was originally from ", RecordingViewController.recording_start, " to ", RecordingViewController.recording_end+1)
         for i in stride(from:RecordingViewController.recording_start, to:RecordingViewController.recording_end+1, by:1) {
             let indexPath = NSIndexPath(item:i, section:0)
@@ -308,6 +335,7 @@ class RecordingViewController: UIViewController, UIScrollViewDelegate, UICollect
             let start_id = getGestureId(index: RecordingViewController.recording_start)
             let end_id = getGestureId(index: RecordingViewController.recording_end)
             if (StylusManager.liveStatus()) {
+                isRecordingLoop = true
                 StylusManager.setToRecording(idStart: start_id, idEnd: end_id)
                 //erase strokes associated with the recording
                 StylusManager.eraseStrokesForLooping(idStart:start_id, idEnd:end_id)
