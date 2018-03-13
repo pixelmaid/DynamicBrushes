@@ -251,7 +251,7 @@ div.text_entry, div.property{
   padding-right: 5px;
   font-weight: 400;
   position: relative;
-  height: 20px;
+  min-height: 20px;
   padding-top: 2px;
   display: inline-block;
 }
@@ -267,8 +267,8 @@ span.block {
 }
 
 .palette{
- width: 120px;
- min-width: 120px;
+ width: 110px;
+ min-width: 110px;
  float: none;
  display: block;
 
@@ -644,7 +644,7 @@ input[type="button"]{
   right: 0;
   top: 0;
   bottom: 0;
-  width: 224px;
+  width: 250px;
   height: 100%;
   color: #fbfbfb;
 }
@@ -660,9 +660,22 @@ section {
   position: relative;
   height: 350px;
   border-bottom: 1px solid gray;
-
 }
-
+#palette_menu {
+  width: 90px;
+  float: left;
+}
+#selected_palette {
+  width: 160px;
+  float: right;
+}
+.filter-palette {
+  border-radius: 10px;
+  border: 1px;
+  height: 1.7em;
+  padding-left: 10px;
+  margin-left: 15px;
+}
 
 .clear-both {
  clear: both;
@@ -691,15 +704,13 @@ nav ul#behaviorselect{
   overflow-y:scroll;
 }
 ul.list_menu {
-  border-bottom: 1px solid grey;
-  border-top: 1px solid grey;
-  padding-bottom: 10px;
   padding:0;
   margin:0;
+  margin-top: 5px;
 }
 .list_menu li{
   list-style: none;
-  padding: 2px 5px 2px 10px;
+  padding: 6px 5px 6px 10px;
 }
 .list_menu li.selected {
   list-style: none;
@@ -761,8 +772,10 @@ span.refresh{
 }
 
 #selected_palette{
+  width: 160px;
   padding:0;
   text-align: center;
+  margin-top: 0px;
 }
 
 .selectel {

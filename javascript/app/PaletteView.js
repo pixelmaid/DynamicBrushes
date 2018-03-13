@@ -4,7 +4,7 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", 'app/i
 
     function($, jqueryui, Handlebars, paletteTemplate, ID) {
 
-        var datasets_btn, states_btn, generator_btn, brush_properties_btn, sensor_properties_btn, ui_properties_btn, brush_actions_btn, transitions_btn;
+        var live_btn, recordings_btn, datasets_btn, generator_btn;
 
         var PaletteView = class {
 
@@ -14,7 +14,14 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", 'app/i
                 var self = this;
                 self.updateSelectedPalette(model.data[model.selected]);
 
-                states_btn = this.el.find('#states');
+                live_btn = this.el.find('#live_input');
+                recordings_btn = this.el.find('#recordings');
+                datasets_btn = this.el.find('#datasets');
+                generator_btn = this.el.find('#generators');
+                this.btn_list = [live_btn, recordings_btn, datasets_btn, generator_btn];
+
+                /* old buttons
+                // states_btn = this.el.find('#states');
                 generator_btn = this.el.find('#generators');
                 brush_properties_btn = this.el.find('#brush_properties');
                 sensor_properties_btn = this.el.find('#sensor_properties');
@@ -23,7 +30,7 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", 'app/i
                 transitions_btn = this.el.find('#transitions');
                 datasets_btn = this.el.find('#datasets');
                 this.btn_list = [states_btn, generator_btn, datasets_btn, brush_properties_btn, sensor_properties_btn, ui_properties_btn, brush_actions_btn, transitions_btn];
-
+                */
 
                 this.el.droppable({
                     drop: function(event, ui) {
