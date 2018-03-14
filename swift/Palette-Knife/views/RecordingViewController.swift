@@ -93,17 +93,30 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         print("^^^^^ it scrolled ", scrolledToCell)
+        let visibleCells = collectionView?.indexPathsForVisibleItems
+        print("^^^^ visible cells ", visibleCells)
         let indexPath = NSIndexPath(item: scrolledToCell, section:0)
-        let cell = self.collectionView?.cellForItem(at: indexPath as IndexPath)
+        let cell = collectionView?.cellForItem(at: indexPath as IndexPath)
         print("^^^^^ cell is ", cell)
         if isRecordingLoop {
             cell?.layer.borderColor = scrolledToColor
-            print("^^^^ set color ", scrolledToColor)
+//            print("^^^^ set color ", scrolledToColor)
+            
+            let indexPath2 = NSIndexPath(item: scrolledToCell+1, section:0)
+            let cell2 = collectionView?.cellForItem(at: indexPath2 as IndexPath)
+            cell2?.layer.borderColor = UIColor.orange.cgColor
+            print("^^^^^ orange cell is ", cell2)
+
         } else {
-            if !anyCellsSelected {
-                cell?.layer.borderColor = UIColor.white.cgColor
-            } else if scrolledToCell >= RecordingViewController.recording_start && scrolledToCell <= RecordingViewController.recording_end {
-                cell?.layer.borderColor = UIColor.green.cgColor
+            for indexPath in visibleCells! {
+                let cell = collectionView?.cellForItem(at: indexPath as IndexPath)
+                    if !anyCellsSelected {
+                        cell?.layer.borderColor = UIColor.white.cgColor
+                        print("^^^^ set color white")
+                    } else if scrolledToCell >= RecordingViewController.recording_start && scrolledToCell <= RecordingViewController.recording_end {
+                        cell?.layer.borderColor = UIColor.green.cgColor
+                        print("^^^^ set color green")
+                    }
             }
         }
     }
@@ -162,8 +175,10 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
             highlightCells()
             cell.layer.borderWidth = 4.0
             cell.layer.borderColor = UIColor.green.cgColor
-        } else {
-            print ("^^ scrolling to old cell")
+        }
+        
+        if !anyCellsSelected {
+            cell.layer.borderColor = UIColor.white.cgColor
             cell.layer.borderWidth = 0
         }
 
@@ -248,10 +263,16 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     
     func highlightKeyframe(i:Int, isYellow:Bool) {
         print("^^ higlighting" , i)
-        let indexPath = NSIndexPath(item:i, section:0)
         var sp = UICollectionViewScrollPosition.right
-        if i == 0 { sp = UICollectionViewScrollPosition.left}
-        collectionView?.scrollToItem(at: indexPath as IndexPath, at: UICollectionViewScrollPosition.right, animated: false)
+        if i == RecordingViewController.recording_start { sp = UICollectionViewScrollPosition.left}
+
+        let indexPath = NSIndexPath(item:i, section:0)
+        if i < RecordingViewController.gestures.count - 1 {
+            let nextIndexPath = NSIndexPath(item:i+1, section:0)
+            collectionView?.scrollToItem(at: nextIndexPath as IndexPath, at: UICollectionViewScrollPosition.right, animated: false)
+        } else {
+            collectionView?.scrollToItem(at: indexPath as IndexPath, at: sp, animated: false)
+        }
        
 //        let layout = collectionView?.layoutAttributesForItem(at: indexPath as IndexPath)
 //        let x = layout!.center.x - 500
@@ -313,10 +334,10 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         print ("^^ reseting selection which was originally from ", RecordingViewController.recording_start, " to ", RecordingViewController.recording_end+1)
         for i in stride(from:RecordingViewController.recording_start, to:RecordingViewController.recording_end+1, by:1) {
             let indexPath = NSIndexPath(item:i, section:0)
-//            print ("^^ total cells in collectionview ", collectionView?.numberOfItems(inSection: 0))
+            collectionView?.deselectItem(at: indexPath as IndexPath, animated: false)
             let cell = collectionView?.cellForItem(at: indexPath as IndexPath)
             cell?.layer.borderWidth = 0.0
-            collectionView?.deselectItem(at: indexPath as IndexPath, animated: false)
+            cell?.layer.borderColor = UIColor.white.cgColor
         }
         RecordingViewController.recording_start = Int.max
         RecordingViewController.recording_end = -1
