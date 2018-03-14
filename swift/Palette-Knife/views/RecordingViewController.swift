@@ -253,14 +253,11 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
             print ("^^ H index is " , index)
             print ("^^ H prev is " , prev)
 
-            if (prev != -1) {
-                highlightKeyframe(i: prev, isYellow: false)
-            }
-
+            highlightKeyframe(i: prev, isYellow: false)
             highlightKeyframe(i: index, isYellow: true)
 
             RecordingViewController.currKeyframeOffset += 1
-            if RecordingViewController.currKeyframeOffset > RecordingViewController.recording_end {
+            if RecordingViewController.currKeyframeOffset >= totalFrames {
                 RecordingViewController.currKeyframeOffset = 0
             }
 
@@ -305,7 +302,11 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     
     func deselectLastKeyframe(data:String, key:String){
         if data == "DESELECT_LAST" { //recording has finished looping one last time
-            highlightKeyframe(i: RecordingViewController.recording_end, isYellow: false)
+            let totalFrames:Int = RecordingViewController.recording_end - RecordingViewController.recording_start + 1
+            let index = mod(RecordingViewController.currKeyframeOffset, totalFrames) + RecordingViewController.recording_start
+            let prev = mod((index - RecordingViewController.recording_start - 1), totalFrames) + RecordingViewController.recording_start
+
+            highlightKeyframe(i: prev, isYellow: false)
             RecordingViewController.currKeyframeOffset = 0
             isRecordingLoop = false
         }
