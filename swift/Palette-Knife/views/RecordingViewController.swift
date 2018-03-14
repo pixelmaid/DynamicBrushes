@@ -92,12 +92,12 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        print("^^^^^ it scrolled ", scrolledToCell)
+        print("^^^^^ scrolled to ", scrolledToCell)
         let visibleCells = collectionView?.indexPathsForVisibleItems
-        print("^^^^ visible cells ", visibleCells)
+//        print("^^^^ visible cells ", visibleCells)
         let indexPath = NSIndexPath(item: scrolledToCell, section:0)
         let cell = collectionView?.cellForItem(at: indexPath as IndexPath)
-        print("^^^^^ cell is ", cell)
+//        print("^^^^^ scrolled to cell is ", cell)
         if isRecordingLoop {
             cell?.layer.borderColor = scrolledToColor
 //            print("^^^^ set color ", scrolledToColor)
@@ -112,7 +112,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
                 let cell = collectionView?.cellForItem(at: indexPath as IndexPath)
                     if !anyCellsSelected {
                         cell?.layer.borderColor = UIColor.white.cgColor
-                        print("^^^^ set color white")
+//                        print("^^^^ set color white")
                     } else if scrolledToCell >= RecordingViewController.recording_start && scrolledToCell <= RecordingViewController.recording_end {
                         cell?.layer.borderColor = UIColor.green.cgColor
                         print("^^^^ set color green")
@@ -233,17 +233,23 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         resetSelection()
     }
     
+    func mod(_ a: Int, _ n: Int) -> Int {
+        precondition(n > 0, "modulus must be positive")
+        let r = a % n
+        return r >= 0 ? r : r + n
+    }
+    
     func highlightCellForPlayback(data:String, key:String) {
         if data == "ADVANCE_KEYFRAME" {
 //            inHighlightingKeyframes = true
             print ("^^ H start and end offset are " , RecordingViewController.recording_start, RecordingViewController.recording_end, RecordingViewController.currKeyframeOffset)
 
             let totalFrames:Int = RecordingViewController.recording_end - RecordingViewController.recording_start + 1
-            let index = RecordingViewController.currKeyframeOffset % totalFrames + RecordingViewController.recording_start
-            let prev = (index - 1) % totalFrames
-            if prev == -1 {
-                highlightKeyframe(i: RecordingViewController.recording_end, isYellow: false)
-            } //IDK WHY THIS HAPPENS cuz mod math should never be -???
+            let index = mod(RecordingViewController.currKeyframeOffset, totalFrames) + RecordingViewController.recording_start
+            let prev = mod((index - RecordingViewController.recording_start - 1), totalFrames) + RecordingViewController.recording_start
+//            if prev == -1 {
+//                highlightKeyframe(i: RecordingViewController.recording_end, isYellow: false)
+//            } //IDK WHY THIS HAPPENS cuz mod math should never be -???
             print ("^^ H index is " , index)
             print ("^^ H prev is " , prev)
 
@@ -262,9 +268,9 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     }
     
     func highlightKeyframe(i:Int, isYellow:Bool) {
-        print("^^ higlighting" , i)
+        print("^^ higlighting " , i, " is yellow? ", isYellow)
         var sp = UICollectionViewScrollPosition.right
-        if i == RecordingViewController.recording_start { sp = UICollectionViewScrollPosition.left}
+        if i == RecordingViewController.recording_start { sp = UICollectionViewScrollPosition.left }
 
         let indexPath = NSIndexPath(item:i, section:0)
         if i < RecordingViewController.gestures.count - 1 {
@@ -299,18 +305,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     
     func deselectLastKeyframe(data:String, key:String){
         if data == "DESELECT_LAST" { //recording has finished looping one last time
-            let totalFrames:Int = RecordingViewController.recording_end - RecordingViewController.recording_start + 1
-            let index = RecordingViewController.currKeyframeOffset % totalFrames + RecordingViewController.recording_start
-            var prev = (index - 1) % totalFrames
-            if prev == -1 {
-                highlightKeyframe(i: RecordingViewController.recording_end, isYellow: false)
-            } else {
-                 highlightKeyframe(i: prev, isYellow: false)
-            }
-            print("^^ deselecting last w prev" , prev)
-
-            
-            //reset offset
+            highlightKeyframe(i: RecordingViewController.recording_end, isYellow: false)
             RecordingViewController.currKeyframeOffset = 0
             isRecordingLoop = false
         }
