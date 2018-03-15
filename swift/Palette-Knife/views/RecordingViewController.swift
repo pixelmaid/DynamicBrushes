@@ -87,12 +87,8 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         super.didReceiveMemoryWarning()
     }
     
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        print("^^^^^^^^ end scroll")
-    }
-    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        print("^^^^^ scrolled to ", scrolledToCell)
+//        print("^^^^^ scrolled to ", scrolledToCell)
         let visibleCells = collectionView?.indexPathsForVisibleItems
 //        print("^^^^ visible cells ", visibleCells)
         let indexPath = NSIndexPath(item: scrolledToCell, section:0)
@@ -105,7 +101,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
             let indexPath2 = NSIndexPath(item: scrolledToCell+1, section:0)
             let cell2 = collectionView?.cellForItem(at: indexPath2 as IndexPath)
             cell2?.layer.borderColor = UIColor.orange.cgColor
-            print("^^^^^ orange cell is ", cell2)
+//            print("^^^^^ orange cell is ", cell2)
 
         } else {
             for indexPath in visibleCells! {
@@ -115,7 +111,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
 //                        print("^^^^ set color white")
                     } else if scrolledToCell >= RecordingViewController.recording_start && scrolledToCell <= RecordingViewController.recording_end {
                         cell?.layer.borderColor = UIColor.green.cgColor
-                        print("^^^^ set color green")
+//                        print("^^^^ set color green")
                     }
             }
         }
@@ -242,16 +238,14 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     func highlightCellForPlayback(data:String, key:String) {
         if data == "ADVANCE_KEYFRAME" {
 //            inHighlightingKeyframes = true
-            print ("^^ H start and end offset are " , RecordingViewController.recording_start, RecordingViewController.recording_end, RecordingViewController.currKeyframeOffset)
+//            print ("^^ H start and end offset are " , RecordingViewController.recording_start, RecordingViewController.recording_end, RecordingViewController.currKeyframeOffset)
 
             let totalFrames:Int = RecordingViewController.recording_end - RecordingViewController.recording_start + 1
             let index = mod(RecordingViewController.currKeyframeOffset, totalFrames) + RecordingViewController.recording_start
             let prev = mod((index - RecordingViewController.recording_start - 1), totalFrames) + RecordingViewController.recording_start
-//            if prev == -1 {
-//                highlightKeyframe(i: RecordingViewController.recording_end, isYellow: false)
-//            } //IDK WHY THIS HAPPENS cuz mod math should never be -???
-            print ("^^ H index is " , index)
-            print ("^^ H prev is " , prev)
+
+//            print ("^^ H index is " , index)
+//            print ("^^ H prev is " , prev)
 
             highlightKeyframe(i: prev, isYellow: false)
             highlightKeyframe(i: index, isYellow: true)
@@ -327,7 +321,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     
     func resetSelection() {
         anyCellsSelected = false
-        print ("^^ reseting selection which was originally from ", RecordingViewController.recording_start, " to ", RecordingViewController.recording_end+1)
+        print ("^^ reseting selection ")
         for i in stride(from:RecordingViewController.recording_start, to:RecordingViewController.recording_end+1, by:1) {
             let indexPath = NSIndexPath(item:i, section:0)
             collectionView?.deselectItem(at: indexPath as IndexPath, animated: false)
@@ -348,7 +342,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     func loopInitialized() {
         print (RecordingViewController.recording_start, RecordingViewController.recording_end)
         if (RecordingViewController.recording_start >= 0 && RecordingViewController.recording_end >= RecordingViewController.recording_start) {
-            print ("^^ going to loop from ", RecordingViewController.recording_start, " to ", RecordingViewController.recording_end)
+            print ("^^ loop pressed from ", RecordingViewController.recording_start, " to ", RecordingViewController.recording_end)
             let start_id = getGestureId(index: RecordingViewController.recording_start)
             let end_id = getGestureId(index: RecordingViewController.recording_end)
             if (StylusManager.liveStatus()) {
