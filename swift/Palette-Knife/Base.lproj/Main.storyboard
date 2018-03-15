@@ -332,7 +332,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AX5-sg-QJz">
-                                <rect key="frame" x="1326" y="5" width="30" height="30"/>
+                                <rect key="frame" x="1331" y="8" width="24" height="26"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <accessibility key="accessibilityConfiguration" label="Loop">
                                     <accessibilityTraits key="traits" button="YES" image="YES"/>
@@ -366,7 +366,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hvQ-ec-DtD">
-                                <rect key="frame" x="1278" y="8" width="27" height="25"/>
+                                <rect key="frame" x="1271" y="8" width="27" height="25"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <accessibility key="accessibilityConfiguration" label="Loop">
                                     <accessibilityTraits key="traits" button="YES" image="YES"/>
@@ -378,6 +378,7 @@
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
                     <connections>
+                        <outlet property="exportButton" destination="AX5-sg-QJz" id="zb9-gD-ik2"/>
                         <outlet property="loopRecording" destination="hvQ-ec-DtD" id="QjT-jz-RR3"/>
                         <outlet property="playbackSpeed" destination="dWt-v9-eke" id="YWQ-eb-pyV"/>
                         <outlet property="recordImg" destination="auo-VT-Ze4" id="XsN-2g-S2R"/>
@@ -641,7 +642,7 @@
         <image name="layeradd_button.png" width="33" height="33"/>
         <image name="loop_button_off2x.png" width="167" height="154"/>
         <image name="record_on2x.png" width="122" height="122"/>
-        <image name="recording_export_button.png" width="60" height="60"/>
+        <image name="recording_export_button.png" width="64" height="70"/>
         <image name="refresh_button2x.png" width="121" height="101"/>
         <image name="save_button2x.png" width="121" height="120"/>
         <image name="trash_button.png" width="44" height="48"/>

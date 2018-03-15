@@ -14,6 +14,7 @@ class RecordingToolbarVC: UIViewController {
     let playbackSpeeds: [Float] = [0.1, 0.25, 0.5, 0.75, 1, 1.5, 2, 4, 10] //real playback speeds
     let recordImgEventKey = NSUUID().uuidString
 
+    @IBOutlet weak var exportButton: UIButton!
     @IBOutlet weak var loopRecording: UIButton!
     @IBOutlet weak var playbackSpeed: UISlider!
     @IBOutlet weak var speedLabel: UILabel!
@@ -24,6 +25,8 @@ class RecordingToolbarVC: UIViewController {
 
     override func viewDidLoad() {
         loopRecording.addTarget(self, action: #selector(RecordingToolbarVC.loop), for: .touchUpInside)
+        exportButton.addTarget(self, action: #selector(RecordingToolbarVC.showExportDialog), for: .touchUpInside)
+
         _ = StylusManager.visualizationEvent.addHandler(target: self, handler: RecordingToolbarVC.recordImgOn, key: recordImgEventKey)
 
     }
@@ -46,6 +49,7 @@ class RecordingToolbarVC: UIViewController {
 
     }
     
+    
     func loop() {
         if (!isLooping) {
             loopRecording.setImage(UIImage(named: "loop_button_on2x"), for: .normal)
@@ -57,6 +61,34 @@ class RecordingToolbarVC: UIViewController {
             
         }
         loopEvent.raise(data: ("LOOP"));
+    }
+    
+    func showExportDialog() {
+        //Creating UIAlertController and
+        //Setting title and message for the alert dialog
+        let alertController = UIAlertController(title: "Export Recording", message: "Name your recording", preferredStyle: .alert)
+        
+        //the confirm action taking the inputs
+        let confirmAction = UIAlertAction(title: "Confirm", style: .default) { (_) in
+              //getting the input values from user
+            let name = alertController.textFields?[0].text
+            //now actually export it
+        }
+        
+        //the cancel action doing nothing
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in }
+        
+        //adding textfields to our dialog box
+        alertController.addTextField { (textField) in
+            textField.placeholder = "Enter Name"
+        }
+        
+        //adding the action to dialogbox
+        alertController.addAction(confirmAction)
+        alertController.addAction(cancelAction)
+        
+        //finally presenting the dialog box
+        self.present(alertController, animated: true, completion: nil)
     }
     
 
