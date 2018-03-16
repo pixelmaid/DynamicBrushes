@@ -1,0 +1,64 @@
+{
+"signalInstances" : [
+      {
+        "classType" : "generator",
+        "collectionId" :  "864D4F6C",
+        "collectionName" : "function ",
+        "displayName" : "sine wave",
+        "fieldName" : "sine",
+        "id" : "7geqmtfoh",
+        "freq" : 0.032000001519918442,
+        "amp" : 100,
+        "phase" : -1.6000000238418579
+      },
+      {
+        "classType" : "imported",
+        "collectionId" :  "864D4F6C",
+        "collectionName" : "running data",
+        "displayName" : "total distance",
+        "fieldName" : "distance",
+        "id" : "7geqmtfoh",
+      },
+      {
+        "classType" : "live",
+        "collectionId" :  "864D4F6C",
+        "collectionName" : "stylus",
+        "displayName" : "stylus x",
+        "fieldName" : "x",
+        "id" : "7geqmtfoh",
+      },
+      {
+        "classType" : "live",
+        "collectionId" :  "864D4F6C",
+        "collectionName" : "ui",
+        "displayName" : "hue",
+        "fieldName" : "hue",
+        "id" : "7geqmtfoh",
+      },
+      {
+        "classType" : "recording",
+        "collectionId" :  "864D4F6C",
+        "collectionName" : "stylus recording 1",
+        "displayName" : "stylus delta x (1)",
+        "fieldName" : "dx",
+        "id" : "7geqmtfoh",
+      },
+      {
+        "classType" : "brush",
+        "collectionId" :  "864D4F6C",
+        "collectionName" : "brush1",
+        "displayName" : "spawn index",
+        "fieldName" : "index",
+        "id" : "7geqmtfoh",
+      },
+       {
+        "classType" : "drawing",
+        "collectionId" :  "864D4F6C",
+        "collectionName" : "drawing1",
+        "displayName" : "intersection",
+        "fieldName" : "intersection",
+        "id" : "7geqmtfoh",
+      }
+  ]
+  
+}

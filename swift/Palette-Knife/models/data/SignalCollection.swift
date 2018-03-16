@@ -80,11 +80,12 @@ class SignalCollection: Object{
     }
     
     
-    public func initializeSignal(fieldName:String){
-       
+    public func initializeSignal(fieldName:String, displayName:String, settings:JSON)->String{
+        let id = NSUUID().uuidString
         let aClass = NSClassFromString(fieldName) as! Signal.Type;
-        let signal = aClass.init(id: NSUUID().uuidString, fieldName: fieldName, collectionId: self.id);
-        self.initializedSignals[fieldName]![signal.id] = signal;
+        let signal = aClass.init(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+        self.initializedSignals[fieldName]![id] = signal;
+        return id;
     }
     
     public func removeSignal(fieldName:String,id:String){
@@ -117,9 +118,10 @@ class SignalCollection: Object{
         return signal.get(id:nil);
     }
     
+   
+    
     public func getSample(groupId:String,hash:Float)->JSON?{
-      
-        if(self.samples.contains(hash)){
+    if.samples.contains(hash)){
         
             var sample:JSON = [:]
             for (key,value) in self.registeredSignals{

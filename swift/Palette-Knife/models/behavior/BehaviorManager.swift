@@ -15,6 +15,7 @@ enum BehaviorError: Error {
     case mappingDoesNotExist;
     case transitionDoesNotExist;
     case requestDoesNotExist;
+    case collectionDoesNotExist
 }
 
 class BehaviorManager{
@@ -260,13 +261,11 @@ class BehaviorManager{
             return resultJSON;*/
        
         case "signal_initialized":
-            self.parseSignalJSON(data:data);
+          self.parseSignalJSON(data:data);
         break;
             
         case "expression_modified":
             let behaviorId = data["behaviorId"].stringValue;
-            
-            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.(data:data)
             
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseExpressionJSON(data:data)
             
@@ -309,9 +308,43 @@ class BehaviorManager{
     }
     
     
-   static func parseSignalJSON(data:JSON){
-        let type = data["type"].stringValue;
-        switch(type){
+ private func parseSignalJSON(data:JSON) throws{
+        let classType = data["classType"].stringValue;
+        let collectionId = data["collectionId"].stringValue;
+        let fieldName = data["fieldName"].stringValue;
+        let displayName = data["displayName"].stringValue;
+        let settings  = data["settings"];
+
+
+    switch classType{
+        case "generator":
+            let id = BehaviorManager.generatorCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings);
+        break;
+        case "imported":
+            guard let dataCollection = BehaviorManager.datasets[collectionId] else {
+                throw BehaviorError.collectionDoesNotExist;
+            }
+            let id = dataCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings);
+
+        break;
+        case "live":
+        
+        break;
+        case "recording":
+        
+        break;
+        case "brush":
+        
+        break;
+        case "drawing":
+        
+        break;
+        default:
+        break;
+        
+    }
+    
+       /* switch(type){
         case "random":
             self.addRandomGenerator(name: data["generatorId"].stringValue, min: data["min"].floatValue, max: data["max"].floatValue)
             break;
@@ -376,7 +409,7 @@ class BehaviorManager{
         //  return "success";
         default:
             break;
-        }
+        }*/
     }
     
    static func parseDataset(data:JSON){
@@ -385,12 +418,6 @@ class BehaviorManager{
     BehaviorManager.datasets[id] = signalCollection;
     }
     
-    static func resetAllDatasets(){
-        print("resetting all datasets")
-        for (_,value) in BehaviorManager.datasets{
-            value.syncSignalsTo(hash0:);
-        }
-    }
     
     //checks to see if other behaviors reference the target behavior
     func checkDependency(behaviorId:String)->[String:String]{

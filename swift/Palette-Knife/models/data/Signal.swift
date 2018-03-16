@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+import SwiftyJSON
 
 
 class Signal:Observable<Float>{
@@ -18,18 +18,16 @@ class Signal:Observable<Float>{
     internal let fieldName:String!
     internal let displayName:String!
     internal let collectionId:String!;
-    public let groupId:String?
     
     
     var dataSubscribers = [String:Observable<Float>]();
     var id:String
     //    var param = Observable<Float>(1.0);
-    required init(id:String,fieldName:String, displayName:String, collectionId:String, groupId:String?){
+    required init(id:String,fieldName:String, displayName:String, collectionId:String, settings:JSON){
         self.id = id;
         self.fieldName = fieldName;
         self.collectionId = collectionId
-        self.groupId = groupId;
-        
+        self.displayName = displayName;
         super.init(0)
         RequestHandler.registerObservable(observableId: id, observable: self)
     }
@@ -150,11 +148,11 @@ class Sine:Signal{
     var index = Observable<Float>(0);
     
     
-    init(id:String, freq:Float, amp:Float, phase:Float){
-        self.freq = freq;
-        self.phase = phase;
-        self.amp = amp;
-        super.init(id:id,fieldName: "sine",collectionId: "generator");
+    required init(id:String, fieldName:String, displayName:String, collectionId:String, settings:JSON?){
+        self.freq = 0.032;
+        self.phase = -1.60;
+        self.amp = 100;
+        super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, groupId: groupId, settings:settings);
     }
     
     
@@ -211,18 +209,27 @@ class Interval:Signal{
     let inc:Float
     
     
-    init(id:String,inc:Float,times:Int?){
-        self.inc = inc;
-        super.init(id:id, fieldName: "interval", collectionId: "generator");
-        if(times != nil){
-            for i in 1..<times!{
+  
+    
+    required init(id:String, fieldName:String, displayName:String, collectionId:String, settings:JSON){
+        
+       self.inc = settings["inc"].floatValue
+        
+        if (settings["times"] != JSON.null){
+            
+         let times = settings["times"].intValue
+            for i in 1..<times{
                 val.append(Float(i)*self.inc)
             }
         }
-        else{
+        
+        else {
             infinite = true;
         }
+        
+        super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, settings:settings);
     }
+    
     
     func reset(){
         self.index = 0;
@@ -295,7 +302,7 @@ class CircularBuffer:Signal{
 class Sawtooth:Signal{
     var val = [Float]();
     var index = Observable<Float>(0);
-    init(id:String,min:Int,max:Int,start:Float,stop:Float){
+    required init(id:String, fieldName:String, displayName:String, collectionId:String, settings:JSON){
         super.init(id:id,fieldName: "range", collectionId: "generator")
         let increment = (stop-start)/Float(max-min)
         for i in min...max-1{
