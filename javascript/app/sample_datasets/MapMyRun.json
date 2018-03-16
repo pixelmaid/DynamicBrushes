@@ -9,31 +9,31 @@
           "id": "701eaf42",
           "name": "Workout Date",
           "dataTypeName": "date",
-          "item_name": "workout_date",
+          "fieldName": "workout_date",
           "position": 0
         }, {
           "id": "7010c5d6",
           "name": "Activity Type",
           "dataTypeName": "string",
-          "item_name": "activity_type",
+          "fieldName": "activity_type",
           "position": 1
         }, {
           "id": "7010c518",
           "name": "Distance",
           "dataTypeName": "number",
-          "item_name": "distance",
+          "fieldName": "distance",
           "position": 2
         }, {
           "id": "7010c450",
           "name": "Workout Time",
           "dataTypeName": "number",
-          "item_name": "workout_time",
+          "fieldName": "workout_time",
           "position": 3
         }, {
           "id": "7010c392",
           "name": "Average Pace",
           "dataTypeName": "number",
-          "item_name": "average_pace",
+          "fieldName": "average_pace",
           "position": 4
         },
 
@@ -41,7 +41,7 @@
           "id": "7010c2c0",
           "name": "Max max_pace",
           "dataTypeName": "number",
-          "item_name": "max_pace",
+          "fieldName": "max_pace",
           "position": 5
         },
 
@@ -49,19 +49,19 @@
           "id": "7010c18a",
           "name": "Average Speed",
           "dataTypeName": "number",
-          "item_name": "average_speed",
+          "fieldName": "average_speed",
           "position": 6
         }, {
           "id": "7010bcc6",
           "name": "Max Speed",
           "dataTypeName": "number",
-          "item_name": "max_speed",
+          "fieldName": "max_speed",
           "position": 7
         }, {
           "id": "7010bbea",
           "name": "Steps",
           "dataTypeName": "number",
-          "item_name": "steps",
+          "fieldName": "steps",
           "position": 8
         }
       ]

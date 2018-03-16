@@ -4,7 +4,7 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", 'app/i
 
     function($, jqueryui, Handlebars, paletteTemplate, ID) {
 
-        var live_btn, recordings_btn, datasets_btn, generator_btn;
+        var live_btn, recordings_btn, datasets_btn, generator_btn, brushes_btn, drawings_btn;
 
         var PaletteView = class {
 
@@ -18,7 +18,10 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", 'app/i
                 recordings_btn = this.el.find('#recordings');
                 datasets_btn = this.el.find('#datasets');
                 generator_btn = this.el.find('#generators');
-                this.btn_list = [live_btn, recordings_btn, datasets_btn, generator_btn];
+                brushes_btn = this.el.find('#brushes');
+                drawings_btn = this.el.find('#drawings');
+
+                this.btn_list = [live_btn, recordings_btn, datasets_btn, generator_btn, brushes_btn, drawings_btn];
 
                 /* old buttons
                 // states_btn = this.el.find('#states');

@@ -9,11 +9,11 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
         var paletteModel = new PaletteModel();
         var signalModel = new SignalModel();
         var paletteView = new PaletteView(signalModel, "#scripts");
-        var chartViewManager = new ChartViewManager(paletteModel, "#canvas");
+        var chartViewManager = new ChartViewManager(signalModel, "#canvas");
         var saveManager = new SaveManager();
         var saveView = new SaveView(saveManager, "#save-menu");
         var codename;
-        var dataView = new DatasetView(paletteModel.datasetLoader, "#dataset_select");
+        var dataView = new DatasetView(signalModel.datasetLoader, "#dataset_select");
 
         //sets up interface by initializing palette, removing overlay etc.
         var setupInterface = function(){
@@ -221,7 +221,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
 
         chartViewManager.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
         saveManager.addListener("ON_SAVE_EVENT", onStorageEvent);
-        paletteModel.addListener("ON_DATASET_READY",onDataReady);
+        signalModel.addListener("ON_DATASET_READY",onDataReady);
         promptConnect();
 
 
