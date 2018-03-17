@@ -21,16 +21,24 @@ enum BehaviorError: Error {
 class BehaviorManager{
     static var behaviors = [String:BehaviorDefinition]()
     static var datasets = [String:SignalCollection]();
+    static var recordings = [String:SignalCollection]();
     static var generatorCollection = GeneratorCollection();
-    static var stylusCollection = StylusCollection();
+    static var liveInputs = [String:SignalCollection]();
     static var uiCollection = UICollection();
     var canvas:Canvas
     init(canvas:Canvas){
         self.canvas = canvas;
-       
+      
     }
     
-  
+    static func registerLiveInput(collectionId:String,liveInput:SignalCollection){
+        
+        BehaviorManager.liveInputs[collectionId] = liveInput;
+    }
+    
+    static func storeRecording(collectionId:String,recording:SignalCollection){
+        BehaviorManager.recordings[collectionId] = recording;
+    }
     
     static func getBehaviorById(id:String)->BehaviorDefinition?{
         if(BehaviorManager.behaviors[id] != nil){
@@ -74,7 +82,6 @@ class BehaviorManager{
     }
     
     func handleAuthoringRequest(authoring_data:JSON) throws->JSON{
-        BehaviorManager.resetAllDatasets();
 
         let data = authoring_data["data"] as JSON;
         let type = data["type"].stringValue;
@@ -261,7 +268,16 @@ class BehaviorManager{
             return resultJSON;*/
        
         case "signal_initialized":
-          self.parseSignalJSON(data:data);
+            do {
+                let signalData = try self.parseSignalJSON(data:data);
+                resultJSON["data"] = signalData;
+                resultJSON["result"] = "success";
+
+            }
+            catch{
+                resultJSON["result"] = "failure";
+                return resultJSON;
+            }
         break;
             
         case "expression_modified":
@@ -308,31 +324,42 @@ class BehaviorManager{
     }
     
     
- private func parseSignalJSON(data:JSON) throws{
+ private func parseSignalJSON(data:JSON) throws->JSON{
         let classType = data["classType"].stringValue;
         let collectionId = data["collectionId"].stringValue;
         let fieldName = data["fieldName"].stringValue;
         let displayName = data["displayName"].stringValue;
         let settings  = data["settings"];
-
+        let id:String
 
     switch classType{
         case "generator":
-            let id = BehaviorManager.generatorCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings);
+             id = BehaviorManager.generatorCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings);
         break;
         case "imported":
             guard let dataCollection = BehaviorManager.datasets[collectionId] else {
                 throw BehaviorError.collectionDoesNotExist;
             }
-            let id = dataCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings);
+             id = dataCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings);
 
         break;
         case "live":
-        
+            guard let liveCollection = BehaviorManager.liveInputs[collectionId] else {
+                throw BehaviorError.collectionDoesNotExist;
+
+            }
+             id = liveCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings);
+
         break;
         case "recording":
-        
+            guard let recordingCollection = BehaviorManager.recordings[collectionId] else {
+                throw BehaviorError.collectionDoesNotExist;
+                
+            }
+            id = recordingCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings);
+
         break;
+    //TODO: INIT BRUSH SETUP
         case "brush":
         
         break;
@@ -341,6 +368,14 @@ class BehaviorManager{
         break;
         default:
         break;
+        
+        var signalJSON:JSON = [:]
+        signalJSON["id"] = JSON(id);
+        signalJSON["classType"] = JSON(classType)
+        signalJSON["collectionId"] = JSON(collectionId)
+        signalJSON["fieldName"] = JSON(fieldName)
+        
+        return signalJSON;
         
     }
     

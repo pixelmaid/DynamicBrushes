@@ -89,6 +89,7 @@
 		5FBDF1051ED8E6EE00022B07 /* JotUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FBDF1041ED8E6EE00022B07 /* JotUI.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		5FC91D2D1EA00C2F00A19206 /* RequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC91D2C1EA00C2F00A19206 /* RequestHandler.swift */; };
 		5FD6CD121DE0EE0E007D94AA /* sm_pen_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FD6CD111DE0EE0E007D94AA /* sm_pen_blue.png */; };
+		5FDE68EB205C93F0005A49C3 /* Generator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FDE68EA205C93F0005A49C3 /* Generator.swift */; };
 		5FE32F611ECE2EBB00ADC01E /* ToolbarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE32F601ECE2EBB00ADC01E /* ToolbarViewController.swift */; };
 		5FE32F631ECE535100ADC01E /* LayerContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE32F621ECE535100ADC01E /* LayerContainerView.swift */; };
 		5FE32F651ECE638B00ADC01E /* LayerPanelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE32F641ECE638B00ADC01E /* LayerPanelViewController.swift */; };
@@ -263,6 +264,7 @@
 		5FBDF1041ED8E6EE00022B07 /* JotUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JotUI.framework; sourceTree = "<group>"; };
 		5FC91D2C1EA00C2F00A19206 /* RequestHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestHandler.swift; sourceTree = "<group>"; };
 		5FD6CD111DE0EE0E007D94AA /* sm_pen_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sm_pen_blue.png; sourceTree = "<group>"; };
+		5FDE68EA205C93F0005A49C3 /* Generator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Generator.swift; path = data/Generator.swift; sourceTree = "<group>"; };
 		5FE32F601ECE2EBB00ADC01E /* ToolbarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarViewController.swift; sourceTree = "<group>"; };
 		5FE32F621ECE535100ADC01E /* LayerContainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LayerContainerView.swift; sourceTree = "<group>"; };
 		5FE32F641ECE638B00ADC01E /* LayerPanelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LayerPanelViewController.swift; sourceTree = "<group>"; };
@@ -379,6 +381,7 @@
 		5F15BB5E1F8D94A5005E5B08 /* data */ = {
 			isa = PBXGroup;
 			children = (
+				5FDE68EA205C93F0005A49C3 /* Generator.swift */,
 				5F90F5631E9D5BCC006BB9FE /* Signal.swift */,
 				5FFFD796204F5E5D0038A0BA /* SignalCollection.swift */,
 				5F6903351FBBB75900EB3437 /* MapFunctions.swift */,
@@ -1159,6 +1162,7 @@
 				5F90F5551E9D5A41006BB9FE /* Canvas.swift in Sources */,
 				5F5CED301ED1132600A253A0 /* UIInput.swift in Sources */,
 				5F90F5691E9D5BCC006BB9FE /* Expression.swift in Sources */,
+				5FDE68EB205C93F0005A49C3 /* Generator.swift in Sources */,
 				5FB74959202128FE007D9E12 /* StylusManager.swift in Sources */,
 				5F90F5491E9D59D4006BB9FE /* WebTransmitter.swift in Sources */,
 				7267DCC5202A8ECF0093245A /* RecordingFrameCell.swift in Sources */,

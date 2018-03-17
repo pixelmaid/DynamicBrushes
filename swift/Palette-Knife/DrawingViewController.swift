@@ -435,6 +435,8 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
         fileListContainerView.layer.cornerRadius = 8.0
         fileListContainerView.clipsToBounds = true
         fileListContainerView.isHidden = true;
+        
+        BehaviorManager.registerLiveInput(id: "stylus", liveInput: StylusCollection());
     }
     
     override func viewDidAppear(_ animated: Bool) {

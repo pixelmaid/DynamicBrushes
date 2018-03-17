@@ -121,7 +121,7 @@ class SignalCollection: Object{
    
     
     public func getSample(groupId:String,hash:Float)->JSON?{
-    if.samples.contains(hash)){
+    if (samples.contains(hash)){
         
             var sample:JSON = [:]
             for (key,value) in self.registeredSignals{
