@@ -11,6 +11,8 @@ import SwiftKVC
 import SwiftyJSON
 enum SignalError: Error {
     case signalTypeAlreadyRegistered;
+    case protoNotFound;
+    
    
 }
 
@@ -19,7 +21,10 @@ class SignalCollection: Object{
     //list of hashes for all samples
     internal var samples:Set<Float> = [];
     internal var lastSample:Float = 0;
+    //stored instances of available signals
     internal var initializedSignals  = [String:[String:Signal]]();
+    internal var protoSignals = [String:Signal]();
+    //signal types that can be initialized
     internal var registeredSignals = [String:String]();
     public let id:String
     
@@ -30,49 +35,59 @@ class SignalCollection: Object{
     init(data:JSON){
         self.id = data["meta"]["view"]["id"].stringValue;
 
-        self.loadDataFromJSON(data: data);
+        do{
+            try self.loadDataFromJSON(data: data);
+        }
+        catch {
+            
+            
+            print("ERRROR ---------SIGNAL ERROR ON INIT-----------")
+        }
     }
     
     public func syncSignalsToHash(hash:Float){
         
     }
     
-  public  func loadDataFromJSON(data:JSON){
+  public  func loadDataFromJSON(data:JSON) throws{
     
         let allSignalData = data["meta"]["view"]["columns"].arrayValue;
         #if DEBUG
             //print("dataset loaded",columns,data)
         #endif
         let rawData = data["data"].arrayValue;
-        
         for i in 0..<allSignalData.count{
             let fieldName = allSignalData[i]["fieldName"].stringValue;
-           
-            let signal = Signal(id:id,fieldName:fieldName,collectionId:self.id);
-            for j in 0..<rawData.count{
-                let row = rawData[j].arrayValue;
-                let v = row[i].floatValue;
-                signal.addValue(h: Float(j), v: v);
-            }
-            do{
-                try self.registerSignalType(fieldName: fieldName, classType: "Signal");
-            }
-            catch SignalError.signalTypeAlreadyRegistered {
-                print("ERRROR ---------Signal Type already Registered-----------")
-            }
-            catch{
-                
-            }
+            let displayName = allSignalData[i]["displayName"].stringValue;
+            let classType =  allSignalData[i]["classType"].stringValue;
+            let settings = allSignalData[i]["settings"]
+
             
+            do{
+                try self.registerSignalType(fieldName: fieldName, displayName:displayName, settings:settings, classType: classType);
+                guard let  signal = self.protoSignals[fieldName] else {
+                   throw SignalError.protoNotFound
+                }
+                for j in 0..<rawData.count{
+                    let row = rawData[j].arrayValue;
+                    let v = row[i].floatValue;
+                    signal.addValue(h: Float(j), v: v);
+                }
+            }
             
         }
     
     }
     
-    public func registerSignalType(fieldName:String,classType:String) throws{
+    public func registerSignalType(fieldName:String, displayName:String, settings:JSON, classType:String) throws{
         if(self.registeredSignals[fieldName] != nil){
             self.registeredSignals[fieldName] = classType;
             self.initializedSignals[fieldName] = [String:Signal]();
+            do {
+                try _ = self.initializeSignal(fieldName: fieldName, displayName: displayName, settings: settings, isProto: true)
+            }
+
+            
         }
         else{
             throw SignalError.signalTypeAlreadyRegistered;
@@ -80,11 +95,20 @@ class SignalCollection: Object{
     }
     
     
-    public func initializeSignal(fieldName:String, displayName:String, settings:JSON)->String{
+    public func initializeSignal(fieldName:String, displayName:String, settings:JSON, isProto:Bool)throws->String{
         let id = NSUUID().uuidString
         let aClass = NSClassFromString(fieldName) as! Signal.Type;
         let signal = aClass.init(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
-        self.initializedSignals[fieldName]![id] = signal;
+        if(isProto){
+            self.protoSignals[fieldName] = signal;
+        }
+        else{
+            guard let protoData = self.protoSignals[fieldName]?.signalBuffer else{
+                throw SignalError.protoNotFound;
+            }
+            signal.cloneRawData(protoData:protoData)
+            self.initializedSignals[fieldName]![id] = signal;
+        }
         return id;
     }
     
@@ -96,23 +120,23 @@ class SignalCollection: Object{
         }
     }
     
-    public func addSample(fieldName:String,hash:Float,data:JSON){
+    public func addProtoSample(hash:Float,data:JSON){
         self.samples.insert(hash)
         self.lastSample  = hash;
          for (key,value) in data {
-            guard let targetSignals = self.initializedSignals[key] else {
-                print("ERRROR ---------NO SIGNALS FOUND THAT CORRESPOND WITH FIELD NAME-----------")
+            guard let targetProtoSignal = self.protoSignals[key] else {
+                print("ERRROR ---------NO PROTO SIGNAL FOUND THAT CORRESPOND WITH FIELD NAME-----------")
                 return;
                 
             }
-            for (_,signal) in targetSignals{
-                signal.addValue(h: hash, v: value.floatValue)
-            }
+          
+            targetProtoSignal.addValue(h: hash, v: value.floatValue)
+            
         }
     }
     
-    public func getSignalValue(fieldName:String,id:String)->Float?{
-        guard let signal =  self.initializedSignals[fieldName]![id] else{
+    public func getProtoSignalValue(fieldName:String)->Float?{
+        guard let signal =  self.protoSignals[fieldName] else{
             return nil
         }
         return signal.get(id:nil);
@@ -120,12 +144,12 @@ class SignalCollection: Object{
     
    
     
-    public func getSample(groupId:String,hash:Float)->JSON?{
-    if (samples.contains(hash)){
+    public func getProtoSample(hash:Float)->JSON?{
+        if (samples.contains(hash)){
         
-            var sample:JSON = [:]
-            for (key,value) in self.registeredSignals{
-                let signalList =
+        var sample:JSON = [:]
+        for (key,value) in self.protoSignals{
+            
                 value.setHash(h:hash);
                 sample[key] = JSON(value.get(id:nil));
             }
@@ -147,12 +171,12 @@ class GeneratorCollection:SignalCollection{
    override  init(){
         super.init();
         do{
-            try self.registerSignalType(fieldName: "sine", classType: "Sine");
-            try self.registerSignalType(fieldName: "square", classType: "Square");
-            try self.registerSignalType(fieldName: "triangle", classType: "Triangle");
-            try self.registerSignalType(fieldName: "random", classType: "Random");
+           /* try self.registerSignalType(fieldName: "sine", displayName: "sine wave", classType: "Sine");
+            try self.registerSignalType(fieldName: "square", displayName: "square wave", classType: "Square");
+            try self.registerSignalType(fieldName: "triangle", displayName: "triangle wave",classType: "Triangle");
+            try self.registerSignalType(fieldName: "random", displayName: "random", classType: "Random");
             try self.registerSignalType(fieldName: "sawtooth", classType: "Sawtooth");
-            try self.registerSignalType(fieldName: "alternate", classType: "Alternate");
+            try self.registerSignalType(fieldName: "alternate", classType: "Alternate");*/
         }
         catch SignalError.signalTypeAlreadyRegistered{
             print("ERRROR ---------Signal Type already Registered-----------")
@@ -170,8 +194,8 @@ class BrushCollection:SignalCollection{
     override init(){
         super.init();
         do{
-            try self.registerSignalType(fieldName: "spawnIndex", classType: "Index");
-            try self.registerSignalType(fieldName: "siblingCount", classType: "SiblingCount");
+           /* try self.registerSignalType(fieldName: "spawnIndex", classType: "Index");
+            try self.registerSignalType(fieldName: "siblingCount", classType: "SiblingCount");*/
         }
         catch SignalError.signalTypeAlreadyRegistered{
             print("ERRROR ---------Signal Type already Registered-----------")
@@ -188,11 +212,11 @@ class UICollection:SignalCollection{
     override init(){
         super.init();
         do{
-            try self.registerSignalType(fieldName: "hue", classType: "Signal");
+            /*try self.registerSignalType(fieldName: "hue", classType: "Signal");
             try self.registerSignalType(fieldName: "lightness", classType: "Signal");
             try self.registerSignalType(fieldName: "saturation", classType: "Signal");
             try self.registerSignalType(fieldName: "diameter", classType: "Signal");
-            try self.registerSignalType(fieldName: "alpha", classType: "Signal");
+            try self.registerSignalType(fieldName: "alpha", classType: "Signal");*/
 
         }
         catch SignalError.signalTypeAlreadyRegistered{
@@ -209,13 +233,13 @@ class StylusCollection:SignalCollection{
    override init(){
        super.init();
         do{
-            try self.registerSignalType(fieldName: "dx", classType: "Recording");
+          /*  try self.registerSignalType(fieldName: "dx", classType: "Recording");
             try self.registerSignalType(fieldName: "dy", classType: "Recording");
             try self.registerSignalType(fieldName: "x", classType: "Recording");
             try self.registerSignalType(fieldName: "y", classType: "Recording");
             try self.registerSignalType(fieldName: "force", classType: "Recording");
             try self.registerSignalType(fieldName: "angle", classType: "Recording");
-            try self.registerSignalType(fieldName: "stylusEvent", classType: "EventRecording");
+            try self.registerSignalType(fieldName: "stylusEvent", classType: "EventRecording"); */
         }
         catch SignalError.signalTypeAlreadyRegistered{
             print("ERRROR ---------Signal Type already Registered-----------")
@@ -238,13 +262,14 @@ class StylusRecordingCollection:StylusCollection{
     var targetLayer:String
     
     init(id:String,start:Date,targetLayer:String){
-        super.init();
         self.start = start;
         self.targetLayer = targetLayer;
+        super.init();
+
     }
    
-    override func getSample(hash: Float) -> JSON? {
-        var sample = super.getSample(hash: hash);
+    override func getProtoSample(hash: Float) -> JSON? {
+        var sample = super.getProtoSample(hash: hash);
         if(sample != nil){
             sample!["targetLayer"] = JSON(self.targetLayer);
             return sample;
@@ -263,8 +288,8 @@ class StylusRecordingCollection:StylusCollection{
         var hashValue:Float  = 0;
         while(hashValue <= self.lastSample){
             if(self.samples.contains(hashValue)){
-                signals["stylusEvent"]!.setHash(h: hashValue);
-                let sE =  signals["stylusEvent"]!.get(id:nil);
+                protoSignals["stylusEvent"]!.setHash(h: hashValue);
+                let sE =  protoSignals["stylusEvent"]!.get(id:nil);
                 
                 sampleList[hashValue] = sE;
                 print(" recording at:",hashValue,sE);

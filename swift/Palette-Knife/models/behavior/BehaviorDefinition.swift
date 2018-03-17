@@ -16,7 +16,7 @@ class BehaviorDefinition {
     var states = [String:(String,Float,Float)]()
     var expressions = [String:([String:(Any?,[String]?,[String]?)],String)]();
     var conditions = [(String,Any?,[String]?,Any?,[String]?,String)]()
-    var generators = [String:(String,[Any?])]()
+   // var generators = [String:(String,[Any?])]()
     var methods = [String:[(String,String,String,[Any]?)]]()
     var transitions = [String:(String,Emitter?,Bool,String?,String,String,String?,String)]()
     var behaviorMapper = BehaviorMapper()
@@ -24,7 +24,7 @@ class BehaviorDefinition {
     
     var storedExpressions = [String:[String:Expression]]()
     var storedConditions =  [String:[String:Condition]]()
-    var storedGenerators = [String:[String:Signal]]()
+    //var storedGenerators = [String:[String:Signal]]()
 
     var name:String;
     var id: String;
@@ -53,11 +53,8 @@ class BehaviorDefinition {
         let transitionJSON = json["transitions"].arrayValue;
         let mappingJSON = json["mappings"].arrayValue;
         let methodJSON = json["methods"].arrayValue;
-        let generatorJSON = json["generators"].arrayValue;
         let conditionJSON = json["conditions"].arrayValue;
-        for i in 0..<generatorJSON.count{
-            self.parseSignalJSON(data:generatorJSON[i])
-        }
+       
         for i in 0..<conditionJSON.count{
             self.parseConditionJSON(data:conditionJSON[i])
         }
@@ -156,8 +153,7 @@ class BehaviorDefinition {
         if(expressionPropertyList != JSON.null){
             let dataExpressionDictionary = expressionPropertyList.dictionaryValue;
             for (key,value) in dataExpressionDictionary{
-                let observableID:String
-                var dataEmitterValue = (value.arrayValue)[0].stringValue;
+                let dataEmitterValue = (value.arrayValue)[0].stringValue;
                 let emitter:Any?
                 #if DEBUG
                     print("data emitter value",dataEmitterValue);
@@ -176,7 +172,7 @@ class BehaviorDefinition {
                     let dataset_id = String(dataEmitterValue.split(separator: "_")[1]);
                     emitter = BehaviorManager.datasets[dataset_id];
                      #if DEBUG
-                    print("found dataset emitter", emitter)
+                        print("found dataset emitter", emitter as! String)
                     #endif
                     }
                     else{

@@ -32,6 +32,10 @@ class Signal:Observable<Float>{
         RequestHandler.registerObservable(observableId: id, observable: self)
     }
     
+    func cloneRawData(protoData:[Float:Float]){
+        self.signalBuffer = protoData
+    }
+    
     override func get(id:String?) -> Float {
         
         let v:Float;

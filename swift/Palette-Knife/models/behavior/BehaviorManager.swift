@@ -269,7 +269,10 @@ class BehaviorManager{
        
         case "signal_initialized":
             do {
-                let signalData = try self.parseSignalJSON(data:data);
+                guard let signalData = try self.parseSignalJSON(data:data) else{
+                    resultJSON["result"] = "failure";
+                    return resultJSON;
+                }
                 resultJSON["data"] = signalData;
                 resultJSON["result"] = "success";
 
@@ -324,7 +327,7 @@ class BehaviorManager{
     }
     
     
- private func parseSignalJSON(data:JSON) throws->JSON{
+ private func parseSignalJSON(data:JSON) throws->JSON?{
         let classType = data["classType"].stringValue;
         let collectionId = data["collectionId"].stringValue;
         let fieldName = data["fieldName"].stringValue;
@@ -332,15 +335,16 @@ class BehaviorManager{
         let settings  = data["settings"];
         let id:String
 
+    do {
     switch classType{
         case "generator":
-             id = BehaviorManager.generatorCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings);
+           try  id = BehaviorManager.generatorCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,isProto: false);
         break;
         case "imported":
             guard let dataCollection = BehaviorManager.datasets[collectionId] else {
                 throw BehaviorError.collectionDoesNotExist;
             }
-             id = dataCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings);
+            try id = dataCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings, isProto: false);
 
         break;
         case "live":
@@ -348,7 +352,7 @@ class BehaviorManager{
                 throw BehaviorError.collectionDoesNotExist;
 
             }
-             id = liveCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings);
+            try id = liveCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings, isProto: false);
 
         break;
         case "recording":
@@ -356,18 +360,19 @@ class BehaviorManager{
                 throw BehaviorError.collectionDoesNotExist;
                 
             }
-            id = recordingCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings);
+           try  id = recordingCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings, isProto: false);
 
         break;
     //TODO: INIT BRUSH SETUP
-        case "brush":
+        //case "brush":
         
-        break;
-        case "drawing":
+        //break;
+        //case "drawing":
         
-        break;
+        //break;
         default:
-        break;
+            return nil;
+        }
         
         var signalJSON:JSON = [:]
         signalJSON["id"] = JSON(id);
@@ -376,76 +381,16 @@ class BehaviorManager{
         signalJSON["fieldName"] = JSON(fieldName)
         
         return signalJSON;
-        
     }
-    
-       /* switch(type){
-        case "random":
-            self.addRandomGenerator(name: data["generatorId"].stringValue, min: data["min"].floatValue, max: data["max"].floatValue)
-            break;
-        case "alternate":
-            let jsonValues =  data["values"].arrayValue;
-            var values = [Float]();
-            for i in jsonValues{
-                values.append(i.floatValue);
-            }
-            self.addAlternate(name: data["generatorId"].stringValue, values: values)
-            break;
+        catch {
+            #if DEBUG
+                print("error thrown on init signal")
+            #endif
             
-            
-        case "range":
-            
-            self.addRange(name: data["generatorId"].stringValue, min: data["min"].intValue, max: data["max"].intValue, start: data["start"].floatValue, stop: data["stop"].floatValue)
-            break;
-            
-        case "sine":
-            self.addSine(name: data["generatorId"].stringValue, freq: data["freq"].floatValue, amp: data["amp"].floatValue, phase: data["phase"].floatValue);
-            
-            break;
-            
-        case "square":
-            self.addSquare(name: data["generatorId"].stringValue, min: data["min"].floatValue, max: data["max"].floatValue, freq: data["freq"].floatValue);
-            
-            break;
-            
-        case "triangle":
-            self.addTriangle(name: data["generatorId"].stringValue, min: data["min"].floatValue, max: data["max"].floatValue, freq: data["freq"].floatValue);
-            break;
-            
-            
-        case "ease":
-            self.addEaseGenerator(name: data["generatorId"].stringValue, a: data["a"].floatValue, b: data["b"].floatValue, k: data["k"].floatValue);
-            
-            break;
-        case "interval":
-            var  times:Int? = nil
-            if (data["times"] != JSON.null){
-                times = data["times"].intValue
-            }
-            self.addInterval(name: data["generatorId"].stringValue, inc: data["inc"].floatValue, times:times );
-            
-            break;
-            
-        case "index":
-            self.addIndex(name: data["generatorId"].stringValue);
-            
-            break;
-            
-        case "siblingcount":
-            self.addSiblingCount(name: data["generatorId"].stringValue);
-            
-            break;
-            
-            // case "random_walk":
-            
-            //return "success"
-            
-            
-        //  return "success";
-        default:
-            break;
-        }*/
+        }
+        return nil;
     }
+
     
    static func parseDataset(data:JSON){
     let id = data["id"].stringValue;
