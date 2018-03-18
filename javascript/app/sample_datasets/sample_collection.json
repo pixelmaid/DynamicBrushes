@@ -1,0 +1,47 @@
+{
+  "collections": [{
+      "classType": "imported",
+      "collectionId": "864D4F6C",
+      "collectionName": "running data",
+      "signals": [{
+          "displayName": "distance",
+          "fieldName": "distance"
+        },
+        {
+          "displayName": "workout_date",
+          "fieldName": "workoutdate"
+        },
+        {
+          "displayName": "workout time",
+          "fieldName": "workouttime"
+        }, {
+          "displayName": "calories burned",
+          "fieldName": "calories"
+        }
+      ]
+
+    },
+    {
+      "classType": "recording",
+      "collectionId": "8643426C",
+      "collectionName": "stylus recording 1",
+      "signals": [{
+          "displayName": "stylus x",
+          "fieldName": "x"
+        },
+        {
+          "displayName": "stylus y",
+          "fieldName": "y"
+        },
+        {
+          "displayName": "stylus force",
+          "fieldName": "force"
+        }, {
+          "displayName": "stylus angle",
+          "fieldName": "angle"
+        }
+      ]
+
+    }
+  ]
+}
