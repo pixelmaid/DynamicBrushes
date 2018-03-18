@@ -274,6 +274,27 @@ span.block {
 
 }
 
+ul.collapsibleList {
+  list-style-image : url('images/button-open.png');
+  cursor           : pointer;
+  padding: 0;
+}
+
+.data-label {
+  float: left;
+  padding-left: 15px;
+}
+
+ul.collapsibleListOpen{
+  list-style-image : url('images/button-open.png');
+  cursor           : pointer;
+}
+
+ul.collapsibleListClosed{
+  list-style-image : url('images/button-closed.png');
+  cursor           : pointer;
+}
+
 .block-draggable{
   position: absolute;
 
@@ -775,7 +796,6 @@ span.refresh{
   width: 160px;
   padding:0;
   text-align: center;
-  margin-top: 0px;
 }
 
 .selectel {
@@ -822,7 +842,9 @@ span.refresh{
 .generator{
   background-color: #4a89eb;
 }
-
+.recording {
+    background-color: #a8233c;
+}
 .dataset {
     background-color: rgb(235, 104, 75);
 }
