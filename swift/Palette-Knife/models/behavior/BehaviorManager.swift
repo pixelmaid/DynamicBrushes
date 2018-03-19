@@ -22,8 +22,9 @@ class BehaviorManager{
     static var behaviors = [String:BehaviorDefinition]()
     static var datasets = [String:SignalCollection]();
     static var recordings = [String:SignalCollection]();
-    static var generatorCollection = GeneratorCollection();
+    static var generators = [String:GeneratorCollection]();
     static var liveInputs = [String:SignalCollection]();
+    static var signalCollections = [datasets,recordings,generators,liveInputs];
     static var uiCollection = UICollection();
     var canvas:Canvas
     init(canvas:Canvas){
@@ -338,7 +339,7 @@ class BehaviorManager{
     do {
     switch classType{
         case "generator":
-           try  id = BehaviorManager.generatorCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,isProto: false);
+            try  id = BehaviorManager.generators["default"]!.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,isProto: false);
         break;
         case "imported":
             guard let dataCollection = BehaviorManager.datasets[collectionId] else {
@@ -439,8 +440,25 @@ class BehaviorManager{
         
     }
     
-    public func getSignalForId(id:id) {
-        for each 
+    public static func getSignal(id:String)->Signal? {
+        for collectionList in BehaviorManager.signalCollections{
+            for(_,collection) in collectionList{
+                let signal = collection.getInitializedSignal(id:id);
+                if( signal != nil){
+                    return signal;
+                }
+            }
+        }
+        return nil;
+    }
+    
+    public static func getCollectionName(id:String)->String?{
+        for collectionList in BehaviorManager.signalCollections{
+            if (collectionList[id] != nil){
+                return collectionList[id]?.name;
+            }
+        }
+        return nil;
     }
     
     func defaultSetup(name:String) throws->BehaviorDefinition {

@@ -27,6 +27,7 @@ class SignalCollection: Object{
     //signal types that can be initialized
     internal var registeredSignals = [String:String]();
     public let id:String
+    public var name:String?
     
     init(){
         self.id = NSUUID().uuidString;
@@ -111,6 +112,15 @@ class SignalCollection: Object{
             self.initializedSignals[fieldName]![id] = signal;
         }
         return id;
+    }
+    
+    public func getInitializedSignal(id:String)->Signal?{
+        for(_,signalList) in self.initializedSignals{
+            if signalList[id] != nil{
+                return signalList[id];
+            }
+        }
+        return nil;
     }
     
     public func removeSignal(fieldName:String,id:String){
@@ -226,6 +236,8 @@ class UICollection:SignalCollection{
         catch {
             
         }
+        self.name = "stylus";
+
     }
 }
 
@@ -249,7 +261,7 @@ class StylusCollection:SignalCollection{
             
         }
         
-        
+    self.name = "stylus";
     }
 }
 
@@ -266,6 +278,8 @@ class StylusRecordingCollection:StylusCollection{
         self.start = start;
         self.targetLayer = targetLayer;
         super.init();
+        self.name = "stylus_recording";
+
 
     }
    

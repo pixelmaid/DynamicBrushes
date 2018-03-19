@@ -84,7 +84,13 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
             }
 
             getPropertyList() {
-                return this.references;
+                var propList = [];
+                for (var key in this.references){
+                 if(this.references.hasOwnProperty(key)){
+                        propList.append(key);
+                    }
+                }
+                return propList;
             }
 
             containsActive(){

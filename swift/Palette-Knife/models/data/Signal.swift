@@ -32,6 +32,7 @@ class Signal:Observable<Float>{
         RequestHandler.registerObservable(observableId: id, observable: self)
     }
     
+ 
     func cloneRawData(protoData:[Float:Float]){
         self.signalBuffer = protoData
     }
@@ -78,6 +79,11 @@ class Signal:Observable<Float>{
     func clearSignal(){
         signalBuffer.removeAll();
     }
+    
+    public func getCollectionName()->String?{
+        return BehaviorManager.getCollectionName(id:self.collectionId);
+    }
+    
 }
 
 
