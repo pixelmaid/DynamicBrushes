@@ -1,10 +1,9 @@
 //PaletteView.js
 'use strict';
-define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/id", "CollapsibleLists"],
+define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/id" ,'lib/CollapsibleLists.js'],
 
-    function($, jqueryui, Handlebars, paletteTemplate, ID, CollapsibleLists) {
+    function($, jqueryui, Handlebars, paletteTemplate, ID, CollabsibleLists) {
 
-        console.log("CollapsibleLists is", CollapsibleLists);
 
         var live_btn, recordings_btn, datasets_btn, generator_btn, brushes_btn, drawings_btn;
 
@@ -72,7 +71,9 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
             updateSelectedPalette(data) {
                 var html = paletteTemplate(data);
                 this.el.find('#selected_palette').html(html);
-                CollapsibleLists.apply(true);
+                console.log("CollapsibleLists is", CollapsibleLists);
+
+               CollapsibleLists.apply(true);
                 this.el.find(".palette").mousedown(function(event) {
                     if (!$(event.target).hasClass("tooltiptext")) {
                         var clone = $("<div id=" + $(event.target).attr('id') + "></div>");

@@ -17,7 +17,7 @@ define(["jquery", "app/id", "app/Emitter"],
 					case "alternate":
 					data.values = [1,100];
 					break;
-					case "range":
+					case "sawtooth":
 					data.min = 1;
 					data.max = 100;
 					data.start = 1;
