@@ -418,67 +418,6 @@ class BehaviorDefinition {
         json_obj["active_status"] = JSON(self.active_status);
         json_obj["auto_spawn_num"] = JSON(self.auto_spawn_num);
         
-        var generatorArray = [JSON]();
-        for (key,data) in generators {
-            var generatorJSON:JSON = [:]
-            let type = data.0;
-            generatorJSON["generator_type"] = JSON(type);
-            generatorJSON["generatorId"] = JSON(key)
-            switch(type){
-            case "random":
-                generatorJSON["min"] = JSON(data.1[0]!)
-                generatorJSON["max"] = JSON(data.1[1]!)
-                break;
-            case "alternate":
-                generatorJSON["values"] = JSON(data.1[0]!)
-                break;
-            case "range":
-                generatorJSON["min"] = JSON(data.1[0]!)
-                generatorJSON["max"] = JSON(data.1[1]!)
-                generatorJSON["start"] = JSON(data.1[2]!)
-                generatorJSON["stop"] = JSON(data.1[3]!)
-                break;
-            case "sine":
-                generatorJSON["freq"] = JSON(data.1[0]!)
-                generatorJSON["amp"] = JSON(data.1[1]!)
-                generatorJSON["phase"] = JSON(data.1[2]!)
-                break;
-            case "triangle":
-                generatorJSON["min"] = JSON(data.1[0]!)
-                generatorJSON["max"] = JSON(data.1[1]!)
-                generatorJSON["freq"] = JSON(data.1[2]!)
-                break;
-            case "square":
-                generatorJSON["min"] = JSON(data.1[0]!)
-                generatorJSON["max"] = JSON(data.1[1]!)
-                generatorJSON["freq"] = JSON(data.1[2]!)
-                break;
-            case "ease":
-                generatorJSON["a"] = JSON(data.1[0]!)
-                generatorJSON["b"] = JSON(data.1[1]!)
-                generatorJSON["k"] = JSON(data.1[2]!)
-                break;
-            case "interval":
-                generatorJSON["inc"] = JSON(data.1[0]!)
-                if(data.1[1] != nil){
-                    generatorJSON["times"] = JSON(data.1[1]!)
-                }
-                break;
-
-                // case "random_walk":
-                
-                //return "success"
-                
-                
-            //  return "success";
-            default:
-                break;
-                
-            }
-            generatorArray.append(generatorJSON);
-        }
-        
-        
         var conditionArray = [JSON]();
         for i in 0..<conditions.count {
             let data = conditions[i];
@@ -695,7 +634,6 @@ class BehaviorDefinition {
         json_obj["mappings"] = JSON(mappingsArray);
         json_obj["methods"] = JSON(methodArray);
         json_obj["conditions"] = JSON(conditionArray);
-        json_obj["generators"] = JSON(generatorArray);
 
         return json_obj;
     }
@@ -718,55 +656,6 @@ class BehaviorDefinition {
         
         conditions.append((name,reference,referenceNames,relative,relativeNames,relational))
         
-    }
-    
-    func addInterval(name:String,inc:Float,times:Int?){
-        generators[name] = ("interval",[inc,times]);
-    }
-    
-    func addIncrement(name:String,inc:Observable<Float>,start:Observable<Float>){
-        generators[name] = ("increment",[inc,start]);
-    }
-    
-    func addRange(name:String,min:Int,max:Int,start:Float,stop:Float){
-        generators[name] = ("range",[min,max,start,stop]);
-    }
-    
-    func addSine(name:String,freq:Float,amp:Float,phase:Float){
-        generators[name] = ("sine",[freq,amp,phase]);
-    }
-    
-    func addTriangle(name:String,min:Float,max:Float,freq:Float){
-        generators[name] = ("triangle",[min,max,freq]);
-    }
-
-    
-    func addSquare(name:String,min:Float,max:Float,freq:Float){
-        generators[name] = ("square",[min,max,freq]);
-    }
-    
-    
-    func addIndex(name:String){
-        generators[name] = ("index",[]);
-    }
-    
-    func addSiblingCount(name:String){
-        generators[name] = ("siblingcount",[]);
-    }
-    
-    
-    func addRandomGenerator(name:String,min:Float,max:Float){
-        generators[name] = ("random",[min,max]);
-    }
-    
-    func addEaseGenerator(name:String,a:Float,b:Float,k:Float){
-        
-        generators[name] = ("ease",[a,b,k]);
-    }
-    
-    
-    func addAlternate(name:String,values:[Float]){
-        generators[name] = ("alternate",[values]);
     }
     
     func addState(stateId:String, stateName:String, stateX:Float, stateY:Float){
@@ -942,91 +831,13 @@ class BehaviorDefinition {
         expressions[id]=(emitterOperandList,expressionText);
     }
     
-    
-    
-    //TODO: add in cases for other generators
-    func generateGenerator(name:String, data:(String,[Any?]),targetBrush:Brush){
-        let id = targetBrush.id;
-        switch(data.0){
-        case "interval":
-            let interval = Interval( id:name, inc:data.1[0] as! Float,times:data.1[1] as? Int)
-            storedGenerators[id]![name] = interval;
-            break;
-        case "range":
-            let range = Sawtooth(id:name, min:data.1[0] as! Int, max:data.1[1] as! Int, start: data.1[2] as! Float, stop:data.1[3] as! Float)
-           storedGenerators[id]![name] = range;
-        case "sine":
-            let sine = Sine(id:name, freq: data.1[0] as! Float, amp: data.1[1] as! Float, phase: data.1[2] as! Float);
-            storedGenerators[id]![name] = sine;
-        case "square":
-            let square = Square(id:name, min: data.1[0] as! Float, max: data.1[1] as! Float, freq: data.1[2] as! Float);
-            storedGenerators[id]![name] = square;
-
-        case "triangle":
-            let triangle = Triangle(id:name, min: data.1[0] as! Float, max: data.1[1] as! Float, freq: data.1[2] as! Float);
-            storedGenerators[id]![name] = triangle;
-
-        case "random":
-            let random = Random(id:name, start:data.1[0] as! Float, end:data.1[1] as! Float)
-            storedGenerators[id]![name] = random;
-        case "ease":
-            let ease = Ease(id:name, a: data.1[0] as! Float, b:  data.1[1] as! Float, k:  data.1[2] as! Float)
-            storedGenerators[id]![name] = ease;
-            
-            break;
-        case "alternate":
-            let alternate = Alternate(id:name, values:data.1[0] as! [Float])
-            storedGenerators[id]![name] = alternate;
-        case "index":
-            let index = Index(id:name, val:targetBrush.index);
-            storedGenerators[id]![name] = index;
-        case "siblingcount":
-            let siblingCount = SiblingCount(id:name, val:targetBrush.siblingcount);
-            storedGenerators[id]![name] = siblingCount;
- 
-        default:
-            break;
+    func generateSingleOperand(id:String)->Signal?{
+        guard let signal = BehaviorManager.getSignalForId(id:id) else{
+            return nil
         }
-        RequestHandler.registerObservable(observableId: name, observable: storedGenerators[id]![name]!);
-    }
-    
-    func generateSingleOperand(targetBrush:Brush, emitter:Any?,propList:[String]?)->Observable<Float>{
-        let id = targetBrush.id;
-
-        var operand:Observable<Float>
-       
-        if(propList != nil){
-            if(storedGenerators[id]![propList![0]]) != nil{
-                operand = storedGenerators[id]![propList![0]]!;
-            }
-            else if(storedExpressions[id]![propList![0]] != nil){
-                operand = storedExpressions[id]![propList![0]]!;
-                
-            }
-            else if(storedConditions[id]![propList![0]] != nil){
-                operand = storedConditions[id]![propList![0]]!;
-                
-            }
-            else{
-                if let table = emitter as? Table{
-                     operand = table.columns[propList![0]]! as Observable<Float>
-                }
-                else{
-                operand = (emitter as! Object)[propList![0]]! as! Observable<Float>
-                }
-            }
-            
-            if(propList!.count > 1){
-                
-                for i in 1..<propList!.count{
-                    operand = operand[propList![i]] as! Observable<Float>
-                }
-            }
-        }
-        else{
-            operand = emitter as! Observable<Float>
-        }
-        return operand;
+        
+        return signal;
+        
     }
     
     func generateOperands(targetBrush:Brush,data:(Any?,[String]?,Any?,[String]?,String))->(Observable<Float>,Observable<Float>){
@@ -1141,7 +952,6 @@ class BehaviorDefinition {
             #if DEBUG
                 print("registering observable target with id:",observableId);
             #endif
-            
             let operand = self.generateSingleOperand(targetBrush: targetBrush, emitter: emitter, propList: propList)
             operands[key] = operand;
             RequestHandler.registerObservableTarget(observableId: observableId, behaviorId: self.id, target: key)

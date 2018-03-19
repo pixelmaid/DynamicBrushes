@@ -439,6 +439,10 @@ class BehaviorManager{
         
     }
     
+    public func getSignalForId(id:id) {
+        for each 
+    }
+    
     func defaultSetup(name:String) throws->BehaviorDefinition {
         let b = BehaviorDefinition(id:NSUUID().uuidString,name: name)
         //TODO: add check for if name is a duplicate

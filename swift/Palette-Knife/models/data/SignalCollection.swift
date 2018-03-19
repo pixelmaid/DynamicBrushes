@@ -107,6 +107,7 @@ class SignalCollection: Object{
                 throw SignalError.protoNotFound;
             }
             signal.cloneRawData(protoData:protoData)
+            RequestHandler.registerObservable(observableId: id, observable: signal);
             self.initializedSignals[fieldName]![id] = signal;
         }
         return id;
