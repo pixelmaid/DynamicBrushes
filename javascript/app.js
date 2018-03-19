@@ -22,6 +22,7 @@ requirejs.config({
 		'editableselect': 'editableselect',	
 		'contextmenu': 'jquery.contextMenu',
 		'aws-sdk-js':'aws-sdk-js/dist/aws-sdk.min',
+		'CollapsibleLists': 'CollapsibleLists',
 		app: '../app'
 	},
 
