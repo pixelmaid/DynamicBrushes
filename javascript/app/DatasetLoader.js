@@ -26,7 +26,7 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 
 						var item_class = "block recording palette"
 						if (classType === "imported") {
-							"block dataset palette"
+							item_class = "block dataset palette"
 						}
 						var items = [];
 						items.push({
@@ -56,6 +56,7 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 			}
 
 			loadDataset(filename){
+				console.log("load dataset called ");
 				var self = this;
 				$.getJSON("app/sample_datasets/"+filename, function(data) {
 

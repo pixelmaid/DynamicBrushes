@@ -271,28 +271,31 @@ span.block {
  min-width: 110px;
  float: none;
  display: block;
-
 }
 
 ul.collapsibleList {
-  list-style-image : url('images/button-open.png');
-  cursor           : pointer;
+  cursor: pointer;
   padding: 0;
+  margin: 7px 0px 6px 0px;
 }
+
+ul.data-block { padding: 0; }
 
 .data-label {
   float: left;
-  padding-left: 15px;
+  padding-left: 25px;
 }
 
-ul.collapsibleListOpen{
-  list-style-image : url('images/button-open.png');
+li.collapsibleListOpen{
+  background: url('images/button-closed.png') no-repeat 7px 6px;
+  padding: 3px 0px 3px 0px;
   cursor           : pointer;
 }
 
-ul.collapsibleListClosed{
-  list-style-image : url('images/button-closed.png');
-  cursor           : pointer;
+li.collapsibleListClosed{
+  background: url('images/button-open.png') no-repeat 7px 6px;
+  padding: 3px 0px 3px 0px;
+  cursor: pointer;
 }
 
 .block-draggable{
@@ -689,6 +692,7 @@ section {
 #selected_palette {
   width: 160px;
   float: right;
+  margin: 0;
 }
 .filter-palette {
   border-radius: 10px;

@@ -21,6 +21,7 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
                 generator_btn = this.el.find('#generators');
                 brushes_btn = this.el.find('#brushes');
                 drawings_btn = this.el.find('#drawings');
+                
 
                 this.btn_list = [live_btn, recordings_btn, datasets_btn, generator_btn, brushes_btn, drawings_btn];
 
@@ -71,7 +72,7 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
             updateSelectedPalette(data) {
                 var html = paletteTemplate(data);
                 this.el.find('#selected_palette').html(html);
-                console.log("CollapsibleLists is", CollapsibleLists);
+                // console.log("CollapsibleLists is", CollapsibleLists);
 
                CollapsibleLists.apply(true);
                 this.el.find(".palette").mousedown(function(event) {

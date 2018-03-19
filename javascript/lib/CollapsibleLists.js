@@ -1,2 +1,116 @@
-//code.iamkate.com
-var CollapsibleLists=function(){function e(b,c){[].forEach.call(b.getElementsByTagName("li"),function(a){c&&b!==a.parentNode||(a.style.userSelect="none",a.style.MozUserSelect="none",a.style.msUserSelect="none",a.style.WebkitUserSelect="none",a.addEventListener("click",g.bind(null,a)),f(a))})}function g(b,c){for(var a=c.target;"LI"!==a.nodeName;)a=a.parentNode;a===b&&f(b)}function f(b){var c=b.classList.contains("collapsibleListClosed"),a=b.getElementsByTagName("ul");[].forEach.call(a,function(a){for(var d=a;"LI"!==d.nodeName;)d=d.parentNode;d===b&&(a.style.display=c?"block":"none")});b.classList.remove("collapsibleListOpen");b.classList.remove("collapsibleListClosed");0<a.length&&b.classList.add("collapsibleList"+(c?"Open":"Closed"))}return{apply:function(b){[].forEach.call(document.getElementsByTagName("ul"),function(c){c.classList.contains("collapsibleList")&&(e(c,!0),b||[].forEach.call(c.getElementsByTagName("ul"),function(a){a.classList.add("collapsibleList")}))})},applyTo:e}}();
+/*
+
+CollapsibleLists.js
+
+An object allowing lists to dynamically expand and collapse
+
+Created by Kate Morley - http://code.iamkate.com/ - and released under the terms
+of the CC0 1.0 Universal legal code:
+
+http://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+*/
+
+const CollapsibleLists = (function(){
+
+  // Makes all lists with the class 'collapsibleList' collapsible. The
+  // parameter is:
+  //
+  // doNotRecurse - true if sub-lists should not be made collapsible
+  function apply(doNotRecurse){
+
+    [].forEach.call(document.getElementsByTagName('ul'), node => {
+
+      if (node.classList.contains('collapsibleList')){
+
+        applyTo(node, true);
+
+        if (!doNotRecurse){
+
+          [].forEach.call(node.getElementsByTagName('ul'), subnode => {
+            subnode.classList.add('collapsibleList')
+          });
+
+        }
+
+      }
+
+    })
+
+  }
+
+  // Makes the specified list collapsible. The parameters are:
+  //
+  // node         - the list element
+  // doNotRecurse - true if sub-lists should not be made collapsible
+  function applyTo(node, doNotRecurse){
+
+    [].forEach.call(node.getElementsByTagName('li'), li => {
+
+      if (!doNotRecurse || node === li.parentNode){
+
+        li.style.userSelect       = 'none';
+        li.style.MozUserSelect    = 'none';
+        li.style.msUserSelect     = 'none';
+        li.style.WebkitUserSelect = 'none';
+
+        li.addEventListener('click', handleClick.bind(null, li));
+
+        toggle(li);
+
+      }
+
+    });
+
+  }
+
+  // Handles a click. The parameter is:
+  //
+  // node - the node for which clicks are being handled
+  function handleClick(node, e){
+
+    let li = e.target;
+    while (li.nodeName !== 'LI'){
+      li = li.parentNode;
+    }
+
+    if (li === node){
+      toggle(node);
+    }
+
+  }
+
+  // Opens or closes the unordered list elements directly within the
+  // specified node. The parameter is:
+  //
+  // node - the node containing the unordered list elements
+  function toggle(node){
+
+    const open = node.classList.contains('collapsibleListClosed');
+    const uls  = node.getElementsByTagName('ul');
+
+    [].forEach.call(uls, ul => {
+
+      let li = ul;
+      while (li.nodeName !== 'LI'){
+        li = li.parentNode;
+      }
+
+      if (li === node){
+        ul.style.display = (open ? 'none' : 'block');
+      }
+
+    });
+
+    node.classList.remove('collapsibleListOpen');
+    node.classList.remove('collapsibleListClosed');
+
+    if (uls.length > 0){
+      node.classList.add('collapsibleList' + (open ? 'Open' : 'Closed'));
+    }
+
+  }
+
+  return {apply, applyTo};
+
+})();

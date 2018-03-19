@@ -17,6 +17,7 @@ define(["jquery", "jquery-ui", "handlebars", 'app/id'],
 					this.el.append('<option value="'+name+'">'+name+'</option>');
 				}
 				this.el.change(function() {
+					console.log("loading called on ", self.el.val());
 					if(self.el.val()==="sample_collection.json"){
 						self.model.loadCollection(self.el.val())
 					}

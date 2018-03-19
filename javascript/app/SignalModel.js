@@ -18,9 +18,14 @@ define(['emitter', 'app/id', 'app/Emitter', 'app/DatasetLoader'],
         this.setupData();
       }
 
-      onDatasetLoaded(id,items,data){
-
-        this.data["datasets"] = {items:items};
+      onDatasetLoaded(id,items,data){ //always loads over?
+        if (items[0].classType === 'imported') {
+          this.data["datasets"].items.push(items[0]); 
+          console.log("pushed to datasets ", items);         
+        } else if (items[0].classType === 'recording'){
+          this.data["recordings"].items.push(items[0]);   
+            console.log("pushed to recordings ", items);       
+        }
         console.log("data_loaded",items,this);
         this.trigger("ON_DATASET_READY",[id,data]);
       }
@@ -282,7 +287,14 @@ define(['emitter', 'app/id', 'app/Emitter', 'app/DatasetLoader'],
               }
             ]
           },
-
+          "recordings": {
+            items: [
+            ]
+          },
+          "datasets": {
+            items: [
+            ]
+          },
           "drawings": {
             items: [
             ]
