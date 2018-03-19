@@ -79,7 +79,6 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
                     if (!$(event.target).hasClass("tooltiptext")) {
                         var clone = $("<div id=" + $(event.target).attr('id') + "></div>");
 
-
                         clone.html($(event.target).attr('display_name'));
                         clone.attr("type", $(event.target).attr('type'));
                         clone.attr("name", $(event.target).attr('name'));
