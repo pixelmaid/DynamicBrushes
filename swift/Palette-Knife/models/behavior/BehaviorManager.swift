@@ -381,6 +381,7 @@ class BehaviorManager{
         let collectionData = data.dictionaryValue;
         for (key,value) in collectionData{
             let collectionList = value.arrayValue;
+            print("collection key",key);
             switch (key){
             case "live":
                 for metadata in collectionList{
@@ -401,13 +402,17 @@ class BehaviorManager{
                 }
                 break;
             case "recordings":
+                print("recording list",collectionList);
+
                 for metadata in collectionList{
-                    if(metadata["id"].stringValue == "recording_preset"){
+                    print("metadata id",metadata["id"].stringValue);
+
+                    if(metadata["meta"]["id"].stringValue == "recording_preset"){
                         StylusManager.setRecordingPresetData(data: metadata);
                     }
                     else{
-                        let signalCollection = GeneratorCollection(data:metadata);
-                        BehaviorManager.generators[signalCollection.id] = signalCollection;
+                        let signalCollection = RecordingCollection(data:metadata);
+                        BehaviorManager.recordings[signalCollection.id] = signalCollection;
                     }
                 }
                 break;

@@ -140,8 +140,10 @@ class Recording:Signal{
 }
 
 
-class StylusEventRecording:StylusEvent{
-    
+class StylusEventRecording:Recording{
+    let stylusUp = 0.0;
+    let stylusMove = 1.0;
+    let stylusDown = 2.0;
 }
 
 class StylusEvent:LiveSignal{

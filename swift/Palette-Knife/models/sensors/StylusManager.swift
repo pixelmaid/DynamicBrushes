@@ -51,7 +51,7 @@ final class StylusManager{
   
     
     static private func beginRecording(start:Date)->RecordingCollection{
-        
+        print("preset data",recordingPresetData)
         let rPackage = RecordingCollection(id: NSUUID().uuidString,start:start,targetLayer:StylusManager.layerId,data:recordingPresetData)
         if(firstRecording == nil){
             firstRecording = rPackage.id;

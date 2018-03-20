@@ -132,7 +132,7 @@ class SignalCollection: Object{
         self.lastSample  = hash;
         for (key,value) in data {
             guard let targetProtoSignal = self.protoSignals[key] else {
-                print("ERRROR ---------NO PROTO SIGNAL FOUND THAT CORRESPOND WITH FIELD NAME-----------")
+                print("ERROR ---------NO PROTO SIGNAL FOUND THAT CORRESPOND WITH FIELD NAME-----------",key,self.protoSignals)
                 return;
                 
             }
@@ -201,14 +201,29 @@ class GeneratorCollection:SignalCollection{
     public override func initializeSignal(fieldName:String, displayName:String, settings:JSON, classType:String, isProto:Bool)->String{
         let id = NSUUID().uuidString
         let signal:Signal
-        switch(signal.fieldName){
+        switch(fieldName){
         case "sine":
             signal = Sine(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
         break;
         case "sawtooth":
-            signal = Sine(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+            signal = Sawtooth(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
         break;
-        default
+        case "interval":
+            signal = Interval(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+            break;
+        case "square":
+            signal = Square(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+            break;
+        case "triangle":
+            signal = Triangle(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+            break;
+        case "random":
+            signal = Random(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+            break;
+        case "alternate":
+            signal = Alternate(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+            break;
+        default:
             signal = Generator(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
             break;
         }
@@ -241,6 +256,13 @@ class BrushCollection:SignalCollection{
      
      }
      }*/
+    //TODO: INIT BRUSH PROPERTIES
+   override public func initializeSignal(fieldName:String, displayName:String, settings:JSON, classType:String, isProto:Bool)->String{
+        let id = NSUUID().uuidString
+        let signal = Signal(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+        self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto)
+        return id;
+    }
 }
 
 
@@ -269,6 +291,14 @@ class UICollection:SignalCollection{
      self.name = "stylus";
      
      }*/
+    
+    //TODO: INIT UI PROPERTIES
+    override public func initializeSignal(fieldName:String, displayName:String, settings:JSON, classType:String, isProto:Bool)->String{
+        let id = NSUUID().uuidString
+        let signal = Signal(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+        self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto)
+        return id;
+    }
 }
 
 
@@ -301,7 +331,18 @@ class LiveCollection:SignalCollection{
      self.name = "stylus";
      }*/
     
-    
+    override public func initializeSignal(fieldName:String, displayName:String, settings:JSON, classType:String, isProto:Bool)->String{
+        let id = NSUUID().uuidString
+        let signal:Signal;
+        if(fieldName == "StylusEvent"){
+            signal = StylusEvent(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+        }
+        else{
+            signal = LiveSignal(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+        }
+        self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto)
+        return id;
+    }
 }
 
 class RecordingCollection:LiveCollection{
@@ -324,6 +365,20 @@ class RecordingCollection:LiveCollection{
         self.targetLayer = "nil"
         super.init(data:data);
         
+    }
+    
+    
+    override public func initializeSignal(fieldName:String, displayName:String, settings:JSON, classType:String, isProto:Bool)->String{
+        let id = NSUUID().uuidString
+        let signal:Signal;
+        if(fieldName == "StylusEvent"){
+            signal = StylusEventRecording(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+        }
+        else{
+            signal = Recording(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+        }
+        self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto)
+        return id;
     }
     
     override func getProtoSample(hash: Float) -> JSON? {
