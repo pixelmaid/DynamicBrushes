@@ -52,7 +52,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
                 var currentBehaviorName = data["currentBehaviorName"];
                 var currentBehaviorFile = data["currentFile"];
                 console.log("currentBehaviorName=",currentBehaviorName,currentBehaviorFile);
-                chartViewManager.synchronize(data);
+                chartViewManager.synchronize(data.data.behaviors);
+                signalModel.datasetLoader.loadCollection(data.data.collections);
                 saveManager.setCurrentFilename(currentBehaviorName,currentBehaviorFile);
 
             } 

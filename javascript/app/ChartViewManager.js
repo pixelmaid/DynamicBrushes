@@ -283,7 +283,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                 this.destroyAllViews();
                 this.refreshBehaviorList();
 
-                var behaviorData = sync_data.data;
+                var behaviorData = sync_data;
                 console.log("synch called", behaviorData.length);
 
                 for (var i = 0; i < behaviorData.length; i++) {
