@@ -14,10 +14,12 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 			}
 
 			loadCollection(data) {
+				console.log("!!! LOAD COLLECTIONG LOADING ", data);
 				var self = this;
 				var collections =  data["collections"];
 
 				for (var i=0; i<collections.length; i++) {
+					console.log("!!! inside collections ", collections[i]);
 					var classType = collections[i]["classType"];
 					var collectionId = collections[i]["id"];
 					var collectionName = collections[i]["name"];
@@ -77,43 +79,43 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 				});			
 			}
 
-			loadDataset(filename){
-				console.log("load dataset called ");
-				var self = this;
-				$.getJSON("app/sample_datasets/"+filename, function(data) {
+			// loadDataset(filename){
+			// 	console.log("load dataset called ");
+			// 	var self = this;
+			// 	$.getJSON("app/sample_datasets/"+filename, function(data) {
 
-					var id = data["meta"]["id"];
-					var name = data["meta"]["name"];
-					var columns = data["meta"]["columns"];
-					var items = [];
-					items.push({
-		                classType: "imported",
-		                collectionId: id,
-		                collectionName: name,
-		                signals: [],
-		            	});
-					var signals = [];
-					for (var i=0; i<columns.length;i++) {
-							if(columns[i]["dataTypeName"]!="meta_data"){
-							//if (c["fieldName"] == "mass" || c["fieldName"] == "reclat" || c["fieldName"] == "reclong" || c["fieldName"] == "year") {
-								signals.push({
-									item_class: "block dataset palette",
-									fieldName:  id+"_"+columns[i]["fieldName"],
-									displayName:columns[i]["name"],
-									classType: "imported"
+			// 		var id = data["meta"]["id"];
+			// 		var name = data["meta"]["name"];
+			// 		var columns = data["meta"]["columns"];
+			// 		var items = [];
+			// 		items.push({
+		 //                classType: "imported",
+		 //                collectionId: id,
+		 //                collectionName: name,
+		 //                signals: [],
+		 //            	});
+			// 		var signals = [];
+			// 		for (var i=0; i<columns.length;i++) {
+			// 				if(columns[i]["dataTypeName"]!="meta_data"){
+			// 				//if (c["fieldName"] == "mass" || c["fieldName"] == "reclat" || c["fieldName"] == "reclong" || c["fieldName"] == "year") {
+			// 					signals.push({
+			// 						item_class: "block dataset palette",
+			// 						fieldName:  id+"_"+columns[i]["fieldName"],
+			// 						displayName:columns[i]["name"],
+			// 						classType: "imported"
 
-								});
-							}
+			// 					});
+			// 				}
 							
-						}
-					items[0].signals = signals;
+			// 			}
+			// 		items[0].signals = signals;
 					
-					console.log("loaded data",columns, items);
+			// 		console.log("loaded data",columns, items);
 
-					self.trigger("ON_DATA_LOADED",[id,items,data]);
-				});
+			// 		self.trigger("ON_DATA_LOADED",[id,items,data]);
+			// 	});
 
-			}
+			// }
 		};
 
 		return DatasetLoader;

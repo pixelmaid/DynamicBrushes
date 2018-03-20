@@ -25,17 +25,6 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
 
                 this.btn_list = [live_btn, recordings_btn, datasets_btn, generator_btn, brushes_btn, drawings_btn];
 
-                /* old buttons
-                // states_btn = this.el.find('#states');
-                generator_btn = this.el.find('#generators');
-                brush_properties_btn = this.el.find('#brush_properties');
-                sensor_properties_btn = this.el.find('#sensor_properties');
-                ui_properties_btn = this.el.find('#ui_properties');
-                brush_actions_btn = this.el.find('#brush_actions');
-                transitions_btn = this.el.find('#transitions');
-                datasets_btn = this.el.find('#datasets');
-                this.btn_list = [states_btn, generator_btn, datasets_btn, brush_properties_btn, sensor_properties_btn, ui_properties_btn, brush_actions_btn, transitions_btn];
-                */
 
                 this.el.droppable({
                     drop: function(event, ui) {
@@ -51,13 +40,20 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
                     console.log("ON_DATA_READY called");
                     var currClass = $("#palette_menu").find(".selected").attr('id');
                     var dataClass = data.items[0].classType;
-                    if ((currClass === "recordings" && dataClass === "recording") || (currClass === "datasets" && dataClass === "imported")) {
+                    if ((currClass === "recordings" && dataClass === "recording") || 
+                        (currClass === "datasets" && dataClass === "imported") ||
+                        (currClass === "generators" && dataClass === "generator") ||
+                        (currClass === "live_input" && dataClass === "live")) {
                         this.updateSelectedPalette(self.model.data[currClass]);
                         console.log("updating palette in ON_DATA_READY")
                     }
                 }.bind(this));
             }
 
+            clearPalette(){
+                this.model.setupData();
+                console.log("palette cleared");
+            }
 
             generatePalette(){
                 console.log("generate palette called");
