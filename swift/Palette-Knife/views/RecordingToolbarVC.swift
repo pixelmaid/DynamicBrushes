@@ -11,7 +11,7 @@ import UIKit
 import SwiftyJSON
 
 
-class RecordingToolbarVC: UIViewController,Requester {
+class RecordingToolbarVC: UIViewController, Requester {
   
     
     let playbackSpeeds: [Float] = [0.1, 0.25, 0.5, 0.75, 1, 1.5, 2, 4, 10] //real playback speeds
@@ -78,12 +78,16 @@ class RecordingToolbarVC: UIViewController,Requester {
             
             
             //now actually export it
+            let start_id = RecordingViewController.getGestureId(index:RecordingViewController.recording_start)
+            let end_id = RecordingViewController.getGestureId(index:RecordingViewController.recording_end)
+            print("# exporting from ", start_id, " to ", end_id)
+            print("# index ", RecordingViewController.recording_start, RecordingViewController.recording_end)
             
-            //let collection = StylusManager.exportRecording(startId: "foo", endId: "bar")
-           // collection["name"] = name;
+            var collection = StylusManager.exportRecording(startId: start_id, endId: end_id)
+            collection!["name"].stringValue = name!;
             
-            let collectionList:JSON = [:];
-            //collectionList["collections"] = JSON([collection])
+            var collectionList:JSON = [:];
+            collectionList["collections"] = JSON([collection])
             
             let request = Request(target: "socket", action: "send_collection_data", data: collectionList, requester: self)
             RequestHandler.addRequest(requestData: request)

@@ -58,7 +58,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
             } 
 
             else if (data.type == "collection_data"){
-                datasetLoader.loadCollection(data["data"]);
+                signalModel.datasetLoader.loadCollection(data["data"]);
             }
             else if (data.type == "storage_data") {
                 saveManager.loadStorageData(data);

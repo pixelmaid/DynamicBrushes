@@ -51,7 +51,6 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
                     console.log("ON_DATA_READY called");
                     var currClass = $("#palette_menu").find(".selected").attr('id');
                     var dataClass = data.items[0].classType;
-                    console.log("curr class is ", currClass, " data class is ", dataClass);
                     if ((currClass === "recordings" && dataClass === "recording") || (currClass === "datasets" && dataClass === "imported")) {
                         this.updateSelectedPalette(self.model.data[currClass]);
                         console.log("updating palette in ON_DATA_READY")

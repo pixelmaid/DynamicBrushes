@@ -335,7 +335,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     }
 
     //from an index, go to a gesture stringid
-    func getGestureId(index:Int) -> String {
+    static func getGestureId(index:Int) -> String {
         return RecordingViewController.gestures[index].id
     }
     
@@ -343,8 +343,8 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         print (RecordingViewController.recording_start, RecordingViewController.recording_end)
         if (RecordingViewController.recording_start >= 0 && RecordingViewController.recording_end >= RecordingViewController.recording_start) {
             print ("^^ loop pressed from ", RecordingViewController.recording_start, " to ", RecordingViewController.recording_end)
-            let start_id = getGestureId(index: RecordingViewController.recording_start)
-            let end_id = getGestureId(index: RecordingViewController.recording_end)
+            let start_id = RecordingViewController.getGestureId(index: RecordingViewController.recording_start)
+            let end_id = RecordingViewController.getGestureId(index: RecordingViewController.recording_end)
             if (StylusManager.liveStatus()) {
                 isRecordingLoop = true
                 StylusManager.setToRecording(idStart: start_id, idEnd: end_id)
