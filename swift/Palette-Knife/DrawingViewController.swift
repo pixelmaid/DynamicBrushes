@@ -1258,8 +1258,13 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     }
     
     func synchronizeWithAuthoringClient(){
-        var behavior:JSON = behaviorManager!.getAllBehaviorJSON();
-        let request = Request(target: "socket", action: "synchronize", data: behavior, requester: self)
+        let behavior:JSON = behaviorManager!.getAllBehaviorJSON();
+        let collections:JSON = behaviorManager!.getAllCollectionJSON();
+        var syncJSON:JSON = [:]
+        syncJSON["behaviors"] = behavior;
+        syncJSON["collections"] = collections;
+
+        let request = Request(target: "socket", action: "synchronize", data: syncJSON, requester: self)
         RequestHandler.addRequest(requestData: request)
     }
     

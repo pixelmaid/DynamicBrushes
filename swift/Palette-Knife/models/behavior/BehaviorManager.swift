@@ -458,6 +458,21 @@ class BehaviorManager{
         
     }
     
+    
+    //TODO: eventually move all collection stuff to seperate final collection manager
+    func getAllCollectionJSON()->JSON{
+        var collectionJSON = [JSON]();
+        
+        for collectionList in BehaviorManager.signalCollections{
+            for(_,value) in collectionList {
+                collectionJSON.append(value.protoToJSON());
+            }
+            
+        }
+        
+        return JSON(collectionJSON);
+    }
+    
     func getAllBehaviorJSON()->JSON {
         var behaviorJSON = [JSON]()
         for (_, behavior) in BehaviorManager.behaviors {
