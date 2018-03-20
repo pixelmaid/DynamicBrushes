@@ -47,8 +47,15 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
 
                 this.generatePalette();
 
-               this.model.addListener("ON_DATA_READY",function(data) {
-                    this.updateSelectedPalette(data);
+               this.model.addListener("ON_DATASET_READY",function(id, data) {
+                    console.log("ON_DATA_READY called");
+                    var currClass = $("#palette_menu").find(".selected").attr('id');
+                    var dataClass = data.items[0].classType;
+                    console.log("curr class is ", currClass, " data class is ", dataClass);
+                    if ((currClass === "recordings" && dataClass === "recording") || (currClass === "datasets" && dataClass === "imported")) {
+                        this.updateSelectedPalette(self.model.data[currClass]);
+                        console.log("updating palette in ON_DATA_READY")
+                    }
                 }.bind(this));
             }
 
@@ -70,6 +77,8 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
             }
 
             updateSelectedPalette(data) {
+                console.log("update selected palette called with data ", data);
+
                 var html = paletteTemplate(data);
                 this.el.find('#selected_palette').html(html);
                 // console.log("CollapsibleLists is", CollapsibleLists);

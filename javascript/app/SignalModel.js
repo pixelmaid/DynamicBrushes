@@ -27,7 +27,7 @@ define(['emitter', 'app/id', 'app/Emitter', 'app/DatasetLoader'],
             console.log("pushed to recordings ", items);       
         }
         console.log("data_loaded",items,this);
-        this.trigger("ON_DATASET_READY",[id,data]);
+        this.trigger("ON_DATASET_READY",[id,{items:items}]);
       }
 
       setupData(){
