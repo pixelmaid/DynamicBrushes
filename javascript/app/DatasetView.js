@@ -18,11 +18,8 @@ define(["jquery", "jquery-ui", "handlebars", 'app/id'],
 				}
 				this.el.change(function() {
 					console.log("loading called on ", self.el.val());
-					if(self.el.val()==="sample_collection.json"){
+					if(self.el.val()!==""){
 						self.model.loadCollectionFromFilename(self.el.val())
-					}
-					else if(self.el.val()!==""){
-						self.model.loadDataset(self.el.val());
 					}
 				});
 
