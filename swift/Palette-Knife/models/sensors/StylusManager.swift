@@ -402,16 +402,24 @@ final class StylusManager{
     
     static public func exportRecording(startId:String, endId:String)->JSON?{
         let compiledId = NSUUID().uuidString;
-        guard let startRecording = StylusManager.recordingPackages[startId] else{
+        guard let startRecordingCollection = StylusManager.recordingPackages[startId] else{
             print("================ERROR no recording collection by that id===================");
             return nil;
         }
-        //let compiledRecording = RecordingCollection(id: compiledId, start: startRecording.start, targetLayer: startRecording.targetLayer, data: StylusManager.recordingPresetData)
         
-        //while(true){
-            
-        //}
-        return startRecording.protoToJSON();
+        let compiledRecordingCollection = RecordingCollection(id: compiledId, start: startRecordingCollection.start, targetLayer: startRecordingCollection.targetLayer, data: StylusManager.recordingPresetData)
+        var targetRecordingCollection = startRecordingCollection;
+        while(true){
+            compiledRecordingCollection.addDataFrom(recordingCollection:targetRecordingCollection);
+            if(targetRecordingCollection.id == endId || targetRecordingCollection.next == nil){
+                break
+            }
+            else{
+                targetRecordingCollection = targetRecordingCollection.next!;
+            }
+
+        }
+        return compiledRecordingCollection.protoToJSON();
     }
    
 }
