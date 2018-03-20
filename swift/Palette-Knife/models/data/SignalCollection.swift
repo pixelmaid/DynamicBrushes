@@ -94,7 +94,7 @@ class SignalCollection: Object{
     public func rawDataToJSON()->JSON{
         var rawData = [[Float]]();
         let sortedProtos = self.protoSignals.sorted{ $0.1.order < $1.1.order }
-        for _ in 0..<sortedProtos[0].value.signalBuffer.count {
+        for _ in 0..<sortedProtos.count {
             rawData.append([Float]());
         }
         for i in 0..<sortedProtos.count {
@@ -472,7 +472,7 @@ class RecordingCollection:LiveCollection{
                 let value = sortedBuffer[i].value;
                 signal?.addValue(h:hash , v: value);
             }
-            self.lastSample = sortedBuffer[sortedBuffer.count].key+self.lastSample;
+            self.lastSample = sortedBuffer[sortedBuffer.count-1].key+self.lastSample;
         }
     }
     
