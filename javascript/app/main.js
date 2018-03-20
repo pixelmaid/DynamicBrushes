@@ -1,14 +1,14 @@
 'use strict';
-define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveView", "app/PaletteModel", "app/PaletteView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart", "app/DatasetView", "app/SignalModel"],
+define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveView", "app/PaletteModel", "app/SignalView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart", "app/DatasetView", "app/SignalModel"],
 
 
-    function($, paper, Handlebars, ID, SaveManager, SaveView, PaletteModel, PaletteView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart,DatasetView, SignalModel) {
+    function($, paper, Handlebars, ID, SaveManager, SaveView, PaletteModel, SignalView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart,DatasetView, SignalModel) {
 
         var socketController = new SocketController();
         var socketView = new SocketView(socketController, "#socket");
         var paletteModel = new PaletteModel();
         var signalModel = new SignalModel();
-        var paletteView = new PaletteView(signalModel, "#scripts");
+        var SignalView = new SignalView(signalModel, "#scripts");
         var chartViewManager = new ChartViewManager(signalModel, "#canvas");
         var saveManager = new SaveManager();
         var saveView = new SaveView(saveManager, "#save-menu");

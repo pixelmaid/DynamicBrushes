@@ -1,4 +1,4 @@
-//PaletteView.js
+//InspectorModel.js
 'use strict';
 define(["jquery", "jquery-ui", "app/Emitter", "handlebars", 'app/id',"app/InspectorDataController", "app/InspectorView"],
 

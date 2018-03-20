@@ -1,4 +1,4 @@
-//PaletteView.js
+//SignalView.js
 'use strict';
 define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/id" ,'lib/CollapsibleLists.js'],
 
@@ -7,7 +7,7 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
 
         var live_btn, recordings_btn, datasets_btn, generator_btn, brushes_btn, drawings_btn;
 
-        var PaletteView = class {
+        var SignalView = class {
 
             constructor(model, element) {
                 this.el = $(element);
@@ -109,6 +109,6 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
 
         };
 
-        return PaletteView;
+        return SignalView;
 
     });

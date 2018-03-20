@@ -1,4 +1,4 @@
-//PaletteView.js
+//InspectorView.js
 'use strict';
 define(["jquery", "jquery-ui", "handlebars", "app/id","hbs!app/templates/propertyInspector"],
 
