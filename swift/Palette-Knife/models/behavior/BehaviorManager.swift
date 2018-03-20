@@ -20,34 +20,19 @@ enum BehaviorError: Error {
 
 class BehaviorManager{
     static var behaviors = [String:BehaviorDefinition]()
-    static var datasets = [String:SignalCollection]();
+    static var imported = [String:SignalCollection]();
     static var recordings = [String:SignalCollection]();
     static var generators = [String:GeneratorCollection]();
     static var liveInputs = [String:SignalCollection]();
-    static var signalCollections = [datasets,recordings,generators,liveInputs];
-    static var uiCollection = UICollection();
+    static var signalCollections = [imported,recordings,generators,liveInputs];
+
     var canvas:Canvas
     init(canvas:Canvas){
         self.canvas = canvas;
       
     }
     
-    static func registerLiveInput(collectionId:String,liveInput:SignalCollection){
-        
-        BehaviorManager.liveInputs[collectionId] = liveInput;
-    }
-    
-    static func storeRecording(collectionId:String,recording:SignalCollection){
-        BehaviorManager.recordings[collectionId] = recording;
-    }
-    
-    static func getBehaviorById(id:String)->BehaviorDefinition?{
-        if(BehaviorManager.behaviors[id] != nil){
-            return BehaviorManager.behaviors[id]
-        }
-        return nil
-    }
-    
+  
     
     func refreshAllBehaviors(){
         for (_,behavior) in BehaviorManager.behaviors{
@@ -256,17 +241,7 @@ class BehaviorManager{
             
             resultJSON["result"] = "success";
             return resultJSON;
-            
-       /* case "mapping_updated":
-            let behaviorId = data["behaviorId"].stringValue;
-            
-            
-            BehaviorManager.behaviors[behaviorId]!.parseMappingJSON(data: data)
-            BehaviorManager.behaviors[behaviorId]!.createBehavior(canvas:canvas)
-            
-            
-            resultJSON["result"] = "success";
-            return resultJSON;*/
+ 
        
         case "signal_initialized":
             do {
@@ -312,7 +287,7 @@ class BehaviorManager{
              #if DEBUG
                 //print("dataset loaded",data);
             #endif
-           BehaviorManager.parseDataset(data:data)
+           BehaviorManager.parseImported(data:data)
             
             resultJSON["result"] = "success";
             return resultJSON;
@@ -339,13 +314,13 @@ class BehaviorManager{
     do {
     switch classType{
         case "generator":
-            try  id = BehaviorManager.generators["default"]!.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,isProto: false);
+            try  id = BehaviorManager.generators["default"]!.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType, isProto: false);
         break;
         case "imported":
-            guard let dataCollection = BehaviorManager.datasets[collectionId] else {
+            guard let dataCollection = BehaviorManager.imported[collectionId] else {
                 throw BehaviorError.collectionDoesNotExist;
             }
-            try id = dataCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings, isProto: false);
+            try id = dataCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType, isProto: false);
 
         break;
         case "live":
@@ -353,7 +328,7 @@ class BehaviorManager{
                 throw BehaviorError.collectionDoesNotExist;
 
             }
-            try id = liveCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings, isProto: false);
+            try id = liveCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType, isProto: false);
 
         break;
         case "recording":
@@ -361,7 +336,7 @@ class BehaviorManager{
                 throw BehaviorError.collectionDoesNotExist;
                 
             }
-           try  id = recordingCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings, isProto: false);
+           try  id = recordingCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType, isProto: false);
 
         break;
     //TODO: INIT BRUSH SETUP
@@ -392,11 +367,70 @@ class BehaviorManager{
         return nil;
     }
 
+  
     
-   static func parseDataset(data:JSON){
+    static func getBehaviorById(id:String)->BehaviorDefinition?{
+        if(BehaviorManager.behaviors[id] != nil){
+            return BehaviorManager.behaviors[id]
+        }
+        return nil
+    }
+    
+    
+    static func loadCollectionsFromJSON(data:JSON){
+        let collectionData = data.dictionaryValue;
+        for (key,value) in collectionData{
+            let collectionList = value.arrayValue;
+            switch (key){
+            case "live":
+                for metadata in collectionList{
+                    let signalCollection = LiveCollection(data:metadata);
+                    BehaviorManager.liveInputs[signalCollection.id] = signalCollection;
+                }
+                break;
+            case "imported":
+                for metadata in collectionList{
+                    let signalCollection = SignalCollection(data:metadata);
+                    BehaviorManager.imported[signalCollection.id] = signalCollection;
+                }
+                break;
+            case "generators":
+                for metadata in collectionList{
+                    let signalCollection = GeneratorCollection(data:metadata);
+                    BehaviorManager.generators[signalCollection.id] = signalCollection;
+                }
+                break;
+            case "recordings":
+                for metadata in collectionList{
+                    if(metadata["id"].stringValue == "recording_preset"){
+                        StylusManager.setRecordingPresetData(data: metadata);
+                    }
+                    else{
+                        let signalCollection = GeneratorCollection(data:metadata);
+                        BehaviorManager.generators[signalCollection.id] = signalCollection;
+                    }
+                }
+                break;
+            case "drawings":
+                break;
+            case "brush":
+                break;
+            default:
+                break;
+            }
+        }
+    }
+    
+    
+    static func register(collectionId:String,recording:SignalCollection){
+        BehaviorManager.recordings[collectionId] = recording;
+    }
+    
+    
+   static func parseImported(data:JSON){
     let id = data["id"].stringValue;
     let signalCollection = SignalCollection(data: data);
-    BehaviorManager.datasets[id] = signalCollection;
+    BehaviorManager.imported[id] = signalCollection;
     }
     
     

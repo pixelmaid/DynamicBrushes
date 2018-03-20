@@ -306,7 +306,7 @@ class BehaviorDefinition {
         var settings:JSON = [:]
         settings["inc"] = condition_list[0];
          do{
-            let interval_id = try BehaviorManager.generators["default"]!.initializeSignal(fieldName:"interval",displayName:"interval",settings:settings,isProto:false);
+            let interval_id = try BehaviorManager.generators["default"]!.initializeSignal(fieldName:"interval",displayName:"interval",settings:settings,classType: "Interval",isProto:false);
         
          
         switch(event){

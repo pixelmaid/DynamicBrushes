@@ -13,7 +13,7 @@ enum SignalError: Error {
     case signalTypeAlreadyRegistered;
     case protoNotFound;
     
-   
+    
 }
 
 //stores a collection of related signals e.g. a stylus recording, a data table
@@ -27,34 +27,28 @@ class SignalCollection: Object{
     //signal types that can be initialized
     internal var registeredSignals = [String:String]();
     public let id:String
-    public var name:String?
+    public let name:String
     
-    init(){
-        self.id = NSUUID().uuidString;
-    }
     
-    init(data:JSON){
-        self.id = data["meta"]["view"]["id"].stringValue;
-
+    required init(data:JSON){
+        self.id = data["meta"]["id"].stringValue;
+        self.name = data["meta"]["name"].stringValue;
         do{
             try self.loadDataFromJSON(data: data);
         }
         catch {
             
             
-            print("ERRROR ---------SIGNAL ERROR ON INIT-----------")
+            print("ERROR ---------SIGNAL ERROR ON INIT-----------")
         }
     }
     
-    public func syncSignalsToHash(hash:Float){
+    
+    public  func loadDataFromJSON(data:JSON) throws{
         
-    }
-    
-  public  func loadDataFromJSON(data:JSON) throws{
-    
-        let allSignalData = data["meta"]["view"]["columns"].arrayValue;
+        let allSignalData = data["meta"]["columns"].arrayValue;
         #if DEBUG
-            //print("dataset loaded",columns,data)
+            //print("dataset loaded",data["meta"]["columns"].arrayValue)
         #endif
         let rawData = data["data"].arrayValue;
         for i in 0..<allSignalData.count{
@@ -62,56 +56,58 @@ class SignalCollection: Object{
             let displayName = allSignalData[i]["displayName"].stringValue;
             let classType =  allSignalData[i]["classType"].stringValue;
             let settings = allSignalData[i]["settings"]
-
             
-            do{
-                try self.registerSignalType(fieldName: fieldName, displayName:displayName, settings:settings, classType: classType);
-                guard let  signal = self.protoSignals[fieldName] else {
-                   throw SignalError.protoNotFound
-                }
-                for j in 0..<rawData.count{
-                    let row = rawData[j].arrayValue;
-                    let v = row[i].floatValue;
-                    signal.addValue(h: Float(j), v: v);
-                }
+            
+            self.registerSignalType(fieldName: fieldName, displayName:displayName, settings:settings, classType: classType);
+            guard let  signal = self.protoSignals[fieldName] else {
+                print("ERROR======SIGNAL PROTO NOT FOUND==============",fieldName)
+                throw SignalError.protoNotFound
+                
+            }
+            for j in 0..<rawData.count{
+                let row = rawData[j].arrayValue;
+                let v = row[i].floatValue;
+                signal.addValue(h: Float(j), v: v);
             }
             
         }
-    
+        
     }
     
-    public func registerSignalType(fieldName:String, displayName:String, settings:JSON, classType:String) throws{
-        if(self.registeredSignals[fieldName] != nil){
+    
+    public func registerSignalType(fieldName:String, displayName:String, settings:JSON, classType:String){
+        if(self.registeredSignals[fieldName] == nil){
             self.registeredSignals[fieldName] = classType;
             self.initializedSignals[fieldName] = [String:Signal]();
-            do {
-                try _ = self.initializeSignal(fieldName: fieldName, displayName: displayName, settings: settings, isProto: true)
-            }
-
+            _ = self.initializeSignal(fieldName: fieldName, displayName: displayName, settings: settings, classType:classType, isProto: true)
             
         }
         else{
-            throw SignalError.signalTypeAlreadyRegistered;
+            print("ERROR======SIGNAL ALREADY REGISTERED==============",fieldName)
         }
     }
     
     
-    public func initializeSignal(fieldName:String, displayName:String, settings:JSON, isProto:Bool)throws->String{
+    public func initializeSignal(fieldName:String, displayName:String, settings:JSON, classType:String, isProto:Bool)->String{
         let id = NSUUID().uuidString
-        let aClass = NSClassFromString(fieldName) as! Signal.Type;
-        let signal = aClass.init(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+        let signal = Signal(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+        self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto)
+        return id;
+    }
+    
+    internal func storeSignal(fieldName:String, signal:Signal,isProto:Bool){
         if(isProto){
             self.protoSignals[fieldName] = signal;
         }
         else{
             guard let protoData = self.protoSignals[fieldName]?.signalBuffer else{
-                throw SignalError.protoNotFound;
+                print("ERROR======NO PROTODATA AVAILABLE=============",fieldName)
+                return;
             }
             signal.cloneRawData(protoData:protoData)
             RequestHandler.registerObservable(observableId: id, observable: signal);
             self.initializedSignals[fieldName]![id] = signal;
         }
-        return id;
     }
     
     public func getInitializedSignal(id:String)->Signal?{
@@ -124,7 +120,7 @@ class SignalCollection: Object{
     }
     
     public func removeSignal(fieldName:String,id:String){
-       
+        
         if (initializedSignals[fieldName]![id] != nil){
             let signal = initializedSignals[fieldName]?.removeValue(forKey: id);
             signal?.destroy();
@@ -134,13 +130,13 @@ class SignalCollection: Object{
     public func addProtoSample(hash:Float,data:JSON){
         self.samples.insert(hash)
         self.lastSample  = hash;
-         for (key,value) in data {
+        for (key,value) in data {
             guard let targetProtoSignal = self.protoSignals[key] else {
                 print("ERRROR ---------NO PROTO SIGNAL FOUND THAT CORRESPOND WITH FIELD NAME-----------")
                 return;
                 
             }
-          
+            
             targetProtoSignal.addValue(h: hash, v: value.floatValue)
             
         }
@@ -153,14 +149,14 @@ class SignalCollection: Object{
         return signal.get(id:nil);
     }
     
-   
+    
     
     public func getProtoSample(hash:Float)->JSON?{
         if (samples.contains(hash)){
-        
-        var sample:JSON = [:]
-        for (key,value) in self.protoSignals{
             
+            var sample:JSON = [:]
+            for (key,value) in self.protoSignals{
+                
                 value.setHash(h:hash);
                 sample[key] = JSON(value.get(id:nil));
             }
@@ -179,22 +175,45 @@ class SignalCollection: Object{
 
 class GeneratorCollection:SignalCollection{
     
-   override  init(){
-        super.init();
-        do{
-           /* try self.registerSignalType(fieldName: "sine", displayName: "sine wave", classType: "Sine");
-            try self.registerSignalType(fieldName: "square", displayName: "square wave", classType: "Square");
-            try self.registerSignalType(fieldName: "triangle", displayName: "triangle wave",classType: "Triangle");
-            try self.registerSignalType(fieldName: "random", displayName: "random", classType: "Random");
-            try self.registerSignalType(fieldName: "sawtooth", classType: "Sawtooth");
-            try self.registerSignalType(fieldName: "alternate", classType: "Alternate");*/
+    
+    required init(data:JSON){
+        super.init(data:data);
+    }
+    
+    /*override  init(){
+     super.init();
+     do{
+     try self.registerSignalType(fieldName: "sine", displayName: "sine wave", classType: "Sine");
+     try self.registerSignalType(fieldName: "square", displayName: "square wave", classType: "Square");
+     try self.registerSignalType(fieldName: "triangle", displayName: "triangle wave",classType: "Triangle");
+     try self.registerSignalType(fieldName: "random", displayName: "random", classType: "Random");
+     try self.registerSignalType(fieldName: "sawtooth", classType: "Sawtooth");
+     try self.registerSignalType(fieldName: "alternate", classType: "Alternate");
+     }
+     catch SignalError.signalTypeAlreadyRegistered{
+     print("ERRROR ---------Signal Type already Registered-----------")
+     }
+     catch {
+     
+     }
+     }*/
+    
+    public override func initializeSignal(fieldName:String, displayName:String, settings:JSON, classType:String, isProto:Bool)->String{
+        let id = NSUUID().uuidString
+        let signal:Signal
+        switch(signal.fieldName){
+        case "sine":
+            signal = Sine(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+        break;
+        case "sawtooth":
+            signal = Sine(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+        break;
+        default
+            signal = Generator(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+            break;
         }
-        catch SignalError.signalTypeAlreadyRegistered{
-            print("ERRROR ---------Signal Type already Registered-----------")
-        }
-        catch {
-            
-        }
+        self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto)
+        return id;
     }
 }
 
@@ -202,87 +221,111 @@ class GeneratorCollection:SignalCollection{
 
 class BrushCollection:SignalCollection{
     
-    override init(){
-        super.init();
-        do{
-           /* try self.registerSignalType(fieldName: "spawnIndex", classType: "Index");
-            try self.registerSignalType(fieldName: "siblingCount", classType: "SiblingCount");*/
-        }
-        catch SignalError.signalTypeAlreadyRegistered{
-            print("ERRROR ---------Signal Type already Registered-----------")
-        }
-        catch {
-            
-        }
+    required init(data:JSON){
+        super.init(data:data);
+        
     }
+    
+    
+    
+    /* override init(){
+     super.init();
+     do{
+     /* try self.registerSignalType(fieldName: "spawnIndex", classType: "Index");
+     try self.registerSignalType(fieldName: "siblingCount", classType: "SiblingCount");*/
+     }
+     catch SignalError.signalTypeAlreadyRegistered{
+     print("ERRROR ---------Signal Type already Registered-----------")
+     }
+     catch {
+     
+     }
+     }*/
 }
 
 
 class UICollection:SignalCollection{
     
-    override init(){
-        super.init();
-        do{
-            /*try self.registerSignalType(fieldName: "hue", classType: "Signal");
-            try self.registerSignalType(fieldName: "lightness", classType: "Signal");
-            try self.registerSignalType(fieldName: "saturation", classType: "Signal");
-            try self.registerSignalType(fieldName: "diameter", classType: "Signal");
-            try self.registerSignalType(fieldName: "alpha", classType: "Signal");*/
-
-        }
-        catch SignalError.signalTypeAlreadyRegistered{
-            print("ERRROR ---------Signal Type already Registered-----------")
-        }
-        catch {
-            
-        }
-        self.name = "stylus";
-
-    }
-}
-
-
-class StylusCollection:SignalCollection{
-   override init(){
-       super.init();
-        do{
-          /*  try self.registerSignalType(fieldName: "dx", classType: "Recording");
-            try self.registerSignalType(fieldName: "dy", classType: "Recording");
-            try self.registerSignalType(fieldName: "x", classType: "Recording");
-            try self.registerSignalType(fieldName: "y", classType: "Recording");
-            try self.registerSignalType(fieldName: "force", classType: "Recording");
-            try self.registerSignalType(fieldName: "angle", classType: "Recording");
-            try self.registerSignalType(fieldName: "stylusEvent", classType: "EventRecording"); */
-        }
-        catch SignalError.signalTypeAlreadyRegistered{
-            print("ERRROR ---------Signal Type already Registered-----------")
-        }
-        catch {
-            
-        }
+    required init(data:JSON){
+        super.init(data:data);
         
-    self.name = "stylus";
     }
+    /*override init(){
+     super.init();
+     do{
+     /*try self.registerSignalType(fieldName: "hue", classType: "Signal");
+     try self.registerSignalType(fieldName: "lightness", classType: "Signal");
+     try self.registerSignalType(fieldName: "saturation", classType: "Signal");
+     try self.registerSignalType(fieldName: "diameter", classType: "Signal");
+     try self.registerSignalType(fieldName: "alpha", classType: "Signal");*/
+     
+     }
+     catch SignalError.signalTypeAlreadyRegistered{
+     print("ERRROR ---------Signal Type already Registered-----------")
+     }
+     catch {
+     
+     }
+     self.name = "stylus";
+     
+     }*/
 }
 
-class StylusRecordingCollection:StylusCollection{
-   
+
+class LiveCollection:SignalCollection{
+    
+    required init(data:JSON){
+        super.init(data:data);
+        
+        
+    }
+    
+    /* override init(){
+     super.init();
+     do{
+     /*  try self.registerSignalType(fieldName: "dx", classType: "Recording");
+     try self.registerSignalType(fieldName: "dy", classType: "Recording");
+     try self.registerSignalType(fieldName: "x", classType: "Recording");
+     try self.registerSignalType(fieldName: "y", classType: "Recording");
+     try self.registerSignalType(fieldName: "force", classType: "Recording");
+     try self.registerSignalType(fieldName: "angle", classType: "Recording");
+     try self.registerSignalType(fieldName: "stylusEvent", classType: "EventRecording"); */
+     }
+     catch SignalError.signalTypeAlreadyRegistered{
+     print("ERRROR ---------Signal Type already Registered-----------")
+     }
+     catch {
+     
+     }
+     
+     self.name = "stylus";
+     }*/
+    
+    
+}
+
+class RecordingCollection:LiveCollection{
+    
     //stylus
-    var next:StylusRecordingCollection?
-    var prev:StylusRecordingCollection?
+    var next:RecordingCollection?
+    var prev:RecordingCollection?
     var start:Date;
     var resultantStrokes = [String:[String]]();
     var targetLayer:String
     
-    init(id:String,start:Date,targetLayer:String){
+    init(id:String,start:Date,targetLayer:String, data:JSON){
         self.start = start;
         self.targetLayer = targetLayer;
-        super.init();
-        self.name = "stylus_recording";
-
-
+        super.init(data:data);
     }
-   
+    
+    required init(data:JSON){
+        self.start = Date();
+        self.targetLayer = "nil"
+        super.init(data:data);
+        
+    }
+    
     override func getProtoSample(hash: Float) -> JSON? {
         var sample = super.getProtoSample(hash: hash);
         if(sample != nil){
@@ -293,7 +336,7 @@ class StylusRecordingCollection:StylusCollection{
     }
     
     
-    func store(next:StylusRecordingCollection){
+    func store(next:RecordingCollection){
         self.next = next;
         next.prev = self;
     }

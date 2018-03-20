@@ -125,6 +125,7 @@
 		5FE32FA21ECF70BE00ADC01E /* layerVisible_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FE32F9E1ECF70BE00ADC01E /* layerVisible_button.png */; };
 		5FE32FA31ECF70BE00ADC01E /* layerVisible_button2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FE32F9F1ECF70BE00ADC01E /* layerVisible_button2x.png */; };
 		5FE34C7B1F1FA61300E26C06 /* PathFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE34C7A1F1FA61300E26C06 /* PathFunctions.swift */; };
+		5FE7AB602060860F00FBCD9E /* CollectionPresets.json in Resources */ = {isa = PBXBuildFile; fileRef = 5FE7AB5F2060860F00FBCD9E /* CollectionPresets.json */; };
 		5FEE2AC91DE127D800080095 /* dual_pen.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FEE2AC71DE127D800080095 /* dual_pen.png */; };
 		5FEE2ACA1DE127D800080095 /* lg_pen_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FEE2AC81DE127D800080095 /* lg_pen_blue.png */; };
 		5FFAC4D71E9D84040009DC5E /* SaveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFAC4D61E9D84040009DC5E /* SaveManager.swift */; };
@@ -300,6 +301,7 @@
 		5FE32F9E1ECF70BE00ADC01E /* layerVisible_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = layerVisible_button.png; sourceTree = "<group>"; };
 		5FE32F9F1ECF70BE00ADC01E /* layerVisible_button2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = layerVisible_button2x.png; sourceTree = "<group>"; };
 		5FE34C7A1F1FA61300E26C06 /* PathFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathFunctions.swift; sourceTree = "<group>"; };
+		5FE7AB5F2060860F00FBCD9E /* CollectionPresets.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = CollectionPresets.json; path = "Palette-Knife/Resources/CollectionPresets.json"; sourceTree = "<group>"; };
 		5FEE2AC71DE127D800080095 /* dual_pen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dual_pen.png; sourceTree = "<group>"; };
 		5FEE2AC81DE127D800080095 /* lg_pen_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lg_pen_blue.png; sourceTree = "<group>"; };
 		5FFAC4D61E9D84040009DC5E /* SaveManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SaveManager.swift; sourceTree = "<group>"; };
@@ -416,6 +418,7 @@
 			isa = PBXGroup;
 			children = (
 				5F5037291EA95E37004ABAC1 /* Recording.data */,
+				5FE7AB5F2060860F00FBCD9E /* CollectionPresets.json */,
 			);
 			name = Resources;
 			path = ..;
@@ -984,6 +987,7 @@
 				5FE32F881ECF6D5300ADC01E /* erase_button.png in Resources */,
 				72478CDF2029043800D24C92 /* Palette-KnifeTests in Resources */,
 				5FBDF0E71ED8D95300022B07 /* quad.vsh in Resources */,
+				5FE7AB602060860F00FBCD9E /* CollectionPresets.json in Resources */,
 				5FE32F991ECF6DC900ADC01E /* save_button2x.png in Resources */,
 				5FEE2ACA1DE127D800080095 /* lg_pen_blue.png in Resources */,
 				5FE32F7D1ECF6D5300ADC01E /* behavior_activate_button_active2x.png in Resources */,

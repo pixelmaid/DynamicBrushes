@@ -1,0 +1,124 @@
+{
+    "data": {
+        "collections": {
+            "live": [{
+                     "meta": {
+                     "id": "stylus",
+                     "name": "stylus",
+                     "columns": [{
+                                 "fieldName": "x",
+                                 "displayName": "stylus x",
+                                 "classType": "LiveSignal",
+                                 "settings": {}
+                                 }, {
+                                 "fieldName": "y",
+                                 "displayName": "stylus y",
+                                 "classType": "LiveSignal",
+                                 "settings": {}
+                                 }, {
+                                 "fieldName": "dx",
+                                 "displayName": "stylus delta x",
+                                 "classType": "LiveSignal",
+                                 "settings": {}
+                                 },
+                                 
+                                 {
+                                 "fieldName": "dy",
+                                 "displayName": "stylus delta y",
+                                 "classType": "LiveSignal",
+                                 "settings": {}
+                                 },
+                                 
+                                 
+                                 {
+                                 "fieldName": "force",
+                                 "displayName": "stylus force",
+                                 "classType": "LiveSignal",
+                                 "settings": {}
+                                 },
+                                 
+                                 
+                                 
+                                 {
+                                 "fieldName": "angle",
+                                 "displayName": "stylus angle",
+                                 "classType": "LiveSignal",
+                                 "settings": {}
+                                 },
+                                 
+                                 
+                                 {
+                                 "fieldName": "stylusEvent",
+                                 "displayName": "stylus event",
+                                 "classType": "StylusEvent",
+                                 "settings": {}
+                                 }
+                                 ]
+                     }
+                     }]
+            
+            
+        },
+        "imported": [],
+        "recordings": [{
+                        "meta": {
+                        "id": "recording_preset",
+                        "name": "recording_preset",
+                        "columns": [{
+                                    "fieldName": "x",
+                                    "displayName": "stylus x",
+                                    "classType": "Recording",
+                                    "settings": {}
+                                    }, {
+                                    "fieldName": "y",
+                                    "displayName": "stylus y",
+                                    "classType": "Recording",
+                                    "settings": {}
+                                    }, {
+                                    "fieldName": "dx",
+                                    "displayName": "stylus delta x",
+                                    "classType": "Recording",
+                                    "settings": {}
+                                    },
+                                    
+                                    {
+                                    "fieldName": "dy",
+                                    "displayName": "stylus delta y",
+                                    "classType": "Recording",
+                                    "settings": {}
+                                    },
+                                    
+                                    
+                                    {
+                                    "fieldName": "force",
+                                    "displayName": "stylus force",
+                                    "classType": "Recording",
+                                    "settings": {}
+                                    },
+                                    
+                                    
+                                    
+                                    {
+                                    "fieldName": "angle",
+                                    "displayName": "stylus angle",
+                                    "classType": "Recording",
+                                    "settings": {}
+                                    },
+                                    
+                                    
+                                    {
+                                    "fieldName": "stylusEvent",
+                                    "displayName": "stylus event",
+                                    "classType": "StylusEventRecording",
+                                    "settings": {}
+                                    }
+                                    ]
+                        }
+                        }
+                       ],
+        "generators": [],
+        "drawings": [],
+        "brush": []
+    }
+    
+}

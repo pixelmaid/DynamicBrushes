@@ -436,7 +436,23 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
         fileListContainerView.clipsToBounds = true
         fileListContainerView.isHidden = true;
         
-        BehaviorManager.registerLiveInput(collectionId: "stylus", liveInput: StylusCollection());
+        do {
+            if let file = Bundle.main.url(forResource: "CollectionPresets", withExtension: "json") {
+                let data = try Data(contentsOf: file)
+                let json = try JSONSerialization.jsonObject(with: data, options: [])
+                if json is [String: Any] {
+                    // json is a dictionary
+                    BehaviorManager.loadCollectionsFromJSON(data:JSON(data)["data"])
+                }  else {
+                    print("JSON is invalid")
+                }
+            } else {
+                print("no file")
+            }
+        } catch {
+            print(error.localizedDescription)
+        }
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -459,7 +475,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
         
         
         var templateJSON:JSON = [:]
-        templateJSON["filename"] = "templates/recording_template.json"
+        templateJSON["filename"] = "templates/refactor_template.json"
         templateJSON["type"] = JSON("load")
         let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: self)
         RequestHandler.addRequest(requestData:behaviorDownloadRequest);

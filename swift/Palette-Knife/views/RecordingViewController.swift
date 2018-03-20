@@ -224,7 +224,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         }
     }
     
-    func recordingCreatedHandler (data:(String, StylusRecordingCollection), key:String) {
+    func recordingCreatedHandler (data:(String, RecordingCollection), key:String) {
         let stylusData = data.1
         let xRecording = stylusData.protoSignals["x"];
         let yRecording = stylusData.protoSignals["y"];

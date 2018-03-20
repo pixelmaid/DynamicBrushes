@@ -16,11 +16,11 @@ final class StylusManager{
     static let stylusMove = Float(1.0);
     static let stylusDown = Float(2.0);
     static private var isLive = true;
-    static private var currentRecordingPackage:StylusRecordingCollection!
-    static private var currentLoopingPackage:StylusRecordingCollection!
+    static private var currentRecordingPackage:RecordingCollection!
+    static private var currentLoopingPackage:RecordingCollection!
     static private var playbackTimer:Timer!
     //todo: get rid of this and use linked list structure
-    static private var recordingPackages = [String:StylusRecordingCollection]()
+    static private var recordingPackages = [String:RecordingCollection]()
     static var layerId:String!
     static private var currentStartDate:Date!
     //producer consumer props
@@ -34,7 +34,7 @@ final class StylusManager{
 
     //events
     static public let eraseEvent = Event<(String,[String:[String]])>();
-    static public let recordEvent = Event<(String,StylusRecordingCollection)>();
+    static public let recordEvent = Event<(String,RecordingCollection)>();
     static public let layerEvent = Event<(String,String)>();
     static public let stylusDataEvent = Event<(String, [Float])>();
     static public let visualizationEvent = Event<String>();
@@ -46,17 +46,13 @@ final class StylusManager{
     static private var revertToLiveOnLoopEnd = false;
     static private var idStart:String!
     static private var idEnd:String!
-
+    static private var recordingPresetData:JSON = [:]
     
-    init(){
+  
+    
+    static private func beginRecording(start:Date)->RecordingCollection{
         
-    }
-    
-    
-    
-    static private func beginRecording(start:Date)->StylusRecordingCollection{
-        
-        let rPackage = StylusRecordingCollection(id: NSUUID().uuidString,start:start,targetLayer:StylusManager.layerId)
+        let rPackage = RecordingCollection(id: NSUUID().uuidString,start:start,targetLayer:StylusManager.layerId,data:recordingPresetData)
         if(firstRecording == nil){
             firstRecording = rPackage.id;
         }
@@ -72,7 +68,7 @@ final class StylusManager{
         
     }
     
-    static private func endRecording()->StylusRecordingCollection?{
+    static private func endRecording()->RecordingCollection?{
         if(currentRecordingPackage != nil){
             currentRecordingPackage.endRecording();
             recordEvent.raise(data:("END_RECORDING",currentRecordingPackage));
@@ -81,6 +77,11 @@ final class StylusManager{
         return nil
     }
     
+    
+    
+    static public func setRecordingPresetData(data:JSON){
+        StylusManager.recordingPresetData = data;
+    }
 
     
     static public func liveStatus()->Bool{
@@ -392,7 +393,7 @@ final class StylusManager{
 class StylusDataProducer{
     
     
-    func produce(hash:Float,recordingPackage:StylusRecordingCollection)->JSON?{
+    func produce(hash:Float,recordingPackage:RecordingCollection)->JSON?{
      
         let sample = recordingPackage.getProtoSample(hash: hash);
        // print("sample found at time",hash);
