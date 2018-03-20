@@ -57,14 +57,6 @@ public class Event<T> {
     
 }
 
-class StylusEvent:Event<(Observable<(Float,Float)>,Float,Float)>{
-    
-}
-
-class BrushEvent:Event<(Brush)>{
-    
-}
-
 
 
 

@@ -1563,7 +1563,7 @@
 						LastSwiftMigration = 0820;
 					};
 					BAA396C4D689A02A15029B49E076FAF0 = {
-						LastSwiftMigration = 0900;
+						LastSwiftMigration = 0920;
 					};
 					C99F1E001A30E520BD36C551F50E892A = {
 						LastSwiftMigration = 0820;

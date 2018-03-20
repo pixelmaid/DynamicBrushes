@@ -358,9 +358,11 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         }
     }
     
-    func recordingCreatedHandler (data:(String, StylusRecordingPackage), key:String) {
-        let stylusdata = data.1
-        RecordingViewController.gestures.append(GestureRecording(id: stylusdata.id, x:stylusdata.x, y:stylusdata.y))
+    func recordingCreatedHandler (data:(String, RecordingCollection), key:String) {
+        let stylusData = data.1
+        let xRecording = stylusData.protoSignals["x"];
+        let yRecording = stylusData.protoSignals["y"];
+        RecordingViewController.gestures.append(GestureRecording(id: stylusData.id, x:xRecording as! Recording, y:yRecording as! Recording))
         let IndexPath = NSIndexPath(item: RecordingViewController.gestures.count-1, section:0)
         collectionView?.insertItems(at: [IndexPath as IndexPath])
         collectionView?.scrollToItem(at: IndexPath as IndexPath, at: UICollectionViewScrollPosition.right, animated: false)

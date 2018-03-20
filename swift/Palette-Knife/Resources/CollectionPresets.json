@@ -1,0 +1,136 @@
+{
+    "collections": {
+        "live": [{   "classType": "live",
+                     "id": "stylus",
+                     "name": "stylus",
+                     "signals": [{
+                                 "fieldName": "x",
+                                 "displayName": "stylus x",
+                                 "classType": "LiveSignal",
+                                 "order": 0,
+                                 "settings": {}
+                                 }, {
+                                 "fieldName": "y",
+                                 "displayName": "stylus y",
+                                 "classType": "LiveSignal",
+                                 "order": 1,
+                                 "settings": {}
+                                 }, {
+                                 "fieldName": "dx",
+                                 "displayName": "stylus delta x",
+                                 "classType": "LiveSignal",
+                                  "order": 2,
+                                 "settings": {}
+                                 },
+                                 
+                                 {
+                                 "fieldName": "dy",
+                                 "displayName": "stylus delta y",
+                                 "classType": "LiveSignal",
+                                  "order": 3,
+                                 "settings": {}
+                                 },
+                                 
+                                 
+                                 {
+                                 "fieldName": "force",
+                                 "displayName": "stylus force",
+                                 "classType": "LiveSignal",
+                                  "order": 4,
+                                 "settings": {}
+                                 },
+                                 
+                                 
+                                 
+                                 {
+                                 "fieldName": "angle",
+                                 "displayName": "stylus angle",
+                                 "classType": "LiveSignal",
+                                  "order": 5,
+                                 "settings": {}
+                                 },
+                                 
+                                 
+                                 {
+                                 "fieldName": "stylusEvent",
+                                 "displayName": "stylus event",
+                                 "classType": "StylusEvent",
+                                  "order": 6,
+                                 "settings": {}
+                                 }
+                                 ]
+                     }]
+            
+            
+        },
+        "imported": [],
+        "recordings": [{
+                       
+                       "classType": "recording",
+                       "id": "recording_preset",
+                       "name": "recording_preset",
+                       "signals" : [{
+                                    "fieldName": "x",
+                                    "displayName": "stylus x",
+                                    "classType": "Recording",
+                                     "order": 0,
+                                    "settings": {}
+                                    }, {
+                                    "fieldName": "y",
+                                    "displayName": "stylus y",
+                                    "classType": "Recording",
+                                     "order": 1,
+                                    "settings": {}
+                                    }, {
+                                    "fieldName": "dx",
+                                    "displayName": "stylus delta x",
+                                    "classType": "Recording",
+                                     "order": 2,
+                                    "settings": {}
+                                    },
+                                    
+                                    {
+                                    "fieldName": "dy",
+                                    "displayName": "stylus delta y",
+                                    "classType": "Recording",
+                                     "order": 3,
+                                    "settings": {}
+                                    },
+                                    
+                                    
+                                    {
+                                    "fieldName": "force",
+                                    "displayName": "stylus force",
+                                    "classType": "Recording",
+                                     "order": 4,
+                                    "settings": {}
+                                    },
+                                    
+                                    
+                                    
+                                    {
+                                    "fieldName": "angle",
+                                    "displayName": "stylus angle",
+                                    "classType": "Recording",
+                                     "order": 5,
+                                    "settings": {}
+                                    },
+                                    
+                                    
+                                    {
+                                    "fieldName": "stylusEvent",
+                                    "displayName": "stylus event",
+                                    "classType": "StylusEventRecording",
+                                     "order": 6,
+                                    "settings": {}
+                                    }
+                                    ]
+                       
+                        }
+                       ],
+        "generators": [],
+        "drawings": [],
+        "brush": []
+    
+    
+}

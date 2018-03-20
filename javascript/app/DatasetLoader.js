@@ -53,6 +53,7 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 
 					}
 				});			
+
 			}
 
 			loadDataset(filename){
@@ -60,9 +61,9 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 				var self = this;
 				$.getJSON("app/sample_datasets/"+filename, function(data) {
 
-					var id = data["meta"]["view"]["id"];
-					var name = data["meta"]["view"]["name"];
-					var columns = data["meta"]["view"]["columns"];
+					var id = data["meta"]["id"];
+					var name = data["meta"]["name"];
+					var columns = data["meta"]["columns"];
 					var items = [];
 					items.push({
 		                classType: "imported",

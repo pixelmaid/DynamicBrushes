@@ -26,12 +26,12 @@
     ],
     "generators" : [
       {
-        "generator_type" : "interval",
+        "generatorType" : "interval",
         "generatorId" : "interval_12D9E044-CD08-455C-B244-1B6D1353790E",
         "inc" : 1
       },
       {
-        "generator_type" : "interval",
+        "generatorType" : "interval",
         "generatorId" : "interval_5151EC00-B60D-4E2C-8740-C87E2F5B5456",
         "inc" : 0.001
       }
@@ -101,7 +101,7 @@
         "expressionPropertyList" : {
 
         },
-        "relativePropertyItemName" : "delta x"
+        "relativePropertyFieldName" : "delta x"
       },
       {
         "stateId" : "_uerji92qt",
@@ -113,7 +113,7 @@
         "expressionPropertyList" : {
 
         },
-        "relativePropertyItemName" : "delta y"
+        "relativePropertyFieldName" : "delta y"
       }
     ],
     "conditions" : [

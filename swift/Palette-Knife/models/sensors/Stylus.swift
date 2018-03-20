@@ -15,7 +15,7 @@ class Stylus: TimeSeries, WebTransmitter {
     var force = Observable<Float>(0)
     var prevForce = Observable<Float>(0)
     var angle = Observable<Float>(0)
-    var speed = MovingAverage(id:"stylus_speed");
+    var speed =  Observable<Float>(0)
     var prevAngle = Observable<Float>(0)
     var deltaAngle = Observable<Float>(0)
     var position = LinkedPoint(x:0,y:0)
@@ -58,12 +58,14 @@ class Stylus: TimeSeries, WebTransmitter {
         self.distance = Observable<Float>(0);
         self.xDistance = Observable<Float>(0);
         self.yDistance = Observable<Float>(0);
+        
         RequestHandler.registerObservable(observableId: "stylus_x", observable: self.x)
         RequestHandler.registerObservable(observableId: "stylus_y", observable: self.y)
         RequestHandler.registerObservable(observableId: "stylus_dx", observable: self.dx)
         RequestHandler.registerObservable(observableId: "stylus_dy", observable: self.dy)
         RequestHandler.registerObservable(observableId: "stylus_force", observable: self.force)
         RequestHandler.registerObservable(observableId: "stylus_angle", observable: self.angle)
+        
         super.init()
         self.id = "stylus";
         self.name = "stylus"
@@ -170,7 +172,6 @@ class Stylus: TimeSeries, WebTransmitter {
         }
         //self.delta.set(x: 0,y:0)
         self.penDown.set(newValue: 0);
-        self.speed.hardReset(val: 0);
         self.speed.set(newValue: 0);
         self.resetDistance();
         //self.transmitData();

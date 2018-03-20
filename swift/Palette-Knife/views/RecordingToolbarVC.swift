@@ -8,9 +8,12 @@
 
 import Foundation
 import UIKit
+import SwiftyJSON
 
 
-class RecordingToolbarVC: UIViewController {
+class RecordingToolbarVC: UIViewController,Requester {
+  
+    
     let playbackSpeeds: [Float] = [0.1, 0.25, 0.5, 0.75, 1, 1.5, 2, 4, 10] //real playback speeds
     let recordImgEventKey = NSUUID().uuidString
 
@@ -72,7 +75,18 @@ class RecordingToolbarVC: UIViewController {
         let confirmAction = UIAlertAction(title: "Confirm", style: .default) { (_) in
               //getting the input values from user
             let name = alertController.textFields?[0].text
+            
+            
             //now actually export it
+            
+            //let collection = StylusManager.exportRecording(startId: "foo", endId: "bar")
+           // collection["name"] = name;
+            
+            let collectionList:JSON = [:];
+            //collectionList["collections"] = JSON([collection])
+            
+            let request = Request(target: "socket", action: "send_collection_data", data: collectionList, requester: self)
+            RequestHandler.addRequest(requestData: request)
         }
         
         //the cancel action doing nothing
@@ -89,6 +103,17 @@ class RecordingToolbarVC: UIViewController {
         
         //finally presenting the dialog box
         self.present(alertController, animated: true, completion: nil)
+    }
+    
+    
+    //requester stubs
+    func processRequest(data: (String, JSON?)) {
+       
+    }
+    
+    func processRequestHandler(data: (String, JSON?), key: String) {
+        self.processRequest(data:data)
+
     }
     
 

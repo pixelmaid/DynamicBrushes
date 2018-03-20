@@ -43,6 +43,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     self.instance = jsPlumb.getInstance({
                         Endpoint: ["Rectangle", {
                             width: 10,
+                            width: 10,
                             height: 10,
                             cssClass: "transendpoint"
                         }],
@@ -388,7 +389,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     drop: function(event, ui) {
                         var type = $(ui.draggable).attr('type');
                         var name = $(ui.draggable).attr('name');
-                        var item_name = $(ui.draggable).html();
+                        var fieldName = $(ui.draggable).html();
                         var mapping_id = ID();
                         var data = {
                             type: type,
@@ -400,7 +401,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                         if (type == "brush_prop") {
                             console.log("brush prop dropped on state");
                             var expressionId = ID();
-                            self.trigger("ON_MAPPING_ADDED", [mapping_id, name, item_name, type, expressionId, id, self.id]);
+                            self.trigger("ON_MAPPING_ADDED", [mapping_id, name, fieldName, type, expressionId, id, self.id]);
                             $(ui.helper).remove(); //destroy clone
                             $(ui.draggable).remove(); //remove from list
                         }

@@ -55,7 +55,12 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
                 chartViewManager.synchronize(data);
                 saveManager.setCurrentFilename(currentBehaviorName,currentBehaviorFile);
 
-            } else if (data.type == "storage_data") {
+            } 
+
+            else if (data.type == "collection_data"){
+                datasetLoader.loadCollection(data["data"]);
+            }
+            else if (data.type == "storage_data") {
                 saveManager.loadStorageData(data);
             }
 

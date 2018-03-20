@@ -89,6 +89,7 @@
 		5FBDF1051ED8E6EE00022B07 /* JotUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FBDF1041ED8E6EE00022B07 /* JotUI.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		5FC91D2D1EA00C2F00A19206 /* RequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC91D2C1EA00C2F00A19206 /* RequestHandler.swift */; };
 		5FD6CD121DE0EE0E007D94AA /* sm_pen_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FD6CD111DE0EE0E007D94AA /* sm_pen_blue.png */; };
+		5FDE68EB205C93F0005A49C3 /* Generator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FDE68EA205C93F0005A49C3 /* Generator.swift */; };
 		5FE32F611ECE2EBB00ADC01E /* ToolbarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE32F601ECE2EBB00ADC01E /* ToolbarViewController.swift */; };
 		5FE32F631ECE535100ADC01E /* LayerContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE32F621ECE535100ADC01E /* LayerContainerView.swift */; };
 		5FE32F651ECE638B00ADC01E /* LayerPanelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE32F641ECE638B00ADC01E /* LayerPanelViewController.swift */; };
@@ -124,10 +125,10 @@
 		5FE32FA21ECF70BE00ADC01E /* layerVisible_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FE32F9E1ECF70BE00ADC01E /* layerVisible_button.png */; };
 		5FE32FA31ECF70BE00ADC01E /* layerVisible_button2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FE32F9F1ECF70BE00ADC01E /* layerVisible_button2x.png */; };
 		5FE34C7B1F1FA61300E26C06 /* PathFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FE34C7A1F1FA61300E26C06 /* PathFunctions.swift */; };
+		5FE7AB602060860F00FBCD9E /* CollectionPresets.json in Resources */ = {isa = PBXBuildFile; fileRef = 5FE7AB5F2060860F00FBCD9E /* CollectionPresets.json */; };
 		5FEE2AC91DE127D800080095 /* dual_pen.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FEE2AC71DE127D800080095 /* dual_pen.png */; };
 		5FEE2ACA1DE127D800080095 /* lg_pen_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FEE2AC81DE127D800080095 /* lg_pen_blue.png */; };
 		5FFAC4D71E9D84040009DC5E /* SaveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFAC4D61E9D84040009DC5E /* SaveManager.swift */; };
-		5FFC455A1EE1B133007B7597 /* Particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FFC45581EE1B133007B7597 /* Particle.png */; };
 		5FFC455B1EE1B133007B7597 /* point.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 5FFC45591EE1B133007B7597 /* point.vsh */; };
 		5FFC456F1EE4C648007B7597 /* airbrush_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FFC456D1EE4C648007B7597 /* airbrush_button.png */; };
 		5FFC45701EE4C648007B7597 /* airbrush_button2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FFC456E1EE4C648007B7597 /* airbrush_button2x.png */; };
@@ -136,6 +137,7 @@
 		5FFC45781EE5C473007B7597 /* BehaviorPanelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFC45771EE5C473007B7597 /* BehaviorPanelViewController.swift */; };
 		5FFC457A1EE5C6D6007B7597 /* BehaviorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFC45791EE5C6D6007B7597 /* BehaviorCell.swift */; };
 		5FFDAB091D21B5C400632A26 /* SocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFDAB081D21B5C400632A26 /* SocketManager.swift */; };
+		5FFFD797204F5E5D0038A0BA /* SignalCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFFD796204F5E5D0038A0BA /* SignalCollection.swift */; };
 		72478CDD2029043800D24C92 /* Palette-Knife in Resources */ = {isa = PBXBuildFile; fileRef = 72478CDA2029043700D24C92 /* Palette-Knife */; };
 		72478CDE2029043800D24C92 /* Palette-KnifeUITests in Resources */ = {isa = PBXBuildFile; fileRef = 72478CDB2029043800D24C92 /* Palette-KnifeUITests */; };
 		72478CDF2029043800D24C92 /* Palette-KnifeTests in Resources */ = {isa = PBXBuildFile; fileRef = 72478CDC2029043800D24C92 /* Palette-KnifeTests */; };
@@ -227,7 +229,7 @@
 		5F90F5601E9D5BCC006BB9FE /* BehaviorMapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BehaviorMapper.swift; sourceTree = "<group>"; };
 		5F90F5611E9D5BCC006BB9FE /* Condition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Condition.swift; sourceTree = "<group>"; };
 		5F90F5621E9D5BCC006BB9FE /* Expression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Expression.swift; sourceTree = "<group>"; };
-		5F90F5631E9D5BCC006BB9FE /* Signal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Signal.swift; sourceTree = "<group>"; };
+		5F90F5631E9D5BCC006BB9FE /* Signal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Signal.swift; path = data/Signal.swift; sourceTree = "<group>"; };
 		5F90F5641E9D5BCC006BB9FE /* State.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = State.swift; sourceTree = "<group>"; };
 		5F90F56D1E9D5BE3006BB9FE /* Stylus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stylus.swift; sourceTree = "<group>"; };
 		5F90F5731E9D5CE8006BB9FE /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
@@ -266,6 +268,7 @@
 		5FBDF1041ED8E6EE00022B07 /* JotUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JotUI.framework; sourceTree = "<group>"; };
 		5FC91D2C1EA00C2F00A19206 /* RequestHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestHandler.swift; sourceTree = "<group>"; };
 		5FD6CD111DE0EE0E007D94AA /* sm_pen_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sm_pen_blue.png; sourceTree = "<group>"; };
+		5FDE68EA205C93F0005A49C3 /* Generator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Generator.swift; path = data/Generator.swift; sourceTree = "<group>"; };
 		5FE32F601ECE2EBB00ADC01E /* ToolbarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToolbarViewController.swift; sourceTree = "<group>"; };
 		5FE32F621ECE535100ADC01E /* LayerContainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LayerContainerView.swift; sourceTree = "<group>"; };
 		5FE32F641ECE638B00ADC01E /* LayerPanelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LayerPanelViewController.swift; sourceTree = "<group>"; };
@@ -301,10 +304,10 @@
 		5FE32F9E1ECF70BE00ADC01E /* layerVisible_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = layerVisible_button.png; sourceTree = "<group>"; };
 		5FE32F9F1ECF70BE00ADC01E /* layerVisible_button2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = layerVisible_button2x.png; sourceTree = "<group>"; };
 		5FE34C7A1F1FA61300E26C06 /* PathFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathFunctions.swift; sourceTree = "<group>"; };
+		5FE7AB5F2060860F00FBCD9E /* CollectionPresets.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = CollectionPresets.json; path = "Palette-Knife/Resources/CollectionPresets.json"; sourceTree = "<group>"; };
 		5FEE2AC71DE127D800080095 /* dual_pen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dual_pen.png; sourceTree = "<group>"; };
 		5FEE2AC81DE127D800080095 /* lg_pen_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lg_pen_blue.png; sourceTree = "<group>"; };
 		5FFAC4D61E9D84040009DC5E /* SaveManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SaveManager.swift; sourceTree = "<group>"; };
-		5FFC45581EE1B133007B7597 /* Particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Particle.png; sourceTree = SOURCE_ROOT; };
 		5FFC45591EE1B133007B7597 /* point.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = point.vsh; sourceTree = SOURCE_ROOT; };
 		5FFC456D1EE4C648007B7597 /* airbrush_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = airbrush_button.png; sourceTree = "<group>"; };
 		5FFC456E1EE4C648007B7597 /* airbrush_button2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = airbrush_button2x.png; sourceTree = "<group>"; };
@@ -313,6 +316,7 @@
 		5FFC45771EE5C473007B7597 /* BehaviorPanelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BehaviorPanelViewController.swift; path = "Palette-Knife/views/BehaviorPanelViewController.swift"; sourceTree = SOURCE_ROOT; };
 		5FFC45791EE5C6D6007B7597 /* BehaviorCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BehaviorCell.swift; sourceTree = "<group>"; };
 		5FFDAB081D21B5C400632A26 /* SocketManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketManager.swift; sourceTree = "<group>"; };
+		5FFFD796204F5E5D0038A0BA /* SignalCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SignalCollection.swift; path = data/SignalCollection.swift; sourceTree = "<group>"; };
 		72478CDA2029043700D24C92 /* Palette-Knife */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Palette-Knife"; sourceTree = "<group>"; };
 		72478CDB2029043800D24C92 /* Palette-KnifeUITests */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Palette-KnifeUITests"; sourceTree = "<group>"; };
 		72478CDC2029043800D24C92 /* Palette-KnifeTests */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Palette-KnifeTests"; sourceTree = "<group>"; };
@@ -385,6 +389,9 @@
 		5F15BB5E1F8D94A5005E5B08 /* data */ = {
 			isa = PBXGroup;
 			children = (
+				5FDE68EA205C93F0005A49C3 /* Generator.swift */,
+				5F90F5631E9D5BCC006BB9FE /* Signal.swift */,
+				5FFFD796204F5E5D0038A0BA /* SignalCollection.swift */,
 				5F6903351FBBB75900EB3437 /* MapFunctions.swift */,
 				5F15BB5F1F8D94C8005E5B08 /* DataObject.swift */,
 			);
@@ -417,6 +424,7 @@
 			isa = PBXGroup;
 			children = (
 				5F5037291EA95E37004ABAC1 /* Recording.data */,
+				5FE7AB5F2060860F00FBCD9E /* CollectionPresets.json */,
 			);
 			name = Resources;
 			path = ..;
@@ -493,7 +501,6 @@
 				5F90F5601E9D5BCC006BB9FE /* BehaviorMapper.swift */,
 				5F90F5611E9D5BCC006BB9FE /* Condition.swift */,
 				5F90F5621E9D5BCC006BB9FE /* Expression.swift */,
-				5F90F5631E9D5BCC006BB9FE /* Signal.swift */,
 				5F90F5641E9D5BCC006BB9FE /* State.swift */,
 			);
 			path = behavior;
@@ -548,7 +555,6 @@
 		5FA4C7221CDA7B5B004A728C /* PaletteKnife */ = {
 			isa = PBXGroup;
 			children = (
-				5FFC45581EE1B133007B7597 /* Particle.png */,
 				5FFC45591EE1B133007B7597 /* point.vsh */,
 				5F5037281EA95E27004ABAC1 /* Resources */,
 				5F5037231EA95DD0004ABAC1 /* Shaders */,
@@ -991,9 +997,9 @@
 				5FE32F7E1ECF6D5300ADC01E /* behavior_activate_button.png in Resources */,
 				5FD6CD121DE0EE0E007D94AA /* sm_pen_blue.png in Resources */,
 				5FE32F881ECF6D5300ADC01E /* erase_button.png in Resources */,
-				5FFC455A1EE1B133007B7597 /* Particle.png in Resources */,
 				72478CDF2029043800D24C92 /* Palette-KnifeTests in Resources */,
 				5FBDF0E71ED8D95300022B07 /* quad.vsh in Resources */,
+				5FE7AB602060860F00FBCD9E /* CollectionPresets.json in Resources */,
 				5FE32F991ECF6DC900ADC01E /* save_button2x.png in Resources */,
 				5FEE2ACA1DE127D800080095 /* lg_pen_blue.png in Resources */,
 				5FE32F7D1ECF6D5300ADC01E /* behavior_activate_button_active2x.png in Resources */,
@@ -1172,6 +1178,7 @@
 				5F90F5551E9D5A41006BB9FE /* Canvas.swift in Sources */,
 				5F5CED301ED1132600A253A0 /* UIInput.swift in Sources */,
 				5F90F5691E9D5BCC006BB9FE /* Expression.swift in Sources */,
+				5FDE68EB205C93F0005A49C3 /* Generator.swift in Sources */,
 				5FB74959202128FE007D9E12 /* StylusManager.swift in Sources */,
 				5F90F5491E9D59D4006BB9FE /* WebTransmitter.swift in Sources */,
 				7267DCC5202A8ECF0093245A /* RecordingFrameCell.swift in Sources */,
@@ -1185,6 +1192,7 @@
 				5F90F56A1E9D5BCC006BB9FE /* Signal.swift in Sources */,
 				5FE32F651ECE638B00ADC01E /* LayerPanelViewController.swift in Sources */,
 				5FE32F631ECE535100ADC01E /* LayerContainerView.swift in Sources */,
+				5FFFD797204F5E5D0038A0BA /* SignalCollection.swift in Sources */,
 				5FFC45781EE5C473007B7597 /* BehaviorPanelViewController.swift in Sources */,
 				5F5CED2B1ED10AED00A253A0 /* ColorWheel.swift in Sources */,
 				5F50371D1EA957F5004ABAC1 /* debug.swift in Sources */,

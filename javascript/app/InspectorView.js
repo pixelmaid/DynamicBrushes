@@ -22,7 +22,7 @@ define(["jquery", "jquery-ui", "handlebars", "app/id","hbs!app/templates/propert
 
             dataUpdatedHandler() {
                     var currentData = this.model.currentValue;
-                    this.el.html(currentData);        
+                    this.el.html(currentData.toFixed(2));        
             }
 
            

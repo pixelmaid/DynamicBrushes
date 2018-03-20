@@ -1,0 +1,685 @@
+{
+  "_0zhy81iuw" : {
+    "name" : "behavior_4",
+    "methods" : [
+      {
+        "hasArguments" : false,
+        "targetMethod" : "startTimer",
+        "targetTransition" : "_jsplumb_c_1492035672042",
+        "methodId" : "_yknzqq2by"
+      },
+      {
+        "targetTransition" : "_jsplumb_c_1492035672042",
+        "hasArguments" : true,
+        "currentArguments" : [
+          "parent_position"
+        ],
+        "targetMethod" : "newStroke",
+        "defaultArgument" : "stylus_position",
+        "methodArguments" : {
+          "parent_origin" : "parent_origin",
+          "stylus_position" : "stylus_position",
+          "parent_position" : "parent_position"
+        },
+        "methodId" : "_y9981vzdi"
+      }
+    ],
+    "generators" : [
+      {
+        "generatorType" : "interval",
+        "generatorId" : "interval_3074455A-6494-483C-AC33-3ADA4C32BAED",
+        "inc" : 1
+      },
+      {
+        "generatorType" : "interval",
+        "generatorId" : "interval_4FC8A74E-532D-42AB-B9BD-E3235656EA81",
+        "inc" : 1
+      },
+      {
+        "generatorType" : "sine",
+        "generatorId" : "_7geqmtfoh",
+        "freq" : 0.032000001519918442,
+        "amp" : 100,
+        "phase" : -1.6000000238418579
+      },
+      {
+        "generatorType" : "interval",
+        "generatorId" : "interval_63524599-B9AB-466B-9CEC-C405C33238B6",
+        "inc" : 0.0010000000474974513
+      },
+      {
+        "generatorType" : "interval",
+        "generatorId" : "interval_07B14218-495E-4C25-836D-5095A151DA6B",
+        "inc" : 0.004999999888241291
+      },
+      {
+        "generatorType" : "interval",
+        "generatorId" : "interval_864D4F6C-4775-423B-8C44-981277E4A00A",
+        "inc" : 0.0070000002160668373
+      },
+      {
+        "generatorType" : "interval",
+        "generatorId" : "interval_183B4F4B-A5BF-4649-B01F-FD430412F51E",
+        "inc" : 1
+      },
+      {
+        "generatorType" : "interval",
+        "generatorId" : "interval_8C5E3E00-0D22-4447-BBB9-A682BB636AF2",
+        "inc" : 0.25
+      },
+      {
+        "generatorType" : "triangle",
+        "generatorId" : "_t7lfk37u9",
+        "min" : 0,
+        "freq" : 0.5,
+        "max" : 100
+      },
+      {
+        "generatorType" : "interval",
+        "generatorId" : "interval_32C11E95-8BD0-4000-8158-B3C68EE581D2",
+        "inc" : 1
+      },
+      {
+        "generatorType" : "interval",
+        "generatorId" : "interval_D5775CE5-9CF6-4BA1-B342-A7DAF5AFDAD3",
+        "inc" : 0.64999997615814209
+      },
+      {
+        "generatorType" : "interval",
+        "generatorId" : "interval_A71FC2C4-1423-4BA6-B7D2-C3A53D802AE3",
+        "inc" : 1
+      },
+      {
+        "generatorType" : "interval",
+        "generatorId" : "interval_309CA84C-9565-450A-8F4D-D81F7A75E6C6",
+        "inc" : 1
+      },
+      {
+        "generatorType" : "interval",
+        "generatorId" : "interval_D5BD1FD2-78C0-4D69-9CFB-55A1BC67B2EB",
+        "inc" : 0.10000000149011612
+      },
+      {
+        "generatorType" : "interval",
+        "generatorId" : "interval_FD272394-275B-4443-89E3-B7CBB0BCA3F6",
+        "inc" : 0.75
+      },
+      {
+        "generatorType" : "interval",
+        "generatorId" : "interval_02DB2DB5-0678-4791-9623-6970F07A0C1A",
+        "inc" : 100
+      },
+      {
+        "generatorType" : "interval",
+        "generatorId" : "interval_671FAA5B-EF10-404B-86D3-B6E680561F94",
+        "inc" : 0.25
+      },
+      {
+        "generatorType" : "interval",
+        "generatorId" : "interval_91DAAB5A-856C-45A8-BD5F-B357AC270917",
+        "inc" : 10
+      }
+    ],
+    "id" : "_0zhy81iuw",
+    "states" : [
+      {
+        "name" : "myState",
+        "x" : 326.98858642578125,
+        "id" : "_uerji92qt",
+        "y" : 403.99148559570312
+      },
+      {
+        "name" : "setup",
+        "x" : 20,
+        "id" : "_y5p6lqn2a",
+        "y" : 229
+      },
+      {
+        "name" : "die",
+        "x" : 1327.9969482421875,
+        "id" : "_jupcoyws8",
+        "y" : 450
+      },
+      {
+        "name" : "drop",
+        "x" : 720.99432373046875,
+        "id" : "_rlzhx5ste",
+        "y" : 398.99148559570312
+      }
+    ],
+    "auto_spawn_num" : 0,
+    "active_status" : false,
+    "transitions" : [
+      {
+        "name" : "myState",
+        "eventName" : "TIME_INTERVAL",
+        "transitionId" : "_jsplumb_c_1501296951778",
+        "fromStateId" : "_uerji92qt",
+        "toStateId" : "_rlzhx5ste",
+        "parentFlag" : false,
+        "displayName" : "timeInterval",
+        "conditionName" : "condition_F52147B3-CA5D-44F7-B0CD-5CE30E3B2CA1"
+      },
+      {
+        "name" : "drop",
+        "eventName" : "TIME_INTERVAL",
+        "transitionId" : "_jsplumb_c_1501297171388",
+        "fromStateId" : "_rlzhx5ste",
+        "toStateId" : "_jupcoyws8",
+        "parentFlag" : false,
+        "displayName" : "timeInterval",
+        "conditionName" : "condition_464B1FE4-AE2A-41BE-8B91-C474871F3455"
+      },
+      {
+        "name" : "myState",
+        "eventName" : "TIME_INTERVAL",
+        "transitionId" : "_jsplumb_c_1496085710346",
+        "fromStateId" : "_uerji92qt",
+        "toStateId" : "_uerji92qt",
+        "parentFlag" : false,
+        "displayName" : "timeInterval",
+        "conditionName" : "condition_B86FEA15-DA0F-40B5-9D50-B87E2145C254"
+      },
+      {
+        "name" : "drop",
+        "eventName" : "TIME_INTERVAL",
+        "transitionId" : "_jsplumb_c_1501297084482",
+        "fromStateId" : "_rlzhx5ste",
+        "toStateId" : "_rlzhx5ste",
+        "parentFlag" : false,
+        "displayName" : "timeInterval",
+        "conditionName" : "condition_47E2BD61-3EEC-4101-84E1-E8947A1ED492"
+      },
+      {
+        "name" : "setup",
+        "eventName" : "STATE_COMPLETE",
+        "transitionId" : "_jsplumb_c_1492035672042",
+        "fromStateId" : "_y5p6lqn2a",
+        "toStateId" : "_uerji92qt",
+        "parentFlag" : false,
+        "displayName" : "stateComplete"
+      }
+    ],
+    "mappings" : [
+      {
+        "stateId" : "_uerji92qt",
+        "constraintType" : "passive",
+        "mappingId" : "_ych666mje",
+        "expressionId" : "_ddb5frbjb",
+        "expressionText" : "30",
+        "relativePropertyName" : "diameter",
+        "expressionPropertyList" : {
+
+        },
+        "relativePropertyItemName" : "diameter"
+      },
+      {
+        "stateId" : "_uerji92qt",
+        "constraintType" : "passive",
+        "mappingId" : "_mgszf0fxx",
+        "expressionId" : "_77qdbz0bs",
+        "expressionText" : "0",
+        "relativePropertyName" : "lightness",
+        "expressionPropertyList" : {
+
+        },
+        "relativePropertyItemName" : "lightness"
+      },
+      {
+        "stateId" : "_uerji92qt",
+        "constraintType" : "passive",
+        "mappingId" : "_xaze9ubtp",
+        "expressionId" : "_50w9ihmn4",
+        "expressionText" : "1",
+        "relativePropertyName" : "dy",
+        "expressionPropertyList" : {
+
+        },
+        "relativePropertyItemName" : "delta y"
+      },
+      {
+        "stateId" : "_rlzhx5ste",
+        "constraintType" : "passive",
+        "mappingId" : "_5q29f0ih3",
+        "expressionId" : "_8l99c0uzf",
+        "expressionText" : "%_7geqmtfoh%\/1.25",
+        "relativePropertyName" : "diameter",
+        "expressionPropertyList" : {
+          "_7geqmtfoh" : [
+            "null",
+            [
+              "_7geqmtfoh"
+            ],
+            [
+              "sine wave"
+            ]
+          ]
+        },
+        "relativePropertyItemName" : "diameter"
+      },
+      {
+        "stateId" : "_rlzhx5ste",
+        "constraintType" : "passive",
+        "mappingId" : "_a46lcsq40",
+        "expressionId" : "_ph8grm2cf",
+        "expressionText" : "1",
+        "relativePropertyName" : "dy",
+        "expressionPropertyList" : {
+
+        },
+        "relativePropertyItemName" : "delta y"
+      }
+    ],
+    "conditions" : [
+      {
+        "name" : "condition_ECE6854E-8802-48AF-A60A-7E7928510491",
+        "referenceNames" : [
+          "time"
+        ],
+        "relativeNames" : [
+          "interval_3074455A-6494-483C-AC33-3ADA4C32BAED"
+        ],
+        "relational" : "within"
+      },
+      {
+        "name" : "condition_D5477DCC-A2F7-462A-8067-30687B2FBBDE",
+        "referenceNames" : [
+          "time"
+        ],
+        "relativeNames" : [
+          "interval_A71FC2C4-1423-4BA6-B7D2-C3A53D802AE3"
+        ],
+        "relational" : "within"
+      },
+      {
+        "name" : "condition_B86FEA15-DA0F-40B5-9D50-B87E2145C254",
+        "referenceNames" : [
+          "time"
+        ],
+        "relativeNames" : [
+          "interval_63524599-B9AB-466B-9CEC-C405C33238B6"
+        ],
+        "relational" : "within"
+      },
+      {
+        "name" : "condition_9BEC12F5-D95E-4FF2-881B-D07D4B925B2B",
+        "referenceNames" : [
+          "time"
+        ],
+        "relativeNames" : [
+          "interval_D5BD1FD2-78C0-4D69-9CFB-55A1BC67B2EB"
+        ],
+        "relational" : "within"
+      },
+      {
+        "name" : "condition_9DAF85EC-B0F5-4503-9DC8-A0FB1FC3AB04",
+        "referenceNames" : [
+          "time"
+        ],
+        "relativeNames" : [
+          "interval_8C5E3E00-0D22-4447-BBB9-A682BB636AF2"
+        ],
+        "relational" : "within"
+      },
+      {
+        "name" : "condition_CCA2A79E-1968-44E3-B62E-9E7E40245B41",
+        "referenceNames" : [
+          "distance"
+        ],
+        "relativeNames" : [
+          "interval_4FC8A74E-532D-42AB-B9BD-E3235656EA81"
+        ],
+        "relational" : "within"
+      },
+      {
+        "name" : "condition_13046664-6661-4A03-B03B-5158D84A763B",
+        "referenceNames" : [
+          "distance"
+        ],
+        "relativeNames" : [
+          "interval_02DB2DB5-0678-4791-9623-6970F07A0C1A"
+        ],
+        "relational" : "within"
+      },
+      {
+        "name" : "condition_53048944-ABD3-4665-88D5-9DAF00914507",
+        "referenceNames" : [
+          "distance"
+        ],
+        "relativeNames" : [
+          "interval_91DAAB5A-856C-45A8-BD5F-B357AC270917"
+        ],
+        "relational" : "within"
+      },
+      {
+        "name" : "condition_E6CC42C4-7871-4E31-BBDD-359AEAC65079",
+        "referenceNames" : [
+          "time"
+        ],
+        "relativeNames" : [
+          "interval_32C11E95-8BD0-4000-8158-B3C68EE581D2"
+        ],
+        "relational" : "within"
+      },
+      {
+        "name" : "condition_F52147B3-CA5D-44F7-B0CD-5CE30E3B2CA1",
+        "referenceNames" : [
+          "time"
+        ],
+        "relativeNames" : [
+          "interval_671FAA5B-EF10-404B-86D3-B6E680561F94"
+        ],
+        "relational" : "within"
+      },
+      {
+        "name" : "condition_B9BDC8DE-4BDB-47F0-A4AA-83F4D0738DCF",
+        "referenceNames" : [
+          "time"
+        ],
+        "relativeNames" : [
+          "interval_183B4F4B-A5BF-4649-B01F-FD430412F51E"
+        ],
+        "relational" : "within"
+      },
+      {
+        "name" : "condition_C346E47C-7F09-47D8-87F8-4FE9512D4F8D",
+        "referenceNames" : [
+          "time"
+        ],
+        "relativeNames" : [
+          "interval_07B14218-495E-4C25-836D-5095A151DA6B"
+        ],
+        "relational" : "within"
+      },
+      {
+        "name" : "condition_BB2FF085-A3F1-4942-B166-EC025E2A89C9",
+        "referenceNames" : [
+          "time"
+        ],
+        "relativeNames" : [
+          "interval_309CA84C-9565-450A-8F4D-D81F7A75E6C6"
+        ],
+        "relational" : "within"
+      },
+      {
+        "name" : "condition_F52E9915-9EE7-4D68-9D09-823B3FF917AE",
+        "referenceNames" : [
+          "time"
+        ],
+        "relativeNames" : [
+          "interval_FD272394-275B-4443-89E3-B7CBB0BCA3F6"
+        ],
+        "relational" : "within"
+      },
+      {
+        "name" : "condition_47E2BD61-3EEC-4101-84E1-E8947A1ED492",
+        "referenceNames" : [
+          "time"
+        ],
+        "relativeNames" : [
+          "interval_864D4F6C-4775-423B-8C44-981277E4A00A"
+        ],
+        "relational" : "within"
+      },
+      {
+        "name" : "condition_464B1FE4-AE2A-41BE-8B91-C474871F3455",
+        "referenceNames" : [
+          "time"
+        ],
+        "relativeNames" : [
+          "interval_D5775CE5-9CF6-4BA1-B342-A7DAF5AFDAD3"
+        ],
+        "relational" : "within"
+      }
+    ]
+  },
+  "_eve1izeke" : {
+    "name" : "behavior_3",
+    "methods" : [
+      {
+        "hasArguments" : false,
+        "targetMethod" : "stopTimer",
+        "targetTransition" : "_jsplumb_c_1496085939954",
+        "methodId" : "_39hctu44a"
+      },
+      {
+        "targetTransition" : "_jsplumb_c_1492035674156",
+        "hasArguments" : true,
+        "currentArguments" : [
+          "_0zhy81iuw",
+          1
+        ],
+        "targetMethod" : "spawn",
+        "defaultArgument" : "self",
+        "methodArguments" : {
+          "self" : "self",
+          "_0zhy81iuw" : "behavior_4"
+        },
+        "methodId" : "_sig56b5el"
+      },
+      {
+        "targetTransition" : "_jsplumb_c_1496085613556",
+        "hasArguments" : true,
+        "currentArguments" : [
+          "stylus_position"
+        ],
+        "targetMethod" : "newStroke",
+        "defaultArgument" : "stylus_position",
+        "methodArguments" : {
+          "parent_origin" : "parent_origin",
+          "stylus_position" : "stylus_position",
+          "parent_position" : "parent_position"
+        },
+        "methodId" : "_s4wc2ux7z"
+      },
+      {
+        "hasArguments" : false,
+        "targetMethod" : "startTimer",
+        "targetTransition" : "_jsplumb_c_1496085613556",
+        "methodId" : "_f6yi30bcc"
+      }
+    ],
+    "generators" : [
+      {
+        "generatorType" : "interval",
+        "generatorId" : "interval_7EB4A23E-3AD1-404B-9E43-E7D17AD32A61",
+        "inc" : 0.5
+      },
+      {
+        "generatorType" : "interval",
+        "generatorId" : "interval_DA6AF03D-89AE-4188-BF10-C837D78DC786",
+        "inc" : 1
+      },
+      {
+        "generatorType" : "interval",
+        "generatorId" : "interval_1D696A27-347D-4ADA-B5C4-B43844BC16F1",
+        "inc" : 0.25
+      },
+      {
+        "generatorType" : "interval",
+        "generatorId" : "interval_216BADEF-B989-4FBA-BCE1-EE827003DD91",
+        "inc" : 1
+      }
+    ],
+    "id" : "_eve1izeke",
+    "states" : [
+      {
+        "name" : "myState",
+        "x" : 385,
+        "id" : "_uerji92qt",
+        "y" : 202
+      },
+      {
+        "name" : "setup",
+        "x" : 23,
+        "id" : "_y5p6lqn2a",
+        "y" : 215
+      },
+      {
+        "name" : "die",
+        "x" : 1006,
+        "id" : "_jupcoyws8",
+        "y" : 190
+      }
+    ],
+    "auto_spawn_num" : 1,
+    "active_status" : true,
+    "transitions" : [
+      {
+        "name" : "myState",
+        "emitter" : "stylus",
+        "eventName" : "STYLUS_UP",
+        "transitionId" : "_jsplumb_c_1496085939954",
+        "fromStateId" : "_uerji92qt",
+        "toStateId" : "_uerji92qt",
+        "parentFlag" : false,
+        "displayName" : "stylusUp"
+      },
+      {
+        "name" : "myState",
+        "eventName" : "TIME_INTERVAL",
+        "transitionId" : "_jsplumb_c_1492035674156",
+        "fromStateId" : "_uerji92qt",
+        "toStateId" : "_uerji92qt",
+        "parentFlag" : false,
+        "displayName" : "timeInterval",
+        "conditionName" : "condition_D684D36B-8AEB-4839-BFF1-88DA8B277738"
+      },
+      {
+        "name" : "setup",
+        "eventName" : "STATE_COMPLETE",
+        "transitionId" : "_jsplumb_c_1492035672042",
+        "fromStateId" : "_y5p6lqn2a",
+        "toStateId" : "_uerji92qt",
+        "parentFlag" : false,
+        "displayName" : "stateComplete"
+      },
+      {
+        "name" : "myState",
+        "emitter" : "stylus",
+        "eventName" : "STYLUS_DOWN",
+        "transitionId" : "_jsplumb_c_1496085613556",
+        "fromStateId" : "_uerji92qt",
+        "toStateId" : "_uerji92qt",
+        "parentFlag" : false,
+        "displayName" : "stylusDown"
+      }
+    ],
+    "mappings" : [
+      {
+        "stateId" : "_uerji92qt",
+        "constraintType" : "active",
+        "mappingId" : "_16y80ecqx",
+        "expressionId" : "_23v0ckj5l",
+        "expressionText" : "%_5t2vm315k%",
+        "relativePropertyName" : "x",
+        "expressionPropertyList" : {
+          "_5t2vm315k" : [
+            "stylus",
+            [
+              "x"
+            ],
+            [
+              "stylus x"
+            ]
+          ]
+        },
+        "relativePropertyItemName" : "x"
+      },
+      {
+        "stateId" : "_uerji92qt",
+        "constraintType" : "active",
+        "mappingId" : "_6llgdzxi0",
+        "expressionId" : "_8j0vl7ang",
+        "expressionText" : "%_1byx1ecep%",
+        "relativePropertyName" : "diameter",
+        "expressionPropertyList" : {
+          "_1byx1ecep" : [
+            "stylus",
+            [
+              "force"
+            ],
+            [
+              "force"
+            ]
+          ]
+        },
+        "relativePropertyItemName" : "diameter"
+      },
+      {
+        "stateId" : "_uerji92qt",
+        "constraintType" : "active",
+        "mappingId" : "_yr04li8cv",
+        "expressionId" : "_gts9gzm8b",
+        "expressionText" : "%_dhyald0ql%",
+        "relativePropertyName" : "y",
+        "expressionPropertyList" : {
+          "_dhyald0ql" : [
+            "stylus",
+            [
+              "y"
+            ],
+            [
+              "stylus y"
+            ]
+          ]
+        },
+        "relativePropertyItemName" : "y"
+      },
+      {
+        "stateId" : "_uerji92qt",
+        "constraintType" : "passive",
+        "mappingId" : "_s0rl867k3",
+        "expressionId" : "_0rigmljf3",
+        "expressionText" : "0",
+        "relativePropertyName" : "lightness",
+        "expressionPropertyList" : {
+
+        },
+        "relativePropertyItemName" : "lightness"
+      }
+    ],
+    "conditions" : [
+      {
+        "name" : "condition_B698BC47-3664-48E9-A4C4-5C4F289921A0",
+        "referenceNames" : [
+          "time"
+        ],
+        "relativeNames" : [
+          "interval_216BADEF-B989-4FBA-BCE1-EE827003DD91"
+        ],
+        "relational" : "within"
+      },
+      {
+        "name" : "condition_DECFD4A5-5FE0-4C0B-8D93-058606695A24",
+        "referenceNames" : [
+          "time"
+        ],
+        "relativeNames" : [
+          "interval_DA6AF03D-89AE-4188-BF10-C837D78DC786"
+        ],
+        "relational" : "within"
+      },
+      {
+        "name" : "condition_17F78B76-0883-41E5-839A-23EE1176223D",
+        "referenceNames" : [
+          "time"
+        ],
+        "relativeNames" : [
+          "interval_7EB4A23E-3AD1-404B-9E43-E7D17AD32A61"
+        ],
+        "relational" : "within"
+      },
+      {
+        "name" : "condition_D684D36B-8AEB-4839-BFF1-88DA8B277738",
+        "referenceNames" : [
+          "time"
+        ],
+        "relativeNames" : [
+          "interval_1D696A27-347D-4ADA-B5C4-B43844BC16F1"
+        ],
+        "relational" : "within"
+      }
+    ]
+  }
+}

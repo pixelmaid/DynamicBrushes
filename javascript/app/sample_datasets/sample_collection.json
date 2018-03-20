@@ -1,8 +1,8 @@
 {
   "collections": [{
       "classType": "imported",
-      "collectionId": "864D4F6C",
-      "collectionName": "running data",
+      "id": "864D4F6C",
+      "name": "running data",
       "signals": [{
           "displayName": "distance",
           "fieldName": "distance"
@@ -23,8 +23,8 @@
     },
     {
       "classType": "recording",
-      "collectionId": "8643426C",
-      "collectionName": "stylus recording 1",
+      "id": "8643426C",
+      "name": "stylus recording 1",
       "signals": [{
           "displayName": "stylus x",
           "fieldName": "x"

@@ -107,6 +107,13 @@ final class RequestHandler: Requester{
                     send_data["type"] = JSON("inspector_data")
                     RequestHandler.socketManager.sendData(data: send_data);
                     break;
+                case "send_collection_data":
+                    let data = RequestHandler.activeItem!.data!
+                    var send_data:JSON = [:]
+                    send_data["data"] = data;
+                    send_data["type"] = JSON("collection_data")
+                    RequestHandler.socketManager.sendData(data: send_data);
+                    break;
                 case "authoring_response":
                     let data = RequestHandler.activeItem!.data!
                     RequestHandler.socketManager.sendData(data: data);
@@ -255,8 +262,8 @@ final class RequestHandler: Requester{
         }
     }
     
-    static func registerObservableTarget(observableId:String,behaviorId:String, target:String){
-        RequestHandler.inspectorObservables[observableId]!.registerListener(behaviorId:behaviorId, listenerId: target);
+    static func registerObservableTarget(observableId:String,behaviorId:String){
+        RequestHandler.inspectorObservables[observableId]!.registerListener(behaviorId:behaviorId, listenerId: observableId);
     if(inspectorTimer == nil){
             inspectorTimer = Timer.scheduledTimer(timeInterval:1, target: RequestHandler.sharedInstance, selector: #selector(RequestHandler.emitterLogCallback), userInfo: nil, repeats: true)
         }

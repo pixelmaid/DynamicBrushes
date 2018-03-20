@@ -14,9 +14,9 @@ class BehaviorDefinition {
     
     var brushInstances = [Brush]();
     var states = [String:(String,Float,Float)]()
-    var expressions = [String:([String:(Any?,[String]?,[String]?)],String)]();
+    var expressions = [String:([String],String)]();
     var conditions = [(String,Any?,[String]?,Any?,[String]?,String)]()
-    var generators = [String:(String,[Any?])]()
+    // var generators = [String:(String,[Any?])]()
     var methods = [String:[(String,String,String,[Any]?)]]()
     var transitions = [String:(String,Emitter?,Bool,String?,String,String,String?,String)]()
     var behaviorMapper = BehaviorMapper()
@@ -24,8 +24,8 @@ class BehaviorDefinition {
     
     var storedExpressions = [String:[String:Expression]]()
     var storedConditions =  [String:[String:Condition]]()
-    var storedGenerators = [String:[String:Signal]]()
-
+    //var storedGenerators = [String:[String:Signal]]()
+    
     var name:String;
     var id: String;
     private var active_status:Bool;
@@ -53,11 +53,8 @@ class BehaviorDefinition {
         let transitionJSON = json["transitions"].arrayValue;
         let mappingJSON = json["mappings"].arrayValue;
         let methodJSON = json["methods"].arrayValue;
-        let generatorJSON = json["generators"].arrayValue;
         let conditionJSON = json["conditions"].arrayValue;
-        for i in 0..<generatorJSON.count{
-            self.parseGeneratorJSON(data:generatorJSON[i])
-        }
+        
         for i in 0..<conditionJSON.count{
             self.parseConditionJSON(data:conditionJSON[i])
         }
@@ -88,14 +85,14 @@ class BehaviorDefinition {
         if(data["reference"] != JSON.null){
             let refString = data["reference"].stringValue
             switch(refString){
-                case "stylus":
-                    reference = stylus
+            case "stylus":
+                reference = stylus
                 break
-                case "parent":
-                    reference = "parent"
+            case "parent":
+                reference = "parent"
                 break
             default:
-                    break;
+                break;
             }
         }
         else{
@@ -108,7 +105,7 @@ class BehaviorDefinition {
             referenceNames = [String]()
             for i in 0..<referenceNamesJSON.count{
                 referenceNames?.append(referenceNamesJSON[i].stringValue)
-
+                
             }
         }
         
@@ -127,7 +124,7 @@ class BehaviorDefinition {
             }
         }
         
-
+        
         var relativeNames:[String]? = nil
         if(data["relativeNames"] != JSON.null){
             let relativeNamesJSON = data["relativeNames"].arrayValue;
@@ -143,148 +140,22 @@ class BehaviorDefinition {
         self.addCondition(name: name, reference: reference, referenceNames: referenceNames, relative: relative, relativeNames: relativeNames, relational: relational)
     }
     
-    
-    func parseGeneratorJSON(data:JSON){
-        let type = data["generatorType"].stringValue;
-        switch(type){
-        case "random":
-            self.addRandomGenerator(name: data["generatorId"].stringValue, min: data["min"].floatValue, max: data["max"].floatValue)
-            break;
-        case "alternate":
-            let jsonValues =  data["values"].arrayValue;
-            var values = [Float]();
-            for i in jsonValues{
-                values.append(i.floatValue);
-            }
-            self.addAlternate(name: data["generatorId"].stringValue, values: values)
-            break;
-            
-            
-        case "range":
-            
-            self.addRange(name: data["generatorId"].stringValue, min: data["min"].intValue, max: data["max"].intValue, start: data["start"].floatValue, stop: data["stop"].floatValue)
-            break;
-            
-        case "sine":
-            self.addSine(name: data["generatorId"].stringValue, freq: data["freq"].floatValue, amp: data["amp"].floatValue, phase: data["phase"].floatValue);
-            
-            break;
-            
-        case "square":
-            self.addSquare(name: data["generatorId"].stringValue, min: data["min"].floatValue, max: data["max"].floatValue, freq: data["freq"].floatValue);
-            
-            break;
-            
-        case "triangle":
-            self.addTriangle(name: data["generatorId"].stringValue, min: data["min"].floatValue, max: data["max"].floatValue, freq: data["freq"].floatValue);
-            break;
-            
-
-        case "ease":
-            self.addEaseGenerator(name: data["generatorId"].stringValue, a: data["a"].floatValue, b: data["b"].floatValue, k: data["k"].floatValue);
-            
-            break;
-        case "interval":
-            var  times:Int? = nil
-            if (data["times"] != JSON.null){
-                times = data["times"].intValue
-            }
-            self.addInterval(name: data["generatorId"].stringValue, inc: data["inc"].floatValue, times:times );
-            
-            break;
-        
-        case "index":
-            self.addIndex(name: data["generatorId"].stringValue);
-            
-            break;
-            
-        case "siblingcount":
-            self.addSiblingCount(name: data["generatorId"].stringValue);
-            
-            break;
-
-            // case "random_walk":
-            
-            //return "success"
-            
-            
-        //  return "success";
-        default:
-            break;
-        }
-    }
-    
     func parseExpressionJSON(data:JSON){
         
         let expressionId = data["expressionId"].stringValue;
         
-        let expressionPropertyList = data["expressionPropertyList"];
+        let expressionPropertyList = data["expressionPropertyList"].arrayValue;
         let expressionText = data["expressionText"].stringValue;
-        var emitterOperandList = [String:(Any?,[String]?,[String]?)]();
+        var operandList = [String]();
+        for i in 0..<expressionPropertyList.count{
+            operandList.append(expressionPropertyList[i].stringValue);
+        }
         #if DEBUG
             print("expression prop list",expressionPropertyList);
         #endif
-        if(expressionPropertyList != JSON.null){
-            let dataExpressionDictionary = expressionPropertyList.dictionaryValue;
-            for (key,value) in dataExpressionDictionary{
-                let observableID:String
-                var dataEmitterValue = (value.arrayValue)[0].stringValue;
-                let emitter:Any?
-                #if DEBUG
-                    print("data emitter value",dataEmitterValue);
-                    
-                    
-                    #endif
-                if (dataEmitterValue == "stylus"){
-                    emitter = stylus;
-                    
-                }
-                    else if(dataEmitterValue == "ui"){
-                    emitter = uiInput;
-                    }
-                    
-                else if(dataEmitterValue.range(of:"dataset") != nil){
-                    let dataset_id = String(dataEmitterValue.split(separator: "_")[1]);
-                    emitter = BehaviorManager.datasets[dataset_id];
-                     #if DEBUG
-                    print("found dataset emitter", emitter)
-                    #endif
-                    }
-                    else{
-                    emitter = nil;
-                    
-                }
-                var propertyList:[String]?;
-                
-                if ((value.arrayValue)[1] != JSON.null) {
-                    let dataPropertyList = (value.arrayValue)[1].arrayValue;
-                    propertyList = [String]();
-                    
-                    for i in 0..<dataPropertyList.count {
-                        let property = dataPropertyList[i].stringValue;
-                        propertyList!.append(property)
-                    }
-                }
-                
-                var displayNameList:[String]?;
-                
-                if ((value.arrayValue)[2] != JSON.null) {
-                    let dataPropertyList = (value.arrayValue)[2].arrayValue;
-                    displayNameList = [String]();
-                    
-                    for i in 0..<dataPropertyList.count {
-                        let property = dataPropertyList[i].stringValue;
-                        displayNameList!.append(property)
-                    }
-                }
-                
-                
-                emitterOperandList[key]=(emitter,propertyList,displayNameList);
-
-            }
-        }
         
-        self.addExpression(id: expressionId, emitterOperandList: emitterOperandList, expressionText: expressionText)
+        
+        self.addExpression(id: expressionId, emitterOperandList: operandList, expressionText: expressionText)
     }
     
     
@@ -293,13 +164,13 @@ class BehaviorDefinition {
         
         let expressionId = data["expressionId"].stringValue;
         
-        self.addMapping(id: data["mappingId"].stringValue, referenceProperty:nil, referenceNames: [expressionId], relativePropertyName: data["relativePropertyName"].stringValue, stateId: data["stateId"].stringValue,type: data["constraintType"].stringValue,relativePropertyItemName: data["relativePropertyItemName"].stringValue)
+        self.addMapping(id: data["mappingId"].stringValue, referenceProperty:nil, referenceNames: [expressionId], relativePropertyName: data["relativePropertyName"].stringValue, stateId: data["stateId"].stringValue,type: data["constraintType"].stringValue,relativePropertyFieldName: data["relativePropertyFieldName"].stringValue)
     }
     
     func parseMethodJSON(data:JSON)->JSON{
         self.parseExpressionJSON(data:data)
         let expressionId = data["expressionId"].stringValue;
-
+        
         let targetTransition:String?
         if(data["targetTransition"] != JSON.null){
             targetTransition = data["targetTransition"].stringValue;
@@ -423,65 +294,65 @@ class BehaviorDefinition {
             }
         }
         
-        let conditionName:String?
+        var conditionName:String?
+        
         if(data["conditionName"] != JSON.null){
             conditionName = data["conditionName"].stringValue;
         }
         else{
-        let condition_list = data["conditions"].arrayValue;
-        switch(event){
-        case "TIME_INTERVAL":
-            conditionName = "condition_" + NSUUID().uuidString
-            let interval_name = "interval_" + NSUUID().uuidString
-            let interval_value = condition_list[0].floatValue;
-            self.addInterval(name: interval_name, inc: interval_value, times: nil)
             
-            self.addCondition(name: conditionName!, reference: nil, referenceNames: ["time"], relative: nil, relativeNames: [interval_name], relational: "within")
-            break;
-        case "DISTANCE_INTERVAL":
+            let condition_list = data["conditions"].arrayValue;
             conditionName = "condition_" + NSUUID().uuidString
-            let interval_name = "interval_" + NSUUID().uuidString
-            let interval_value = condition_list[0].floatValue;
-            self.addInterval(name: interval_name, inc: interval_value, times: nil)
-            
-            self.addCondition(name: conditionName!, reference: nil, referenceNames: ["distance"], relative: nil, relativeNames: [interval_name], relational: "within")
-            break;
-        case "INTERSECTION":
-            conditionName = "condition_" + NSUUID().uuidString
-            let interval_name = "interval_" + NSUUID().uuidString
-            let interval_value = condition_list[0].floatValue;
-            self.addInterval(name: interval_name, inc: interval_value, times: nil)
-            
-            self.addCondition(name: conditionName!, reference: nil, referenceNames: ["intersections"], relative: nil, relativeNames: [interval_name], relational: "within")
-            break;
-        case "STYLUS_MOVE_BY","STYLUS_X_MOVE_BY","STYLUS_Y_MOVE_BY":
-            let referenceName:String
-            if(event == "STYLUS_MOVE_BY"){
-                referenceName = "distance"
-            }
-            else if(event == "STYLUS_X_MOVE_BY"){
-                referenceName = "xDistance"
+            //TODO: CLEAN THIS UP TO REMOVE CONDITIONAL on event check
+            if(event != "STATE_COMPLETE"){
+                
+                var settings:JSON = [:]
+                settings["inc"] = condition_list[0];
+                let interval_id =  BehaviorManager.generators["default"]!.initializeSignal(fieldName:"interval",displayName:"interval",settings:settings,classType: "Interval",isProto:false , order:nil);
+                
+                
+                switch(event){
+                case "TIME_INTERVAL":
+                    self.addCondition(name: conditionName!, reference: nil, referenceNames: ["time"], relative: nil, relativeNames: [interval_id], relational: "within")
+                    break;
+                case "DISTANCE_INTERVAL":
+                    self.addCondition(name: conditionName!, reference: nil, referenceNames: ["distance"], relative: nil, relativeNames: [interval_id], relational: "within")
+                    break;
+                case "INTERSECTION":
+                    self.addCondition(name: conditionName!, reference: nil, referenceNames: ["intersections"], relative: nil, relativeNames: [interval_id], relational: "within")
+                    break;
+                case "STYLUS_MOVE_BY","STYLUS_X_MOVE_BY","STYLUS_Y_MOVE_BY":
+                    let referenceName:String
+                    if(event == "STYLUS_MOVE_BY"){
+                        referenceName = "distance"
+                    }
+                    else if(event == "STYLUS_X_MOVE_BY"){
+                        referenceName = "xDistance"
+                    }
+                    else{
+                        referenceName = "yDistance"
+                    }
+                    self.addCondition(name: conditionName!, reference: stylus, referenceNames: [referenceName], relative: nil, relativeNames: [interval_id], relational: "within")
+                    break;
+                    
+                    
+                default:
+                    conditionName = nil
+
+                    break;
+                    
+                }
+                
             }
             else{
-                referenceName = "yDistance"
-            }
-            conditionName = "condition_" + NSUUID().uuidString
-            let interval_name = "interval_" + NSUUID().uuidString
-            let interval_value = condition_list[0].floatValue;
-            self.addInterval(name: interval_name, inc: interval_value, times: nil)
-            
-            self.addCondition(name: conditionName!, reference: stylus, referenceNames: [referenceName], relative: nil, relativeNames: [interval_name], relational: "within")
-            break;
-            
+                conditionName = nil
 
-        default:
-            conditionName = nil;
-            break;
-            
-        }
+            }
         }
         
+        
         self.addTransition(transitionId: data["transitionId"].stringValue, name: data["name"].stringValue, eventEmitter: emitter, parentFlag: data["parentFlag"].boolValue, event: data["eventName"].stringValue, fromStateId: data["fromStateId"].stringValue, toStateId: data["toStateId"].stringValue, condition: conditionName,displayName:data["displayName"].stringValue)
+        
         
     }
     
@@ -493,67 +364,6 @@ class BehaviorDefinition {
         json_obj["active_status"] = JSON(self.active_status);
         json_obj["auto_spawn_num"] = JSON(self.auto_spawn_num);
         
-        var generatorArray = [JSON]();
-        for (key,data) in generators {
-            var generatorJSON:JSON = [:]
-            let type = data.0;
-            generatorJSON["generator_type"] = JSON(type);
-            generatorJSON["generatorId"] = JSON(key)
-            switch(type){
-            case "random":
-                generatorJSON["min"] = JSON(data.1[0]!)
-                generatorJSON["max"] = JSON(data.1[1]!)
-                break;
-            case "alternate":
-                generatorJSON["values"] = JSON(data.1[0]!)
-                break;
-            case "range":
-                generatorJSON["min"] = JSON(data.1[0]!)
-                generatorJSON["max"] = JSON(data.1[1]!)
-                generatorJSON["start"] = JSON(data.1[2]!)
-                generatorJSON["stop"] = JSON(data.1[3]!)
-                break;
-            case "sine":
-                generatorJSON["freq"] = JSON(data.1[0]!)
-                generatorJSON["amp"] = JSON(data.1[1]!)
-                generatorJSON["phase"] = JSON(data.1[2]!)
-                break;
-            case "triangle":
-                generatorJSON["min"] = JSON(data.1[0]!)
-                generatorJSON["max"] = JSON(data.1[1]!)
-                generatorJSON["freq"] = JSON(data.1[2]!)
-                break;
-            case "square":
-                generatorJSON["min"] = JSON(data.1[0]!)
-                generatorJSON["max"] = JSON(data.1[1]!)
-                generatorJSON["freq"] = JSON(data.1[2]!)
-                break;
-            case "ease":
-                generatorJSON["a"] = JSON(data.1[0]!)
-                generatorJSON["b"] = JSON(data.1[1]!)
-                generatorJSON["k"] = JSON(data.1[2]!)
-                break;
-            case "interval":
-                generatorJSON["inc"] = JSON(data.1[0]!)
-                if(data.1[1] != nil){
-                    generatorJSON["times"] = JSON(data.1[1]!)
-                }
-                break;
-
-                // case "random_walk":
-                
-                //return "success"
-                
-                
-            //  return "success";
-            default:
-                break;
-                
-            }
-            generatorArray.append(generatorJSON);
-        }
-        
-        
         var conditionArray = [JSON]();
         for i in 0..<conditions.count {
             let data = conditions[i];
@@ -561,7 +371,7 @@ class BehaviorDefinition {
             let name = data.0;
             if(data.1 != nil){
                 if((data.1 as? Stylus) == stylus){
-                   conditionJSON["reference"] = JSON("stylus")
+                    conditionJSON["reference"] = JSON("stylus")
                 }
                 else if((data.1 as? String) == "parent"){
                     conditionJSON["reference"] = JSON("parent")
@@ -666,7 +476,7 @@ class BehaviorDefinition {
                             
                         }
                         else if let def =  targetBehavior as? String {
-
+                            
                             behaviorId = def;
                             methodJSON["currentArguments"] = JSON([behaviorId,num]);
                             
@@ -724,26 +534,27 @@ class BehaviorDefinition {
             var mappingJSON:JSON = [:]
             
             let mappingId = key;
-            let relativePropertyItemName = data.5;
+            let relativePropertyFieldName = data.5;
             let expressionId = data.1![0]
             let expression = expressions[expressionId];
             let expressionText = expression?.1;
             let expressionPropertyList = expression?.0;
             var expressionPropertyListJSON:JSON = [:]
-            for(pId,pData) in expressionPropertyList!{
-                let emitter = pData.0;
-                let propertyList = pData.1;
-                let displayNameList = pData.2;
+            
+            for pId in expressionPropertyList! {
+                
+                let signal = BehaviorManager.getSignal(id: pId);
                 
                 var propEmitter = [JSON]();
-                if (emitter as? Stylus) != nil{
-                    propEmitter.append(JSON("stylus"));
-                }
-                else if (emitter as? UIInput) != nil{
-                    propEmitter.append(JSON("ui"));
+                let emitter = signal?.getCollectionName();
+                let propertyList = signal?.fieldName;
+                let displayNameList = signal?.displayName;
+                
+                if(emitter != nil){
+                    propEmitter.append(JSON(emitter!));
                 }
                 else{
-                    propEmitter.append(JSON("null"));
+                    propEmitter.append(JSON("NULL"));
                 }
                 propEmitter.append(JSON(propertyList!));
                 propEmitter.append(JSON(displayNameList!));
@@ -760,7 +571,7 @@ class BehaviorDefinition {
             mappingJSON["expressionText"] = JSON(expressionText!);
             mappingJSON["expressionPropertyList"] = expressionPropertyListJSON
             mappingJSON["constraintType"] = JSON(type)
-            mappingJSON["relativePropertyItemName"] = JSON(relativePropertyItemName);
+            mappingJSON["relativePropertyFieldName"] = JSON(relativePropertyFieldName);
             mappingsArray.append(mappingJSON);
             
         }
@@ -770,8 +581,7 @@ class BehaviorDefinition {
         json_obj["mappings"] = JSON(mappingsArray);
         json_obj["methods"] = JSON(methodArray);
         json_obj["conditions"] = JSON(conditionArray);
-        json_obj["generators"] = JSON(generatorArray);
-
+        
         return json_obj;
     }
     
@@ -793,55 +603,6 @@ class BehaviorDefinition {
         
         conditions.append((name,reference,referenceNames,relative,relativeNames,relational))
         
-    }
-    
-    func addInterval(name:String,inc:Float,times:Int?){
-        generators[name] = ("interval",[inc,times]);
-    }
-    
-    func addIncrement(name:String,inc:Observable<Float>,start:Observable<Float>){
-        generators[name] = ("increment",[inc,start]);
-    }
-    
-    func addRange(name:String,min:Int,max:Int,start:Float,stop:Float){
-        generators[name] = ("range",[min,max,start,stop]);
-    }
-    
-    func addSine(name:String,freq:Float,amp:Float,phase:Float){
-        generators[name] = ("sine",[freq,amp,phase]);
-    }
-    
-    func addTriangle(name:String,min:Float,max:Float,freq:Float){
-        generators[name] = ("triangle",[min,max,freq]);
-    }
-
-    
-    func addSquare(name:String,min:Float,max:Float,freq:Float){
-        generators[name] = ("square",[min,max,freq]);
-    }
-    
-    
-    func addIndex(name:String){
-        generators[name] = ("index",[]);
-    }
-    
-    func addSiblingCount(name:String){
-        generators[name] = ("siblingcount",[]);
-    }
-    
-    
-    func addRandomGenerator(name:String,min:Float,max:Float){
-        generators[name] = ("random",[min,max]);
-    }
-    
-    func addEaseGenerator(name:String,a:Float,b:Float,k:Float){
-        
-        generators[name] = ("ease",[a,b,k]);
-    }
-    
-    
-    func addAlternate(name:String,values:[Float]){
-        generators[name] = ("alternate",[values]);
     }
     
     func addState(stateId:String, stateName:String, stateX:Float, stateY:Float){
@@ -905,7 +666,7 @@ class BehaviorDefinition {
                         methods.removeValue(forKey: methodId);
                         
                     }
-                   
+                    
                     return;
                 }
                 
@@ -966,8 +727,8 @@ class BehaviorDefinition {
     }
     
     
-    func addMapping(id:String, referenceProperty:Any?, referenceNames:[String]?, relativePropertyName:String,stateId:String, type:String,relativePropertyItemName:String){
-        mappings[id] = ((referenceProperty,referenceNames,relativePropertyName,stateId,type,relativePropertyItemName))
+    func addMapping(id:String, referenceProperty:Any?, referenceNames:[String]?, relativePropertyName:String,stateId:String, type:String,relativePropertyFieldName:String){
+        mappings[id] = ((referenceProperty,referenceNames,relativePropertyName,stateId,type,relativePropertyFieldName))
         
     }
     
@@ -1013,227 +774,98 @@ class BehaviorDefinition {
         
     }
     
-    func addExpression(id:String, emitterOperandList:[String:(Any?,[String]?,[String]?)], expressionText:String){
+    func addExpression(id:String, emitterOperandList:[String], expressionText:String){
         expressions[id]=(emitterOperandList,expressionText);
     }
     
-    
-    
-    //TODO: add in cases for other generators
-    func generateGenerator(name:String, data:(String,[Any?]),targetBrush:Brush){
-        let id = targetBrush.id;
-        switch(data.0){
-        case "interval":
-            let interval = Interval( id:name, inc:data.1[0] as! Float,times:data.1[1] as? Int)
-            storedGenerators[id]![name] = interval;
-            break;
-        case "range":
-            let range = Range(id:name, min:data.1[0] as! Int, max:data.1[1] as! Int, start: data.1[2] as! Float, stop:data.1[3] as! Float)
-           storedGenerators[id]![name] = range;
-        case "sine":
-            let sine = Sine(id:name, freq: data.1[0] as! Float, amp: data.1[1] as! Float, phase: data.1[2] as! Float);
-            storedGenerators[id]![name] = sine;
-        case "square":
-            let square = Square(id:name, min: data.1[0] as! Float, max: data.1[1] as! Float, freq: data.1[2] as! Float);
-            storedGenerators[id]![name] = square;
-
-        case "triangle":
-            let triangle = Triangle(id:name, min: data.1[0] as! Float, max: data.1[1] as! Float, freq: data.1[2] as! Float);
-            storedGenerators[id]![name] = triangle;
-
-        case "random":
-            let random = RandomGenerator(id:name, start:data.1[0] as! Float, end:data.1[1] as! Float)
-            storedGenerators[id]![name] = random;
-        case "ease":
-            let ease = Ease(id:name, a: data.1[0] as! Float, b:  data.1[1] as! Float, k:  data.1[2] as! Float)
-            storedGenerators[id]![name] = ease;
-            
-            break;
-        case "alternate":
-            let alternate = Alternate(id:name, values:data.1[0] as! [Float])
-            storedGenerators[id]![name] = alternate;
-        case "index":
-            let index = Index(id:name, val:targetBrush.index);
-            storedGenerators[id]![name] = index;
-        case "siblingcount":
-            let siblingCount = SiblingCount(id:name, val:targetBrush.siblingcount);
-            storedGenerators[id]![name] = siblingCount;
- 
-        default:
-            break;
+    func generateSignal(id:String)->Signal?{
+        guard let signal = BehaviorManager.getSignal(id:id) else{
+            return nil
         }
-        RequestHandler.registerObservable(observableId: name, observable: storedGenerators[id]![name]!);
+        
+        return signal;
     }
     
-    func generateSingleOperand(targetBrush:Brush, emitter:Any?,propList:[String]?)->Observable<Float>{
-        let id = targetBrush.id;
-
+    func generateOperand(targetBrush:Brush,targetEmitter:Any?, propId:String?)->Observable<Float>{
+        let id = targetBrush.id
+        var emitter:Any
+        
         var operand:Observable<Float>
-       
-        if(propList != nil){
-            if(storedGenerators[id]![propList![0]]) != nil{
-                operand = storedGenerators[id]![propList![0]]!;
+        
+        if(targetEmitter == nil){
+            emitter = targetBrush;
+        }
+        else{
+            emitter = targetEmitter!
+        }
+        
+        
+        if(propId != nil){
+            let signal = generateSignal(id:propId!);
+            if(signal != nil){
+                operand = signal!;
             }
-            else if(storedExpressions[id]![propList![0]] != nil){
-                operand = storedExpressions[id]![propList![0]]!;
+            else if(storedExpressions[id]![propId!] != nil){
+                operand = storedExpressions[id]![propId!]!;
                 
             }
-            else if(storedConditions[id]![propList![0]] != nil){
-                operand = storedConditions[id]![propList![0]]!;
+            else if(storedConditions[id]![propId!] != nil){
+                operand = storedConditions[id]![propId!]!;
                 
             }
             else{
-                if let table = emitter as? Table{
-                     operand = table.columns[propList![0]]! as Observable<Float>
-                }
-                else{
-                operand = (emitter as! Object)[propList![0]]! as! Observable<Float>
-                }
+                operand = (emitter as! Object)[propId!]! as! Observable<Float>
             }
             
-            if(propList!.count > 1){
-                
-                for i in 1..<propList!.count{
-                    operand = operand[propList![i]] as! Observable<Float>
-                }
-            }
         }
         else{
             operand = emitter as! Observable<Float>
         }
+        
         return operand;
-    }
-    
-    func generateOperands(targetBrush:Brush,data:(Any?,[String]?,Any?,[String]?,String))->(Observable<Float>,Observable<Float>){
-        let id = targetBrush.id
-        var emitter1:Any
-        var emitter2:Any
-        
-        var operand1:Observable<Float>
-        var operand2: Observable<Float>
-        
-        if(data.0 == nil){
-            emitter1 = targetBrush;
-        }
-        else{
-            emitter1 = data.0!
-        }
-        
-        if(data.2 == nil){
-            emitter2 = targetBrush
-        }
-        else{
-            emitter2 = data.2!
-        }
-        
-        if(data.1 != nil){
-            var refPropList = data.1!
-            if(storedGenerators[id]![refPropList[0]]) != nil{
-                operand1 = storedGenerators[id]![refPropList[0]]!;
-            }
-            else if(storedExpressions[id]![refPropList[0]] != nil){
-                operand1 = storedExpressions[id]![refPropList[0]]!;
-                
-            }
-            else if(storedConditions[id]![refPropList[0]] != nil){
-                operand1 = storedConditions[id]![refPropList[0]]!;
-                
-            }
-            else{
-                operand1 = (emitter1 as! Object)[refPropList[0]]! as! Observable<Float>
-            }
-            
-            if(refPropList.count > 1){
-                
-                for i in 1..<refPropList.count{
-                    operand1 = operand1[refPropList[i]] as! Observable<Float>
-                }
-            }
-        }
-        else{
-            operand1 = emitter1 as! Observable<Float>
-        }
-        
-        if(data.3  != nil){
-            var refPropList = data.3!
-            if(storedGenerators[id]![refPropList[0]]) != nil{
-                operand2 = storedGenerators[id]![refPropList[0]]!;
-            }
-            else if(storedExpressions[id]![refPropList[0]] != nil){
-                operand2 = storedExpressions[id]![refPropList[0]]!;
-                
-            }
-            else if(storedConditions[id]![refPropList[0]] != nil){
-                operand2 = storedConditions[id]![refPropList[0]]!;
-                
-            }
-            else{
-                operand2 = (emitter2 as! Object)[refPropList[0]] as! Observable<Float>
-            }
-            
-            if(refPropList.count > 1){
-                
-                for i in 1..<refPropList.count{
-                    operand2 = operand2[refPropList[i]] as! Observable<Float>
-                    
-                }
-            }
-        }
-        else{
-            operand2 = emitter2 as! Observable<Float>
-        }
-        
-        return(operand1,operand2)
-        
         
     }
     
-    func generateCondition(targetBrush:Brush, data:(String, Any?,[String]?,Any?,[String]?,String)){
-        let name = data.0;
+    func generateCondition(targetBrush:Brush, conditionId:String, operand1:Observable<Float>, operand2:Observable<Float>, relational:String){
+        
         let id = targetBrush.id;
-        let operands = generateOperands(targetBrush: targetBrush, data:(data.1,data.2,data.3,data.4,data.5))
-        let operand1 = operands.0;
-        let operand2 = operands.1;
+        // let operands = generateOperands(targetBrush: targetBrush, data:(data.1,data.2,data.3,data.4,data.5))
+        //let operand1 = operands.0;
+        //let operand2 = operands.1;
         
-        let condition = Condition(a: operand1, b: operand2, relational: data.5)
-        storedConditions[id]![name] = condition;
+        let condition = Condition(a: operand1, b: operand2, relational: relational)
+        storedConditions[id]![conditionId] = condition;
         
     }
     
-    func generateExpression(targetBrush:Brush, name:String, data:([String:(Any?,[String]?,[String]?)],String)){
+    func generateExpression(targetBrush:Brush, name:String, signalIds:[String], expressionText:String){
         let id = targetBrush.id
         var operands = [String:Observable<Float>]();
-        for (key,value) in data.0 {
-            let emitter = value.0;
-            let propList = value.1;
-            let observableId :String;
-            if(emitter != nil){
-                observableId = ((emitter as! Emitter).id+"_"+propList![0]);
-            }
-            else{
-                 observableId = propList![0];
-            }
+        
+        for observableId in signalIds {
             #if DEBUG
                 print("registering observable target with id:",observableId);
             #endif
-            
-            let operand = self.generateSingleOperand(targetBrush: targetBrush, emitter: emitter, propList: propList)
-            operands[key] = operand;
-            RequestHandler.registerObservableTarget(observableId: observableId, behaviorId: self.id, target: key)
+            let operand = self.generateOperand(targetBrush: targetBrush, targetEmitter: nil, propId:observableId);
+            operands[observableId] = operand;
+            RequestHandler.registerObservableTarget(observableId: observableId, behaviorId: self.id)
         }
-        let expression = Expression(id:name,subscriberId:id,brushIndex:targetBrush.index,operandList: operands, text: data.1);
+        let expression = Expression(id:name,subscriberId:id,brushIndex:targetBrush.index,operandList: operands, text: expressionText);
+        
         self.storedExpressions[id]![name] = expression;
     }
     
-    func generateMapping(targetBrush:Brush, id:String, data:(Any?,[String]?,String,String,String,String)){
+    func generateMapping(targetBrush:Brush, id:String, referenceEmitter:Any?, referenceProperties:[String]?, relativePropertyName:String, stateId:String){
+        var referenceProp:String? = nil;
+        if(referenceProperties != nil){
+            referenceProp = referenceProperties?[0];
+        }
         
-        var mappingRelativeList = [String]();
-        mappingRelativeList.append(data.2);
-        let operands = generateOperands(targetBrush: targetBrush, data:(data.0,data.1,targetBrush,mappingRelativeList,""))
-        let referenceOperand = operands.0;
-        let relativeOperand = operands.1;
-        targetBrush.addConstraint(id: id, reference:referenceOperand, relative: relativeOperand, stateId: data.3)
-
+        let referenceOperand = generateOperand(targetBrush: targetBrush, targetEmitter: referenceEmitter, propId: referenceProp)
+        let relativeOperand = generateOperand(targetBrush: targetBrush, targetEmitter: targetBrush, propId: relativePropertyName)
+        
+        targetBrush.addConstraint(id: id, reference:referenceOperand, relative: relativeOperand, stateId: stateId)
+        
     }
     
     func addBrush(targetBrush:Brush){
@@ -1247,7 +879,6 @@ class BehaviorDefinition {
             if (b.id == data) {
                 brushInstances.remove(at: i)
                 self.clearExpressionsForId(id: b.id)
-                self.clearGeneratorsForId(id: b.id)
                 self.clearConditionsForId(id: b.id)
                 return
             }
@@ -1259,18 +890,11 @@ class BehaviorDefinition {
             v.destroy();
         }
         self.storedExpressions[id] = nil;
-
-
+        
     }
     
-    func clearGeneratorsForId(id:String){
-        for (_,v) in self.storedGenerators[id]!{
-            v.destroy();
-        }
-        self.storedGenerators[id] = nil;
-
-    }
-
+    
+    
     func clearConditionsForId(id:String){
         for (_,v) in self.storedConditions[id]!{
             v.destroy();
@@ -1278,7 +902,7 @@ class BehaviorDefinition {
         self.storedConditions[id] = nil;
         
     }
-
+    
     
     func clearBehavior(){
         RequestHandler.clearAllObservableListenersForBehavior(behaviorId: self.id)
@@ -1294,21 +918,15 @@ class BehaviorDefinition {
                 v.destroy();
             }
         }
-
+        
         self.storedConditions.removeAll();
-       
-        for (_,value) in self.storedGenerators{
-            for (_,v) in value{
-                v.destroy();
-            }
-        }
-        self.storedGenerators.removeAll();
+        //TODO: AT WHAT POINT DO SIGNALS GET DESTROYED???
         
         for i in 0..<self.brushInstances.count{
             let targetBrush = self.brushInstances[i];
             targetBrush.clearBehavior();
             targetBrush.destroy();
-
+            
         }
         self.brushInstances.removeAll();
         
@@ -1332,28 +950,37 @@ class BehaviorDefinition {
     func initBrushBehavior(targetBrush:Brush){
         targetBrush.createGlobals();
         let id = targetBrush.id
-        storedGenerators[id] = [String:Signal]();
         storedConditions[id] = [String:Condition]();
         storedExpressions[id] = [String:Expression]();
         
-        for (key, generator_data) in generators{
-            self.generateGenerator(name: key,data:generator_data,targetBrush:targetBrush)
-        }
+        
         
         for i in 0..<conditions.count{
-            self.generateCondition(targetBrush: targetBrush,data:conditions[i])
+            let conditionId = conditions[i].0;
+            var propId1:String? = nil;
+            var propId2:String? = nil;
+            
+            if conditions[i].2 != nil{
+                propId1 = conditions[i].2![0]
+            }
+            if conditions[i].4 != nil{
+                propId2 = conditions[i].4![0]
+            }
+            let operand1 = generateOperand(targetBrush: targetBrush, targetEmitter: conditions[i].1, propId: propId1);
+            let operand2 = generateOperand(targetBrush: targetBrush, targetEmitter: conditions[i].3, propId: propId2);
+            
+            let relational = conditions[i].5;
+            
+            self.generateCondition(targetBrush: targetBrush, conditionId: conditionId, operand1: operand1, operand2: operand2, relational: relational);
         }
         
         for (key,expression_data) in expressions{
-            self.generateExpression(targetBrush: targetBrush,name:key,data:expression_data)
-            
-            
-            
+            self.generateExpression(targetBrush: targetBrush, name: key, signalIds: expression_data.0, expressionText: expression_data.1);
         }
         
         for (id,state) in states{
             targetBrush.createState(id: id, name:state.0);
-
+            
         }
         
         for (key,transition) in transitions{
@@ -1395,10 +1022,10 @@ class BehaviorDefinition {
             for method in method_list {
                 //behaviorMapper.addMethod(relative: targetBrush,transitionName:key,methodId:method.0,methodName:method.1,expressionId:String,arguments:method.3);
                 //func addMethod(relative:Brush,transitionName:String,methodId:String,methodName:String, arguments:[Any]?){
-                    
+                
                 
                 targetBrush.addMethod(transitionId:key,methodId:method.0,methodName:method.1,expressionId:method.2, arguments:method.3)
-
+                
             }
         }
         
@@ -1406,7 +1033,7 @@ class BehaviorDefinition {
         for (id, mapping_data) in mappings{
             if(mapping_data.0 != nil || mapping_data.1 != nil ){
                 
-                self.generateMapping(targetBrush: targetBrush,id:id, data:mapping_data);
+                self.generateMapping(targetBrush: targetBrush, id: id, referenceEmitter: mapping_data.0, referenceProperties: mapping_data.1, relativePropertyName: mapping_data.2, stateId: mapping_data.3);
             }
             else{
                 print("could not generate mapping \(id) because reference is nil")
@@ -1414,7 +1041,7 @@ class BehaviorDefinition {
             
         }
         targetBrush.setupTransition();
-
+        
     }
     
 }

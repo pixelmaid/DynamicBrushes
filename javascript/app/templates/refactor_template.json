@@ -1,0 +1,55 @@
+{
+
+  "collections": {
+    "live": [],
+    "imported": [],
+    "recordings": [],
+    "generators": [],
+    "drawings": [],
+    "brush": []
+  },
+
+  "behaviors": {
+    "_8x0thh4ay": {
+      "name": "sample_behavior",
+      "id": "_8x0thh4ay",
+      "methods": [
+
+      ],
+      "states": [{
+        "name": "state 1",
+        "x": 347.99716186523438,
+        "id": "_s865vlzry",
+        "y": 325
+      }, {
+        "name": "setup",
+        "x": 71.988632202148438,
+        "id": "_y5p6lqn2a",
+        "y": 335.99429321289062
+      }, {
+        "name": "die",
+        "x": 1018,
+        "id": "_jupcoyws8",
+        "y": 221
+      }],
+      "auto_spawn_num": 1,
+      "active_status": true,
+      "transitions": [{
+        "name": "setup",
+        "eventName": "STATE_COMPLETE",
+        "transitionId": "_jsplumb_c_1495732354038",
+        "fromStateId": "_y5p6lqn2a",
+        "toStateId": "_s865vlzry",
+        "parentFlag": false,
+        "displayName": "stateComplete"
+      }],
+      "mappings": [
+
+
+      ],
+      "conditions": [
+
+      ]
+    }
+  }
+}
