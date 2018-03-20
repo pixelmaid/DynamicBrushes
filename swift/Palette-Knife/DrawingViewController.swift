@@ -442,7 +442,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
                 let json = try JSONSerialization.jsonObject(with: data, options: [])
                 if json is [String: Any] {
                     // json is a dictionary
-                    BehaviorManager.loadCollectionsFromJSON(data:JSON(data))
+                    BehaviorManager.loadCollectionsFromJSON(data:JSON(data)["collections"])
                 }  else {
                     print("JSON is invalid")
                 }
@@ -1259,7 +1259,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     
     func synchronizeWithAuthoringClient(){
         let behavior:JSON = behaviorManager!.getAllBehaviorJSON();
-        let collections:JSON = behaviorManager!.getAllCollectionJSON();
+        let collections:JSON = BehaviorManager.getAllCollectionJSON();
         var syncJSON:JSON = [:]
         syncJSON["behaviors"] = behavior;
         syncJSON["collections"] = collections;
