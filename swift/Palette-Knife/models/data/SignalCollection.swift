@@ -450,7 +450,7 @@ class RecordingCollection:LiveCollection{
         
     }
     
-    //TODO: move these to stylus manager
+    //TODO: move this to stylus manager?
     func addResultantStroke(layerId:String,strokeId:String){
         if(resultantStrokes[layerId] == nil){
             resultantStrokes[layerId] = [String]();
@@ -460,6 +460,20 @@ class RecordingCollection:LiveCollection{
     
     func removeResultantStrokes(){
         resultantStrokes.removeAll();
+    }
+    
+    public func addDataFrom(recordingCollection:RecordingCollection){
+        
+        for (key,recSignal) in recordingCollection.protoSignals{
+            let sortedBuffer = recSignal.signalBuffer.sorted{ $0.key < $1.key };
+            let signal = self.protoSignals[key];
+            for i in 0..<sortedBuffer.count{
+                let hash = sortedBuffer[i].key+self.lastSample;
+                let value = sortedBuffer[i].value;
+                signal?.addValue(h:hash , v: value);
+            }
+            self.lastSample = sortedBuffer[sortedBuffer.count].key+self.lastSample;
+        }
     }
     
     
