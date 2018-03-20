@@ -41,7 +41,7 @@ class BehaviorManager{
     }
     
     func loadData(json:JSON){
-        BehaviorManager.loadCollectionsFromJSON(data: json["collections"]);
+        //BehaviorManager.loadCollectionsFromJSON(data: json["collections"]);
         self.loadBehaviorsFromJSON(json: json["behaviors"], rewriteAll: true)
     }
     
@@ -380,12 +380,14 @@ class BehaviorManager{
     
     
     static func loadCollectionsFromJSON(data:JSON){
+        
         let collectionData = data.dictionaryValue;
-        for (key,value) in collectionData{
-            let collectionList = value.arrayValue;
-            print("collection key",key);
+        for (key,list) in collectionData{
+            let collectionList = list.arrayValue;
+            print("collection key",key,collectionList,list);
             switch (key){
             case "live":
+                print("live data",collectionList)
                 for metadata in collectionList{
                     let signalCollection = LiveCollection(data:metadata);
                     BehaviorManager.liveInputs[signalCollection.id] = signalCollection;
@@ -460,11 +462,13 @@ class BehaviorManager{
     
     
     //TODO: eventually move all collection stuff to seperate final collection manager
-    func getAllCollectionJSON()->JSON{
+    static func getAllCollectionJSON()->JSON{
         var collectionJSON = [JSON]();
-        
         for collectionList in BehaviorManager.signalCollections{
+            print("collectionList",collectionList)
+
             for(_,value) in collectionList {
+                print("export collection by name",value.name,BehaviorManager.signalCollections.count)
                 collectionJSON.append(value.protoToJSON());
             }
             

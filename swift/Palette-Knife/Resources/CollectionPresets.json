@@ -1,6 +1,6 @@
 {
     "collections": {
-        "live": [{   "classType": "live",
+        "live": [{ "classType": "live",
                  "id": "stylus",
                  "name": "stylus",
                  "signals": [{
@@ -58,11 +58,9 @@
                              "order": 6,
                              "settings": {}
                              }
+                             
                              ]
-                 }]
-        
-        
-    },
+                 }],
     "imported": [],
     "recordings": [{
                    
@@ -214,6 +212,5 @@
                    ],
     "drawings": [],
     "brush": []
-    
-    
+    }
 }
