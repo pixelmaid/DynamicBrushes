@@ -55,6 +55,8 @@ wss.on('connection', (ws) => {
 	    
 		 if (json_data.type == "synchronize" || json_data.type == "collection_data" || json_data.type == "behavior_data" || json_data.type == "authoring_response" || json_data.type == "storage_data" || json_data.type == "inspector_data") {
 			if (authoring_clients[userkey]) {
+					    console.log('sending client message');
+
 				authoring_clients[userkey].send(JSON.stringify(json_data));
 			}
 		}
