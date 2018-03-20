@@ -16,7 +16,7 @@ class BehaviorDefinition {
     var states = [String:(String,Float,Float)]()
     var expressions = [String:([String],String)]();
     var conditions = [(String,Any?,[String]?,Any?,[String]?,String)]()
-   // var generators = [String:(String,[Any?])]()
+    // var generators = [String:(String,[Any?])]()
     var methods = [String:[(String,String,String,[Any]?)]]()
     var transitions = [String:(String,Emitter?,Bool,String?,String,String,String?,String)]()
     var behaviorMapper = BehaviorMapper()
@@ -25,7 +25,7 @@ class BehaviorDefinition {
     var storedExpressions = [String:[String:Expression]]()
     var storedConditions =  [String:[String:Condition]]()
     //var storedGenerators = [String:[String:Signal]]()
-
+    
     var name:String;
     var id: String;
     private var active_status:Bool;
@@ -54,7 +54,7 @@ class BehaviorDefinition {
         let mappingJSON = json["mappings"].arrayValue;
         let methodJSON = json["methods"].arrayValue;
         let conditionJSON = json["conditions"].arrayValue;
-       
+        
         for i in 0..<conditionJSON.count{
             self.parseConditionJSON(data:conditionJSON[i])
         }
@@ -85,14 +85,14 @@ class BehaviorDefinition {
         if(data["reference"] != JSON.null){
             let refString = data["reference"].stringValue
             switch(refString){
-                case "stylus":
-                    reference = stylus
+            case "stylus":
+                reference = stylus
                 break
-                case "parent":
-                    reference = "parent"
+            case "parent":
+                reference = "parent"
                 break
             default:
-                    break;
+                break;
             }
         }
         else{
@@ -105,7 +105,7 @@ class BehaviorDefinition {
             referenceNames = [String]()
             for i in 0..<referenceNamesJSON.count{
                 referenceNames?.append(referenceNamesJSON[i].stringValue)
-
+                
             }
         }
         
@@ -124,7 +124,7 @@ class BehaviorDefinition {
             }
         }
         
-
+        
         var relativeNames:[String]? = nil
         if(data["relativeNames"] != JSON.null){
             let relativeNamesJSON = data["relativeNames"].arrayValue;
@@ -170,7 +170,7 @@ class BehaviorDefinition {
     func parseMethodJSON(data:JSON)->JSON{
         self.parseExpressionJSON(data:data)
         let expressionId = data["expressionId"].stringValue;
-
+        
         let targetTransition:String?
         if(data["targetTransition"] != JSON.null){
             targetTransition = data["targetTransition"].stringValue;
@@ -294,58 +294,62 @@ class BehaviorDefinition {
             }
         }
         
-        let conditionName:String?
+        var conditionName:String?
         
         if(data["conditionName"] != JSON.null){
             conditionName = data["conditionName"].stringValue;
         }
         else{
-       
+            
             let condition_list = data["conditions"].arrayValue;
-        conditionName = "condition_" + NSUUID().uuidString
-        var settings:JSON = [:]
-        settings["inc"] = condition_list[0];
-         do{
-            let interval_id = try BehaviorManager.generators["default"]!.initializeSignal(fieldName:"interval",displayName:"interval",settings:settings,classType: "Interval",isProto:false);
-        
-         
-        switch(event){
-        case "TIME_INTERVAL":
-            self.addCondition(name: conditionName!, reference: nil, referenceNames: ["time"], relative: nil, relativeNames: [interval_id], relational: "within")
-            break;
-        case "DISTANCE_INTERVAL":
-            self.addCondition(name: conditionName!, reference: nil, referenceNames: ["distance"], relative: nil, relativeNames: [interval_id], relational: "within")
-            break;
-        case "INTERSECTION":
-            self.addCondition(name: conditionName!, reference: nil, referenceNames: ["intersections"], relative: nil, relativeNames: [interval_id], relational: "within")
-            break;
-        case "STYLUS_MOVE_BY","STYLUS_X_MOVE_BY","STYLUS_Y_MOVE_BY":
-            let referenceName:String
-            if(event == "STYLUS_MOVE_BY"){
-                referenceName = "distance"
-            }
-            else if(event == "STYLUS_X_MOVE_BY"){
-                referenceName = "xDistance"
+            conditionName = "condition_" + NSUUID().uuidString
+            //TODO: CLEAN THIS UP TO REMOVE CONDITIONAL on event check
+            if(event != "STATE_COMPLETE"){
+                
+                var settings:JSON = [:]
+                settings["inc"] = condition_list[0];
+                let interval_id =  BehaviorManager.generators["default"]!.initializeSignal(fieldName:"interval",displayName:"interval",settings:settings,classType: "Interval",isProto:false);
+                
+                
+                switch(event){
+                case "TIME_INTERVAL":
+                    self.addCondition(name: conditionName!, reference: nil, referenceNames: ["time"], relative: nil, relativeNames: [interval_id], relational: "within")
+                    break;
+                case "DISTANCE_INTERVAL":
+                    self.addCondition(name: conditionName!, reference: nil, referenceNames: ["distance"], relative: nil, relativeNames: [interval_id], relational: "within")
+                    break;
+                case "INTERSECTION":
+                    self.addCondition(name: conditionName!, reference: nil, referenceNames: ["intersections"], relative: nil, relativeNames: [interval_id], relational: "within")
+                    break;
+                case "STYLUS_MOVE_BY","STYLUS_X_MOVE_BY","STYLUS_Y_MOVE_BY":
+                    let referenceName:String
+                    if(event == "STYLUS_MOVE_BY"){
+                        referenceName = "distance"
+                    }
+                    else if(event == "STYLUS_X_MOVE_BY"){
+                        referenceName = "xDistance"
+                    }
+                    else{
+                        referenceName = "yDistance"
+                    }
+                    self.addCondition(name: conditionName!, reference: stylus, referenceNames: [referenceName], relative: nil, relativeNames: [interval_id], relational: "within")
+                    break;
+                    
+                    
+                default:
+                    conditionName = nil
+
+                    break;
+                    
+                }
+                
             }
             else{
-                referenceName = "yDistance"
-            }
-            self.addCondition(name: conditionName!, reference: stylus, referenceNames: [referenceName], relative: nil, relativeNames: [interval_id], relational: "within")
-            break;
-            
+                conditionName = nil
 
-        default:
-            break;
-            
-        }
-         }
-            
-         catch{
-            #if DEBUG
-                print("error attempting to initialize interval for transition")
-            #endif
             }
         }
+        
         
         self.addTransition(transitionId: data["transitionId"].stringValue, name: data["name"].stringValue, eventEmitter: emitter, parentFlag: data["parentFlag"].boolValue, event: data["eventName"].stringValue, fromStateId: data["fromStateId"].stringValue, toStateId: data["toStateId"].stringValue, condition: conditionName,displayName:data["displayName"].stringValue)
         
@@ -367,7 +371,7 @@ class BehaviorDefinition {
             let name = data.0;
             if(data.1 != nil){
                 if((data.1 as? Stylus) == stylus){
-                   conditionJSON["reference"] = JSON("stylus")
+                    conditionJSON["reference"] = JSON("stylus")
                 }
                 else if((data.1 as? String) == "parent"){
                     conditionJSON["reference"] = JSON("parent")
@@ -472,7 +476,7 @@ class BehaviorDefinition {
                             
                         }
                         else if let def =  targetBehavior as? String {
-
+                            
                             behaviorId = def;
                             methodJSON["currentArguments"] = JSON([behaviorId,num]);
                             
@@ -536,16 +540,16 @@ class BehaviorDefinition {
             let expressionText = expression?.1;
             let expressionPropertyList = expression?.0;
             var expressionPropertyListJSON:JSON = [:]
-           
+            
             for pId in expressionPropertyList! {
-              
+                
                 let signal = BehaviorManager.getSignal(id: pId);
-               
+                
                 var propEmitter = [JSON]();
                 let emitter = signal?.getCollectionName();
                 let propertyList = signal?.fieldName;
                 let displayNameList = signal?.displayName;
-              
+                
                 if(emitter != nil){
                     propEmitter.append(JSON(emitter!));
                 }
@@ -577,7 +581,7 @@ class BehaviorDefinition {
         json_obj["mappings"] = JSON(mappingsArray);
         json_obj["methods"] = JSON(methodArray);
         json_obj["conditions"] = JSON(conditionArray);
-
+        
         return json_obj;
     }
     
@@ -662,7 +666,7 @@ class BehaviorDefinition {
                         methods.removeValue(forKey: methodId);
                         
                     }
-                   
+                    
                     return;
                 }
                 
@@ -803,11 +807,11 @@ class BehaviorDefinition {
             }
             else if(storedExpressions[id]![propId!] != nil){
                 operand = storedExpressions[id]![propId!]!;
-                    
+                
             }
             else if(storedConditions[id]![propId!] != nil){
                 operand = storedConditions[id]![propId!]!;
-                    
+                
             }
             else{
                 operand = (emitter as! Object)[propId!]! as! Observable<Float>
@@ -823,9 +827,9 @@ class BehaviorDefinition {
     }
     
     func generateCondition(targetBrush:Brush, conditionId:String, operand1:Observable<Float>, operand2:Observable<Float>, relational:String){
-      
+        
         let id = targetBrush.id;
-       // let operands = generateOperands(targetBrush: targetBrush, data:(data.1,data.2,data.3,data.4,data.5))
+        // let operands = generateOperands(targetBrush: targetBrush, data:(data.1,data.2,data.3,data.4,data.5))
         //let operand1 = operands.0;
         //let operand2 = operands.1;
         
@@ -837,7 +841,7 @@ class BehaviorDefinition {
     func generateExpression(targetBrush:Brush, name:String, signalIds:[String], expressionText:String){
         let id = targetBrush.id
         var operands = [String:Observable<Float>]();
-      
+        
         for observableId in signalIds {
             #if DEBUG
                 print("registering observable target with id:",observableId);
@@ -856,12 +860,12 @@ class BehaviorDefinition {
         if(referenceProperties != nil){
             referenceProp = referenceProperties?[0];
         }
-    
+        
         let referenceOperand = generateOperand(targetBrush: targetBrush, targetEmitter: referenceEmitter, propId: referenceProp)
         let relativeOperand = generateOperand(targetBrush: targetBrush, targetEmitter: targetBrush, propId: relativePropertyName)
         
         targetBrush.addConstraint(id: id, reference:referenceOperand, relative: relativeOperand, stateId: stateId)
-
+        
     }
     
     func addBrush(targetBrush:Brush){
@@ -886,11 +890,11 @@ class BehaviorDefinition {
             v.destroy();
         }
         self.storedExpressions[id] = nil;
-
+        
     }
     
-   
-
+    
+    
     func clearConditionsForId(id:String){
         for (_,v) in self.storedConditions[id]!{
             v.destroy();
@@ -898,7 +902,7 @@ class BehaviorDefinition {
         self.storedConditions[id] = nil;
         
     }
-
+    
     
     func clearBehavior(){
         RequestHandler.clearAllObservableListenersForBehavior(behaviorId: self.id)
@@ -914,7 +918,7 @@ class BehaviorDefinition {
                 v.destroy();
             }
         }
-
+        
         self.storedConditions.removeAll();
         //TODO: AT WHAT POINT DO SIGNALS GET DESTROYED???
         
@@ -922,7 +926,7 @@ class BehaviorDefinition {
             let targetBrush = self.brushInstances[i];
             targetBrush.clearBehavior();
             targetBrush.destroy();
-
+            
         }
         self.brushInstances.removeAll();
         
@@ -949,13 +953,13 @@ class BehaviorDefinition {
         storedConditions[id] = [String:Condition]();
         storedExpressions[id] = [String:Expression]();
         
-    
+        
         
         for i in 0..<conditions.count{
             let conditionId = conditions[i].0;
             var propId1:String? = nil;
             var propId2:String? = nil;
-
+            
             if conditions[i].2 != nil{
                 propId1 = conditions[i].2![0]
             }
@@ -964,7 +968,7 @@ class BehaviorDefinition {
             }
             let operand1 = generateOperand(targetBrush: targetBrush, targetEmitter: conditions[i].1, propId: propId1);
             let operand2 = generateOperand(targetBrush: targetBrush, targetEmitter: conditions[i].3, propId: propId2);
-
+            
             let relational = conditions[i].5;
             
             self.generateCondition(targetBrush: targetBrush, conditionId: conditionId, operand1: operand1, operand2: operand2, relational: relational);
@@ -976,7 +980,7 @@ class BehaviorDefinition {
         
         for (id,state) in states{
             targetBrush.createState(id: id, name:state.0);
-
+            
         }
         
         for (key,transition) in transitions{
@@ -1018,10 +1022,10 @@ class BehaviorDefinition {
             for method in method_list {
                 //behaviorMapper.addMethod(relative: targetBrush,transitionName:key,methodId:method.0,methodName:method.1,expressionId:String,arguments:method.3);
                 //func addMethod(relative:Brush,transitionName:String,methodId:String,methodName:String, arguments:[Any]?){
-                    
+                
                 
                 targetBrush.addMethod(transitionId:key,methodId:method.0,methodName:method.1,expressionId:method.2, arguments:method.3)
-
+                
             }
         }
         
@@ -1037,7 +1041,7 @@ class BehaviorDefinition {
             
         }
         targetBrush.setupTransition();
-
+        
     }
     
 }

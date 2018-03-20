@@ -1,6 +1,5 @@
 {
-    "data": {
-        "collections": {
+    "collections": {
             "live": [{
                      "meta": {
                      "id": "stylus",
@@ -119,6 +118,6 @@
         "generators": [],
         "drawings": [],
         "brush": []
-    }
+    
     
 }

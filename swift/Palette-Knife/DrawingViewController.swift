@@ -442,7 +442,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
                 let json = try JSONSerialization.jsonObject(with: data, options: [])
                 if json is [String: Any] {
                     // json is a dictionary
-                    BehaviorManager.loadCollectionsFromJSON(data:JSON(data)["data"])
+                    BehaviorManager.loadCollectionsFromJSON(data:JSON(data))
                 }  else {
                     print("JSON is invalid")
                 }
@@ -1075,7 +1075,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
             currentBehaviorName = (data.1?["short_filename"].stringValue)!
             currentBehaviorFile = (data.1?["filename"].stringValue)!
             
-            behaviorManager?.loadBehavior(json: data.1!["data"])
+            behaviorManager?.loadData(json: data.1!["data"])
             self.behaviorPanelController?.loadBehaviors(json: data.1!["data"])
             self.synchronizeWithAuthoringClient();
             self.startBackupTimer(interval:self.backupInterval);

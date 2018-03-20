@@ -40,8 +40,9 @@ class BehaviorManager{
         }
     }
     
-    func loadBehavior(json:JSON){
-        self.loadBehaviorsFromJSON(json: json, rewriteAll: true)
+    func loadData(json:JSON){
+        BehaviorManager.loadCollectionsFromJSON(data: json["collections"]);
+        self.loadBehaviorsFromJSON(json: json["behaviors"], rewriteAll: true)
     }
     
    

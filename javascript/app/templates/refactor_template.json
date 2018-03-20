@@ -1,65 +1,12 @@
 {
 
-  "data": {
-    "collections": {
-      "live": {
-        "stylus": [{
-          "fieldName": "x",
-          "displayName": "stylus x",
-          "classType": "LiveSignal",
-          "settings": {},
-        }, 
-        { "fieldName": "y",
-          "displayName": "stylus y",
-          "classType": "LiveSignal",
-          "settings": {},
-          },
-        { "fieldName": "dx",
-          "displayName": "stylus delta x",
-          "classType": "LiveSignal",
-          "settings": {},
-        },
-
-        { "fieldName": "dy",
-          "displayName": "stylus delta y",
-          "classType": "LiveSignal",
-          "settings": {},
-        },
-
-
-        { "fieldName": "force",
-          "displayName": "stylus force",
-          "classType": "LiveSignal",
-          "settings": {},
-        },
-        
-
-
-        { "fieldName": "angle",
-          "displayName": "stylus angle",
-          "classType": "LiveSignal",
-          "settings": {},
-        },
-
-
-        { "fieldName": "stylusEvent",
-          "displayName": "stylus event",
-          "classType": "StylusEvent",
-          "settings": {},
-        }
-        ]
-
-
-      },
-      "imported": {},
-      "recordings": {},
-      "generators": {},
-      "drawings": {},
-      "brush": {}
-
-    }
-
-
+  "collections": {
+    "live": [],
+    "imported": [],
+    "recordings": [],
+    "generators": [],
+    "drawings": [],
+    "brush": []
   },
 
   "behaviors": {
