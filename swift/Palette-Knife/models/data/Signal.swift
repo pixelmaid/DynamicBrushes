@@ -127,7 +127,7 @@ class Recording:Signal{
         if(prev != nil){
             return prev!;
         }
-        return nil;
+        return nil; 
     }
     
     func setNext(r:Recording){

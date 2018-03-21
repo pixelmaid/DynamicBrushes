@@ -12,7 +12,7 @@ import SwiftyJSON
 enum SignalError: Error {
     case signalTypeAlreadyRegistered;
     case protoNotFound;
-    
+    case signalNotFound;
     
 }
 
@@ -333,7 +333,7 @@ class UICollection:SignalCollection{
     //TODO: INIT UI PROPERTIES
     override public func initializeSignal(fieldName:String, displayName:String, settings:JSON, classType:String, isProto:Bool, order:Int?)->String{
         let id = NSUUID().uuidString
-        let signal = Signal(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+        let signal = LiveSignal(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
         self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
         return id;
     }

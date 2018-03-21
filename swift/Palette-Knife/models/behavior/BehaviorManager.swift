@@ -259,6 +259,21 @@ class BehaviorManager{
                 return resultJSON;
             }
         break;
+        
+        case "signal_destroyed":
+            do {
+                let signalId = data["signalId"].stringValue
+                try self.destroySignalInstance(id:signalId)
+              
+            }
+            catch{
+                #if DEBUG
+                    print("=================ERROR SIGNAL NOT FOUND TO DESTROY====================")
+                #endif
+                resultJSON["result"] = "failure";
+                return resultJSON;
+            }
+            break;
             
         case "expression_modified":
             let behaviorId = data["behaviorId"].stringValue;
@@ -303,6 +318,20 @@ class BehaviorManager{
         return resultJSON;
     }
     
+    
+    private func destroySignalInstance(id:String) throws{
+        for collectionList in BehaviorManager.signalCollections{
+            for(_,collection) in collectionList{
+                var signal = collection.getInitializedSignal(id:id);
+                if( signal != nil){
+                    collection.removeSignal(fieldName: signal!.fieldName, id: signal!.id)
+                    signal = nil
+                    return;
+                }
+            }
+        }
+        throw SignalError.signalNotFound
+    }
     
  private func parseSignalJSON(data:JSON) throws->JSON?{
         let classType = data["classType"].stringValue;
@@ -384,10 +413,8 @@ class BehaviorManager{
         let collectionData = data.dictionaryValue;
         for (key,list) in collectionData{
             let collectionList = list.arrayValue;
-            print("collection key",key,collectionList,list);
             switch (key){
             case "live":
-                print("live data",collectionList)
                 for metadata in collectionList{
                     let signalCollection = LiveCollection(data:metadata);
                     BehaviorManager.liveInputs[signalCollection.id] = signalCollection;
@@ -406,8 +433,6 @@ class BehaviorManager{
                 }
                 break;
             case "recordings":
-                print("recording list",collectionList);
-
                 for metadata in collectionList{
                     print("metadata id",metadata["id"].stringValue);
 

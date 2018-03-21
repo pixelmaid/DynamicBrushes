@@ -1076,10 +1076,12 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
             currentBehaviorFile = (data.1?["filename"].stringValue)!
             
             behaviorManager?.loadData(json: data.1!["data"])
+            
             self.behaviorPanelController?.loadBehaviors(json: data.1!["data"])
             self.synchronizeWithAuthoringClient();
             self.startBackupTimer(interval:self.backupInterval);
             break;
+            
         case "download_project_complete":
             let id = data.1!["id"].stringValue;
             let path = data.1!["path"].stringValue;
@@ -1102,7 +1104,6 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
             let newLayers = layerContainerView.loadFromData(fileData: fileData,size:targetSize)
             layerPanelController?.loadLayers(newLayers:newLayers);
 
-            
             let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
             let documentDirectory = paths[0] as! String
             

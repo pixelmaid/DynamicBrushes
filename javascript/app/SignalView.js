@@ -2,7 +2,7 @@
 'use strict';
 define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/id" ,'lib/CollapsibleLists.js'],
 
-    function($, jqueryui, Handlebars, paletteTemplate, ID, CollabsibleLists) {
+    function($, jqueryui, Handlebars, paletteTemplate, ID) {
 
 
         var live_btn, recordings_btn, datasets_btn, generator_btn, brushes_btn, drawings_btn;
@@ -25,18 +25,7 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
 
                 this.btn_list = [live_btn, recordings_btn, datasets_btn, generator_btn, brushes_btn, drawings_btn];
 
-                /* old buttons
-                // states_btn = this.el.find('#states');
-                generator_btn = this.el.find('#generators');
-                brush_properties_btn = this.el.find('#brush_properties');
-                sensor_properties_btn = this.el.find('#sensor_properties');
-                ui_properties_btn = this.el.find('#ui_properties');
-                brush_actions_btn = this.el.find('#brush_actions');
-                transitions_btn = this.el.find('#transitions');
-                datasets_btn = this.el.find('#datasets');
-                this.btn_list = [states_btn, generator_btn, datasets_btn, brush_properties_btn, sensor_properties_btn, ui_properties_btn, brush_actions_btn, transitions_btn];
-                */
-
+               
                 this.el.droppable({
                     drop: function(event, ui) {
                         console.log("dropped on canvas", ui);
@@ -53,7 +42,7 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
                     var dataClass = data.items[0].classType;
                     if ((currClass === "recordings" && dataClass === "recording") || (currClass === "datasets" && dataClass === "imported")) {
                         this.updateSelectedPalette(self.model.data[currClass]);
-                        console.log("updating palette in ON_DATA_READY")
+                        console.log("updating palette in ON_DATA_READY");
                     }
                 }.bind(this));
             }
@@ -82,12 +71,12 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
                 this.el.find('#selected_palette').html(html);
                 // console.log("CollapsibleLists is", CollapsibleLists);
 
-               CollapsibleLists.apply(true);
+              CollapsibleLists.apply(true);
                 this.el.find(".palette").mousedown(function(event) {
-                    if (!$(event.target).hasClass("tooltiptext")) {
-                        var clone = $("<div id=" + $(event.target).attr('id') + "></div>");
+                   // if (!$(event.target).hasClass("tooltiptext")) {
+                        var clone = $("<div></div>");
 
-                        clone.html($(event.target).attr('display_name'));
+                        clone.html($(event.target).attr('displayName'));
                         clone.attr("type", $(event.target).attr('type'));
                         clone.attr("name", $(event.target).attr('name'));
                         clone.attr("class", $(event.target).attr('class'));
@@ -99,7 +88,19 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
                         clone.offset($(event.target).offset());
                         clone.prependTo("body").css('position', 'absolute');
                         clone.trigger(event);
-                    }
+                        var fieldName =  $(event.target).attr('fieldName');
+                        var id = "foobar";
+                    var transmit_data = {
+                   
+                        type: "signal_initialized",
+                        fieldName: fieldName,
+                        id:id
+                    };
+
+                
+
+                this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
+                    //}
 
 
                 });
