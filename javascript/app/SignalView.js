@@ -87,8 +87,16 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
                         clone.attr("type", $(event.target).attr('type'));
                         clone.attr("name", $(event.target).attr('name'));
                         clone.attr("class", $(event.target).attr('class'));
-
                         clone.addClass("drag-n-drop");
+
+                        if ($(event.target).attr('class').indexOf("recording") >= 0) {
+                            console.log("CLONE EVENT RECORDING ",  $(event.target).parent().siblings());
+                            
+                            var recording_title = $(event.target).parent(".data-block").siblings(".data-label").text();
+                            console.log("CLONE EVENT RECORDING ", recording_title);
+                            clone.attr("title", recording_title);
+                        }
+
                         console.log("cloning", clone);
 
                         clone.draggable();

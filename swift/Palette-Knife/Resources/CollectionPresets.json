@@ -65,34 +65,34 @@
                  "id": "ui",
                  "name": "ui",
                  "signals": [{
-                             "fieldName": "ui_hue",
+                             "fieldName": "hue",
                              "displayName": "hue",
                              "classType": "LiveSignal",
                              "order": 0,
                              "settings": {}
                              }, {
-                             "fieldName": "ui_saturation",
+                             "fieldName": "saturation",
                              "displayName": "saturation",
                              "classType": "LiveSignal",
                              "order": 1,
                              "settings": {}
                              },
                              {
-                             "fieldName": "ui_lightness",
+                             "fieldName": "lightness",
                              "displayName": "lightness",
                              "classType": "LiveSignal",
                              "order": 2,
                              "settings": {}
                              },
                              {
-                             "fieldName": "ui_diameter",
+                             "fieldName": "diameter",
                              "displayName": "diameter",
                              "classType": "LiveSignal",
                              "order": 3,
                              "settings": {}
                              },
                              {
-                             "fieldName": "ui_alpha",
+                             "fieldName": "alpha",
                              "displayName": "alpha",
                              "classType": "LiveSignal",
                              "order": 4,

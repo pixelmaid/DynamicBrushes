@@ -22,23 +22,23 @@ define(['emitter', 'app/id', 'app/Emitter', 'app/DatasetLoader'],
         var classType = items[0].classType;
         switch (classType) {
           case "imported":
-          this.data["datasets"].items.push(items[0]); 
-          break;
+            this.data["datasets"].items.push(items[0]); 
+            break;
           case "recording":
-          this.data["recordings"].items.push(items[0]); 
-          break;
+            this.data["recordings"].items.push(items[0]); 
+            break;
           case "live":
-          this.data["live_input"].items.push(items[0]); 
-          break;
+            this.data["live_input"].items.push(items[0]); 
+            break;
           case "generator":
-          this.data["generators"].items.push(items[0]); 
-          break;
+            this.data["generators"].items.push(items[0]); 
+            break;
           case "brush":
-          this.data["brushes"].items.push(items[0]); 
-          break;
+            this.data["brushes"].items.push(items[0]); 
+            break;
           case "drawing":
-          this.data["drawings"].items.push(items[0]); 
-          break;
+            this.data["drawings"].items.push(items[0]); 
+            break;
         }
 
         console.log("data_loaded",items,this);
