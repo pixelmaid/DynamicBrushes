@@ -303,9 +303,10 @@ class BehaviorManager{
              #if DEBUG
                 //print("dataset loaded",data);
             #endif
-           BehaviorManager.parseImported(data:data)
-            
+          let signalCollection = BehaviorManager.parseImported(data:data["dataset"])
+          
             resultJSON["result"] = "success";
+            resultJSON["dataset"] = JSON([signalCollection.protoToJSON()]);
             return resultJSON;
             
         default:
@@ -461,10 +462,13 @@ class BehaviorManager{
     }
     
     
-   static func parseImported(data:JSON){
+   static func parseImported(data:JSON)->SignalCollection{
+    print("imported data",data);
     let id = data["id"].stringValue;
     let signalCollection = SignalCollection(data: data);
     BehaviorManager.imported[id] = signalCollection;
+    return signalCollection;
+  
     }
     
     

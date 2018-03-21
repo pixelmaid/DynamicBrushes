@@ -39,8 +39,14 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
             } else if (data.type == "authoring_response") {
 
                 if(data.authoring_type == "signal_initialized"){
-                    console.log("process signal authoring response")
+                    console.log("process signal authoring response");
                     signalView.processAuthoringResponse(data);
+                }
+                else if(data.authoring_type == "dataset_loaded"){                    console.log("process signal authoring response")
+                    console.log("process dataset loaded authoring response");
+
+                    signalModel.datasetLoader.loadCollection(data.dataset);
+
                 }
                 else{
                     chartViewManager.processAuthoringResponse(data);
@@ -58,13 +64,13 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
                 var currentBehaviorFile = data["currentFile"];
                 console.log("currentBehaviorName=",currentBehaviorName,currentBehaviorFile);
                 chartViewManager.synchronize(data.data.behaviors);
-                signalModel.datasetLoader.loadCollection(data.data);
+                signalModel.datasetLoader.loadCollection(data.data.collections);
                 saveManager.setCurrentFilename(currentBehaviorName,currentBehaviorFile);
 
             } 
 
             else if (data.type == "collection_data"){
-                signalModel.datasetLoader.loadCollection(data["data"]);
+                signalModel.datasetLoader.loadCollection(data.data.collections);
             }
             else if (data.type == "storage_data") {
                 saveManager.loadStorageData(data);
@@ -207,9 +213,9 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
             }
         };
 
-        var onDataReady = function(id,dataset){
+        var onDataReady = function(dataset){
                console.log("transmit_data set data", dataset);
-               var data = {id:id,dataset:dataset,type:"dataset_loaded"};
+               var data = {dataset:dataset,type:"dataset_loaded"};
             var transmit_data = {
                 type: "authoring_request",
                 requester: "authoring",
@@ -234,7 +240,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
         signalView.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
 
         saveManager.addListener("ON_SAVE_EVENT", onStorageEvent);
-        signalModel.addListener("ON_DATASET_READY",onDataReady);
+        signalModel.datasetLoader.addListener("ON_IMPORTED_DATASET_READY",onDataReady);
         promptConnect();
 
 

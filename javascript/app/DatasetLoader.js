@@ -16,7 +16,7 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 			loadCollection(data) {
 				console.log("!!! LOAD COLLECTIONG LOADING ", data);
 				var self = this;
-				var collections =  data["collections"];
+				var collections =  data;
 
 				for (var i=0; i<collections.length; i++) {
 					console.log("!!! inside collections ", collections[i]);
@@ -75,7 +75,8 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 			loadCollectionFromFilename(filename) {
 				var self = this;
 				$.getJSON("app/sample_datasets/"+filename, function(data) {
-					self.loadCollection(data);
+					console.log("data loader loading json from file",data)
+					self.trigger("ON_IMPORTED_DATASET_READY",[data])
 				});			
 			}
 

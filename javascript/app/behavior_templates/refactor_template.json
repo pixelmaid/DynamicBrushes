@@ -44,7 +44,18 @@
         "displayName": "stateComplete"  
       }],
       "mappings": [
-
+{
+        "stateId" : "_s865vlzry",
+        "constraintType" : "passive",
+        "mappingId" : "_16y80ecqx",
+        "expressionId" : "_23v0ckj5l",
+        "expressionText" : "1",
+        "relativePropertyName" : "x",
+        "expressionPropertyList" : {
+          
+        },
+        "relativePropertyFieldName" : "x"
+      },
 
       ],
       "conditions": [
