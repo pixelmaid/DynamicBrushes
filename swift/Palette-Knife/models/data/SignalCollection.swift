@@ -165,17 +165,22 @@ class SignalCollection: Object{
         }
     }
     
-    public func addProtoSample(hash:Float,data:JSON){
-        self.samples.insert(hash)
-        self.lastSample  = hash;
+    public func addProtoSample(hash:Float?,data:JSON){
+        let targetHash:Float;
+        if(hash != nil){
+            targetHash = hash!;
+        }else{
+            targetHash = self.lastSample+1;
+        }
+        self.samples.insert(targetHash)
+        self.lastSample  = targetHash;
         for (key,value) in data {
             guard let targetProtoSignal = self.protoSignals[key] else {
                 print("ERROR ---------NO PROTO SIGNAL FOUND THAT CORRESPOND WITH FIELD NAME-----------",key,self.protoSignals)
                 return;
-                
             }
             
-            targetProtoSignal.addValue(h: hash, v: value.floatValue)
+            targetProtoSignal.addValue(h: targetHash, v: value.floatValue)
             
         }
     }

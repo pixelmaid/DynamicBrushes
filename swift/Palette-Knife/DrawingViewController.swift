@@ -11,7 +11,6 @@ import SwiftyJSON
 
 
 let behaviorMapper = BehaviorMapper()
-var stylus = Stylus(x: 0,y:0,angle:0,force:0)
 let uiInput = UIInput();
 //CONSTANTS:
 
@@ -36,7 +35,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     
     
     var layerContainerView:LayerContainerView!
-
+    
     
     var behaviorManager: BehaviorManager?
     var currentCanvas: Canvas?
@@ -64,6 +63,9 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     var behaviorPanelController: BehaviorPanelViewController?
     var recordingToolbarVC: RecordingToolbarVC?
     var recordingViewController:RecordingViewController?
+    
+    //TODO: properly initialize stylus
+    var stylus:Stylus?
     
     var fileListController: SavedFilesPanelViewController?
     let targetSize = CGSize(width:CGFloat(pX),height:CGFloat(pY))

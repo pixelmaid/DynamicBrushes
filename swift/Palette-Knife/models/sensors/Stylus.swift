@@ -7,312 +7,137 @@
 //
 
 import Foundation
-
+import SwiftyJSON
 
 // manages stylus data, notifies behaviors of stylus events
-class Stylus: TimeSeries, WebTransmitter {
-    var prevPosition: Point
-    var force = Observable<Float>(0)
-    var prevForce = Observable<Float>(0)
-    var angle = Observable<Float>(0)
-    var speed =  Observable<Float>(0)
-    var prevAngle = Observable<Float>(0)
-    var deltaAngle = Observable<Float>(0)
-    var position = LinkedPoint(x:0,y:0)
-    var origin = Point(x:0,y:0);
-    var delta = LinkedPoint(x:0,y:0);
-    var deltaChangeBuffer = [Point]();
-    var x:Observable<Float>
-    var y:Observable<Float>
-    var dx:Observable<Float>
-    var dy:Observable<Float>
-    var xDistance:Observable<Float>
-    var yDistance:Observable<Float>
-    var distance:Observable<Float>
-    var prevTime = Float(0);
-    var penDown = Observable<Float>(0);
-    var forceSub = Float(1);
-    var transmitEvent = Event<(String)>()
-    var initEvent = Event<(WebTransmitter,String)>()
-    var moveCounter  = 0;
-    var constraintTransmitComplete = true;
+class Stylus {
     
-    //var moveDist = Float(0);
+    let protoSignalCollection:LiveCollection;
+    var x:Float=0;
+    var y:Float=0;
+    var oX:Float = 0;
+    var oY:Float = 0;
+    var dx:Float = 0;
+    var dy:Float = 0;
+    var pX:Float=0;
+    var pY:Float=0;
+    var force:Float=0;
+    var angle:Float=0;
+    var deltaAngle:Float = 0;
+    var xDistance:Float = 0;
+    var yDistance:Float = 0;
+    var euclidDistance:Float = 0;
+    var speed:Float = 0;
+    var speedDate:Date;
+    var prevTime:Float = 0;
+    var stylusEvent:Float = 0;
     
-    // var testCount = 4;
-    init(x:Float,y:Float,angle:Float,force:Float){
-        prevPosition = Point(x:0, y:0)
-        self.force.set(newValue: force);
-        self.prevForce.set(newValue: force)
-        self.angle.set(newValue: angle)
-        self.prevAngle.set(newValue: angle)
-        self.x = position.x;
-        self.y = position.y
-        self.x.printname = "stylus_position_x"
-        self.y.printname = "stylus_position_y"
-        self.speed.set(newValue: 0)
-        self.dx = delta.x;
-        self.dy = delta.y;
-        self.dx.printname = "stylus_delta_x"
-        self.dy.printname = "stylus_delta_y"
-        self.distance = Observable<Float>(0);
-        self.xDistance = Observable<Float>(0);
-        self.yDistance = Observable<Float>(0);
-        
-        RequestHandler.registerObservable(observableId: "stylus_x", observable: self.x)
-        RequestHandler.registerObservable(observableId: "stylus_y", observable: self.y)
-        RequestHandler.registerObservable(observableId: "stylus_dx", observable: self.dx)
-        RequestHandler.registerObservable(observableId: "stylus_dy", observable: self.dy)
-        RequestHandler.registerObservable(observableId: "stylus_force", observable: self.force)
-        RequestHandler.registerObservable(observableId: "stylus_angle", observable: self.angle)
-        
-        super.init()
-        self.id = "stylus";
-        self.name = "stylus"
-        self.position.name = "stylus_position"
-        position.set(x: x, y:y)
-        self.events =  ["STYLUS_UP","STYLUS_DOWN","STYLUS_MOVE_BY","STYLUS_X_MOVE_BY","STYLUS_Y_MOVE_BY"]
-        self.createKeyStorage();
-        
-        self.x.setLiveStatus(status: true)
-        self.y.setLiveStatus(status: true)
-        self.dx.setLiveStatus(status: true)
-        self.dy.setLiveStatus(status: true)
-        self.force.setLiveStatus(status: true)
-        self.angle.setLiveStatus(status: true)
-        
-        self.startInterval();
-        
+ 
+    init(protoSignalCollection:LiveCollection){
+        self.protoSignalCollection = protoSignalCollection;
+        speedDate = Date();
     }
     
-    
-    
-    @objc override func timerIntervalCallback()
-    {
-        //self.transmitData();
-    }
-    
-    func transmitData(){
-        var string = "{\"type\":\"stylus_data\",\"canvas_id\":\""+self.id;
-        string += "\",\"stylusData\":{"
-        string+="\"time\":"+String(self.getTimeElapsed())+","
-        string+="\"pressure\":"+String(describing: self.force)+","
-        string+="\"angle\":"+String(describing: self.angle)+","
-        string+="\"penDown\":"+String(describing: self.penDown)+","
-        string+="\"speed\":"+String(self.speed.get(id:nil))+","
-        string+="\"position\":{\"x\":"+String(describing: self.position.x)+",\"y\":"+String(describing: self.position.y)+"}"
-        // string+="\"delta\":{\"x\":"+String(delta.x)+",\"y\":"+String(delta.y)+"}"
-        string+="}}"
+    func onStylusUp(x:Float,y:Float){
+        self.xDistance = 0;
+        self.yDistance = 0;
+        self.euclidDistance = 0;
+        self.angle = 0;
+        self.force = 0;
+        self.dx = 0;
+        self.dy = 0;
+        self.x = x;
+        self.y = y;
+        self.speed = 0;
+        self.stylusEvent = Signal.stylusUp;
         
-        transmitEvent.raise(data: string)
-    }
-    
-    func get(targetProp:String)->Any?{
-        switch targetProp{
-        case "force":
-            return force
-            
-        case "angle":
-            return self.angle
-            
-            
-        default:
-            return nil
-            
-        }
-        
-    }
-    
-    func resetDistance(){
-        self.distance.set(newValue: 0);
-        self.xDistance.set(newValue: 0);
-        self.yDistance.set(newValue: 0)
-        
-        for key in keyStorage["STYLUS_MOVE_BY"]!{
-            if(key.1 != nil){
-                let eventCondition = key.1;
-                eventCondition!.reset();
-            }
-
-        }
-        
-        
-        for key in keyStorage["STYLUS_X_MOVE_BY"]!{
-            if(key.1 != nil){
-                let eventCondition = key.1;
-                eventCondition!.reset();
-            }
-            
-        }
-        
-        for key in keyStorage["STYLUS_Y_MOVE_BY"]!{
-            if(key.1 != nil){
-                let eventCondition = key.1;
-                eventCondition!.reset();
-            }
-            
-        }
-    }
-    
-    
-    func onStylusUp(){
-        for key in keyStorage["STYLUS_UP"]!  {
-            key.2.undergoing_transition = true;
-        }
-        for key in keyStorage["STYLUS_UP"]!  {
-            if(key.1 != nil){
-                let eventCondition = key.1;
-            }
-            else{
-                  NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_UP"])
-                
-            }
-            key.2.undergoing_transition = false;
-
-        }
-        //self.delta.set(x: 0,y:0)
-        self.penDown.set(newValue: 0);
-        self.speed.set(newValue: 0);
-        self.resetDistance();
-        //self.transmitData();
-        
+        self.exportData();
     }
     
     func onStylusDown(x:Float,y:Float,force:Float,angle:Float){
-        moveCounter = 0;
-        //TODO: silent set, need to make more robust/ readable
-        self.origin.set(x: x, y: y)
-        self.position.x.setSilent(newValue: x)
-        self.position.y.setSilent(newValue: y)
-        for key in self.keyStorage["STYLUS_DOWN"]!  {
-            if(key.1 != nil){
-                let eventCondition = key.1;
-                _ = eventCondition?.evaluate()
-            }
-            else{
-                NotificationCenter.default.post(name:NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_DOWN"])
-            }
-            
-        }
-        self.delta.set(x: 0,y:0)
-        self.penDown.set(newValue: 1);
+        self.oX = x;
+        self.oY = y;
+        self.x = x;
+        self.y = y;
+        self.dx = 0;
+        self.dy = 0;
+        self.force = force;
+        self.angle = angle;
+        self.stylusEvent = Signal.stylusDown;
+        self.speed = 0;
+        self.deltaAngle = 0;
+        self.xDistance = 0;
+        self.yDistance = 0;
+        self.euclidDistance = 0;
         self.prevTime = self.getTimeElapsed();
-        self.speed.set(newValue: 0);
-        //self.transmitData();
         
+        self.exportData();
+
     }
     
     func onStylusMove(x:Float,y:Float,force:Float,angle:Float){
-        if(moveCounter == 0){
-        for key in keyStorage["STYLUS_MOVE_BY"]!  {
-            if(key.1 != nil){
-                let eventCondition = key.1;
-                if(eventCondition?.evaluate())!{
-                     NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_MOVE_BY"])
-                    
-                }
-                else{
-                    #if DEBUG
-                    //print("EVALUATION FOR CONDITION FAILED")
-                    #endif
-                }
-                
-            }
-            else{
-                NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_MOVE_BY"])
-                
-            }
-        }
-        for key in keyStorage["STYLUS_X_MOVE_BY"]!  {
-            if(key.1 != nil){
-                let eventCondition = key.1;
-                if(eventCondition?.evaluate())!{
-                    NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_X_MOVE_BY"])
-                    
-                }
-                else{
-                    #if DEBUG
-                        //print("EVALUATION FOR CONDITION FAILED")
-                    #endif
-                }
-                
-            }
-            else{
-                NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_X_MOVE"])
-                
-            }
-        }
-        for key in keyStorage["STYLUS_Y_MOVE_BY"]!  {
-            if(key.1 != nil){
-                let eventCondition = key.1;
-                if(eventCondition?.evaluate())!{
-                    NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_Y_MOVE_BY"])
-                    
-                }
-                else{
-                    #if DEBUG
-                        //print("EVALUATION FOR CONDITION FAILED")
-                    #endif
-                }
-                
-            }
-            else{
-                NotificationCenter.default.post(name:NSNotification.Name(key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STYLUS_Y_MOVE_BY"])
-                
-            }
-        }
-
-
-        self.prevPosition.set(val:position);
-        let newP = Point(x:x,y:y);
-        self.position.set(val:newP)
-       
-    
-        let d = self.position.sub(point: self.prevPosition)
       
-        self.delta.set(val:d)
-        var _deltaAngle =  MathUtil.cartToPolar(p1: self.origin, p2: self.position).1
-        _deltaAngle = MathUtil.map(value: _deltaAngle, low1:0.0, high1: 2*Float.pi, low2: 0.0, high2: 100.0)
-        self.deltaAngle.set(newValue: _deltaAngle)
-        //self.delta.set(x: 0,y:0)
-
-       //deltaChangeBuffer.append(self.position.sub(point: self.prevPosition));
+        //TODO: REFACTOR FOR STYLUS MOVE BY
+        self.pX = self.x;
+        self.x = x;
+        self.pY = self.y;
+        self.y = y;
+        self.force = force;
+        self.angle = angle;
+        self.dx = x-pX;
+        self.dy = y-pY;
         
-         self.distance.set(newValue: self.distance.getSilent() + sqrt(pow( d.x.getSilent(),2)+pow( d.y.getSilent(),2)));
-        self.xDistance.set(newValue: self.xDistance.getSilent() + abs(d.x.getSilent()));
-        self.yDistance.set(newValue: self.yDistance.getSilent() + abs(d.y.getSilent()));
+        let rawDeltaAngle = MathUtil.cartToPolar(x1: self.oX, y1: self.oY, x2: self.x, y2: self.y).1;
+        self.deltaAngle = MathUtil.map(value: deltaAngle, low1:0.0, high1: 2*Float.pi, low2: 0.0, high2: 100.0)
+        self.xDistance = self.xDistance + abs(dx);
+        self.yDistance = self.yDistance + abs(dy);
+        let euclidDelta = sqrt(pow(dx,2)+pow(dy,2));
+        self.euclidDistance = self.euclidDistance + sqrt(pow(dx,2)+pow(dy,2));
 
-        self.prevForce.set(newValue:self.force.get(id:nil))
-        self.force.set(newValue: force*20)
-        self.prevAngle.set(newValue:self.angle.get(id:nil));
-        self.angle.set(newValue:angle)
+       
         let currentTime = self.getTimeElapsed();
-        var _speed = prevPosition.dist(point: position)/(currentTime-prevTime)
-        if(_speed > 5000){
-            _speed = 5000
+        var rawSpeed = euclidDelta/(currentTime-prevTime)
+        if(rawSpeed > 5000){
+            rawSpeed = 5000;
         }
-         _speed = MathUtil.map(value: _speed, low1:0, high1: 5000, low2: 0, high2: 100)
-        self.speed.set(newValue:_speed)
-        self.prevTime = currentTime;
-        #if DEBUG
-           // print("stylus speed =",self.speed.get(id: nil));
-            print("stylus delta angle =",self.deltaAngle.get(id: nil));
-
-        #endif
-        }
-       // moveCounter += 1
-        if(moveCounter > 10){
-            moveCounter = 0;
-        }
+        self.speed = MathUtil.map(value: rawSpeed, low1:0, high1: 5000, low2: 0, high2: 100);
         
+        self.prevTime = currentTime;
+        self.stylusEvent = Signal.stylusMove;
+        self.exportData();
+     
     }
     
-    
-    func shiftDeltaBuffer(){
-        self.delta.set(val:self.position.sub(point: self.prevPosition))
-
+    func exportData(){
+        //export data
+        var data:JSON = [:];
+        data["x"] = JSON(self.x);
+        data["y"] = JSON(self.y);
+        data["dx"] = JSON(self.dx);
+        data["dy"] = JSON(self.dy);
+        data["ox"] = JSON(self.oX);
+        data["oy"] = JSON(self.oY);
+        data["force"] = JSON(self.force);
+        data["angle"] = JSON(self.angle);
+        data["stylusEvent"] = JSON(self.stylusEvent);
+        data["euclidDistance"] = JSON(self.euclidDistance);
+        data["xDistance"] = JSON(self.xDistance);
+        data["yDistance"] = JSON(self.yDistance);
+        data["speed"] = JSON(self.speed);
+        data["deltaAngle"] = JSON(self.deltaAngle);
+        
+        //TODO:RESOLVE TIME
+        data["time"] = JSON(self.getTimeElapsed());
+        
+        self.protoSignalCollection.addProtoSample(hash:nil, data: data)
     }
+  
     
+    func getTimeElapsed()->Float{
+        let currentTime = NSDate();
+        let t = currentTime.timeIntervalSince(speedDate as Date)
+        return Float(t);
+    }
     
     
     

@@ -20,6 +20,10 @@ class Signal:Observable<Float>{
     internal let collectionId:String!;
     internal var order:Int = -1;
     
+    static let stylusUp:Float = 0.0;
+    static let stylusMove:Float = 1.0;
+    static let stylusDown:Float = 2.0;
+    
     var dataSubscribers = [String:Observable<Float>]();
     var id:String
     //    var param = Observable<Float>(1.0);
@@ -106,16 +110,19 @@ class Signal:Observable<Float>{
 
 
 class LiveSignal:Signal{
-    
+    required init(id: String, fieldName: String, displayName: String, collectionId: String, settings: JSON) {
+        super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, settings: settings);
+        self.setLiveStatus(status: true);
+    }
 }
 
 
-class Recording:Signal{
+class Recording:LiveSignal{
     private var next:Recording?
     private var prev:Recording?
     private var lastSample:Float = 0;
     
-    
+
     func getNext()->Recording?{
         if(next != nil){
             return next!;
@@ -159,15 +166,11 @@ class Recording:Signal{
 
 
 class StylusEventRecording:Recording{
-    let stylusUp = 0.0;
-    let stylusMove = 1.0;
-    let stylusDown = 2.0;
+   
 }
 
 class StylusEvent:LiveSignal{
-    let stylusUp = 0.0;
-    let stylusMove = 1.0;
-    let stylusDown = 2.0;
+   
 }
 
 
