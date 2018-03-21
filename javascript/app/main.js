@@ -1,6 +1,6 @@
-'use strict';
 define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveView", "app/SignalView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart", "app/DatasetView", "app/SignalModel"],
 
+'use strict';
 
     function($, paper, Handlebars, ID, SaveManager, SaveView,  SignalView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart,DatasetView, SignalModel) {
 
@@ -42,7 +42,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
                     console.log("process signal authoring response");
                     signalView.processAuthoringResponse(data);
                 }
-                else if(data.authoring_type == "dataset_loaded"){                    console.log("process signal authoring response")
+                else if(data.authoring_type == "dataset_loaded"){                    
+                    console.log("process signal authoring response");
                     console.log("process dataset loaded authoring response");
 
                     signalModel.datasetLoader.loadCollection(data.dataset);
