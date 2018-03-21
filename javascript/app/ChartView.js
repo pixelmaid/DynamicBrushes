@@ -476,7 +476,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                         } 
 
                         var expression = self.addReferenceToExpression(expressionTargetId, type, referenceName, referenceProperties, referencePropertiesDisplayNames, drop_id, displayName, dropName);
-                      var eventArgs = [self.id, expression.id, expression.getText(), expression.getPropertyList(), generatorId, generatorType];
+                      var eventArgs = [self.id, expression.id, expression.getText(), expression.getPropertyList()];
 
                         self.trigger("ON_EXPRESSION_MODIFIED", eventArgs);
                     }

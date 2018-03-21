@@ -35,18 +35,30 @@ class Sine:Generator{
         return v;
     }
     
+    override func getSettingsJSON()->JSON{
+        var json = super.getSettingsJSON();
+        json["freq"] = JSON(self.freq);
+        json["phase"] = JSON(self.phase);
+        json["amp"] = JSON(self.amp);
+        return json;
+    }
+    
     
 }
 
 
 class Sawtooth:Generator{
     var val = [Float]();
-    var index = Observable<Float>(0);
+    var start:Float;
+    var stop:Float;
+    var min:Int;
+    var max:Int;
+    
     required init(id:String, fieldName:String, displayName:String, collectionId:String, settings:JSON){
-        let start = settings["start"].floatValue
-        let stop = settings["stop"].floatValue
-        let min = settings["min"].intValue
-        let max = settings["max"].intValue
+         start = settings["start"].floatValue
+         stop = settings["stop"].floatValue
+         min = settings["min"].intValue
+         max = settings["max"].intValue
 
         let increment = (stop-start)/Float(max-min)
         for i in min...max-1{
@@ -57,8 +69,19 @@ class Sawtooth:Generator{
     }
     
     override func get(id:String?) -> Float {
-        let v = val[Int(index.get(id: nil))]
+        //TODO: This won't work correctly with new hash system
+
+        let v = val[Int(hash)]
         return v;
+    }
+    
+    override func getSettingsJSON()->JSON{
+        var json = super.getSettingsJSON();
+        json["start"] = JSON(self.start);
+        json["stop"] = JSON(self.stop);
+        json["min"] = JSON(self.min);
+        json["max"] = JSON(self.max);
+        return json;
     }
     
 }
@@ -68,8 +91,6 @@ class Triangle:Signal{
     var freq:Float
     var min:Float
     var max:Float
-    
-    var index = Observable<Float>(0);
     
  required init(id:String, fieldName:String, displayName:String, collectionId:String, settings:JSON){
         self.freq = settings["freq"].floatValue;
@@ -82,10 +103,19 @@ class Triangle:Signal{
     
     override func get(id:String?) -> Float {
         let ti = 2.0 * Float.pi * (880 / 44100);
-        let theta = ti * self.index.get(id: nil)
+        let theta = ti * hash
         let _v = 1.0 - abs(Float(theta.truncatingRemainder(dividingBy: 4)-2));
         let v = MathUtil.map(value: _v, low1: -1, high1: 1, low2: min, high2: max)
         return v;
+    }
+    
+    override func getSettingsJSON()->JSON{
+        var json = super.getSettingsJSON();
+       
+        json["freq"] = JSON(self.freq);
+        json["min"] = JSON(self.min);
+        json["max"] = JSON(self.max);
+        return json;
     }
     
     
@@ -109,6 +139,7 @@ class Square:Signal{
     }
     
     override func get(id:String?) -> Float {
+        //TODO: This won't work correctly with new hash system
         if(hash == 0.0){
             if(currentVal == min){
                 currentVal = max;
@@ -122,12 +153,21 @@ class Square:Signal{
         
     }
     
+    override func getSettingsJSON()->JSON{
+        var json = super.getSettingsJSON();
+        
+        json["freq"] = JSON(self.freq);
+        json["min"] = JSON(self.min);
+        json["max"] = JSON(self.max);
+        return json;
+    }
+    
+    
     
 }
 
 class Alternate:Signal{
     var val = [Float]();
-    var index = 0;
     
     required init(id:String, fieldName:String, displayName:String, collectionId:String, settings:JSON){
         super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, settings:settings);
@@ -139,8 +179,18 @@ class Alternate:Signal{
     
     
     override func get(id:String?) -> Float {
-        let v = val[index]
+        //TODO: This won't work correctly with new hash system
+
+        let v = val[Int(hash)]
         return v;
+    }
+    
+    
+    override func getSettingsJSON()->JSON{
+        var json = super.getSettingsJSON();
+        
+        json["val"] = JSON(self.val);
+        return json;
     }
     
     
@@ -163,9 +213,20 @@ class Random: Signal{
     }
     
     override func get(id:String?) -> Float {
+        //TODO: This won't work correctly with new hash system
+
         val = Float(arc4random()) / Float(UINT32_MAX) * abs(self.start - self.end) + min(self.start, self.end)
         return val
     }
+    override func getSettingsJSON()->JSON{
+        var json = super.getSettingsJSON();
+        
+        json["start"] = JSON(self.start);
+        json["end"] = JSON(self.end);
+        return json;
+    }
+    
+    
 }
 
 
@@ -173,6 +234,7 @@ class Interval:Generator{
     var val = [Float]();
     var infinite = false;
     let inc:Float
+    let times:Int?
     
     required init(id:String, fieldName:String, displayName:String, collectionId:String, settings:JSON){
         
@@ -180,14 +242,16 @@ class Interval:Generator{
         
         if (settings["times"] != JSON.null){
             
-            let times = settings["times"].intValue
-            for i in 1..<times{
+            self.times = settings["times"].intValue
+            
+            for i in 1..<settings["times"].intValue{
                 val.append(Float(i)*self.inc)
             }
         }
             
         else {
             infinite = true;
+           self.times = nil;
         }
         
         super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, settings:settings);
@@ -208,6 +272,20 @@ class Interval:Generator{
         }
         return -1;
     }
+    
+    override func getSettingsJSON()->JSON{
+        var json = super.getSettingsJSON();
+        
+        json["inc"] = JSON(self.inc);
+        if(times != nil){
+            json["times"] = JSON(self.times!)
+        }
+        else{
+            json["times"] = JSON.null;
+        }
+        return json;
+    }
+    
     
     
 }

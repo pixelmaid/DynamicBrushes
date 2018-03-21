@@ -1,14 +1,13 @@
 'use strict';
-define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveView", "app/PaletteModel", "app/SignalView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart", "app/DatasetView", "app/SignalModel"],
+define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveView", "app/SignalView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart", "app/DatasetView", "app/SignalModel"],
 
 
-    function($, paper, Handlebars, ID, SaveManager, SaveView, PaletteModel, SignalView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart,DatasetView, SignalModel) {
+    function($, paper, Handlebars, ID, SaveManager, SaveView,  SignalView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart,DatasetView, SignalModel) {
 
         var socketController = new SocketController();
         var socketView = new SocketView(socketController, "#socket");
-        var paletteModel = new PaletteModel();
         var signalModel = new SignalModel();
-        var SignalView = new SignalView(signalModel, "#scripts");
+        var signalView = new SignalView(signalModel, "#scripts");
         var chartViewManager = new ChartViewManager(signalModel, "#canvas");
         var saveManager = new SaveManager();
         var saveView = new SaveView(saveManager, "#save-menu");
@@ -39,7 +38,13 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
 
             } else if (data.type == "authoring_response") {
 
-                chartViewManager.processAuthoringResponse(data);
+                if(data.authoring_type == "signal_initialized"){
+                    console.log("process signal authoring response")
+                    signalView.processAuthoringResponse(data);
+                }
+                else{
+                    chartViewManager.processAuthoringResponse(data);
+                }
 
             }  else if (data.type == "inspector_data") {
 
@@ -226,6 +231,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
         socketController.addListener("ON_KEY_RECOGNIZED",onKeyRecognized);
 
         chartViewManager.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
+        signalView.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
+
         saveManager.addListener("ON_SAVE_EVENT", onStorageEvent);
         signalModel.addListener("ON_DATASET_READY",onDataReady);
         promptConnect();

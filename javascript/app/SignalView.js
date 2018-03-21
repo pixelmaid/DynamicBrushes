@@ -1,16 +1,18 @@
 //SignalView.js
 'use strict';
-define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/id" ,'lib/CollapsibleLists.js'],
+define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/id" ,"app/Emitter", 'lib/CollapsibleLists.js'],
 
-    function($, jqueryui, Handlebars, paletteTemplate, ID, CollabsibleLists) {
+    function($, jqueryui, Handlebars, paletteTemplate, ID, Emitter) {
 
 
         var live_btn, recordings_btn, datasets_btn, generator_btn, brushes_btn, drawings_btn;
 
-        var SignalView = class {
+        var SignalView = class extends Emitter {
 
             constructor(model, element) {
+                super();
                 this.el = $(element);
+                this.initQueue = [];
                 this.model = model;
                 var self = this;
                 self.updateSelectedPalette(model.data[model.selected]);
@@ -24,7 +26,6 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
                 
 
                 this.btn_list = [live_btn, recordings_btn, datasets_btn, generator_btn, brushes_btn, drawings_btn];
-
 
                 this.el.droppable({
                     drop: function(event, ui) {
@@ -45,7 +46,7 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
                         (currClass === "generators" && dataClass === "generator") ||
                         (currClass === "live_input" && dataClass === "live")) {
                         this.updateSelectedPalette(self.model.data[currClass]);
-                        console.log("updating palette in ON_DATA_READY")
+                        console.log("updating palette in ON_DATA_READY");
                     }
                 }.bind(this));
             }
@@ -72,18 +73,19 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
             }
 
             updateSelectedPalette(data) {
+                var self = this;
                 console.log("update selected palette called with data ", data);
 
                 var html = paletteTemplate(data);
                 this.el.find('#selected_palette').html(html);
                 // console.log("CollapsibleLists is", CollapsibleLists);
 
-               CollapsibleLists.apply(true);
+              CollapsibleLists.apply(true);
                 this.el.find(".palette").mousedown(function(event) {
-                    if (!$(event.target).hasClass("tooltiptext")) {
-                        var clone = $("<div id=" + $(event.target).attr('id') + "></div>");
+                   // if (!$(event.target).hasClass("tooltiptext")) {
+                        var clone = $("<div></div>");
 
-                        clone.html($(event.target).attr('display_name'));
+                        clone.html($(event.target).attr('displayName'));
                         clone.attr("type", $(event.target).attr('type'));
                         clone.attr("name", $(event.target).attr('name'));
                         clone.attr("class", $(event.target).attr('class'));
@@ -103,10 +105,37 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
                         clone.offset($(event.target).offset());
                         clone.prependTo("body").css('position', 'absolute');
                         clone.trigger(event);
-                    }
+                        var fieldName =  $(event.target).attr('fieldName');
+                        var collectionId = $(event.target).attr('collectionId');
+                        var classType = $(event.target).attr('type');
+                        var displayName = $(event.target).attr('displayName');
+
+                        var id = ID();
+                     self.initQueue.push(clone);
+                    var transmit_data = {
+                   
+                        type: "signal_initialized",
+                        fieldName: fieldName,
+                        displayName: displayName,
+                        collectionId: collectionId,
+                        classType:classType,
+                        id:id
+                    };
+
+                
+
+                self.trigger("ON_AUTHORING_EVENT", [transmit_data]);
+                    //}
 
 
                 });
+            }
+
+            processAuthoringResponse(data){
+                 console.log("signal view process authoring response", data, data.result);
+                 var lastSignal = this.initQueue.shift();
+                 lastSignal.attr('id', data.data.id);
+ 
             }
 
 
