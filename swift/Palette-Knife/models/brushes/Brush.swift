@@ -602,7 +602,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             #if DEBUG
                 //print("executing method:\(method.name,self.id,self.name)");
             #endif
-            
+            //TODO: fix methods to avoid static references to stylus
             switch (methodName){
             case "newStroke":
                 
@@ -630,7 +630,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                         }
                     }
                  else if(arg_string  == "stylus_position"){
-                      self.setOrigin(x: stylus.x.get(id: nil),y: stylus.y.get(id: nil))
+                      //self.setOrigin(x: stylus.x.get(id: nil),y: stylus.y.get(id: nil))
                 }
                 }
                     
@@ -647,6 +647,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             case "stopTimer":
                 self.stopInterval();
                 break;
+            //TODO: FIX setOrigin to avoid static refs to stylus
             case "setOrigin":
                 let arg = method.arguments![0];
                 if  let arg_string = arg as? String {
@@ -657,7 +658,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
                         self.setOrigin(x: self.parent!.origin.x.get(id: nil),y: self.parent!.origin.y.get(id: nil))
                     }
                 }else {
-                    self.setOrigin(x: stylus.x.get(id: nil),y: stylus.y.get(id: nil))
+                   // self.setOrigin(x: stylus.x.get(id: nil),y: stylus.y.get(id: nil))
                 }
             case "destroy":
                 self.destroy();

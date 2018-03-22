@@ -60,7 +60,7 @@
 		5F90F5691E9D5BCC006BB9FE /* Expression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5621E9D5BCC006BB9FE /* Expression.swift */; };
 		5F90F56A1E9D5BCC006BB9FE /* Signal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5631E9D5BCC006BB9FE /* Signal.swift */; };
 		5F90F56B1E9D5BCC006BB9FE /* State.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5641E9D5BCC006BB9FE /* State.swift */; };
-		5F90F56E1E9D5BE3006BB9FE /* Stylus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F56D1E9D5BE3006BB9FE /* Stylus.swift */; };
+		5F90F56E1E9D5BE3006BB9FE /* StylusCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F56D1E9D5BE3006BB9FE /* StylusCollection.swift */; };
 		5F9118D81DEE345100A6B247 /* draw_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F9118D61DEE345100A6B247 /* draw_icon.png */; };
 		5F9118D91DEE345100A6B247 /* select_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F9118D71DEE345100A6B247 /* select_icon.png */; };
 		5F9F25A21DEFE38B005CB5D8 /* radial2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F9F25A11DEFE38B005CB5D8 /* radial2x.png */; };
@@ -231,7 +231,7 @@
 		5F90F5621E9D5BCC006BB9FE /* Expression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Expression.swift; sourceTree = "<group>"; };
 		5F90F5631E9D5BCC006BB9FE /* Signal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Signal.swift; path = data/Signal.swift; sourceTree = "<group>"; };
 		5F90F5641E9D5BCC006BB9FE /* State.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = State.swift; sourceTree = "<group>"; };
-		5F90F56D1E9D5BE3006BB9FE /* Stylus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stylus.swift; sourceTree = "<group>"; };
+		5F90F56D1E9D5BE3006BB9FE /* StylusCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StylusCollection.swift; sourceTree = "<group>"; };
 		5F90F5731E9D5CE8006BB9FE /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		5F90F5741E9D5CE8006BB9FE /* ExceptionCatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionCatcher.h; sourceTree = "<group>"; };
 		5F9118D61DEE345100A6B247 /* draw_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = draw_icon.png; sourceTree = "<group>"; };
@@ -509,7 +509,7 @@
 		5F90F56C1E9D5BE3006BB9FE /* sensors */ = {
 			isa = PBXGroup;
 			children = (
-				5F90F56D1E9D5BE3006BB9FE /* Stylus.swift */,
+				5F90F56D1E9D5BE3006BB9FE /* StylusCollection.swift */,
 				5FB74958202128FD007D9E12 /* StylusManager.swift */,
 			);
 			path = sensors;
@@ -1186,7 +1186,7 @@
 				5F50371B1EA9533A004ABAC1 /* shaderUtil.swift in Sources */,
 				5F90F56B1E9D5BCC006BB9FE /* State.swift in Sources */,
 				5F50371A1EA9533A004ABAC1 /* fileUtil.swift in Sources */,
-				5F90F56E1E9D5BE3006BB9FE /* Stylus.swift in Sources */,
+				5F90F56E1E9D5BE3006BB9FE /* StylusCollection.swift in Sources */,
 				5F90F55C1E9D5A5C006BB9FE /* Brush.swift in Sources */,
 				5F5CED2C1ED10AED00A253A0 /* SelectedColorView.swift in Sources */,
 				5F90F56A1E9D5BCC006BB9FE /* Signal.swift in Sources */,

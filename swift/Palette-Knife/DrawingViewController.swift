@@ -64,9 +64,6 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     var recordingToolbarVC: RecordingToolbarVC?
     var recordingViewController:RecordingViewController?
     
-    //TODO: properly initialize stylus
-    var stylus:Stylus?
-    
     var fileListController: SavedFilesPanelViewController?
     let targetSize = CGSize(width:CGFloat(pX),height:CGFloat(pY))
     var blockAlert:UIAlertController!
@@ -445,6 +442,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
                 if json is [String: Any] {
                     // json is a dictionary
                     BehaviorManager.loadCollectionsFromJSON(data:JSON(data)["collections"])
+                    
                 }  else {
                     print("JSON is invalid")
                 }

@@ -39,7 +39,9 @@ final class StylusManager{
 
     static public let recordEvent = Event<(String,RecordingCollection)>();
     static public let keyframeEvent = Event<(Int)>();
+    static public var stylusCollections = [String:StylusCollection]();
 
+    
     static public let layerEvent = Event<(String,String)>();
     static public let stylusDataEvent = Event<(String, [Float])>();
     static public let visualizationEvent = Event<String>();
@@ -52,6 +54,7 @@ final class StylusManager{
     static private var idStart:String!
     static private var idEnd:String!
     static private var recordingPresetData:JSON = [:]
+    
 
     init(){
         
@@ -108,7 +111,7 @@ final class StylusManager{
         
     }
     
-
+    
     static public func eraseStrokesForLooping(idStart:String,idEnd:String) {
         //jl - TODO write code that only erases the strokes between idStart and idEnd
         //jl - i changed the args to be an idStart and idEnd, same as setToRecording, since we would only ever temporarily erase the strokes we are concerned with in the looping
@@ -317,8 +320,9 @@ final class StylusManager{
 
             currentRecordingPackage.addProtoSample(hash:elapsedTime, data:sample);
             
-            
-            stylus.onStylusMove(x: x, y: y, force: force, angle: angle)
+            for (_,stylusCollection) in self.stylusCollections{
+                stylusCollection.onStylusMove(x: x, y: y, force: force, angle: angle)
+            }
         }
     }
     
@@ -337,7 +341,9 @@ final class StylusManager{
 
             currentRecordingPackage.addProtoSample(hash:elapsedTime, data:sample);
             _ = self.endRecording();
-            stylus.onStylusUp();
+             for (_,stylusCollection) in self.stylusCollections{
+                stylusCollection.onStylusUp(x: x, y:y);
+            }
             
         }
     }
@@ -359,7 +365,9 @@ final class StylusManager{
 
             currentRecordingPackage.addProtoSample(hash:elapsedTime, data:sample);
 
-            stylus.onStylusDown(x: x, y: y, force: force, angle: angle);
+            for (_,stylusCollection) in self.stylusCollections{
+            stylusCollection.onStylusDown(x: x, y: y, force: force, angle: angle);
+            }
         }
     }
     static public func addResultantStroke(layerId:String, strokeId:String){
@@ -421,6 +429,10 @@ final class StylusManager{
         }
         return compiledRecordingCollection.protoToJSON();
     }
+    
+    static public func registerStylus(id:String, stylusCollection:StylusCollection){
+        self.stylusCollections[id] = stylusCollection;
+    }
    
 }
 
@@ -445,19 +457,26 @@ class StylusDataConsumer{
         
         switch(sample["stylusEvent"].floatValue){
         case StylusManager.stylusUp:
-            stylus.onStylusUp();
+            for (_,stylusCollection) in StylusManager.stylusCollections{
+                stylusCollection.onStylusUp(x: sample["x"].floatValue, y: sample["y"].floatValue);
+            }
             StylusManager.stylusDataEvent.raise(data:("STYLUS_UP", [sample["x"].floatValue, sample["y"].floatValue]))
             break;
         case StylusManager.stylusDown:
             StylusManager.stylusDataEvent.raise(data:("STYLUS_DOWN", [sample["x"].floatValue, sample["y"].floatValue]))
             StylusManager.layerEvent.raise(data:("REQUEST_CORRECT_LAYER",sample["targetLayer"].stringValue));
-            stylus.onStylusDown(x: sample["x"].floatValue, y: sample["y"].floatValue, force: sample["force"].floatValue, angle: sample["angle"].floatValue);
+            
+            for (_,stylusCollection) in StylusManager.stylusCollections{
+                stylusCollection.onStylusDown(x: sample["x"].floatValue, y: sample["y"].floatValue, force: sample["force"].floatValue, angle: sample["angle"].floatValue);
+            }
+            
             StylusManager.visualizationEvent.raise(data:"ADVANCE_KEYFRAME")
             break;
         case StylusManager.stylusMove:
             StylusManager.stylusDataEvent.raise(data:("STYLUS_MOVE", [sample["x"].floatValue, sample["y"].floatValue]))
-            
-            stylus.onStylusMove(x: sample["x"].floatValue, y: sample["y"].floatValue, force: sample["force"].floatValue, angle: sample["angle"].floatValue);
+            for (_,stylusCollection) in StylusManager.stylusCollections{
+                stylusCollection.onStylusMove(x: sample["x"].floatValue, y: sample["y"].floatValue, force: sample["force"].floatValue, angle: sample["angle"].floatValue);
+            }
             break;
         default:
             break

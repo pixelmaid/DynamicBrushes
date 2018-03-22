@@ -10,9 +10,8 @@ import Foundation
 import SwiftyJSON
 
 // manages stylus data, notifies behaviors of stylus events
-class Stylus {
+class StylusCollection:LiveCollection {
     
-    let protoSignalCollection:LiveCollection;
     var x:Float=0;
     var y:Float=0;
     var oX:Float = 0;
@@ -33,9 +32,9 @@ class Stylus {
     var stylusEvent:Float = 0;
     
  
-    init(protoSignalCollection:LiveCollection){
-        self.protoSignalCollection = protoSignalCollection;
-        speedDate = Date();
+    required init(data: JSON) {
+        self.speedDate = Date();
+        super.init(data: data);
     }
     
     func onStylusUp(x:Float,y:Float){
@@ -88,7 +87,7 @@ class Stylus {
         self.dy = y-pY;
         
         let rawDeltaAngle = MathUtil.cartToPolar(x1: self.oX, y1: self.oY, x2: self.x, y2: self.y).1;
-        self.deltaAngle = MathUtil.map(value: deltaAngle, low1:0.0, high1: 2*Float.pi, low2: 0.0, high2: 100.0)
+        self.deltaAngle = MathUtil.map(value: rawDeltaAngle, low1:0.0, high1: 2*Float.pi, low2: 0.0, high2: 100.0)
         self.xDistance = self.xDistance + abs(dx);
         self.yDistance = self.yDistance + abs(dy);
         let euclidDelta = sqrt(pow(dx,2)+pow(dy,2));
@@ -129,7 +128,7 @@ class Stylus {
         //TODO:RESOLVE TIME
         data["time"] = JSON(self.getTimeElapsed());
         
-        self.protoSignalCollection.addProtoSample(hash:nil, data: data)
+        self.addProtoSample(hash:nil, data: data)
     }
   
     

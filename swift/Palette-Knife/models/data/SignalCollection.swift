@@ -39,8 +39,7 @@ class SignalCollection: Object{
             try self.loadDataFromJSON(data: data);
         }
         catch {
-            
-            
+    
             print("ERROR ---------SIGNAL ERROR ON INIT-----------")
         }
     }
@@ -179,9 +178,7 @@ class SignalCollection: Object{
                 print("ERROR ---------NO PROTO SIGNAL FOUND THAT CORRESPOND WITH FIELD NAME-----------",key,self.protoSignals)
                 return;
             }
-            
             targetProtoSignal.addValue(h: targetHash, v: value.floatValue)
-            
         }
     }
     
@@ -385,13 +382,38 @@ class LiveCollection:SignalCollection{
         let id = NSUUID().uuidString
         let signal:Signal;
         if(fieldName == "StylusEvent"){
-            signal = StylusEvent(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+            signal = StylusEvent(id:id, fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
         }
         else{
-            signal = LiveSignal(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+            signal = LiveSignal(id:id, fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
         }
         self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
         return id;
+    }
+    
+    override public func addProtoSample(hash: Float?, data: JSON) {
+            let targetHash:Float;
+            if(hash != nil){
+                targetHash = hash!;
+            }else{
+                targetHash = self.lastSample+1;
+            }
+            self.samples.insert(targetHash)
+            self.lastSample  = targetHash;
+            for (key,value) in data {
+                guard let targetProtoSignal = self.protoSignals[key] else {
+                    print("ERROR ---------NO PROTO SIGNAL FOUND THAT CORRESPOND WITH FIELD NAME-----------",key,self.protoSignals)
+                    return;
+                }
+                targetProtoSignal.addValue(h: targetHash, v: value.floatValue)
+                guard let initializedList = self.initializedSignals[key] else{
+                    print("ERROR ---------NO  SIGNAL LIST THAT CORRESPOND WITH FIELD NAME-----------",key)
+                    return;
+                }
+                for (_,signal) in initializedList{
+                    signal.addValue(h:targetHash,v: value.floatValue);
+                }
+            }
     }
 }
 

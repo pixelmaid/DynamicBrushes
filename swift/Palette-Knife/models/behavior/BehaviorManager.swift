@@ -23,7 +23,7 @@ class BehaviorManager{
     static var imported = [String:SignalCollection]();
     static var recordings = [String:SignalCollection]();
     static var generators = [String:GeneratorCollection]();
-    static var liveInputs = [String:SignalCollection]();
+    static var liveInputs = [String:LiveCollection]();
     static var signalCollections = [imported,recordings,generators,liveInputs];
 
     var canvas:Canvas
@@ -417,8 +417,16 @@ class BehaviorManager{
             switch (key){
             case "live":
                 for metadata in collectionList{
-                    let signalCollection = LiveCollection(data:metadata);
+                    let signalCollection:LiveCollection;
+                    if metadata["name"] == "stylus"{
+                        signalCollection = StylusCollection(data:metadata);
+                        StylusManager.registerStylus(id: signalCollection.id, stylusCollection:signalCollection as! StylusCollection);
+                    }
+                    else{
+                        signalCollection = LiveCollection(data:metadata);
+                    }
                     BehaviorManager.liveInputs[signalCollection.id] = signalCollection;
+
                 }
                 break;
             case "imported":

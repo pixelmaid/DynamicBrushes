@@ -78,7 +78,7 @@ class BehaviorDefinition {
     }
     
     
-    
+    //TODO: fix condition to avoid static references ie stylus
     func parseConditionJSON(data:JSON){
         let name = data["name"].stringValue
         var reference:Any? = nil
@@ -86,7 +86,7 @@ class BehaviorDefinition {
             let refString = data["reference"].stringValue
             switch(refString){
             case "stylus":
-                reference = stylus
+                //reference = stylus
                 break
             case "parent":
                 reference = "parent"
@@ -114,7 +114,7 @@ class BehaviorDefinition {
             let refString = data["relative"].stringValue
             switch(refString){
             case "stylus":
-                relative = stylus
+               // relative = stylus
                 break
             case "parent":
                 relative = "parent"
@@ -213,13 +213,13 @@ class BehaviorDefinition {
             
             
             
-            
+        //TODO: remove need for stylus reference
         case "setOrigin", "newStroke":
             if(dataArguments != JSON.null){
                 let arg = (dataArguments.arrayValue)[0].stringValue;
                 switch(arg){
                 case "stylus_position":
-                    arguments = [stylus.position];
+                    arguments = ["stylus"];
                     break;
                 case "parent_position":
                     arguments = ["parent_position"];
@@ -233,7 +233,7 @@ class BehaviorDefinition {
                 }
             }
             else{
-                arguments = [stylus.position];
+                arguments = ["stylus"];
             }
             methodJSON["methodArguments"] = JSON(["stylus_position":"stylus_position","parent_position":"parent_position","parent_origin":"parent_origin" ])
             methodJSON["defaultArgument"] = JSON("stylus_position");
@@ -273,10 +273,12 @@ class BehaviorDefinition {
     func parseTransitionJSON(data:JSON){
         let event = data["eventName"].stringValue;
         let emitter:Emitter?
+        //TODO: remove need for static stylus reference
         if(data["emitter"] != JSON.null){
             switch(data["emitter"].stringValue){
             case "stylus":
-                emitter = stylus;
+                //emitter = stylus;
+                emitter = nil
                 break;
             default:
                 emitter = nil;
@@ -285,8 +287,11 @@ class BehaviorDefinition {
         }
         else{
             switch(event){
+                //TODO: remove need for static stylus reference
+
             case "STYLUS_UP","STYLUS_DOWN","STYLUS_MOVE_BY","STYLUS_X_MOVE_BY","STYLUS_Y_MOVE_BY":
-                emitter = stylus
+               // emitter = stylus
+                emitter = nil
                 break;
             default:
                 emitter = nil
@@ -332,7 +337,9 @@ class BehaviorDefinition {
                     else{
                         referenceName = "yDistance"
                     }
-                    self.addCondition(name: conditionName!, reference: stylus, referenceNames: [referenceName], relative: nil, relativeNames: [interval_id], relational: "within")
+                    //TODO: remove need for static stylus reference
+
+                  //  self.addCondition(name: conditionName!, reference: stylus, referenceNames: [referenceName], relative: nil, relativeNames: [interval_id], relational: "within")
                     break;
                     
                     
@@ -370,10 +377,11 @@ class BehaviorDefinition {
             var conditionJSON:JSON = [:]
             let name = data.0;
             if(data.1 != nil){
-                if((data.1 as? Stylus) == stylus){
+                //TODO: remove need for static stylus reference
+               /* if((data.1 as? Stylus) == stylus){
                     conditionJSON["reference"] = JSON("stylus")
                 }
-                else if((data.1 as? String) == "parent"){
+                else*/ if((data.1 as? String) == "parent"){
                     conditionJSON["reference"] = JSON("parent")
                 }
             }
@@ -381,10 +389,10 @@ class BehaviorDefinition {
                 conditionJSON["referenceNames"] = JSON(data.2!)
             }
             if(data.3 != nil){
-                if((data.3 as? Stylus) == stylus){
+               /* if((data.3 as? Stylus) == stylus){
                     conditionJSON["relative"] = JSON("stylus")
                 }
-                else if((data.3 as? String) == "parent"){
+                else */if((data.3 as? String) == "parent"){
                     conditionJSON["relative"] = JSON("parent")
                 }
             }
@@ -431,10 +439,10 @@ class BehaviorDefinition {
             transitionJSON["toStateId"] = JSON(toStateId);
             
             if(emitter != nil){
-                
-                if(emitter == stylus){
+                //TODO: remove need for static stylus reference
+               /* if(emitter == stylus){
                     transitionJSON["emitter"] = JSON("stylus");
-                }
+                }*/
             }
             
             transitionJSON["eventName"] = JSON(event!);
@@ -493,7 +501,9 @@ class BehaviorDefinition {
                         let pointString:String;
                         let methodPoint = methodArgs[0]
                         if let def = methodPoint as? Point{
-                            if(def == stylus.position){
+                            //TODO: remove need for static stylus reference
+
+                            /*if(def == stylus.position){
                                 pointString = "stylus_position"
                                 methodJSON["currentArguments"]=JSON(["stylus_position"])
                                 
@@ -501,7 +511,7 @@ class BehaviorDefinition {
                             else{
                                 //TODO: handle arbitrary point values here
                                 
-                            }
+                            }*/
                         }
                         else if let def = methodPoint as? String{
                             pointString = def;
