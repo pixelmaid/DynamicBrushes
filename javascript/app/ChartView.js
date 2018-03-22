@@ -12,6 +12,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
         console.log("state template", stateTemplate);
         var state_counter = 0;
         var global_brush_properties;
+        var brush_properties_added = {};
         var ChartView = class extends Emitter {
 
             constructor(id, name, active_status, brush_properties) {
@@ -149,26 +150,38 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                //SAMPLE CONTEXT MENUL FOR PROPERTY ITEMS
                 $.contextMenu({
                     trigger: 'left',
-                    className: "property_menu",
-                    reposition: false,
-                    selector: '#' + self.id +' .prop_button',
+                    className: "property_menu",                    
+                    selector: '#' + self.id +' .prop_button',                 
                     callback: function(key, options) {
-                        var parent = $(options.$trigger[0]).parent().parent().parent();
-                        console.log("property callback",parent);
-                        self.trigger("ON_MAPPING_DATA_REQUEST", [self.id,parent[0].id]);
+                        var name = key;
+                        var mapping_id = ID();
+                        var expressionId = ID();
+                        var id = options.$trigger.parent().parent().parent().attr('id');
+                        var type = "brush_prop";
+                        var fieldName = key;
+                        if (key == "delta x"){
+                            fieldName = "dx";
+                        }else if (key == "delta y"){
+                            fieldName = "dy";
+                        }else if (key == "scale x"){
+                            fieldName = "sx";
+                        }else if (key == "scale y"){
+                            fieldName = "sy";
+                        }
+                        console.log(mapping_id, name, fieldName, type, expressionId, $(options.$trigger[0]), self.id);
+                        self.trigger("ON_MAPPING_ADDED", [mapping_id, name, fieldName, type, expressionId, id, self.id]);
+                        self.trigger("ON_MAPPING_DATA_REQUEST", [self.id]);                      
                     },
 
-                    build: function($trigger) {
+                    build: function(trigger) {
+                        console.log(global_brush_properties.items);
                         var p_items = {};
-
-                        var parent = $trigger.parent().parent().parent();
-                        console.log("property callback",parent);
-                        self.trigger("ON_MAPPING_DATA_REQUEST", [self.id,parent[0].id]);
-
+                        var parent = $(trigger[0]).parent().parent().parent();
                         for(var i = 0; i < global_brush_properties.items.length; i++){
-                            var f_name = global_brush_properties.items[i].fieldName;
-                            p_items[f_name] = {className: 'property_menu_item', name: global_brush_properties.items[i].name};
-                        }
+                            var p_name = global_brush_properties.items[i].fieldName;
+                            p_items[p_name] = {className: 'property_menu_item', name: global_brush_properties.items[i].name, disabled: Object.values(brush_properties_added[self.id][parent.attr("id")]).indexOf(p_name) > -1, fieldName: global_brush_properties.items[i].fieldName};//function(){
+                       }
+
                         var options = {
                             items:p_items
                        };
@@ -186,6 +199,10 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                             console.log("mappping", mappingId);
                             self.trigger("ON_MAPPING_REMOVED", [self.id, mappingId, stateId]);
+                            //new extension
+                            var parent = $(options.$trigger[0]).parent().parent().parent();
+                            console.log("mapping-deleted callback",parent);
+                            self.trigger("ON_MAPPING_DATA_REQUEST", [self.id]);
                         }
                     },
                     items: {
@@ -327,6 +344,18 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 this.instance.cleanupListeners();
             }
 
+            updateProperties(prop_data){
+                brush_properties_added[prop_data.data.behaviorId] = prop_data.data.states;
+                for (var st in brush_properties_added[prop_data.data.behaviorId]){
+                    var mpArray = [];
+                    for(var mp in brush_properties_added[prop_data.data.behaviorId][st]){     
+                        mpArray.push(brush_properties_added[prop_data.data.behaviorId][st][mp]["relativePropertyFieldName"]);
+                    }
+                    brush_properties_added[prop_data.data.behaviorId][st] = mpArray;
+                }
+                console.log(brush_properties_added);
+            }
+
 
             //
             // initialise element as connection targets and source.
@@ -440,7 +469,9 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                         if (type == "brush_prop") {
                             console.log("brush prop dropped on state");
                             var expressionId = ID();
+                            console.log(mapping_id, name, fieldName, type, expressionId, id, self.id);
                             self.trigger("ON_MAPPING_ADDED", [mapping_id, name, fieldName, type, expressionId, id, self.id]);
+                            //need to extension
                             $(ui.helper).remove(); //destroy clone
                             $(ui.draggable).remove(); //remove from list
                         }
@@ -486,6 +517,8 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 var el =  $($('#' + mapping_data.mappingId).find(".reference_expression")[0]);
                 this.setDropFunctionsForExpression(el,mapping_data.mappingId);
                 this.instance.repaintEverything();
+
+                //need to extension
 
             }
 
@@ -865,6 +898,8 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     info.connection.setParameter("id", info.connection.getId());
                     self.trigger("ON_STATE_CONNECTION", [info.connection.getParameter("id"), info.sourceId, $(info.source).attr("name"), info.targetId, self.id]);
                 });
+
+                self.trigger("ON_MAPPING_DATA_REQUEST", [self.id]);
 
                 for (var k = 0; k < data.mappings.length; k++) {
                     var mapping_data = data.mappings[k];

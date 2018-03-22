@@ -299,6 +299,10 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                 this.currentView.initializeBehavior(selectedBehaviorData);
             }
 
+             updateProperties(prop_data){
+                this.currentView.updateProperties(prop_data);
+             }
+
             addBehavior(data) {
                 console.log("add behavior", data, this);
                 if (this.currentView) {
@@ -372,8 +376,8 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                     this.onMappingRemoved(behaviorId, mappingId, stateId);
                 }.bind(this));
 
-                 chartView.addListener("ON_MAPPING_DATA_REQUEST", function(behaviorId, stateId) {
-                    this.onMappingDataRequest(behaviorId, stateId);
+                 chartView.addListener("ON_MAPPING_DATA_REQUEST", function(behaviorId) {
+                    this.onMappingDataRequest(behaviorId);
                 }.bind(this));
 
 
@@ -420,11 +424,6 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
 
             processInspectorData(data){
                   InspectorDataController.setData(data);
-            }
-
-            //Lawrence new mapping process
-            processMappingData(data) {
-                
             }
 
 
@@ -889,12 +888,11 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
 
             }
 
-            onMappingDataRequest(behaviorId, stateId){
-                  console.log("mapping data  request", stateId, behaviorId);
+            onMappingDataRequest(behaviorId){
+                  console.log("mapping data  request",behaviorId);
 
                 var transmit_data = {
                     behaviorId: behaviorId,
-                    stateId: stateId,
                     type: "request_existing_mappings"
                 };
 

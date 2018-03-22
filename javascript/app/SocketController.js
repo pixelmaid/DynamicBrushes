@@ -44,7 +44,7 @@ define(['emitter', 'app/Emitter'],
           // try to decode json (I assume that each message from server is json)
           // try {
 
-          //console.log(message);
+          console.log(message);
 
           if (message.data == "message received") {
             self.emitter.trigger("ON_MESSAGE_RECEIVED");

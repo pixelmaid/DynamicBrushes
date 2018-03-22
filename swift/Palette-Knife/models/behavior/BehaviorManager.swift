@@ -76,14 +76,16 @@ class BehaviorManager{
         var resultJSON:JSON = [:]
         resultJSON["type"] = JSON("data_request_response");
         resultJSON["request_type"] = JSON(type);
-        
         switch(type){
         case "request_existing_mappings":
             let behaviorId = data["behaviorId"].stringValue;
             let stateId = data["stateId"].stringValue;
              let behavior = BehaviorManager.behaviors[behaviorId]!;
-            let data = behavior.getMappingsForState(stateId:stateId);
+            var data:JSON = [:]
+            data["states"] = behavior.getMappings();
+            data["behaviorId"] = JSON(behaviorId);
             resultJSON["data"] = data;
+            
             break;
         default:
             break;

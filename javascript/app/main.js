@@ -53,12 +53,9 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
                 chartViewManager.processAuthoringResponse(data);
 
             }  else if (data.type == "inspector_data") {
-                if (data.subData == "mapping_info")
-                {
-                    console.log(data.data);
-                }else {
-                    chartViewManager.processInspectorData(data.data);
-                }
+
+                chartViewManager.processInspectorData(data.data);
+
             }
 
             else if (data.type == "synchronize") {
@@ -73,10 +70,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
 
             } else if (data.type == "storage_data") {
                 saveManager.loadStorageData(data);
-            }
-            else if (data.type == "data_request_response") {
-                console.log(data);
-
+            }else if (data.type == "data_request_response"){
+                 chartViewManager.updateProperties(data);
             }
 
         };  
@@ -257,7 +252,6 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
 
         chartViewManager.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
         chartViewManager.addListener("ON_DATA_REQUEST_EVENT", onDataRequestEvent);
-
 
         saveManager.addListener("ON_SAVE_EVENT", onStorageEvent);
         paletteModel.addListener("ON_DATASET_READY",onDataReady);
