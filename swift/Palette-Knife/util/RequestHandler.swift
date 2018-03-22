@@ -260,6 +260,7 @@ final class RequestHandler: Requester{
            let disposable = observable.didChange.addHandler(target: sharedInstance, handler: RequestHandler.observableChangeHandler, key: observableId)
             RequestHandler.inspectorEventDisposables[observableId] = disposable
         }
+       
     }
     
     static func registerObservableTarget(observableId:String,behaviorId:String){
@@ -300,6 +301,9 @@ final class RequestHandler: Requester{
                 observableChangeLog.clearValues();
             }
         }
+        #if DEBUG
+            print("transmitData",transmitData);
+        #endif
         if(!transmitData.isEmpty){
             let socketRequest = Request(target: "socket", action: "send_inspector_data", data: transmitData, requester: RequestHandler.sharedInstance)
             RequestHandler.addRequest(requestData: socketRequest)

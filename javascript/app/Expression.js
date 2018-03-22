@@ -87,7 +87,7 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
                 var propList = [];
                 for (var key in this.references){
                  if(this.references.hasOwnProperty(key)){
-                        propList.append(key);
+                        propList.push(key);
                     }
                 }
                 return propList;
@@ -192,25 +192,24 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
             }
 
 
-            addMark(referenceDisplayName, type, referenceId, name,heading) {
+            addMark(referenceId, referenceType, referenceDisplayName) {
                 var el = document.createElement("span");
                 el.innerHTML = referenceDisplayName;
-                el.setAttribute("class", "block property " + type);
-                el.setAttribute("type", type);
+                el.setAttribute("class", "block property " + referenceType);
+                el.setAttribute("type", referenceType);
                 el.setAttribute("parent_id", this.id);
                 el.setAttribute("id", referenceId);
-                el.setAttribute("name", name);  
                 this.marks[referenceId] = el;
                 return el;
             }
 
-            addReference(type, referenceName, referenceProperties, referencePropertyDisplayNames, referenceId, referenceDisplayName, name) {
-                this.references[referenceId] = [referenceName, referenceProperties, referencePropertyDisplayNames];
-                console.log("added reference", this.references, referenceName,referenceDisplayName);
+            addReference(referenceId, referenceType, referenceDisplayName) {
+                this.references[referenceId] = [referenceType, referenceDisplayName];
+                console.log("added reference", referenceDisplayName);
                 this.addReferenceCheck = true;
                 this.mirror.setValue(this.mirror.getValue() + "%" + referenceId + "%");
                 this.addReferenceCheck = false;
-                var el = this.addMark(referenceDisplayName, type, referenceId, name, referenceName);
+                var el = this.addMark(referenceId, referenceType, referenceDisplayName);
 
                 this.renderMarks();
                 return $(el);

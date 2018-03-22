@@ -43,7 +43,6 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     self.instance = jsPlumb.getInstance({
                         Endpoint: ["Rectangle", {
                             width: 10,
-                            width: 10,
                             height: 10,
                             cssClass: "transendpoint"
                         }],
@@ -455,28 +454,14 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
               el.droppable({
                     greedy: true,
                     drop: function(event, ui) {
-                        var type = $(ui.draggable).attr('type');
-                        var dropName = $(ui.draggable).attr('name');
-                        var displayName = $(ui.draggable).html();
+                        var referenceType = $(ui.draggable).attr('type');
+                        var referenceId = $(ui.draggable).attr('id');
+                        var referenceDisplayName = $(ui.draggable).html();
                       
-                        var drop_id = ID();
-                        var referenceName, referenceProperties, referencePropertiesDisplayNames,eventString,generatorType,generatorId;
-                        referencePropertiesDisplayNames = [displayName];
-                         $(ui.helper).remove(); //destroy clone
-                        if (type == 'stylus' || type == 'ui' || type == 'dataset') {
-                            referenceName = type == "dataset"? "dataset_" + dropName.split("_")[0]:type;
-                            referenceProperties = [dropName.split("_")[1]];
-                            
+                      
 
-                        }  else if (type == 'generator') {
-                            referenceName = null;
-                            generatorType = dropName;
-                            generatorId = drop_id;
-                            referenceProperties = [generatorId];
-                        } 
-
-                        var expression = self.addReferenceToExpression(expressionTargetId, type, referenceName, referenceProperties, referencePropertiesDisplayNames, drop_id, displayName, dropName);
-                      var eventArgs = [self.id, expression.id, expression.getText(), expression.getPropertyList()];
+                    var expression = self.addReferenceToExpression(expressionTargetId, referenceId, referenceType, referenceDisplayName);
+                    var eventArgs = [self.id, expression.id, expression.getText(), expression.getPropertyList()];
 
                         self.trigger("ON_EXPRESSION_MODIFIED", eventArgs);
                     }
@@ -496,9 +481,9 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
             }
 
-            addReferenceToExpression(mappingId, referenceType, referenceName, referenceProperties, referencePropertiesDisplayNames, referenceId, referenceDisplayName, name) {
+            addReferenceToExpression(mappingId, referenceId, referenceType, referenceDisplayName) {
                 var expression = this.expressions[mappingId];
-                var el = expression.addReference(referenceType, referenceName, referenceProperties, referencePropertiesDisplayNames, referenceId, referenceDisplayName, name);
+                var el = expression.addReference(referenceId, referenceType, referenceDisplayName);
                 console.log("el to make draggable");
                 this.makeDraggable(el);
                 this.addInspector(el);

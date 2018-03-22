@@ -1,25 +1,34 @@
 {
     "collections": {
-        "live": [{ "classType": "live",
+        "live": [{
+                 "classType": "live",
                  "id": "stylus",
                  "name": "stylus",
                  "signals": [{
-                             "fieldName": "x",
-                             "displayName": "stylus x",
-                             "classType": "LiveSignal",
+                             "fieldName": "time",
+                             "displayName": "stylus time",
+                             "classType": "TimeSignal",
                              "order": 0,
                              "settings": {}
                              }, {
-                             "fieldName": "y",
-                             "displayName": "stylus y",
+                             "fieldName": "x",
+                             "displayName": "stylus x",
                              "classType": "LiveSignal",
                              "order": 1,
                              "settings": {}
-                             }, {
+                             },
+                             {
+                             "fieldName": "y",
+                             "displayName": "stylus y",
+                             "classType": "LiveSignal",
+                             "order": 2,
+                             "settings": {}
+                             },
+                             {
                              "fieldName": "dx",
                              "displayName": "stylus delta x",
                              "classType": "LiveSignal",
-                             "order": 2,
+                             "order": 3,
                              "settings": {}
                              },
                              
@@ -27,14 +36,14 @@
                              "fieldName": "dy",
                              "displayName": "stylus delta y",
                              "classType": "LiveSignal",
-                             "order": 3,
+                             "order": 4,
                              "settings": {}
                              },
                              {
                              "fieldName": "ox",
                              "displayName": "stylus origin x",
                              "classType": "LiveSignal",
-                             "order": 4,
+                             "order": 5,
                              "settings": {}
                              },
                              
@@ -42,7 +51,7 @@
                              "fieldName": "oy",
                              "displayName": "stylus origin x",
                              "classType": "LiveSignal",
-                             "order": 5,
+                             "order": 6,
                              "settings": {}
                              },
                              
@@ -51,7 +60,7 @@
                              "fieldName": "force",
                              "displayName": "stylus force",
                              "classType": "LiveSignal",
-                             "order": 6,
+                             "order": 7,
                              "settings": {}
                              },
                              
@@ -61,7 +70,7 @@
                              "fieldName": "angle",
                              "displayName": "stylus angle",
                              "classType": "LiveSignal",
-                             "order": 7,
+                             "order": 8,
                              "settings": {}
                              },
                              
@@ -70,7 +79,7 @@
                              "fieldName": "stylusEvent",
                              "displayName": "stylus event",
                              "classType": "StylusEvent",
-                             "order": 8,
+                             "order": 9,
                              "settings": {}
                              },
                              
@@ -78,7 +87,7 @@
                              "fieldName": "euclidDistance",
                              "displayName": "stylus euclidean distance",
                              "classType": "LiveSignal",
-                             "order": 9,
+                             "order": 10,
                              "settings": {}
                              },
                              
@@ -86,23 +95,24 @@
                              "fieldName": "xDistance",
                              "displayName": "stylus x distance",
                              "classType": "LiveSignal",
-                             "order": 10,
+                             "order": 11,
+                             "settings": {}
+                             },
+                             
+                             
+                             {
+                             "fieldName": "yDistance",
+                             "displayName": "stylus y distance",
+                             "classType": "LiveSignal",
+                             "order": 12,
                              "settings": {}
                              },
                              
                              {
-                             "fieldName": "euclidDistance",
-                             "displayName": "stylus y distance",
-                             "classType": "LiveSignal",
-                             "order": 11,
-                             "settings": {}
-                             },
-            
-                             {
                              "fieldName": "speed",
                              "displayName": "stylus speed",
                              "classType": "LiveSignal",
-                             "order": 12,
+                             "order": 13,
                              "settings": {}
                              },
                              
@@ -110,262 +120,285 @@
                              "fieldName": "deltaAngle",
                              "displayName": "stylus delta angle ",
                              "classType": "LiveSignal",
-                             "order": 13,
+                             "order": 14,
                              "settings": {}
-                             },
-                            
+                             }
+                             
                              
                              
                              
                              
                              ]
                  },
-                 { "classType": "live",
+                 {
+                 "classType": "live",
                  "id": "ui",
                  "name": "ui",
                  "signals": [{
+                             
+                             "fieldName": "time",
+                             "displayName": "ui time",
+                             "classType": "TimeSignal",
+                             "order": 0,
+                             "settings": {}
+                             },
+                             {
                              "fieldName": "hue",
                              "displayName": "hue",
                              "classType": "LiveSignal",
-                             "order": 0,
+                             "order": 1,
                              "settings": {}
-                             }, {
+                             },
+                             {
                              "fieldName": "saturation",
                              "displayName": "saturation",
                              "classType": "LiveSignal",
-                             "order": 1,
+                             "order": 2,
                              "settings": {}
                              },
                              {
                              "fieldName": "lightness",
                              "displayName": "lightness",
                              "classType": "LiveSignal",
-                             "order": 2,
+                             "order": 3,
                              "settings": {}
                              },
                              {
                              "fieldName": "diameter",
                              "displayName": "diameter",
                              "classType": "LiveSignal",
-                             "order": 3,
+                             "order": 4,
                              "settings": {}
                              },
                              {
                              "fieldName": "alpha",
                              "displayName": "alpha",
                              "classType": "LiveSignal",
-                             "order": 4,
+                             "order": 5,
                              "settings": {}
                              }
                              ]
-                    }
+                 }
                  ],
-    "imported": [],
-    "recordings": [{
-                   
-                   "classType": "recording",
-                   "id": "recording_preset",
-                   "name": "recording_preset",
-                   "signals" : [{"fieldName": "x",
-                                "displayName": "stylus x",
-                                "classType": "Recording",
-                                "order": 0,
-                                "settings": {}
-                                }, {
-                                "fieldName": "y",
-                                "displayName": "stylus y",
-                                "classType": "Recording",
-                                "order": 1,
-                                "settings": {}
-                                }, {
-                                "fieldName": "dx",
-                                "displayName": "stylus delta x",
-                                "classType": "Recording",
-                                "order": 2,
-                                "settings": {}
-                                },
-                                
-                                {
-                                "fieldName": "dy",
-                                "displayName": "stylus delta y",
-                                "classType": "Recording",
-                                "order": 3,
-                                "settings": {}
-                                },
-                                {
-                                "fieldName": "ox",
-                                "displayName": "stylus origin x",
-                                "classType": "Recording",
-                                "order": 4,
-                                "settings": {}
-                                },
-                                
-                                {
-                                "fieldName": "oy",
-                                "displayName": "stylus origin x",
-                                "classType": "Recording",
-                                "order": 5,
-                                "settings": {}
-                                },
-                                
-                                
-                                {
-                                "fieldName": "force",
-                                "displayName": "stylus force",
-                                "classType": "Recording",
-                                "order": 6,
-                                "settings": {}
-                                },
-                                
-                                
-                                
-                                {
-                                "fieldName": "angle",
-                                "displayName": "stylus angle",
-                                "classType": "Recording",
-                                "order": 7,
-                                "settings": {}
-                                },
-                                
-                                
-                                {
-                                "fieldName": "stylusEvent",
-                                "displayName": "stylus event",
-                                "classType": "StylusEvent",
-                                "order": 8,
-                                "settings": {}
-                                },
-                                {
-                                "fieldName": "euclidDistance",
-                                "displayName": "stylus euclidean distance",
-                                "classType": "Recording",
-                                "order": 9,
-                                "settings": {}
-                                },
-                                
-                                {
-                                "fieldName": "xDistance",
-                                "displayName": "stylus x distance",
-                                "classType": "Recording",
-                                "order": 10,
-                                "settings": {}
-                                },
-                                
-                                {
-                                "fieldName": "euclidDistance",
-                                "displayName": "stylus y distance",
-                                "classType": "Recording",
-                                "order": 11,
-                                "settings": {}
-                                },
-                                
-                                
-                                {
-                                "fieldName": "speed",
-                                "displayName": "stylus speed",
-                                "classType": "Recording",
-                                "order": 12,
-                                "settings": {}
-                                },
-                                
-                                {
-                                "fieldName": "deltaAngle",
-                                "displayName": "stylus delta angle ",
-                                "classType": "LiveSignal",
-                                "order": 13,
-                                "settings": {}
-                                }
-                                
-                                
-                                ]
-                   
-                   }
-                   ],
-    "generators": [
-                   {
-                   
-                   "classType": "generator",
-                   "id": "default",
-                   "name": "default",
-                   "signals" : [{
-                                "fieldName": "sine",
-                                "displayName": "sine wave",
-                                "classType": "Sine",
-                                "order": 0,
-                                "settings": {
-                                "freq" : 0.032,
-                                "amp" : 100,
-                                "phase" : -1.6
-                                }
-                                }, {
-                                "fieldName": "square",
-                                "displayName": "square wave",
-                                "classType": "Square",
-                                "order": 1,
-                                "settings": {
-                                    "min" : 0,
-                                    "max" : 100,
-                                    "freq" : 10
-                                    }
-                                },
-                                {
-                                "fieldName": "triangle",
-                                "displayName": "triangle wave",
-                                "classType": "Triangle",
-                                "order": 2,
-                                "settings": {
-                                    "min" : 0,
-                                    "max" : 100,
-                                    "freq" : 0.5
-                                    }
-                                },
-                                {
-                                "fieldName": "sawtooth",
-                                "displayName": "sawtooth wave",
-                                "classType": "Sawtooth",
-                                "order": 3,
-                                "settings": {
-                                    "min" : 0,
-                                    "max" : 100,
-                                    "start" : 1,
-                                    "stop" : 100
-                                    }
-                                },
-                                {
-                                "fieldName": "random",
-                                "displayName": "random",
-                                "classType": "Random",
-                                "order": 4,
-                                "settings": {
-                                    "min" : 0,
-                                    "max" : 100
-                                    }
-                                },
-                                {
-                                "fieldName": "alternate",
-                                "displayName": "alternate",
-                                "classType": "Alternate",
-                                "order": 5,
-                                "settings": {
-                                    "values" : [1,100]
-                                    }
-                                },
-                                {
-                                "fieldName": "interval",
-                                "displayName": "Interval",
-                                "classType": "Interval",
-                                "order": 6,
-                                "settings": {
-                                    "inc" : 100
-                                    }
-                                }
-                                ]
-                   
-                   }
-                   
-                   
-                   ],
-    "drawings": [],
-    "brush": []
+        "imported": [],
+        "recordings": [{
+                       
+                       "classType": "recording",
+                       "id": "recording_preset",
+                       "name": "recording_preset",
+                       "signals": [{
+                                   "fieldName": "time",
+                                   "displayName": "stylus time",
+                                   "classType": "TimeSignal",
+                                   "order": 0,
+                                   "settings": {}
+                                   },
+                                   
+                                   {
+                                   "fieldName": "x",
+                                   "displayName": "stylus x",
+                                   "classType": "Recording",
+                                   "order": 1,
+                                   "settings": {}
+                                   }, {
+                                   "fieldName": "y",
+                                   "displayName": "stylus y",
+                                   "classType": "Recording",
+                                   "order": 2,
+                                   "settings": {}
+                                   }, {
+                                   "fieldName": "dx",
+                                   "displayName": "stylus delta x",
+                                   "classType": "Recording",
+                                   "order": 3,
+                                   "settings": {}
+                                   },
+                                   
+                                   {
+                                   "fieldName": "dy",
+                                   "displayName": "stylus delta y",
+                                   "classType": "Recording",
+                                   "order": 4,
+                                   "settings": {}
+                                   },
+                                   {
+                                   "fieldName": "ox",
+                                   "displayName": "stylus origin x",
+                                   "classType": "Recording",
+                                   "order": 5,
+                                   "settings": {}
+                                   },
+                                   
+                                   {
+                                   "fieldName": "oy",
+                                   "displayName": "stylus origin x",
+                                   "classType": "Recording",
+                                   "order": 6,
+                                   "settings": {}
+                                   },
+                                   
+                                   
+                                   {
+                                   "fieldName": "force",
+                                   "displayName": "stylus force",
+                                   "classType": "Recording",
+                                   "order": 7,
+                                   "settings": {}
+                                   },
+                                   
+                                   
+                                   
+                                   {
+                                   "fieldName": "angle",
+                                   "displayName": "stylus angle",
+                                   "classType": "Recording",
+                                   "order": 8,
+                                   "settings": {}
+                                   },
+                                   
+                                   
+                                   {
+                                   "fieldName": "stylusEvent",
+                                   "displayName": "stylus event",
+                                   "classType": "StylusEvent",
+                                   "order": 9,
+                                   "settings": {}
+                                   },
+                                   {
+                                   "fieldName": "euclidDistance",
+                                   "displayName": "stylus euclidean distance",
+                                   "classType": "Recording",
+                                   "order": 10,
+                                   "settings": {}
+                                   },
+                                   
+                                   {
+                                   "fieldName": "xDistance",
+                                   "displayName": "stylus x distance",
+                                   "classType": "Recording",
+                                   "order": 11,
+                                   "settings": {}
+                                   },
+                                   
+                                   {
+                                   "fieldName": "yDistance",
+                                   "displayName": "stylus y distance",
+                                   "classType": "Recording",
+                                   "order": 12,
+                                   "settings": {}
+                                   },
+                                   
+                                   
+                                   {
+                                   "fieldName": "speed",
+                                   "displayName": "stylus speed",
+                                   "classType": "Recording",
+                                   "order": 13,
+                                   "settings": {}
+                                   },
+                                   
+                                   {
+                                   "fieldName": "deltaAngle",
+                                   "displayName": "stylus delta angle ",
+                                   "classType": "LiveSignal",
+                                   "order": 14,
+                                   "settings": {}
+                                   }
+                                   
+                                   
+                                   ]
+                       
+                       }],
+        "generators": [{
+                       
+                       "classType": "generator",
+                       "id": "default",
+                       "name": "default",
+                       "signals": [{
+                                   "fieldName": "time",
+                                   "displayName": "generator time",
+                                   "classType": "TimeSignal",
+                                   "order": 0,
+                                   "settings": {}
+                                   }, {
+                                   "fieldName": "sine",
+                                   "displayName": "sine wave",
+                                   "classType": "Sine",
+                                   "order": 1,
+                                   "settings": {
+                                   "freq": 0.032,
+                                   "amp": 100,
+                                   "phase": -1.6
+                                   }
+                                   }, {
+                                   "fieldName": "square",
+                                   "displayName": "square wave",
+                                   "classType": "Square",
+                                   "order": 2,
+                                   "settings": {
+                                   "min": 0,
+                                   "max": 100,
+                                   "freq": 10
+                                   }
+                                   },
+                                   {
+                                   "fieldName": "triangle",
+                                   "displayName": "triangle wave",
+                                   "classType": "Triangle",
+                                   "order": 3,
+                                   "settings": {
+                                   "min": 0,
+                                   "max": 100,
+                                   "freq": 0.5
+                                   }
+                                   },
+                                   {
+                                   "fieldName": "sawtooth",
+                                   "displayName": "sawtooth wave",
+                                   "classType": "Sawtooth",
+                                   "order": 4,
+                                   "settings": {
+                                   "min": 0,
+                                   "max": 100,
+                                   "start": 1,
+                                   "stop": 100
+                                   }
+                                   },
+                                   {
+                                   "fieldName": "random",
+                                   "displayName": "random",
+                                   "classType": "Random",
+                                   "order": 5,
+                                   "settings": {
+                                   "min": 0,
+                                   "max": 100
+                                   }
+                                   },
+                                   {
+                                   "fieldName": "alternate",
+                                   "displayName": "alternate",
+                                   "classType": "Alternate",
+                                   "order": 6,
+                                   "settings": {
+                                   "values": [1, 100]
+                                   }
+                                   },
+                                   {
+                                   "fieldName": "interval",
+                                   "displayName": "Interval",
+                                   "classType": "Interval",
+                                   "order": 7,
+                                   "settings": {
+                                   "inc": 100
+                                   }
+                                   }
+                                   ]
+                       
+                       }
+                       
+                       
+                       ],
+        "drawings": [],
+        "brush": []
     }
 }

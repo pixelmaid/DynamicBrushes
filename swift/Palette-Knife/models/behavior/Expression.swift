@@ -50,7 +50,7 @@ class Expression:Observable<Float>{
     func calculateValue()->Float{
         var valueString = "";
 
-        let stringArr = text.characters.split{$0 == "%"}.map(String.init);
+        let stringArr = text.split{$0 == "%"}.map(String.init);
         var currentVals = [String: Float]();
         
         
@@ -80,7 +80,7 @@ class Expression:Observable<Float>{
         
         }
         #if DEBUG
-            //print("exception: \(exception,result)")
+            print("exception: \(exception,result)")
         #endif
 
         return result;

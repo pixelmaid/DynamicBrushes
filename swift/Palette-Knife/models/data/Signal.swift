@@ -11,7 +11,7 @@ import SwiftyJSON
 
 
 class Signal:Observable<Float>{
-    internal var hash:Float = -1;
+    internal var hash:Float?
     internal var signalBuffer = [Float:Float]();
     
     internal var position:Int = 0;
@@ -33,7 +33,6 @@ class Signal:Observable<Float>{
         self.collectionId = collectionId
         self.displayName = displayName;
         super.init(0)
-        RequestHandler.registerObservable(observableId: id, observable: self)
     }
     
     public func setOrder(i:Int){
@@ -64,7 +63,14 @@ class Signal:Observable<Float>{
     
     
     func setHash(h:Float){
-        self.hash = h;
+        if(h != self.hash){
+            let oldValue = self.get(id: nil);
+            self.hash = h;
+            let newValue = self.get(id: nil);
+
+            self.didChange.raise(data: (self.id,oldValue,newValue))
+        }
+        
     }
     
     func setSignal(s:[Float]){
@@ -77,6 +83,7 @@ class Signal:Observable<Float>{
     
     func addValue(h:Float,v:Float){
         signalBuffer[h] = v;
+        print("current signal buffer",self.collectionId,self.displayName,signalBuffer);
         self.setHash(h:h);
     }
     
@@ -106,6 +113,10 @@ class Signal:Observable<Float>{
     public func getSettingsJSON()->JSON{
         return JSON([:]);
     }
+}
+
+class TimeSignal:Signal{
+    
 }
 
 

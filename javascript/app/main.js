@@ -1,8 +1,8 @@
-define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveView", "app/SignalView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart", "app/DatasetView", "app/SignalModel"],
-
 'use strict';
 
-    function($, paper, Handlebars, ID, SaveManager, SaveView,  SignalView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart,DatasetView, SignalModel) {
+define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveView", "app/SignalView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart", "app/DatasetView", "app/SignalModel"],
+
+    function($, paper, Handlebars, ID, SaveManager, SaveView, SignalView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart, DatasetView, SignalModel) {
 
         var socketController = new SocketController();
         var socketView = new SocketView(socketController, "#socket");
@@ -15,7 +15,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
         var dataView = new DatasetView(signalModel.datasetLoader, "#dataset_select");
 
         //sets up interface by initializing palette, removing overlay etc.
-        var setupInterface = function(){
+        var setupInterface = function() {
             requestFileList(codename);
             requestExampleFileList();
         };
@@ -38,53 +38,46 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
 
             } else if (data.type == "authoring_response") {
 
-                if(data.authoring_type == "signal_initialized"){
+                if (data.authoring_type == "signal_initialized") {
                     console.log("process signal authoring response");
                     signalView.processAuthoringResponse(data);
-                }
-                else if(data.authoring_type == "dataset_loaded"){                    
+                } else if (data.authoring_type == "dataset_loaded") {
                     console.log("process signal authoring response");
                     console.log("process dataset loaded authoring response");
 
                     signalModel.datasetLoader.loadCollection(data.dataset);
 
-                }
-                else{
+                } else {
                     chartViewManager.processAuthoringResponse(data);
                 }
 
-            }  else if (data.type == "inspector_data") {
+            } else if (data.type == "inspector_data") {
 
                 chartViewManager.processInspectorData(data.data);
 
-            }
-
-            else if (data.type == "synchronize") {
+            } else if (data.type == "synchronize") {
                 hideOverlay();
                 var currentBehaviorName = data["currentBehaviorName"];
                 var currentBehaviorFile = data["currentFile"];
-                console.log("currentBehaviorName=",currentBehaviorName,currentBehaviorFile);
+                console.log("currentBehaviorName=", currentBehaviorName, currentBehaviorFile);
                 chartViewManager.synchronize(data.data.behaviors);
                 signalModel.datasetLoader.loadCollection(data.data.collections);
-                saveManager.setCurrentFilename(currentBehaviorName,currentBehaviorFile);
+                saveManager.setCurrentFilename(currentBehaviorName, currentBehaviorFile);
 
-            } 
-
-            else if (data.type == "collection_data"){
+            } else if (data.type == "collection_data") {
                 signalModel.datasetLoader.loadCollection(data.data.collections);
-            }
-            else if (data.type == "storage_data") {
+            } else if (data.type == "storage_data") {
                 saveManager.loadStorageData(data);
             }
 
-        };  
+        };
 
         var onConnection = function() {
             console.log("connection made");
         };
 
         var onKeyRecognized = function() {
-           setupInterface();
+            setupInterface();
         };
 
         var onConnectionError = function() {
@@ -110,9 +103,9 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
                 data: {}
 
             };
-           setupInterface();
+            setupInterface();
             socketController.sendMessage(transmit_data);
-            
+
             hideOverlay();
 
         };
@@ -164,16 +157,17 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
                 type: "storage_request",
                 requester: "authoring",
                 data: {
-                    targetFolder: "saved_files/"+artistName+"/behaviors/",
+                    targetFolder: "saved_files/" + artistName + "/behaviors/",
                     type: "filelist_request",
                     list_type: "behavior_list"
                 }
 
             };
+
             socketController.sendMessage(file_request_data);
         };
 
- var requestExampleFileList = function(artistName) {
+        var requestExampleFileList = function(artistName) {
             var file_request_data = {
                 type: "storage_request",
                 requester: "authoring",
@@ -186,6 +180,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
             };
             socketController.sendMessage(file_request_data);
         };
+
         var promptConnect = function() {
 
             codename = prompt("please enter your login key");
@@ -206,17 +201,20 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
             $("#overlay_dialog").addClass("invisible");
         };
 
-        var onKeyNotRecognized = function(){
-             codename = prompt("login key not recognized, please re-enter your key");
+        var onKeyNotRecognized = function() {
+            codename = prompt("login key not recognized, please re-enter your key");
             if (codename !== null) {
                 saveManager.setCodeName(codename);
                 socketController.connect(codename);
             }
         };
 
-        var onDataReady = function(dataset){
-               console.log("transmit_data set data", dataset);
-               var data = {dataset:dataset,type:"dataset_loaded"};
+        var onDataReady = function(dataset) {
+            console.log("transmit_data set data", dataset);
+            var data = {
+                dataset: dataset,
+                type: "dataset_loaded"
+            };
             var transmit_data = {
                 type: "authoring_request",
                 requester: "authoring",
@@ -234,15 +232,16 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
         socketController.addListener("ON_CLIENT_DISCONNECTED", onDrawingClientDisconnected);
         socketController.addListener("ON_CONNECTION", onConnection);
         socketController.addListener("ON_CONNECTION_ERROR", onConnectionError);
-        socketController.addListener("ON_KEY_NOT_RECOGNIZED",onKeyNotRecognized);
-        socketController.addListener("ON_KEY_RECOGNIZED",onKeyRecognized);
+        socketController.addListener("ON_KEY_NOT_RECOGNIZED", onKeyNotRecognized);
+        socketController.addListener("ON_KEY_RECOGNIZED", onKeyRecognized);
 
         chartViewManager.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
         signalView.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
 
         saveManager.addListener("ON_SAVE_EVENT", onStorageEvent);
-        signalModel.datasetLoader.addListener("ON_IMPORTED_DATASET_READY",onDataReady);
+        signalModel.datasetLoader.addListener("ON_IMPORTED_DATASET_READY", onDataReady);
         promptConnect();
 
 
-    });
+    }
+    );

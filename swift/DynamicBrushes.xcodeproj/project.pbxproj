@@ -10,7 +10,6 @@
 		5F0EB6621EB5775100225A6E /* ModifiedCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F0EB6611EB5775100225A6E /* ModifiedCanvasView.swift */; };
 		5F13B69A1FC3A40C00E37A37 /* ProgrammingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F13B6991FC3A40C00E37A37 /* ProgrammingViewController.swift */; };
 		5F13B69C1FC3AEBF00E37A37 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F13B69B1FC3AEBF00E37A37 /* Router.swift */; };
-		5F15BB601F8D94C8005E5B08 /* DataObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F15BB5F1F8D94C8005E5B08 /* DataObject.swift */; };
 		5F2CF3D51ED32D0B0066AC8E /* SavedFilesPanelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2CF3D41ED32D0B0066AC8E /* SavedFilesPanelViewController.swift */; };
 		5F2CF3D71ED32EC00066AC8E /* FileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2CF3D61ED32EC00066AC8E /* FileCell.swift */; };
 		5F2CF3DA1ED333AD0066AC8E /* fileList_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F2CF3D81ED333AD0066AC8E /* fileList_button.png */; };
@@ -180,7 +179,6 @@
 		5F1109431ECE248E000FBF24 /* DynamicBrushes_devUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DynamicBrushes_devUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F13B6991FC3A40C00E37A37 /* ProgrammingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgrammingViewController.swift; sourceTree = "<group>"; };
 		5F13B69B1FC3AEBF00E37A37 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
-		5F15BB5F1F8D94C8005E5B08 /* DataObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DataObject.swift; path = data/DataObject.swift; sourceTree = "<group>"; };
 		5F1E15891F199E478AB56B38 /* Pods-PaletteKnife.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnife.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnife/Pods-PaletteKnife.debug.xcconfig"; sourceTree = "<group>"; };
 		5F2CF3D41ED32D0B0066AC8E /* SavedFilesPanelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SavedFilesPanelViewController.swift; sourceTree = "<group>"; };
 		5F2CF3D61ED32EC00066AC8E /* FileCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileCell.swift; sourceTree = "<group>"; };
@@ -393,7 +391,6 @@
 				5F90F5631E9D5BCC006BB9FE /* Signal.swift */,
 				5FFFD796204F5E5D0038A0BA /* SignalCollection.swift */,
 				5F6903351FBBB75900EB3437 /* MapFunctions.swift */,
-				5F15BB5F1F8D94C8005E5B08 /* DataObject.swift */,
 			);
 			name = data;
 			sourceTree = "<group>";
@@ -1170,7 +1167,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5F90F5481E9D59D4006BB9FE /* TimeSeries.swift in Sources */,
-				5F15BB601F8D94C8005E5B08 /* DataObject.swift in Sources */,
 				5F90F5411E9D59D4006BB9FE /* Emitter.swift in Sources */,
 				5F90F5561E9D5A41006BB9FE /* Drawing.swift in Sources */,
 				5F13B69C1FC3AEBF00E37A37 /* Router.swift in Sources */,

@@ -789,6 +789,9 @@ class BehaviorDefinition {
     }
     
     func generateSignal(id:String)->Signal?{
+        #if DEBUG
+            print("generate signal",id);
+        #endif
         guard let signal = BehaviorManager.getSignal(id:id) else{
             return nil
         }
