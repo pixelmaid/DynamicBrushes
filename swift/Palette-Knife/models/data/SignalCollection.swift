@@ -19,8 +19,6 @@ enum SignalError: Error {
 //stores a collection of related signals e.g. a stylus recording, a data table
 class SignalCollection: Object{
     //list of hashes for all samples
-    internal var samples:Set<Float> = [];
-    internal var lastSample:Float = 0;
     //stored instances of available signals
     internal var initializedSignals  = [String:[String:Signal]]();
     internal var protoSignals = [String:Signal]();
@@ -29,6 +27,7 @@ class SignalCollection: Object{
     public let id:String
     public let name:String
     public let classType:String;
+    public var signalLength:Int = 0;
     
     
     required init(data:JSON){
@@ -66,7 +65,7 @@ class SignalCollection: Object{
             for j in 0..<rawData.count{
                 let row = rawData[j].arrayValue;
                 let v = row[i].floatValue;
-                signal.addValue(h: Float(j), v: v);
+                signal.addValue(v: v);
             }
             
         }
@@ -98,9 +97,8 @@ class SignalCollection: Object{
         }
         for i in 0..<sortedProtos.count {
             let dB = sortedProtos[i].value.signalBuffer;
-            let sortedBuffer = dB.sorted{ $0.key < $1.key }
-           for j in 0..<sortedBuffer.count {
-            rawData[i].append(sortedBuffer[j].value);
+           for j in 0..<dB.count {
+            rawData[i].append(dB[j]);
             }
         }
         return JSON(rawData);
@@ -170,22 +168,16 @@ class SignalCollection: Object{
         }
     }
     
-    public func addProtoSample(hash:Float?,data:JSON){
-        let targetHash:Float;
-        if(hash != nil){
-            targetHash = hash!;
-        }else{
-            targetHash = self.lastSample+1;
-        }
-        self.samples.insert(targetHash)
-        self.lastSample  = targetHash;
+    public func addProtoSample(data:JSON){
+        
         for (key,value) in data {
             guard let targetProtoSignal = self.protoSignals[key] else {
                 print("ERROR ---------NO PROTO SIGNAL FOUND THAT CORRESPOND WITH FIELD NAME-----------",key,self.protoSignals)
                 return;
             }
-            targetProtoSignal.addValue(h: targetHash, v: value.floatValue)
+            targetProtoSignal.addValue(v: value.floatValue)
         }
+        self.signalLength += 1;
     }
     
     public func getProtoSignalValue(fieldName:String)->Float?{
@@ -197,17 +189,17 @@ class SignalCollection: Object{
     
     
     
-    public func getProtoSample(hash:Float)->JSON?{
-        if (samples.contains(hash)){
-            
+    public func getProtoSample(index:Int)->JSON?{
+        
+        if(index > 0 && index < self.signalLength){
             var sample:JSON = [:]
             for (key,value) in self.protoSignals{
                 
-                value.setHash(h:hash);
+                value.setIndex(i: index)
                 sample[key] = JSON(value.get(id:nil));
             }
-            sample["hash"] = JSON(hash)
-            sample["lastHash"] = JSON(self.lastSample)
+            sample["index"] = JSON(index)
+            sample["lastIndex"] = JSON(self.signalLength)
             sample["isLastInRecording"] = JSON(false);
             sample["isLastInSeries"] = JSON(false);
             sample["sequenceHash"] = JSON(0);
@@ -417,29 +409,23 @@ class LiveCollection:SignalCollection{
         return id;
     }
     
-    override public func addProtoSample(hash: Float?, data: JSON) {
-            let targetHash:Float;
-            if(hash != nil){
-                targetHash = hash!;
-            }else{
-                targetHash = self.lastSample+1;
-            }
-            self.samples.insert(targetHash)
-            self.lastSample  = targetHash;
+    override public func addProtoSample (data: JSON) {
+        
             for (key,value) in data {
                 guard let targetProtoSignal = self.protoSignals[key] else {
                     print("ERROR ---------NO PROTO SIGNAL FOUND THAT CORRESPOND WITH FIELD NAME-----------",key,self.protoSignals)
                     return;
                 }
-                targetProtoSignal.addValue(h: targetHash, v: value.floatValue)
+                targetProtoSignal.addValue(v: value.floatValue)
                 guard let initializedList = self.initializedSignals[key] else{
                     print("ERROR ---------NO  SIGNAL LIST THAT CORRESPOND WITH FIELD NAME-----------",key)
                     return;
                 }
                 for (_,signal) in initializedList{
-                    signal.addValue(h:targetHash,v: value.floatValue);
+                    signal.addValue(v: value.floatValue);
                 }
             }
+        self.signalLength += 1;
     }
 }
 
@@ -483,8 +469,8 @@ class RecordingCollection:LiveCollection{
         return id;
     }
     
-    override func getProtoSample(hash: Float) -> JSON? {
-        var sample = super.getProtoSample(hash: hash);
+    override func getProtoSample(index: Int) -> JSON? {
+        var sample = super.getProtoSample(index: index);
         if(sample != nil){
             sample!["targetLayer"] = JSON(self.targetLayer);
             return sample;
@@ -498,21 +484,7 @@ class RecordingCollection:LiveCollection{
         next.prev = self;
     }
     
-    func endRecording(){
-        var sampleList = [Float:Float]();
-        var hashValue:Float  = 0;
-        while(hashValue <= self.lastSample){
-            if(self.samples.contains(hashValue)){
-                protoSignals["stylusEvent"]!.setHash(h: hashValue);
-                let sE =  protoSignals["stylusEvent"]!.get(id:nil);
-                
-                sampleList[hashValue] = sE;
-                print(" recording at:",hashValue,sE);
-            }
-            hashValue+=1.0;
-        }
-        
-    }
+   
     
     //TODO: move this to stylus manager?
     func addResultantStroke(layerId:String,strokeId:String){
@@ -529,14 +501,14 @@ class RecordingCollection:LiveCollection{
     public func addDataFrom(recordingCollection:RecordingCollection){
         
         for (key,recSignal) in recordingCollection.protoSignals{
-            let sortedBuffer = recSignal.signalBuffer.sorted{ $0.key < $1.key };
+            let sortedBuffer = recSignal.signalBuffer;
             let signal = self.protoSignals[key];
             for i in 0..<sortedBuffer.count{
-                let hash = sortedBuffer[i].key+self.lastSample;
-                let value = sortedBuffer[i].value;
-                signal?.addValue(h:hash , v: value);
+               
+                let value = sortedBuffer[i];
+                signal?.addValue(v: value);
             }
-            self.lastSample = sortedBuffer[sortedBuffer.count-1].key+self.lastSample;
+            self.signalLength = (signal?.signalBuffer.count)!;
         }
     }
     

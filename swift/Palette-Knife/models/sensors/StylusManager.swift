@@ -82,7 +82,6 @@ final class StylusManager{
     
     static private func endRecording()->RecordingCollection?{
         if(currentRecordingPackage != nil){
-            currentRecordingPackage.endRecording();
             recordEvent.raise(data:("END_RECORDING",currentRecordingPackage));
             return currentRecordingPackage;
         }
@@ -134,13 +133,12 @@ final class StylusManager{
             var hashAdd:Float = 0;
             while (true){
                // print("====advance recording start====",currentLoopingPackage.id,currentLoopingPackage.signals["dx"]!.signalBuffer.count);
-            for i in 0..<Int(currentLoopingPackage.lastSample+1){
-                let hash = i;
-                var sample = producer.produce(hash: Float(hash), recordingPackage: currentLoopingPackage);
+            for i in 0..<currentLoopingPackage.signalLength{
+                var sample = producer.produce(index:i, recordingPackage: currentLoopingPackage);
                 if sample != nil{
                     sample!["sequenceHash"] = JSON(sample!["hash"].floatValue+hashAdd);
                     samples.append(sample!);
-                    print("advance recording", hash,samples.count);
+                    print("advance recording", i,samples.count);
                     
                 }
             }
@@ -289,7 +287,7 @@ final class StylusManager{
     }
     
    
-    
+    //TOOD: NEED TO MAKE THESE SYMMETRICAL TO STYLUSCOLLECTION EVENTS TO CALCULATE ACCURATE DATA
     static public func onStylusMove(x:Float,y:Float,force:Float,angle:Float){
         if(isLive){
             let currentTime = Date();
@@ -317,10 +315,13 @@ final class StylusManager{
             sample["force"] = JSON(force);
             sample["angle"] = JSON(angle);
             sample["stylusEvent"] = JSON(StylusManager.stylusMove);
-
-            currentRecordingPackage.addProtoSample(hash:elapsedTime, data:sample);
+            sample["time"] = JSON(elapsedTime);
+            
+            currentRecordingPackage.addProtoSample(data:sample);
             
             for (_,stylusCollection) in self.stylusCollections{
+            //TOOD: SHOULD NOT STORE DATA HERE...
+
                 stylusCollection.onStylusMove(x: x, y: y, force: force, angle: angle)
             }
         }
@@ -338,8 +339,9 @@ final class StylusManager{
             sample["force"] = JSON(force);
             sample["angle"] = JSON(angle);
             sample["stylusEvent"] = JSON(StylusManager.stylusUp);
-
-            currentRecordingPackage.addProtoSample(hash:elapsedTime, data:sample);
+            sample["time"] = JSON(elapsedTime);
+            
+            currentRecordingPackage.addProtoSample(data:sample);
             _ = self.endRecording();
              for (_,stylusCollection) in self.stylusCollections{
                 stylusCollection.onStylusUp(x: x, y:y);
@@ -362,8 +364,9 @@ final class StylusManager{
             sample["force"] = JSON(force);
             sample["angle"] = JSON(angle);
             sample["stylusEvent"] = JSON(StylusManager.stylusDown);
-
-            currentRecordingPackage.addProtoSample(hash:elapsedTime, data:sample);
+            sample["time"] = JSON(elapsedTime);
+            
+            currentRecordingPackage.addProtoSample(data:sample);
 
             for (_,stylusCollection) in self.stylusCollections{
             stylusCollection.onStylusDown(x: x, y: y, force: force, angle: angle);
@@ -440,9 +443,9 @@ final class StylusManager{
 class StylusDataProducer{
     
     
-    func produce(hash:Float,recordingPackage:RecordingCollection)->JSON?{
+    func produce(index:Int,recordingPackage:RecordingCollection)->JSON?{
      
-        let sample = recordingPackage.getProtoSample(hash: hash);
+        let sample = recordingPackage.getProtoSample(index:index);
        // print("sample found at time",hash);
         return sample;
     }

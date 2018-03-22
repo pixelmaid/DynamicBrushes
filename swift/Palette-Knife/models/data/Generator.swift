@@ -11,7 +11,7 @@ import SwiftyJSON
 class Generator:Signal{
    
     func reset(){
-        self.setHash(h: 0);
+        self.setIndex(i: 0)
     }
 }
 
@@ -31,7 +31,7 @@ class Sine:Generator{
     
     
     override func get(id:String?) -> Float {
-        let v =  sin(self.hash*freq+phase)*amp/2+amp/2;
+        let v =  sin(Float(self.index)*freq+phase)*amp/2+amp/2;
         return v;
     }
     
@@ -71,7 +71,7 @@ class Sawtooth:Generator{
     override func get(id:String?) -> Float {
         //TODO: This won't work correctly with new hash system
 
-        let v = val[Int(hash)]
+        let v = val[Int(index)]
         return v;
     }
     
@@ -103,7 +103,7 @@ class Triangle:Signal{
     
     override func get(id:String?) -> Float {
         let ti = 2.0 * Float.pi * (880 / 44100);
-        let theta = ti * hash
+        let theta = ti * Float(self.index);
         let _v = 1.0 - abs(Float(theta.truncatingRemainder(dividingBy: 4)-2));
         let v = MathUtil.map(value: _v, low1: -1, high1: 1, low2: min, high2: max)
         return v;
@@ -140,7 +140,7 @@ class Square:Signal{
     
     override func get(id:String?) -> Float {
         //TODO: This won't work correctly with new hash system
-        if(hash == 0.0){
+        if(self.index == 0){
             if(currentVal == min){
                 currentVal = max;
             }
@@ -181,7 +181,7 @@ class Alternate:Signal{
     override func get(id:String?) -> Float {
         //TODO: This won't work correctly with new hash system
 
-        let v = val[Int(hash)]
+        let v = val[Int(self.index)]
         return v;
     }
     
@@ -262,11 +262,11 @@ class Interval:Generator{
     
     override func get(id:String?) -> Float {
         if(infinite){
-            let inf = Float(self.hash)*self.inc
+            let inf = Float(self.index)*self.inc
             return inf;
         }
-        if(Int(hash) < val.count){
-            let v = val[Int(hash)]
+        if(self.index < val.count){
+            let v = val[self.index]
             
             return v;
         }

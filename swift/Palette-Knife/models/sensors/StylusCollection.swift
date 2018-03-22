@@ -128,7 +128,7 @@ class StylusCollection:LiveCollection {
         //TODO:RESOLVE TIME
         data["time"] = JSON(self.getTimeElapsed());
         
-        self.addProtoSample(hash:nil, data: data)
+        self.addProtoSample(data: data)
     }
   
     

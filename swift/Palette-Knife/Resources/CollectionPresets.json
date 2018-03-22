@@ -5,7 +5,7 @@
                  "id": "stylus",
                  "name": "stylus",
                  "signals": [{
-                             "fieldName": "time",
+                             "fieldName": " ",
                              "displayName": "stylus time",
                              "classType": "TimeSignal",
                              "order": 0,

@@ -11,8 +11,8 @@ import SwiftyJSON
 
 
 class Signal:Observable<Float>{
-    internal var hash:Float?
-    internal var signalBuffer = [Float:Float]();
+    internal var index:Int = 0;
+    internal var signalBuffer = [Float]();
     
     internal var position:Int = 0;
     internal let fieldName:String!
@@ -40,7 +40,7 @@ class Signal:Observable<Float>{
     }
     
  
-    func cloneRawData(protoData:[Float:Float]){
+    func cloneRawData(protoData:[Float]){
         self.signalBuffer = protoData
     }
     
@@ -48,7 +48,7 @@ class Signal:Observable<Float>{
         
         let v:Float;
         
-        v = signalBuffer[hash]!;
+        v = signalBuffer[self.index];
         
         self.setSilent(newValue: v);
         return super.get(id: id);
@@ -57,38 +57,38 @@ class Signal:Observable<Float>{
     
     
     override func getSilent()->Float{
-        return signalBuffer[hash]!
+        return signalBuffer[self.index];
     }
     
     
     
-    func setHash(h:Float){
-        if(h != self.hash){
-            let oldValue = self.get(id: nil);
-            self.hash = h;
-            let newValue = self.get(id: nil);
-
-            self.didChange.raise(data: (self.id,oldValue,newValue))
-        }
-        
+    func setIndex(i:Int){
+        self.index = i;
     }
     
     func setSignal(s:[Float]){
         self.signalBuffer.removeAll();
         for i in 0..<s.count{
-            signalBuffer[Float(i)] = s[i];
+            signalBuffer[i] = s[i];
         }
     }
     
     
-    func addValue(h:Float,v:Float){
-        signalBuffer[h] = v;
-        print("current signal buffer",self.collectionId,self.displayName,signalBuffer);
-        self.setHash(h:h);
+    func addValue(v:Float){
+        signalBuffer.append(v);
+        let prevV:Float;
+        if(signalBuffer.count>1){
+            prevV = signalBuffer[signalBuffer.count-1];
+        }
+        else{
+            prevV = v;
+        }
+        self.didChange.raise(data: (self.id, prevV, v))
+      
     }
     
     func incrementIndex(){
-        hash = hash+1.0;
+        self.setIndex(i: self.index+1);
     }
     
     func clearSignal(){
@@ -131,7 +131,7 @@ class LiveSignal:Signal{
 class Recording:LiveSignal{
     private var next:Recording?
     private var prev:Recording?
-    private var lastSample:Float = 0;
+
     
 
     func getNext()->Recording?{
@@ -156,22 +156,9 @@ class Recording:LiveSignal{
         prev = r;
     }
     
-    override func addValue(h:Float,v:Float){
-        super.addValue(h: h, v: v);
-        self.lastSample = h;
-    }
     
     func getTimeOrderedList()->[Float]{
-        var orderedList = [Float]();
-        var hashValue = Float(0);
-        while(hashValue <= self.lastSample){
-            if(self.signalBuffer[hashValue] != nil){
-                orderedList.append(signalBuffer[hashValue]!);
-            }
-            hashValue+=1.0;
-        }
-        
-        return orderedList;
+        return self.signalBuffer;
     }
 }
 
