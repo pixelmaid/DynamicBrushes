@@ -56,6 +56,18 @@
         },
         "relativePropertyFieldName" : "x"
       },
+      {
+        "stateId" : "_s865vlzry",
+        "constraintType" : "passive",
+        "mappingId" : "_543y80ecsf",
+        "expressionId" : "_1230c235l",
+        "expressionText" : "1",
+        "relativePropertyName" : "y",
+        "expressionPropertyList" : {
+          
+        },
+        "relativePropertyFieldName" : "y"
+      }
 
       ],
       "conditions": [

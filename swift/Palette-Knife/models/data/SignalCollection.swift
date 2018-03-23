@@ -485,7 +485,7 @@ class RecordingCollection:LiveCollection{
     }
     
    
-    
+        
     //TODO: move this to stylus manager?
     func addResultantStroke(layerId:String,strokeId:String){
         if(resultantStrokes[layerId] == nil){

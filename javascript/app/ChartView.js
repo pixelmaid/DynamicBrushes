@@ -458,7 +458,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                         var referenceId = $(ui.draggable).attr('id');
                         var referenceDisplayName = $(ui.draggable).html();
                       
-                      
+                      $(ui.draggable).remove();
 
                     var expression = self.addReferenceToExpression(expressionTargetId, referenceId, referenceType, referenceDisplayName);
                     var eventArgs = [self.id, expression.id, expression.getText(), expression.getPropertyList()];
