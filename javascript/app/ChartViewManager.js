@@ -11,7 +11,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
             clientX: 0,
             clientY: 0
         };
-        var basic_template, empty_template, parent_template, child_template, ui_template, timer_template, brush_properties;
+        var basic_template, empty_template, parent_template, child_template, ui_template, timer_template, brush_properties, actions;
         var ChartViewManager = class extends Emitter {
 
 
@@ -55,6 +55,10 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
 
                   $.getJSON("app/presets/brush_props.json", function(data) {
                     brush_properties = data;
+                });
+
+                  $.getJSON("app/presets/actions.json", function(data) {
+                    actions = data;
                 });
 
                 //let $("#behavior_items")
@@ -313,7 +317,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                     this.currentView.resetView();
                 }
 
-                var chartView = new ChartView(data.id, data.name, data.active_status, brush_properties);
+                var chartView = new ChartView(data.id, data.name, data.active_status, brush_properties, actions);
                 chartView.addListener("ON_STATE_CONNECTION", function(connectionId, sourceId, sourceName, targetId, behaviorId) {
                     this.onConnection(connectionId, sourceId, sourceName, targetId, behaviorId);
                 }.bind(this));

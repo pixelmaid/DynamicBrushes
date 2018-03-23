@@ -1,0 +1,56 @@
+[{
+	"displayName": "spawn",
+	"fieldName": "spawn",
+	"arguments": [{
+		"displayName": "behavior name",
+		"fieldName": "behavior",
+		"isExpression": false,
+		"isDropdown": true
+	}, {
+		"displayName": "number",
+		"fieldName": "number",
+		"isExpression": true,
+		"isDropdown": false,
+		"default": 1
+	}]
+}, {
+	"displayName": "set origin",
+	"fieldName": "setOrigin",
+	"arguments": [{
+		"displayName": "x",
+		"fieldName": "x",
+		"isExpression": true,
+		"isDropdown": false,
+		"default": 100
+	}, {
+		"displayName": "y",
+		"name": "y",
+		"isExpression": true,
+		"isDropdown": false,
+		"default": 100
+	}]
+}, {
+	"displayName": "new stroke",
+	"fieldName": "newStroke",
+	"arguments": [{
+		"displayName": "x",
+		"fieldName": "x",
+		"isExpression": true,
+		"isDropdown": false,
+		"default": 100
+	}, {
+		"displayName": "y",
+		"fieldName": "y",
+		"isExpression": true,
+		"isDropdown": false,
+		"default": 100
+	}]
+}, {
+	"displayName": "start timer",
+	"fieldName": "startTimer",
+	"arguments": [{}]
+}, {
+	"displayName": "stop timer",
+	"fieldName": "stopTimer",
+	"arguments": [{}]
+}]
