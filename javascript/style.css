@@ -1050,14 +1050,13 @@ span.refresh{
   position: relative;
   margin: 5px;
   height: 20px;
-  width: 248px;
 }
 
 .prop_button {
 
 position: absolute;
     right: 4px;
-    width: 118px;
+    width: 110px;
     height: 20px;
     border: 1px dotted white;
     border-radius: 5px;
@@ -1079,10 +1078,10 @@ position: absolute;
 
 .prop_button-horizontal {
 
-    top: 50%;   
+   top: 9px;
     width: 10px;
     height: 1px;
-    left: 54px;
+    left: 50px;
 }
 
 

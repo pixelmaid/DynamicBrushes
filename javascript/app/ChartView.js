@@ -169,7 +169,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                         }
                         console.log(mapping_id, name, fieldName, type, expressionId, $(options.$trigger[0]), self.id);
                         self.trigger("ON_MAPPING_ADDED", [mapping_id, name, fieldName, type, expressionId, id, self.id]);
-                        self.trigger("ON_MAPPING_DATA_REQUEST", [self.id]);                      
+                        //self.trigger("ON_MAPPING_DATA_REQUEST", [self.id]);                      
                     },
 
                     build: function(trigger) {
@@ -201,7 +201,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                             //new extension
                             var parent = $(options.$trigger[0]).parent().parent().parent();
                             console.log("mapping-deleted callback",parent);
-                            self.trigger("ON_MAPPING_DATA_REQUEST", [self.id]);
+                            //self.trigger("ON_MAPPING_DATA_REQUEST", [self.id]);
                         }
                     },
                     items: {
