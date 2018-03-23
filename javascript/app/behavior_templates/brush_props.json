@@ -1,0 +1,59 @@
+//Brush Props.json
+[							{"fieldName": "x",
+                             "displayName": "x",
+                             "classType": "BrushProperty",
+                             "order": 0,
+                             }, {
+                             "fieldName": "y",
+                             "displayName": "y",
+                             "classType": "BrushProperty",
+                             "order": 1,
+                             },
+                             {
+                             "fieldName": "dx",
+                             "displayName": "delta x",
+                             "classType": "BrushProperty",
+                             "order": 2,
+                             },
+
+                             {
+                             "fieldName": "dy",
+                             "displayName": "delta y",
+                             "classType": "BrushProperty",
+                             "order": 3,
+                             },
+
+                             {
+                             "fieldName": "radius",
+                             "displayName": "radius",
+                             "classType": "BrushProperty",
+                             "order": 4,
+                             },
+                              {
+                             "fieldName": "theta",
+                             "displayName": "theta",
+                             "classType": "BrushProperty",
+                             "order": 5,
+                             },
+                             {
+                             "fieldName": "sx",
+                             "displayName": "scale x",
+                             "classType": "BrushProperty",
+                             "order": 6,
+                             },
+
+                             {
+                             "fieldName": "sy",
+                             "displayName": "scale y",
+                             "classType": "BrushProperty",
+                             "order":7,
+                             },
+
+                              {
+                             "fieldName": "diameter",
+                             "displayName": "weight",
+                             "classType": "BrushProperty",
+                             "order": 8,
+                             },
+                              
+]

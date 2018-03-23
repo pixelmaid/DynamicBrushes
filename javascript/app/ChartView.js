@@ -1,6 +1,6 @@
 //ChartView     
 "use strict";
-define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "app/Emitter", "app/id", "app/InspectorModel","hbs!app/templates/method", "hbs!app/templates/event", "hbs!app/templates/behavior", "hbs!app/templates/state", "hbs!app/templates/start", "hbs!app/templates/transition", "hbs!app/templates/mapping"],
+define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "editableselect", "app/Expression", "app/Emitter", "app/id", "app/InspectorModel", "hbs!app/templates/method", "hbs!app/templates/event", "hbs!app/templates/behavior", "hbs!app/templates/state", "hbs!app/templates/start", "hbs!app/templates/transition", "hbs!app/templates/mapping"],
 
 
 
@@ -11,9 +11,11 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
         console.log("start template", startTemplate);
         console.log("state template", stateTemplate);
         var state_counter = 0;
+        var global_brush_properties;
+        var brush_properties_added = {};
         var ChartView = class extends Emitter {
 
-            constructor(id, name, active_status) {
+            constructor(id, name, active_status, brush_properties) {
                 super();
                 var behavior_data = {
                     id: id,
@@ -23,6 +25,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 this.dieId = null;
                 this.name = name;
                 this.active_status = active_status;
+                global_brush_properties = brush_properties;
                 this.expressions = {};
                 var self = this;
                 var last_dragged = null;
@@ -123,7 +126,8 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 });
 
                 $.contextMenu({
-                    selector: '#' + self.id + ' .state',
+                    selector: '#' + self.id + ' .stateContainer',
+                    reposition: false,
                     callback: function(key, options) {
                         if (key == "delete") {
                             var parent = $(options.$trigger[0]).parent();
@@ -139,6 +143,52 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                 });
 
+
+
+
+               //SAMPLE CONTEXT MENUL FOR PROPERTY ITEMS
+                $.contextMenu({
+                    trigger: 'left',
+                    className: "property_menu",                    
+                    selector: '#' + self.id +' .prop_button',                 
+                    callback: function(key, options) {
+                        var name = key;
+                        var mapping_id = ID();
+                        var expressionId = ID();
+                        var id = options.$trigger.parent().parent().parent().attr('id');
+                        var type = "brush_prop";
+                        var fieldName = key;
+                        if (key == "delta x"){
+                            fieldName = "dx";
+                        }else if (key == "delta y"){
+                            fieldName = "dy";
+                        }else if (key == "scale x"){
+                            fieldName = "sx";
+                        }else if (key == "scale y"){
+                            fieldName = "sy";
+                        }
+                        console.log(mapping_id, name, fieldName, type, expressionId, $(options.$trigger[0]), self.id);
+                        self.trigger("ON_MAPPING_ADDED", [mapping_id, name, fieldName, type, expressionId, id, self.id]);
+                        self.trigger("ON_MAPPING_DATA_REQUEST", [self.id]);                      
+                    },
+
+                    build: function(trigger) {
+                        console.log(global_brush_properties);
+                        var p_items = {};
+                        var parent = $(trigger[0]).parent().parent().parent();
+                        for(var i = 0; i < global_brush_properties.length; i++){
+                            var p_name = global_brush_properties[i].fieldName;
+                            p_items[p_name] = {className: 'property_menu_item', name: global_brush_properties[i].displayName, disabled: Object.values(brush_properties_added[self.id][parent.attr("id")]).indexOf(p_name) > -1, fieldName: global_brush_properties[i].fieldName};//function(){
+                       }
+
+                        var options = {
+                            items:p_items
+                       };
+                        return options;
+                    }             
+
+                });
+
                 $.contextMenu({
                     selector: '#' + self.id + ' .mapping',
                     callback: function(key, options) {
@@ -148,6 +198,10 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                             console.log("mappping", mappingId);
                             self.trigger("ON_MAPPING_REMOVED", [self.id, mappingId, stateId]);
+                            //new extension
+                            var parent = $(options.$trigger[0]).parent().parent().parent();
+                            console.log("mapping-deleted callback",parent);
+                            self.trigger("ON_MAPPING_DATA_REQUEST", [self.id]);
                         }
                     },
                     items: {
@@ -289,6 +343,18 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 this.instance.cleanupListeners();
             }
 
+            updateProperties(prop_data){
+                brush_properties_added[prop_data.data.behaviorId] = prop_data.data.states;
+                for (var st in brush_properties_added[prop_data.data.behaviorId]){
+                    var mpArray = [];
+                    for(var mp in brush_properties_added[prop_data.data.behaviorId][st]){     
+                        mpArray.push(brush_properties_added[prop_data.data.behaviorId][st][mp]["relativePropertyFieldName"]);
+                    }
+                    brush_properties_added[prop_data.data.behaviorId][st] = mpArray;
+                }
+                console.log("brush props added",brush_properties_added);
+            }
+
 
             //
             // initialise element as connection targets and source.
@@ -369,7 +435,9 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     html = startTemplate(state_data);
                 } else {
                     html = stateTemplate(state_data);
-                }
+                    console.log('state html',html);
+
+                    }
                 d.id = id;
 
                 d.innerHTML = html;
@@ -400,7 +468,9 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                         if (type == "brush_prop") {
                             console.log("brush prop dropped on state");
                             var expressionId = ID();
+                            console.log(mapping_id, name, fieldName, type, expressionId, id, self.id);
                             self.trigger("ON_MAPPING_ADDED", [mapping_id, name, fieldName, type, expressionId, id, self.id]);
+                            //need to extension
                             $(ui.helper).remove(); //destroy clone
                             $(ui.draggable).remove(); //remove from list
                         }
@@ -446,6 +516,8 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 var el =  $($('#' + mapping_data.mappingId).find(".reference_expression")[0]);
                 this.setDropFunctionsForExpression(el,mapping_data.mappingId);
                 this.instance.repaintEverything();
+
+                //need to extension
 
             }
 
@@ -811,6 +883,8 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     info.connection.setParameter("id", info.connection.getId());
                     self.trigger("ON_STATE_CONNECTION", [info.connection.getParameter("id"), info.sourceId, $(info.source).attr("name"), info.targetId, self.id]);
                 });
+
+                self.trigger("ON_MAPPING_DATA_REQUEST", [self.id]);
 
                 for (var k = 0; k < data.mappings.length; k++) {
                     var mapping_data = data.mappings[k];

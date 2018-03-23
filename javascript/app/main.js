@@ -16,8 +16,17 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
 
         //sets up interface by initializing palette, removing overlay etc.
         var setupInterface = function() {
+
             requestFileList(codename);
             requestExampleFileList();
+            
+        };
+
+        var loadDummyData = function(){
+            $.getJSON("app/behavior_templates/dummy_data/recording_template.json", function(data) {
+                    var sync_data = {data:data,type:"synchronize"};
+                    onMessage(sync_data);
+                });
         };
 
         var onMessage = function(data) {
@@ -64,13 +73,18 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
                 signalModel.datasetLoader.loadCollection(data.data.collections);
                 saveManager.setCurrentFilename(currentBehaviorName, currentBehaviorFile);
 
+
             } else if (data.type == "collection_data") {
                 signalModel.datasetLoader.loadCollection(data.data.collections);
             } else if (data.type == "storage_data") {
                 saveManager.loadStorageData(data);
+            }else if (data.type == "data_request_response"){
+                 chartViewManager.updateProperties(data);
             }
 
         };
+
+
 
         var onConnection = function() {
             console.log("connection made");
@@ -140,6 +154,20 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
             socketController.sendMessage(transmit_data);
 
         };
+
+        var onDataRequestEvent = function(data) {
+            console.log("transmit_data", data);
+
+            var transmit_data = {
+                type: "data_request",
+                requester: "authoring",
+                data: data
+
+            };
+            socketController.sendMessage(transmit_data);
+
+        };
+
         var onStorageEvent = function(data) {
             console.log("storage_data", data);
 
@@ -236,6 +264,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
         socketController.addListener("ON_KEY_RECOGNIZED", onKeyRecognized);
 
         chartViewManager.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
+        chartViewManager.addListener("ON_DATA_REQUEST_EVENT", onDataRequestEvent);
+
         signalView.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
 
         saveManager.addListener("ON_SAVE_EVENT", onStorageEvent);

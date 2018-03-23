@@ -105,6 +105,7 @@ final class RequestHandler: Requester{
                     var send_data:JSON = [:]
                     send_data["data"] = data;
                     send_data["type"] = JSON("inspector_data")
+                    send_data["subData"] = "inspector";
                     RequestHandler.socketManager.sendData(data: send_data);
                     break;
                 case "send_collection_data":
@@ -117,8 +118,19 @@ final class RequestHandler: Requester{
                 case "authoring_response":
                     let data = RequestHandler.activeItem!.data!
                     RequestHandler.socketManager.sendData(data: data);
-
                     break;
+                    
+                case "data_request_response":
+                    let data = RequestHandler.activeItem!.data!
+                    var send_data:JSON = [:]
+                    //send_data["type"] = JSON("abcdefg")
+                    send_data["type"] = JSON("data_request_response")
+                    send_data["subData"] = "mapping_info";
+                    send_data["data"] = data;
+                    RequestHandler.socketManager.sendData(data: send_data);
+                    print(send_data);
+                    break;
+                    
                 case "synchronize":
                     let data = RequestHandler.activeItem!.data!
                     let requester = RequestHandler.activeItem!.requester as! DrawingViewController;
@@ -132,6 +144,8 @@ final class RequestHandler: Requester{
                     send_data["type"] = JSON("synchronize")
                     RequestHandler.socketManager.sendData(data: send_data);
                     break
+                    
+               
                 default:
                     break;
                 }
@@ -203,6 +217,7 @@ final class RequestHandler: Requester{
             
             RequestHandler.activeItem?.requester.processRequest(data:data)
             RequestHandler.activeItem = nil;
+            print(data);
 
             RequestHandler.checkRequest();
             

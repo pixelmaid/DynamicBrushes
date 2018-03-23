@@ -11,7 +11,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
             clientX: 0,
             clientY: 0
         };
-        var basic_template, empty_template, parent_template, child_template, ui_template, timer_template;
+        var basic_template, empty_template, parent_template, child_template, ui_template, timer_template, brush_properties;
         var ChartViewManager = class extends Emitter {
 
 
@@ -51,6 +51,10 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
 
                  $.getJSON("app/behavior_templates/timer_template.json", function(data) {
                     timer_template = data;
+                });
+
+                  $.getJSON("app/presets/brush_props.json", function(data) {
+                    brush_properties = data;
                 });
 
                 //let $("#behavior_items")
@@ -299,12 +303,17 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                 this.currentView.initializeBehavior(selectedBehaviorData);
             }
 
+             updateProperties(prop_data){
+                this.currentView.updateProperties(prop_data.data);
+             }
+
             addBehavior(data) {
                 console.log("add behavior", data, this);
                 if (this.currentView) {
                     this.currentView.resetView();
                 }
-                var chartView = new ChartView(data.id, data.name, data.active_status);
+
+                var chartView = new ChartView(data.id, data.name, data.active_status, brush_properties);
                 chartView.addListener("ON_STATE_CONNECTION", function(connectionId, sourceId, sourceName, targetId, behaviorId) {
                     this.onConnection(connectionId, sourceId, sourceName, targetId, behaviorId);
                 }.bind(this));
@@ -369,6 +378,10 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
 
                 chartView.addListener("ON_MAPPING_REMOVED", function(behaviorId, mappingId, stateId) {
                     this.onMappingRemoved(behaviorId, mappingId, stateId);
+                }.bind(this));
+
+                 chartView.addListener("ON_MAPPING_DATA_REQUEST", function(behaviorId) {
+                    this.onMappingDataRequest(behaviorId);
                 }.bind(this));
 
 
@@ -784,7 +797,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
 
                 };
                 //TODO: This is sloppy- find a fix
-                if(generatorId!= undefined || generatorId!= null){
+                if(generatorId!== undefined || generatorId!== null){
                     this.generatorModel.addDefaultValues(generatorType, transmit_data);
 
                 }
@@ -877,6 +890,21 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
 
                 this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
 
+            }
+
+            onMappingDataRequest(behaviorId){
+                  console.log("mapping data  request",behaviorId);
+
+                var transmit_data = {
+                    behaviorId: behaviorId,
+                    type: "request_existing_mappings"
+                };
+
+                this.lastAuthoringRequest = {
+                    data: transmit_data
+                };
+
+                this.trigger("ON_DATA_REQUEST_EVENT", [transmit_data]);
             }
 
             onStateAdded(x, y, data) {

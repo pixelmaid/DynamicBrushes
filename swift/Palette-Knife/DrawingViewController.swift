@@ -1180,6 +1180,16 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
         case "synchronize_request", "authoring_client_connected":
             self.synchronizeWithAuthoringClient();
             break;
+        case "data_request":
+            let requestData = data.1! as JSON;
+
+            
+            let data = behaviorManager!.handleDataRequest(requestData: requestData)
+            
+            let socketRequest = Request(target: "socket", action: "data_request_response", data: data, requester: self)
+            
+            RequestHandler.addRequest(requestData:socketRequest);
+            break;
         case "authoring_request":
             do{
                 let authoring_data = data.1! as JSON

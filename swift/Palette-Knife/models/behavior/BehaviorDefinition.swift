@@ -742,6 +742,28 @@ class BehaviorDefinition {
         
     }
     
+    func getMappings()->JSON{
+        var stateJSON:JSON = [:]
+        for(key,_) in states{
+            stateJSON[key] = getMappingsForState(stateId: key);
+            
+        }
+        return stateJSON;
+    }
+    
+   func getMappingsForState(stateId:String)->JSON{
+    var mappingJSON:JSON = [:];
+        for(key,mapping) in mappings{
+            if mapping.3 == stateId{
+                var mappingData:JSON = [:]
+                mappingData["relativePropertyName"] = JSON(mapping.2);
+                mappingData["relativePropertyFieldName"] = JSON(mapping.5);
+                mappingJSON[key] = mappingData;
+            }
+        }
+    return mappingJSON;
+    }
+    
     func removeMappingsForState(stateId:String){
         for(key,mapping) in mappings{
             if mapping.3 == stateId{

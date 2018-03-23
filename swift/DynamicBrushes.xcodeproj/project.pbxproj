@@ -1456,7 +1456,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution: JENNIFER MARY JACOBS (R3G633C4P2)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = R3G633C4P2;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -1507,7 +1507,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution: JENNIFER MARY JACOBS (R3G633C4P2)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = R3G633C4P2;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",

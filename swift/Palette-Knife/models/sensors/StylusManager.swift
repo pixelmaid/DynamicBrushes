@@ -41,7 +41,6 @@ final class StylusManager{
     static public let keyframeEvent = Event<(Int)>();
     static public var stylusCollections = [String:StylusCollection]();
 
-    
     static public let layerEvent = Event<(String,String)>();
     static public let stylusDataEvent = Event<(String, [Float])>();
     static public let visualizationEvent = Event<String>();

@@ -68,6 +68,33 @@ class BehaviorManager{
         }
     }
     
+    
+    func handleDataRequest(requestData:JSON) ->JSON{
+        let data = requestData["data"] as JSON;
+        let type = data["type"].stringValue;
+        var resultJSON:JSON = [:]
+        resultJSON["type"] = JSON("data_request_response");
+        resultJSON["request_type"] = JSON(type);
+        switch(type){
+        case "request_existing_mappings":
+            let behaviorId = data["behaviorId"].stringValue;
+            let stateId = data["stateId"].stringValue;
+             let behavior = BehaviorManager.behaviors[behaviorId]!;
+            var data:JSON = [:]
+            data["states"] = behavior.getMappings();
+            data["behaviorId"] = JSON(behaviorId);
+            resultJSON["data"] = data;
+            
+            break;
+        default:
+            break;
+            
+        }
+        
+        return resultJSON;
+        
+    }
+    
     func handleAuthoringRequest(authoring_data:JSON) throws->JSON{
 
         let data = authoring_data["data"] as JSON;
