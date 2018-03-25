@@ -25,6 +25,7 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 					var collectionName = collections[i]["name"];
 					var collectionSignals = collections[i]["signals"];
 					var item_class = "block palette"
+
 					switch (classType) {
 						case "live":
 						 	item_class = "palette block property sensor";
@@ -54,15 +55,20 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 	                signals: [],
 	            	});
 
-					var signals = [];
+					var signals = Array(collectionSignals.length);
 					for (var j=0; j<collectionSignals.length;j++) {
-								signals.push({
-								  item_class: item_class,
-				                  fieldName: collectionSignals[j]["fieldName"],
-				                  displayName: collectionSignals[j]["displayName"],
-				                  help_text: ""
-								});
-							}								
+							var signalClassType = collectionSignals[j]["classType"];
+							var order = collectionSignals[j]["order"];
+							// console.log("! signal order is ", order);
+							if (signalClassType === "TimeSignal") continue;
+							signals[order] = {
+							  item_class: item_class,
+							  classType: signalClassType,
+			                  fieldName: collectionSignals[j]["fieldName"],
+			                  displayName: collectionSignals[j]["displayName"],
+			                  help_text: ""
+							};
+						}								
 					items[0].signals = signals;
 					
 					console.log("read from json", items);
