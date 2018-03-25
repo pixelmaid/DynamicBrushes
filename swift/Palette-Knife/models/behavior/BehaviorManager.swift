@@ -237,7 +237,7 @@ class BehaviorManager{
             
    
             
-        case "method_added","method_argument_changed":
+        case "method_added":
             let behaviorId = data["behaviorId"].stringValue
             let methodJSON = BehaviorManager.behaviors[behaviorId]!.parseMethodJSON(data: data)
             BehaviorManager.behaviors[behaviorId]!.createBehavior(canvas:canvas);
@@ -254,7 +254,11 @@ class BehaviorManager{
             resultJSON["data"] = methodJSON;
             return resultJSON;
          
-            
+        //TODO: add case for method argument change
+            //case "method_argument_changed":
+        
+        
+        //return
         case "method_removed":
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.removeMethod(methodId: data["methodId"].stringValue)
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas);

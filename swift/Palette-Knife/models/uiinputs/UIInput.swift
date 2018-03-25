@@ -9,9 +9,8 @@
 import Foundation
 import UIKit
 
-class UIInput: TimeSeries, WebTransmitter {
+class UIInput: TimeSeries {
    
-    var transmitEvent = Event<(String)>()
     var initEvent = Event<(WebTransmitter,String)>()
     
     

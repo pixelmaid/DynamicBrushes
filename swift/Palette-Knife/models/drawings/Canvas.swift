@@ -11,12 +11,11 @@ import UIKit
 //Canvas
 //stores multiple drawings
 
-class Canvas: WebTransmitter, Hashable{
+class Canvas: Hashable{
     var id = NSUUID().uuidString;
     var name:String;
     var drawings = [Drawing]()
     var currentDrawing:Drawing?
-    var transmitEvent = Event<(String)>()
     var initEvent = Event<(WebTransmitter,String)>()
     var dirty = false;
     var geometryModified = Event<(Geometry,String,String)>()
@@ -48,14 +47,7 @@ class Canvas: WebTransmitter, Hashable{
     func initDrawing(){
         currentDrawing = Drawing();
         drawings.append(currentDrawing!)
-        _ = currentDrawing!.transmitEvent.addHandler(target: self,handler: Canvas.drawingDataGenerated, key:drawKey);
         _ = currentDrawing!.geometryModified.addHandler(target: self,handler: Canvas.drawHandler, key:dataKey);
-        
-        var string = "{\"canvas_id\":\""+self.id+"\","
-        string += "\"drawing_id\":\""+currentDrawing!.id+"\","
-        string += "\"type\":\"new_drawing\"}"
-        self.transmitEvent.raise(data:(string));
-        
     }
     
     func addSegmentToStroke(parentID:String, point:Point, weight:Float, color:Color, alpha:Float){
@@ -98,14 +90,6 @@ class Canvas: WebTransmitter, Hashable{
         
         return nil;
     }
-    
-    func drawingDataGenerated(data:(String), key:String){
-        var string = "{\"canvas_id\":\""+self.id+"\","
-        string += data;
-        string += "}"
-        self.transmitEvent.raise(data:(string));
-    }
-    
     
     
     

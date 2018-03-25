@@ -17,6 +17,11 @@
 
       ],
       "states": [{
+        "name": "state 2",
+        "x": 100,
+        "id": "_4ef5vl65d",
+        "y": 100
+      }, {
         "name": "state 1",
         "x": 347.99716186523438,
         "id": "_s865vlzry",
@@ -41,33 +46,44 @@
         "fromStateId": "_y5p6lqn2a",
         "toStateId": "_s865vlzry",
         "parentFlag": false,
-        "displayName": "stateComplete"  
+        "displayName": "stateComplete"
       }],
       "mappings": [
-{
-        "stateId" : "_s865vlzry",
-        "constraintType" : "passive",
-        "mappingId" : "_16y80ecqx",
-        "expressionId" : "_23v0ckj5l",
-        "expressionText" : "1",
-        "relativePropertyName" : "x",
-        "expressionPropertyList" : {
-          
-        },
-        "relativePropertyFieldName" : "x"
-      },
-      {
-        "stateId" : "_s865vlzry",
-        "constraintType" : "passive",
-        "mappingId" : "_543y80ecsf",
-        "expressionId" : "_1230c235l",
-        "expressionText" : "1",
-        "relativePropertyName" : "y",
-        "expressionPropertyList" : {
-          
-        },
-        "relativePropertyFieldName" : "y"
-      }
+
+        {
+          "stateId": "_4ef5vl65d",
+          "constraintType": "passive",
+          "mappingId": "_436gecqx",
+          "expressionId": "_werc35ds",
+          "expressionText": "1",
+          "relativePropertyName": "dx",
+          "expressionPropertyList": {
+
+          },
+          "relativePropertyFieldName": "delta x"
+        }, {
+          "stateId": "_s865vlzry",
+          "constraintType": "passive",
+          "mappingId": "_16y80ecqx",
+          "expressionId": "_23v0ckj5l",
+          "expressionText": "1",
+          "relativePropertyName": "x",
+          "expressionPropertyList": {
+
+          },
+          "relativePropertyFieldName": "x"
+        }, {
+          "stateId": "_s865vlzry",
+          "constraintType": "passive",
+          "mappingId": "_543y80ecsf",
+          "expressionId": "_1230c235l",
+          "expressionText": "1",
+          "relativePropertyName": "y",
+          "expressionPropertyList": {
+
+          },
+          "relativePropertyFieldName": "y"
+        }
 
       ],
       "conditions": [

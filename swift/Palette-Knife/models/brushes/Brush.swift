@@ -29,7 +29,7 @@ struct DeltaStorage{
     var yDist = Float(0);
 }
 
-class Brush: TimeSeries, WebTransmitter, Hashable{
+class Brush: TimeSeries, Hashable{
     
     //hierarcical data
     var children = [Brush]();
@@ -98,8 +98,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     
     //Events
     var geometryModified = Event<(Geometry,String,String)>()
-    var transmitEvent = Event<(String)>()
-    var initEvent = Event<(WebTransmitter,String)>()
+    var initEvent = Event<(Brush,String)>()
     var dieEvent = Event<(String)>()
     
     let removeMappingEvent = Event<(Brush,String,Observable<Float>)>()
@@ -255,18 +254,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         self.delta.name = "delta_"+self.id;
     }
     
-    
-    //creates states and transitions for global actions and mappings
-    func createGlobals(){
-        let _ = self.createState(id: "global",name: "global");
-        let globalEmitter = Emitter();
-        self.addStateTransition(id: "globalTransition", name: "globalTransition", reference: globalEmitter, fromStateId: "global", toStateId: "global")
-        
-    }
-    
-    
-    
-    
+ 
     func setupTransition(){
         
         let setupTransition = self.getTransitionByName(name: "setup");
@@ -520,7 +508,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             if(mapping != nil){
                 let stateTransition = mapping
                 
-                self.raiseBehaviorEvent(d: stateTransition!.toJSON(), event: "transition")
                 self.transitionToState(transition: stateTransition!)
                 
             }
@@ -542,7 +529,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         }
         self.currentState = transition.toStateId;
         if(states[currentState] != nil){
-        self.raiseBehaviorEvent(d: states[currentState]!.toJSON(), event: "state")
         self.executeTransitionMethods(methods: transition.methods)
         
         constraint_mappings =  states[currentState]!.constraint_mappings
@@ -563,19 +549,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
     }
     
-    func raiseBehaviorEvent(d:String, event:String){
-        var data = "{\"brush_id\":\""+self.id+"\","
-        data+="\"brush_name\":\""+self.name+"\","
-        data+="\"behavior_id\":\""+self.behavior_id!+"\","
-        data += "\"event\":\""+event+"\",";
-        data += "\"type\":\"behavior_change\","
-        data += "\"data\":"+d;
-        data += "}"
-        // if(self.name != "rootBehaviorBrush"){
-        self.transmitEvent.raise(data: data);
-        //}
-    }
-    
+
     @objc func completeCallback(){
         for key in self.keyStorage["STATE_COMPLETE"]!  {
             if(key.1 != nil){
@@ -597,49 +571,20 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
         for i in 0..<methods.count{
             let method = methods[i];
-            let methodName = method.name;
+            let methodName = method.fieldName;
             
             #if DEBUG
-                //print("executing method:\(method.name,self.id,self.name)");
+                print("executing method:\(method.fieldName,self.id,self.name)");
             #endif
-            //TODO: fix methods to avoid static references to stylus
             switch (methodName){
-            case "newStroke":
-                
-                let arg = method.arguments![0];
-                if  let arg_string = arg as? String {
-                    if(arg_string  == "parent_position"){
-                        if(self.parent != nil){
-                            self.setOrigin(x: self.parent!.bPosition.x.get(id: nil),y: self.parent!.bPosition.y.get(id: nil))
-                        }
-                        else{
-                            #if DEBUG
-                                print("cannot set origin, no parent position")
-                            #endif
-                        }
-                    }
-                    else if(arg_string  == "parent_origin"){
-                        if(self.parent != nil){
-                            
-                            self.setOrigin(x: self.parent!.origin.x.get(id: nil),y: self.parent!.origin.y.get(id: nil))
-                        }
-                        else{
-                            #if DEBUG
-                                print("cannot set origin, no parent position")
-                            #endif
-                        }
-                    }
-                 else if(arg_string  == "stylus_position"){
-                      //self.setOrigin(x: stylus.x.get(id: nil),y: stylus.y.get(id: nil))
+            case "newStroke",
+                 "setOrigin":
+                let xArg = method.arguments[0];
+                let yArg = method.arguments[1];
+                self.setOrigin(x: xArg.calculateValue(), y:  yArg.calculateValue())
+                if(methodName == "newStroke"){
+                    self.newStroke();
                 }
-                }
-                    
-                else {
-                    print("WARNING!!!: UNABLE TO PARSE POSITION ARGUMENT FOR NEW STROKE");
-                   
-                }
-                
-                self.newStroke();
                 break;
             case "startTimer":
                 self.startInterval();
@@ -647,38 +592,17 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
             case "stopTimer":
                 self.stopInterval();
                 break;
-            //TODO: FIX setOrigin to avoid static refs to stylus
-            case "setOrigin":
-                let arg = method.arguments![0];
-                if  let arg_string = arg as? String {
-                    if(arg_string  == "parent_position"){
-                        self.setOrigin(x: self.parent!.bPosition.x.get(id: nil),y: self.parent!.bPosition.y.get(id: nil))
-                    }
-                    else if(arg_string  == "parent_origin"){
-                        self.setOrigin(x: self.parent!.origin.x.get(id: nil),y: self.parent!.origin.y.get(id: nil))
-                    }
-                }else {
-                   // self.setOrigin(x: stylus.x.get(id: nil),y: stylus.y.get(id: nil))
-                }
             case "destroy":
                 self.destroy();
                 break;
             case "spawn":
-                let arg = method.arguments![0];
-                var behaviorDef:BehaviorDefinition! = nil;
-                let arg_string = arg as? String
-                if(arg_string == "parent"){
-                    behaviorDef = self.parent!.behaviorDef!;
-                }
-                else if(arg_string == "self"){
-                    behaviorDef = self.behaviorDef!;
-                }
-                else{
-                    behaviorDef = BehaviorManager.getBehaviorById(id:arg_string!);
-                }
-                if(behaviorDef != nil){
-                    self.spawn(behavior:behaviorDef,num:(method.arguments![1] as! Int));
-                }
+                let behaviorArg = method.arguments[0] as! DropdownExpression;
+                let countArg = method.arguments[1];
+                let arg_string = behaviorArg.getSelectedId();
+                let behavior = BehaviorManager.getBehaviorById(id:arg_string);
+                let count = Int(countArg.calculateValue());
+                self.spawn(behavior:behavior!,num:count);
+                
                 break;
             default:
                 break;
@@ -782,9 +706,9 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         data.2.removeKey(key: data.1)
     }
     
-    func addMethod(transitionId:String, methodId:String, methodName:String, expressionId:String, arguments:[Any]?){
+    func addMethod(transitionId:String, methodId:String, fieldName:String, arguments:[Expression]){
         
-        (transitions[transitionId]!).addMethod(id: methodId, name:methodName, expressionId:expressionId, arguments:arguments)
+        (transitions[transitionId]!).addMethod(id: methodId, fieldName:fieldName, arguments:arguments)
         
         
     }
@@ -922,7 +846,6 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
     func clearAllEventHandlers(){
         self.initEvent.removeAllHandlers()
         self.geometryModified.removeAllHandlers()
-        self.transmitEvent.removeAllHandlers()
         self.removeMappingEvent.removeAllHandlers()
         self.removeTransitionEvent.removeAllHandlers()
         self.dieEvent.removeAllHandlers()

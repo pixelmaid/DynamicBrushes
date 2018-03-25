@@ -5,13 +5,14 @@
 		"displayName": "behavior name",
 		"fieldName": "behavior",
 		"isExpression": false,
-		"isDropdown": true
+		"isDropdown": true,
+		"default": "self"
 	}, {
 		"displayName": "number",
 		"fieldName": "number",
 		"isExpression": true,
 		"isDropdown": false,
-		"default": 1
+		"default": "1"
 	}]
 }, {
 	"displayName": "set origin",
@@ -21,13 +22,13 @@
 		"fieldName": "x",
 		"isExpression": true,
 		"isDropdown": false,
-		"default": 100
+		"default": "100"
 	}, {
 		"displayName": "y",
 		"name": "y",
-		"isExpression": true,
+		"isExpression": true, 
 		"isDropdown": false,
-		"default": 100
+		"default": "100"
 	}]
 }, {
 	"displayName": "new stroke",
@@ -37,13 +38,13 @@
 		"fieldName": "x",
 		"isExpression": true,
 		"isDropdown": false,
-		"default": 100
+		"default": "100"
 	}, {
 		"displayName": "y",
 		"fieldName": "y",
 		"isExpression": true,
 		"isDropdown": false,
-		"default": 100
+		"default": "100"
 	}]
 }, {
 	"displayName": "start timer",

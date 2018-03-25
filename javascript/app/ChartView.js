@@ -15,7 +15,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
         var brush_properties_added = {};
         var ChartView = class extends Emitter {
 
-            constructor(id, name, active_status, brush_properties) {
+            constructor(id, name, active_status, brush_properties, action_properties) {
                 super();
                 var behavior_data = {
                     id: id,
@@ -37,7 +37,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 this.currrentState = null;
                 this.prevState = null;
                 this.id = id;
-
+                this.action_properties = action_properties;
 
                 jsPlumb.ready(function() {
 
@@ -146,11 +146,11 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
 
 
-               //SAMPLE CONTEXT MENUL FOR PROPERTY ITEMS
+               // CONTEXT MENUL FOR PROPERTY ITEMS
                 $.contextMenu({
                     trigger: 'left',
                     className: "property_menu",                    
-                    selector: '#' + self.id +' .prop_button',                 
+                    selector: '#' + self.id +' .state .prop_button',                 
                     callback: function(key, options) {
                         var name = key;
                         var mapping_id = ID();
@@ -188,6 +188,49 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     }             
 
                 });
+
+// CONTEXT MENUL FOR ACTION ITEMS
+                $.contextMenu({
+                    trigger: 'left',
+                    className: "methods_menu",                    
+                    selector: '#' + self.id +' .methodsContainer .prop_button',                 
+                    callback: function(key, options) {
+                        var name = key;
+                        var methodId = ID();
+                        var expressionId = ID();
+                        var id = options.$trigger.parent().parent().parent().attr('id');
+                        console.log(action_id, name, $(options.$trigger[0]), self.id);
+                        var targetMethod = $(ui.draggable).attr('name');
+                                                   var defaultArgument = $(ui.draggable).attr('defaultArgument');
+                                                   //data.name = name;
+                                                   self.trigger("ON_METHOD_ADDED", [self.id, null, methodId, targetMethod, defaultArgument]);
+                                                   $(ui.helper).remove(); //destroy clone
+                                                   $(ui.draggable).remove(); //remove from list
+
+                     
+                    },
+
+                    build: function(trigger) {
+                        console.log(self.action_properties);
+                        var p_items = {};
+                        var parent = $(trigger[0]).parent().parent().parent();
+                        for(var i = 0; i < self.action_properties.length; i++){
+                            var p_name = self.action_properties[i].fieldName;
+                            var displayName = self.action_properties[i].displayName;
+                            console.log(displayName, p_name);
+
+                            p_items[p_name] = {className: 'property_menu_item', name:displayName, fieldName: p_name};//function(){
+                       }
+
+                        var options = {
+                            items:p_items
+                       };
+                        return options;
+                    }             
+
+                });
+
+     // set a title
 
                 $.contextMenu({
                     selector: '#' + self.id + ' .mapping',
@@ -302,17 +345,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                             }
 
                         }
-                        /*else if (type == "action") {
-                                                   var methodId = ID();
-                                                   var targetMethod = $(ui.draggable).attr('name');
-                                                   var defaultArgument = $(ui.draggable).attr('defaultArgument');
-                                                   //data.name = name;
-                                                   self.trigger("ON_METHOD_ADDED", [self.id, null, methodId, targetMethod, defaultArgument]);
-                                                   $(ui.helper).remove(); //destroy clone
-                                                   $(ui.draggable).remove(); //remove from list
-
-
-                                               }*/
+                       
 
 
                     }
@@ -1024,7 +1057,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 var selector = $("#" + id).parent().closest('div').attr('id');
                 console.log("selector:", selector);
                 $.contextMenu({
-                    selector: "#" + selector,
+                    selector: "#" + selector +" .methods",
                     callback: function(key, options) {
                         if (key == "minimize") {
                             connection.getOverlay("transition_" + id).hide();
@@ -1040,6 +1073,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     }
 
                 });
+             
 
 
 

@@ -1127,3 +1127,28 @@ position: absolute;
   height: 100%;
 }
 
+
+  /* menu header via data attribute */
+   .property_menu:before, .methods_menu:before {
+     content: "add new action";
+    display: block;
+    /* position: absolute; */
+    top: 0;
+    right: 0;
+    left: 0;
+    background: #DDD;
+    padding: 2px;
+    padding-left: 8px;
+    font-size: 12px;
+    font-weight: bold;
+    color: black;
+  }
+/* menu header via data attribute */
+   .property_menu:before {
+   content: "add new mapping";
+  }
+
+  .property_menu:first-child, .methods_menu:first-child {
+        margin-top: 20px;
+    }
+

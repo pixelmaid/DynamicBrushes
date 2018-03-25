@@ -106,6 +106,7 @@ class Signal:Observable<Float>{
         metaJSON["displayName"] = JSON(self.displayName);
         metaJSON["classType"] = JSON(String(describing: type(of: self)));
         metaJSON["settings"] = self.getSettingsJSON();
+         metaJSON["order"] = JSON(self.order);
         return metaJSON;
     }
     

@@ -17,7 +17,7 @@ class BehaviorDefinition {
     var expressions = [String:([String],String)]();
     var conditions = [(String,Any?,[String]?,Any?,[String]?,String)]()
     // var generators = [String:(String,[Any?])]()
-    var methods = [String:[(String,String,String,[Any]?)]]()
+    var methods = [String:(transitionId:String,methodId:String,fieldName:String,displayName:String,arguments:[ArgumentData])]()
     var transitions = [String:(String,Emitter?,Bool,String?,String,String,String?,String)]()
     var behaviorMapper = BehaviorMapper()
     var mappings = [String:(Any?,[String]?,String,String,String,String)]()
@@ -168,97 +168,51 @@ class BehaviorDefinition {
     }
     
     func parseMethodJSON(data:JSON)->JSON{
-        self.parseExpressionJSON(data:data)
-        let expressionId = data["expressionId"].stringValue;
-        
-        let targetTransition:String?
-        if(data["targetTransition"] != JSON.null){
-            targetTransition = data["targetTransition"].stringValue;
+
+        let transitionId = data["transitionId"].stringValue;
+        let fieldName = data["fieldName"].stringValue;
+        let displayName = data["displayName"].stringValue;
+        let methodId:String;
+        var isInit = true;
+        if(data["methodId"] == JSON.null){
+            methodId = NSUUID().uuidString;
+            isInit = false;
         }
         else{
-            targetTransition = nil;
+            methodId = data["methodId"].stringValue;
         }
-        var arguments:[Any]? = nil;
-        let dataArguments = data["currentArguments"];
-        let targetMethod = data["targetMethod"].stringValue
-        var methodJSON:JSON = [:]
-        switch(targetMethod){
-        case "spawn":
-            let behavior:String;
-            let num:Int;
-            
-            if(dataArguments != JSON.null){
-                let spawnBehaviorId = (dataArguments.arrayValue)[0].stringValue;
-                if(spawnBehaviorId == "self"){
-                    behavior = self.id;
+        var arguments:[ArgumentData] = [];
+        let argumentList = data["argumentList"].arrayValue
+        for i in 0..<argumentList.count{
+            let argumentJSON = argumentList[i];
+            let isExpression = argumentJSON["isExpression"].boolValue;
+            let isDropdown = argumentJSON["isDropdown"].boolValue;
+            let defaultVal = argumentJSON["defaultVal"].stringValue;
+            let expressionId:String?
+            if(!isInit){
+                 expressionId = NSUUID().uuidString;
+                if(isExpression){
+                    self.addExpression(id: expressionId!, emitterOperandList: [], expressionText: defaultVal)
                 }
-                else{
-                    behavior = spawnBehaviorId;
-                }
-                num = (dataArguments.arrayValue)[1].intValue
                 
-                arguments = [behavior,num];
             }
             else{
-                arguments = ["self",1]
+                expressionId = argumentJSON["expressionId"].stringValue;
             }
-            var behavior_list = [String:String]()
+            let argumentData:ArgumentData;
             
-            behavior_list["self"] = "self";
-            methodJSON["methodArguments"] = JSON(behavior_list);
-            methodJSON["defaultArgument"] = JSON("self");
-            methodJSON["hasArguments"] = JSON(true)
-            
-            break;
-            
-            
-            
-        //TODO: remove need for stylus reference
-        case "setOrigin", "newStroke":
-            if(dataArguments != JSON.null){
-                let arg = (dataArguments.arrayValue)[0].stringValue;
-                switch(arg){
-                case "stylus_position":
-                    arguments = ["stylus"];
-                    break;
-                case "parent_position":
-                    arguments = ["parent_position"];
-                    break;
-                case "parent_origin":
-                    arguments = ["parent_origin"];
-                    break;
-                default:
-                    //TODO: handle arbitrary point values here
-                    break;
-                }
+            if(isExpression){
+                argumentData = ExpressionArgument(expressionId: expressionId!, defaultVal: defaultVal);
             }
             else{
-                arguments = ["stylus"];
+                argumentData = DropdownArgument(defaultVal: defaultVal)
             }
-            methodJSON["methodArguments"] = JSON(["stylus_position":"stylus_position","parent_position":"parent_position","parent_origin":"parent_origin" ])
-            methodJSON["defaultArgument"] = JSON("stylus_position");
-            methodJSON["hasArguments"] = JSON(true)
-            
-            break;
-        case "startTimer":
-            methodJSON["hasArguments"] = JSON(false)
-            
-            arguments = [];
-            break;
-        case "stopTimer":
-            methodJSON["hasArguments"] = JSON(false)
-            
-            arguments = [];
-            
-            break;
-        default:
-            arguments = nil;
-            break;
+            arguments.append(argumentData);
+           
         }
-        
-        self.addMethod(targetTransition: targetTransition, methodId: data["methodId"].stringValue, targetMethod: targetMethod, expressionId:expressionId, arguments: arguments)
-        
-        return methodJSON;
+    
+        self.addMethod(transitionId: transitionId, methodId: methodId, fieldName: fieldName, displayName: displayName, arguments: arguments);
+        return self.methodToJSON(methodId: methodId)!;
     }
     
     
@@ -453,89 +407,9 @@ class BehaviorDefinition {
         
         var methodArray = [JSON]();
         
-        for (key,data) in methods {
-            for method in data {
-                var methodJSON:JSON = [:]
-                //targetTransition:String?, methodId: String, targetMethod:String, arguments:[Any]?
-                let methodId = method.0
-                let targetMethod = method.1
-                
-                switch(targetMethod){
-                case "spawn":
-                    methodJSON["hasArguments"] = JSON(true)
-                    
-                    var behavior_list = [String:String]()
-                    for (key,value) in BehaviorManager.behaviors{
-                        if key != self.id {
-                            behavior_list[key] = value.name;
-                        }
-                    }
-                    behavior_list["self"] = "self";
-                    methodJSON["methodArguments"] = JSON(behavior_list);
-                    methodJSON["defaultArgument"] = JSON("self");
-                    
-                    if let methodArgs = method.3{
-                        let targetBehavior = methodArgs[0]
-                        let behaviorId: String
-                        let num = methodArgs[1] as! Int
-                        if let def =  targetBehavior as? BehaviorDefinition {
-                            behaviorId = def.id;
-                            methodJSON["currentArguments"] = JSON([behaviorId,num]);
-                            
-                        }
-                        else if let def =  targetBehavior as? String {
-                            
-                            behaviorId = def;
-                            methodJSON["currentArguments"] = JSON([behaviorId,num]);
-                            
-                        }
-                    }
-                    break
-                case "setOrigin", "newStroke":
-                    methodJSON["hasArguments"] = JSON(true)
-                    
-                    methodJSON["methodArguments"] = JSON(["stylus_position":"stylus_position","parent_position":"parent_position","parent_origin":"parent_origin" ])
-                    methodJSON["defaultArgument"] = JSON("stylus_position");
-                    
-                    if let methodArgs = method.3{
-                        let pointString:String;
-                        let methodPoint = methodArgs[0]
-                        if let def = methodPoint as? Point{
-                            //TODO: remove need for static stylus reference
-
-                            /*if(def == stylus.position){
-                                pointString = "stylus_position"
-                                methodJSON["currentArguments"]=JSON(["stylus_position"])
-                                
-                            }
-                            else{
-                                //TODO: handle arbitrary point values here
-                                
-                            }*/
-                        }
-                        else if let def = methodPoint as? String{
-                            pointString = def;
-                            methodJSON["currentArguments"] = JSON([pointString]);
-                            
-                        }
-                        
-                    }
-                    break;
-                default:
-                    methodJSON["hasArguments"] = JSON(false)
-                    
-                    break
-                }
-                
-                methodJSON["methodId"] = JSON(methodId);
-                methodJSON["targetMethod"] = JSON(targetMethod);
-                methodJSON["targetTransition"] = JSON(key);
-                
-                
-                
-                
-                methodArray.append(methodJSON);
-            }
+        for (key,_) in methods {
+            let methodJSON = methodToJSON(methodId:key);
+            methodArray.append(methodJSON!);
         }
         
         var mappingsArray = [JSON]();
@@ -595,6 +469,27 @@ class BehaviorDefinition {
         return json_obj;
     }
     
+    func methodToJSON(methodId:String)->JSON?{
+        guard let method = methods[methodId] else{
+            return nil;
+        }
+        
+        
+                    var methodJSON:JSON = [:]
+                    methodJSON["transitionId"] = JSON(method.transitionId)
+                    methodJSON["methodId"] = JSON(method.methodId);
+                    let arguments =  method.arguments
+                    var argumentList = [JSON]();
+                    for j in 0..<arguments.count{
+                        let argJSON = arguments[j].toJSON();
+                        argumentList.append(argJSON);
+                    }
+                    methodJSON["argumentList"] = JSON(argumentList);
+        methodJSON["displayName"] = JSON(method.displayName);
+                    methodJSON["fieldName"] = JSON(method.fieldName);
+                    return methodJSON;
+    
+    }
     
     
     //TODO: remove eventually- this is bad
@@ -633,65 +528,42 @@ class BehaviorDefinition {
         }
     }
     
-    func addMethod(targetTransition:String?, methodId: String, targetMethod:String, expressionId:String, arguments:[Any]?){
-        var tt:String;
-        if(targetTransition != nil){
-            tt = targetTransition!
-        }
-        else{
-            tt = "globalTransition"
-        }
-        if(methods[tt] == nil){
-            methods [tt] = [];
-        }
-        //TODO: fix
-        methods[tt]? = (methods[tt]?.filter({ $0.0 != methodId }))!
-        methods[tt]!.append((methodId,targetMethod,expressionId,arguments))
+    func addMethod(transitionId:String, methodId: String, fieldName:String, displayName:String, arguments:[ArgumentData]){
+        methods[methodId] = (transitionId:transitionId,methodId:methodId,fieldName:fieldName,displayName:displayName,arguments:arguments);
     }
     
     func checkDependency(behaviorId:String)->Bool{
-        for (_, methodlist) in methods{
-            for method in methodlist{
-                let targetMethod = method.1
-                if(targetMethod == "spawn"){
-                    let args = method.3;
-                    let spawn_id = args?[0] as! String;
-                    if(spawn_id == behaviorId){
-                        return true;
+        for (_, method) in methods{
+                let fieldName = method.fieldName
+                if(fieldName == "spawn"){
+                    let args = method.arguments;
+                    for a in args{
+                        if(a.testSelected(id: behaviorId)){
+                            return true;
+                        }
                     }
-                    
                 }
-            }
         }
         
         return false;
     }
     
     func removeMethod(methodId:String){
-        for (key, method_list) in methods{
-            for i in 0..<method_list.count{
-                if method_list[i].0 == methodId{
-                    methods[key]?.remove(at: i)
-                    if method_list.count == 0{
-                        methods.removeValue(forKey: methodId);
-                        
-                    }
-                    
-                    return;
-                }
-                
-            }
+        if(methods[methodId] == nil){
+            #if DEBUG
+            print("===========WARNING ATTEMPTED TO REMOVE METHOD THAT DOES NOT EXIST=====================")
+            #endif
+            return;
         }
+        methods.removeValue(forKey: methodId);
     }
     
     func removeMethodsForTransition(transitionId:String){
-        if(methods[transitionId] != nil){
-            
-            methods.removeValue(forKey: transitionId);
-            return;
+        for (_,method) in methods{
+            if(method.transitionId == transitionId){
+                methods.removeValue(forKey: transitionId);
+            }
         }
-        
-        
     }
     
     func addTransition(transitionId:String, name:String, eventEmitter:Emitter?,parentFlag:Bool, event:String?, fromStateId:String,toStateId:String, condition:String?, displayName:String){
@@ -983,7 +855,6 @@ class BehaviorDefinition {
     }
     
     func initBrushBehavior(targetBrush:Brush){
-        targetBrush.createGlobals();
         let id = targetBrush.id
         storedConditions[id] = [String:Condition]();
         storedExpressions[id] = [String:Expression]();
@@ -1053,15 +924,24 @@ class BehaviorDefinition {
             
         }
         
-        for (key,method_list) in methods{
-            for method in method_list {
-                //behaviorMapper.addMethod(relative: targetBrush,transitionName:key,methodId:method.0,methodName:method.1,expressionId:String,arguments:method.3);
-                //func addMethod(relative:Brush,transitionName:String,methodId:String,methodName:String, arguments:[Any]?){
-                
-                
-                targetBrush.addMethod(transitionId:key,methodId:method.0,methodName:method.1,expressionId:method.2, arguments:method.3)
-                
+        for (_,method) in methods{
+            let arguments = method.arguments
+            var initializedArguments = [Expression]();
+            for i in 0..<arguments.count{
+                let expressionId = arguments[i].getExpressionId();
+                let expression:Expression
+                if(expressionId != nil){
+                    expression = self.storedExpressions[targetBrush.id]![expressionId!]!;
+                }
+                else{
+                     expression = DropdownExpression(id: NSUUID().uuidString, subscriberId: targetBrush.id, brushIndex: targetBrush.index, operandList: [:], text: arguments[i].defaultVal);
+                }
+                initializedArguments.append(expression);
+
             }
+            targetBrush.addMethod(transitionId:method.transitionId,methodId:method.methodId,fieldName:method.fieldName,arguments:initializedArguments)
+                
+            
         }
         
         //referenceProperty!,referenceName!,relativePropertyName,stateId
@@ -1078,5 +958,73 @@ class BehaviorDefinition {
         targetBrush.setupTransition();
         
     }
+    
+}
+
+class ArgumentData{
+    let defaultVal:String;
+    
+    init(defaultVal:String){
+        self.defaultVal = defaultVal;
+    }
+    public func testSelected(id:String)->Bool{
+        return false;
+    }
+    
+    public func getExpressionId()->String?{
+        return nil
+    }
+    
+    
+    public func toJSON()->JSON{
+        var argumentJSON:JSON = [:]
+        argumentJSON["defaultVal"] = JSON(defaultVal);
+        return argumentJSON;
+        
+    }
+}
+
+class DropdownArgument:ArgumentData{
+    let dropdownOptions = [(id:String,displayName:String)]();
+    var selectedDropdown:(id:String,displayName:String)? = nil;
+    
+    override public func testSelected(id:String)->Bool{
+        if selectedDropdown != nil{
+            if(selectedDropdown!.id == id){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    override public func toJSON() -> JSON {
+        var argumentJSON = super.toJSON();
+        argumentJSON["isExpression"] = JSON(false);
+        argumentJSON["isDropdown"] = JSON(true);
+        argumentJSON["expressionId"] = JSON.null;
+        return argumentJSON;
+    }
+
+}
+
+class ExpressionArgument:ArgumentData{
+    let expressionId:String
+   
+    init(expressionId:String,defaultVal:String){
+        self.expressionId = expressionId;
+        super.init(defaultVal:defaultVal);
+    }
+    override public func toJSON() -> JSON {
+        var argumentJSON = super.toJSON();
+        argumentJSON["isExpression"] = JSON(true);
+        argumentJSON["isDropdown"] = JSON(false);
+        argumentJSON["expressionId"] = JSON(expressionId);
+        return argumentJSON;
+    }
+    
+    override public func getExpressionId()->String?{
+        return self.expressionId;
+    }
+    
     
 }

@@ -11,13 +11,12 @@ import UIKit
 //Drawing
 //stores geometry
 
-class Drawing: TimeSeries, WebTransmitter, Hashable{
+class Drawing: TimeSeries, Hashable{
     //check for if segments need drawing;
     var dirty = false
     
     private var activeStrokes = [String:[Stroke]]();
     var allStrokes = [Stroke]();
-    var transmitEvent = Event<(String)>()
     var initEvent = Event<(WebTransmitter,String)>()
     let strokeGeneratedEvent = Event<(String)>();
     let strokeRemovedEvent = Event<([String])>();

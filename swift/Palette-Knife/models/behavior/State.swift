@@ -134,22 +134,15 @@ struct Constraint{
 }
 
 class Method{
-    var name: String;
+    var fieldName: String;
     var id: String;
-    var arguments: [Any]?
-    var expressionId: String
-    init(id:String,name:String,expressionId:String,arguments:[Any]?){
-        self.name = name;
+    var arguments: [Expression]
+    init(id:String,fieldName:String,arguments:[Expression]){
+        self.fieldName = fieldName;
         self.id = id;
         self.arguments = arguments;
-        self.expressionId = expressionId;
     }
     
-    func toJSON()->String{
-        var data = "{\"id\":\""+(self.id)+"\","
-        data += "\"name\":\""+(self.name)+"\"}"
-        return data;
-    }
     
 }
 
@@ -167,24 +160,12 @@ class StateTransition{
         self.id = id;
     }
     
-    func addMethod(id:String, name:String, expressionId:String, arguments:[Any]?){
-        methods.append(Method(id:id, name:name,expressionId:expressionId, arguments:arguments));
+    func addMethod(id:String, fieldName:String,  arguments:[Expression]){
+        methods.append(Method(id:id, fieldName:fieldName, arguments:arguments));
     }
     
-    func toJSON()->String{
-        var data = "{\"id\":\""+(self.id)+"\","
-        data += "\"name\":\""+self.name+"\","
-        data += "\"methods\":[";
-        for i in 0..<methods.count{
-            if(i>0){
-                data += ","
-            }
-            data += methods[i].toJSON();
-        }
-        data += "]"
-        data += "}"
-        return data;
-    }
+
+    
 
 }
 

@@ -103,6 +103,14 @@ class Expression:Observable<Float>{
 
 }
 
+//TODO: POPULATE DROPDOWN EXPRESSION CLASS
+class DropdownExpression:Expression{
+ 
+    func getSelectedId()->String{
+        return "foo";
+    }
+    
+}
 
 
     
