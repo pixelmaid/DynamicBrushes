@@ -57,6 +57,8 @@ xcuserdata/
 *.moved-aside
 *.xccheckout
 *.xcscmblueprint
+*.DS_Store
+javascript/package-lock.json
 
 ## Obj-C/Swift specific
 *.hmap
