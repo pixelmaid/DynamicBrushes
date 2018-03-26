@@ -217,8 +217,8 @@ class BehaviorDefinition {
     
     
     func parseStateJSON(data:JSON){
-        let stateId = data["id"].stringValue
-        let stateName = data["name"].stringValue
+        let stateId = data["stateId"].stringValue
+        let stateName = data["stateName"].stringValue
         let stateX = data["x"].floatValue
         let stateY = data["y"].floatValue
         self.addState(stateId: stateId, stateName: stateName, stateX: stateX, stateY: stateY)
@@ -267,7 +267,7 @@ class BehaviorDefinition {
                 
                 var settings:JSON = [:]
                 settings["inc"] = condition_list[0];
-                let interval_id =  BehaviorManager.generators["default"]!.initializeSignal(fieldName:"interval",displayName:"interval",settings:settings,classType: "Interval",isProto:false , order:nil);
+                let interval_id =  BehaviorManager.generators["default"]!.initializeSignal(fieldName:"interval",displayName:"interval",settings:settings,classType: "Interval", style:"generator", isProto:false , order:nil);
                 
                 
                 switch(event){

@@ -233,6 +233,27 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
      // set a title
 
                 $.contextMenu({
+                    selector: '#canvas',
+                    callback: function(key, options) {
+                        if (key == "newstate") {
+                            var state_id = ID();
+                            var x = $(".context-menu-visible").parent().position().left;
+                            var y = $(".context-menu-visible").parent().position().top;
+                            var name = prompt("Please give your state a name", "myState");
+                            if (name !== null) {
+                                self.trigger("ON_STATE_ADDED", [self.id, state_id, name, x, y]);
+                            }
+                        }
+                    },
+                    items: {
+                        "newstate": {
+                            name: "New State",
+                        }
+                    }
+
+                });
+
+                $.contextMenu({
                     selector: '#' + self.id + ' .mapping',
                     callback: function(key, options) {
                         if (key == "delete") {
@@ -323,16 +344,17 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                         };
                         var x = $(ui.draggable).position().left;
                         var y = $(ui.draggable).position().top;
-                        if (type == 'state') {
-                            var name = prompt("Please give your state a name", "myState");
-                            if (name !== null) {
-                                data.name = name;
-                                self.trigger("ON_STATE_ADDED", [x, y, data]);
+                        // if (type == 'state') {
+                        //     var name = prompt("Please give your state a name", "myState");
+                        //     if (name !== null) {
+                        //         data.name = name;
+                        //         self.trigger("ON_STATE_ADDED", [x, y, data]);
 
-                            }
-                            $(ui.helper).remove(); //destroy clone
-                            $(ui.draggable).remove(); //remove from list
-                        } else if (type == "brush_prop") {
+                        //     }
+                        //     $(ui.helper).remove(); //destroy clone
+                        //     $(ui.draggable).remove(); //remove from list
+                        // } 
+                         if (type == "brush_prop") {
                             var mappingId = $(ui.draggable).attr('mappingId');
                             var stateId = $(ui.draggable).attr('stateId');
 

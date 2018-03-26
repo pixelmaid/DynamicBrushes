@@ -14,12 +14,13 @@ class Signal:Observable<Float>{
     internal var index:Int = 0;
     internal var signalBuffer = [Float]();
     
-    internal var position:Int = 0;
+    internal var position:Int = 0
     internal let fieldName:String!
     internal let displayName:String!
-    internal let collectionId:String!;
-    internal var order:Int = -1;
-    
+    internal let collectionId:String!
+    internal var order:Int = -1
+    internal let style:String!
+
     static let stylusUp:Float = 0.0;
     static let stylusMove:Float = 1.0;
     static let stylusDown:Float = 2.0;
@@ -27,11 +28,12 @@ class Signal:Observable<Float>{
     var dataSubscribers = [String:Observable<Float>]();
     var id:String
     //    var param = Observable<Float>(1.0);
-    required init(id:String,fieldName:String, displayName:String, collectionId:String, settings:JSON){
+    required init(id:String,fieldName:String, displayName:String, collectionId:String, style:String, settings:JSON){
         self.id = id;
         self.fieldName = fieldName;
         self.collectionId = collectionId
         self.displayName = displayName;
+        self.style = style;
         super.init(0)
     }
     
@@ -107,6 +109,7 @@ class Signal:Observable<Float>{
         metaJSON["classType"] = JSON(String(describing: type(of: self)));
         metaJSON["settings"] = self.getSettingsJSON();
         metaJSON["order"] = JSON(self.order);
+        metaJSON["style"] = JSON(self.style);
         return metaJSON;
     }
     
@@ -122,8 +125,8 @@ class TimeSignal:Signal{
 
 
 class LiveSignal:Signal{
-    required init(id: String, fieldName: String, displayName: String, collectionId: String, settings: JSON) {
-        super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, settings: settings);
+    required init(id: String, fieldName: String, displayName: String, collectionId: String, style: String, settings: JSON) {
+        super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings: settings);
         self.setLiveStatus(status: true);
     }
 }

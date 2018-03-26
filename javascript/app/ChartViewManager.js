@@ -362,8 +362,8 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                     this.onDatasetAdded(mappingId, datasetId, datasetType, behaviorId, stateId, relativePropertyName, relativePropertyFieldName, expressionId, expressionText, expressionPropertyList);
                 }.bind(this));
 
-                chartView.addListener("ON_STATE_ADDED", function(x, y, data) {
-                    this.onStateAdded(x, y, data);
+                chartView.addListener("ON_STATE_ADDED", function(behaviorId, stateId, stateName, x, y)  {
+                    this.onStateAdded(behaviorId, stateId, stateName, x, y);
                 }.bind(this));
 
                 chartView.addListener("ON_STATE_MOVED", function(behaviorId, stateId, x, y) {
@@ -911,12 +911,19 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                 this.trigger("ON_DATA_REQUEST_EVENT", [transmit_data]);
             }
 
-            onStateAdded(x, y, data) {
+            onStateAdded(behaviorId, stateId, stateName, x, y) {
 
-                var transmit_data = data;
-                data.type = "state_added";
-                data.x = x - $("#" + data.behaviorId).offset().left;
-                data.y = y - $("#" + data.behaviorId).offset().top;
+                var transmit_data = {
+                    behaviorId: behaviorId,
+                    stateId: stateId,
+                    stateName: stateName,
+                    x: x,
+                    y: y,
+                    type: "state_added"
+                };
+                // data.type = "state_added";
+                // data.x = x - $("#" + behaviorId).offset().left;
+                // data.y = y - $("#" + behaviorId).offset().top;
                 console.log("state created", transmit_data);
                 this.lastAuthoringRequest = {
                     data: transmit_data

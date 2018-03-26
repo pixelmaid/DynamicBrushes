@@ -24,8 +24,10 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 					var collectionId = collections[i]["id"];
 					var collectionName = collections[i]["name"];
 					var collectionSignals = collections[i]["signals"];
-					var item_class = "block palette"
+					var style = collections[i]["style"];
+					var item_class = style + " palette block property "
 
+					//stylus, ui, generator, recording, dataset
 					switch (classType) {
 						case "live":
 						 	item_class = "palette block property sensor";
