@@ -467,7 +467,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
             newNode(state_data) {
                 var self = this;
 
-                console.log(state_data.x, state_data.y, $("#" + this.id).offset(), this.id, state_data.name);
+                console.log(state_data.x, state_data.y, $("#" + this.id).offset(), this.id, state_data.stateName);
                 if (!state_data) {
                     state_data = {
                         name: "state " + state_counter,
@@ -478,14 +478,14 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 }
                 var html;
                 var d = document.createElement("div");
-                var id = state_data.id;
+                var id = state_data.stateId;
                 d.className = "w";
 
-                if (state_data.name == "setup") {
+                if (state_data.stateName == "setup") {
                     console.log("state data  is setup");
                     d.className = "setup w";
                     html = startTemplate(state_data);
-                } else if (state_data.name == "die") {
+                } else if (state_data.stateName == "die") {
                     d.className = "die w";
                     html = startTemplate(state_data);
                 } else {
@@ -502,10 +502,10 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 d.style.left = state_data.x + "px";
                 d.style.top = state_data.y + "px";
                 this.instance.getContainer().appendChild(d);
-                this.initNode(d, state_data.id, state_data.name);
+                this.initNode(d, state_data.stateId, state_data.stateName);
 
                 console.log("state", $('#' + id));
-                $("#" + id).attr("name", state_data.name);
+                $("#" + id).attr("name", state_data.stateName);
                 $('#' + id).droppable({
                     greedy: true,
                     drop: function(event, ui) {

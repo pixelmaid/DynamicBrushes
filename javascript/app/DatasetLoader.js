@@ -14,7 +14,7 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 			}
 
 			loadCollection(data) {
-				console.log("!!! LOAD COLLECTIONG LOADING ", data);
+				console.log("!!! LOAD COLLECTION", data);
 				var self = this;
 				var collections =  data;
 
@@ -28,25 +28,25 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 					var item_class = style + " palette block property "
 
 					//stylus, ui, generator, recording, dataset
-					switch (classType) {
-						case "live":
-						 	item_class = "palette block property sensor";
-						 	if (collectionName === "ui") item_class =  "palette block property ui";
-						 	break;
-						case "generator":
-						    item_class = "block property generator palette";
-						    break;
-						case "brush":
-							item_class = "block property palette";
-							if (collectionName === "spawn properties") item_class = "block property generator palette";
-							break;
-						case "recording":
-							item_class = "block recording palette";
-							break;
-						case "imported":
-							item_class = "block dataset palette";
-							break;
-					}
+					// switch (classType) {
+					// 	case "live":
+					// 	 	item_class = "palette block property sensor";
+					// 	 	if (collectionName === "ui") item_class =  "palette block property ui";
+					// 	 	break;
+					// 	case "generator":
+					// 	    item_class = "block property generator palette";
+					// 	    break;
+					// 	case "brush":
+					// 		item_class = "block property palette";
+					// 		if (collectionName === "spawn properties") item_class = "block property generator palette";
+					// 		break;
+					// 	case "recording":
+					// 		item_class = "block recording palette";
+					// 		break;
+					// 	case "imported":
+					// 		item_class = "block dataset palette";
+					// 		break;
+					// }
 
 
 					var items = [];
