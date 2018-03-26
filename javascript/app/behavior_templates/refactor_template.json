@@ -17,24 +17,24 @@
 
       ],
       "states": [{
-        "name": "state 2",
+        "stateName": "state 2",
         "x": 100,
-        "id": "_4ef5vl65d",
+        "stateId": "_4ef5vl65d",
         "y": 100
       }, {
-        "name": "state 1",
+        "stateName": "state 1",
         "x": 347.99716186523438,
-        "id": "_s865vlzry",
+        "stateId": "_s865vlzry",
         "y": 325
       }, {
-        "name": "setup",
+        "stateName": "setup",
         "x": 71.988632202148438,
-        "id": "_y5p6lqn2a",
+        "stateId": "_y5p6lqn2a",
         "y": 335.99429321289062
       }, {
-        "name": "die",
+        "stateName": "die",
         "x": 1018,
-        "id": "_jupcoyws8",
+        "stateId": "_jupcoyws8",
         "y": 221
       }],
       "auto_spawn_num": 1,

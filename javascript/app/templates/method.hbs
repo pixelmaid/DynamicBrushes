@@ -1,21 +1,15 @@
-<div name= {{targetMethod}} id="{{methodId}}" type="method" class="block method statement">
-  <div class ="methodName resizeDiv">{{targetMethod}}</div>
-   {{#if hasArguments}}
-  <div class="methodArguments resizeDiv">
-
- <div id="{{expressionId}}" parent_id="{{methodId}}" class = "reference_expression expression">       
-      <textarea  class="text_entry">
-        {{reference_text}}
-      </textarea>  
-  </div>
-
- <!--<input type="text" id="{{methodTextId}}" argumentId="{{defaultArgumentId}}" value="{{defaultArgumentName}}" selectBoxOptions="{{argumentList}}">-->
-  {{#if methodNumberId}}
-  <div class= "selectBox selectBoxNumber">
-  <input class="selectBoxInput selectBoxNumber" id="{{methodNumberId}}" type="number" value="{{defaultNumberArgument}}">
-  </div>
-  {{/if}}
-  </div>
-  {{/if}}
- <div class="clearfix"></div>
+<div displayName= "{{displayName}}" fieldName="{{fieldName}}" id="{{methodId}}" type="method" class="block method statement">
+    <div class ="methodName resizeDiv">{{displayName}}</div>
+        <div class="methodArguments resizeDiv">
+            
+            {{#each argumentList}}
+                <div class="argumentLabel">{{displayName}}</div>
+                <div id="{{expressionId}}" class = "reference_expression expression">       
+                <textarea  class="text_entry">
+                {{default}}
+                </textarea>  
+                </div>
+            {{/each}}
+    </div>
+    <div class="clearfix"></div>
 </div>

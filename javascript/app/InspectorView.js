@@ -25,9 +25,6 @@ define(["jquery", "jquery-ui", "handlebars", "app/id","hbs!app/templates/propert
                     this.el.html(currentData.toFixed(2));        
             }
 
-           
-
-
 
         };
 

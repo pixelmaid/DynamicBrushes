@@ -471,7 +471,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 }
                 var html;
                 var d = document.createElement("div");
-                var id = state_data.id;
+                var id = state_data.stateId;
                 d.className = "w";
 
                 if (state_data.name == "setup") {
@@ -495,10 +495,10 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 d.style.left = state_data.x + "px";
                 d.style.top = state_data.y + "px";
                 this.instance.getContainer().appendChild(d);
-                this.initNode(d, state_data.id, state_data.name);
+                this.initNode(d, state_data.stateId, state_data.name);
 
                 console.log("state", $('#' + id));
-                $("#" + id).attr("name", state_data.name);
+                $("#" + id).attr("name", state_data.stateName);
                 $('#' + id).droppable({
                     greedy: true,
                     drop: function(event, ui) {
@@ -698,71 +698,10 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
             addMethod(data) {
                 console.log("method data =", data);
-                var self = this;
-                var argumentList = "";
-
-                for (var arg in data.methodArguments) {
-                    if (data.methodArguments.hasOwnProperty(arg)) {
-                        argumentList += arg + "|" + data.methodArguments[arg] + ";";
-                    }
-                }
-                var methodTemplateData = {};
-
-                argumentList = argumentList.slice(0, -1);
-                console.log("data.methodArguments", data.methodArguments, argumentList);
-
-                methodTemplateData.targetMethod = data.targetMethod;
-                methodTemplateData.methodId = data.methodId;
-                console.log("has arguments?", data.hasArguments);
-                if (data.hasArguments) {
-                    methodTemplateData.argumentList = argumentList;
-                    methodTemplateData.hasArguments = true;
-                    if (data.currentArguments) {
-                        methodTemplateData.defaultArgumentName = data.methodArguments[data.currentArguments[0]];
-                        methodTemplateData.defaultArgumentId = data.currentArguments[0];
-
-                    } else {
-                        methodTemplateData.defaultArgumentName = data.methodArguments[data.defaultArgument];
-                        methodTemplateData.defaultArgumentId = data.defaultArgument;
-                    }
-
-                    methodTemplateData.methodTextId = data.methodId + "_text";
-                    if (data.targetMethod == "spawn") {
-                        methodTemplateData.methodNumberId = data.methodId + "_num";
-                        if (data.currentArguments) {
-                            methodTemplateData.defaultNumberArgument = data.currentArguments[1];
-
-                        } else {
-                            methodTemplateData.defaultNumberArgument = 1;
-                        }
-
-                    }
-
-                }
-                var html = methodTemplate(methodTemplateData);
-                console.log("target transition:", data.targetTransition, $('#' + data.targetTransition), $($('#' + data.targetTransition).find(".methods")));
-                if (data.targetTransition && data.targetTransition != "globalTransition") {
-                    $($('#' + data.targetTransition).find(".methods")[0]).append(html);
-
-                } else {
-
-                    $('#' + self.id).append(html);
-
-                }
-                // this.makeDraggable($("#" + data.methodId));
-                if (data.hasArguments) {
-                    console.log("get text box by id", document.getElementById(methodTemplateData.methodTextId), methodTemplateData.methodTextId);
-                    //EditableSelect.createEditableSelect(document.getElementById(methodTemplateData.methodTextId));
-                    var expression = this.initializeExpression(data.expressionId, data.methodId);
-                    console.log("method added event", $("#" + data.targetTransition + " .methods .block"), data, $('#' + methodTemplateData.methodTextId));
-                    $('#' + methodTemplateData.methodTextId).change(function() {
-                        console.log("change!");
-                        self.methodArgumentChanged(self.id, data.targetTransition, data.methodId, data.targetMethod);
-                    });
-                    $('#' + data.methodId + "_num").change(function() {
-                        console.log("change!");
-                        self.methodArgumentChanged(self.id, data.targetTransition, data.methodId, data.targetMethod);
-                    });
+                var html = methodTemplate(data);
+                 $($('#' + data.transitionId).find(".methods")[0]).append(html);
+                 for (var i=0;i<data.argumentList.length;i++){
+                    var expression = this.initializeExpression(data.argumentList.expressionId, data.methodId);
                 }
             }
 
