@@ -89,6 +89,8 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
                         clone.attr("type", $(event.target).attr('type'));
                         clone.attr("name", $(event.target).attr('name'));
                         clone.attr("class", $(event.target).attr('class'));
+                        clone.attr("blockstyle", $(event.target).attr('blockstyle'));
+
                         clone.addClass("drag-n-drop");
 
                         if ($(event.target).attr('class').indexOf("recording") >= 0) {

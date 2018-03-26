@@ -9,14 +9,14 @@
                              "displayName": "stylus time",
                              "classType": "TimeSignal",
                              "order": 0,
-                             "style": "stylus",
+                             "style": "sensor",
                              "settings": {}
                              }, {
                              "fieldName": "x",
                              "displayName": "stylus x",
                              "classType": "LiveSignal",
                              "order": 1,
-                             "style": "stylus",
+                             "style": "sensor",
                              "settings": {}
                              },
                              {
@@ -24,7 +24,7 @@
                              "displayName": "stylus y",
                              "classType": "LiveSignal",
                              "order": 2,
-                             "style": "stylus",
+                             "style": "sensor",
                              "settings": {}
                              },
                              {
@@ -32,7 +32,7 @@
                              "displayName": "stylus delta x",
                              "classType": "LiveSignal",
                              "order": 3,
-                             "style": "stylus",
+                             "style": "sensor",
                              "settings": {}
                              },
                              
@@ -41,7 +41,7 @@
                              "displayName": "stylus delta y",
                              "classType": "LiveSignal",
                              "order": 4,
-                             "style": "stylus",
+                             "style": "sensor",
                              "settings": {}
                              },
                              {
@@ -49,7 +49,7 @@
                              "displayName": "stylus origin x",
                              "classType": "LiveSignal",
                              "order": 5,
-                             "style": "stylus",
+                             "style": "sensor",
                              "settings": {}
                              },
                              
@@ -58,7 +58,7 @@
                              "displayName": "stylus origin x",
                              "classType": "LiveSignal",
                              "order": 6,
-                             "style": "stylus",
+                             "style": "sensor",
                              "settings": {}
                              },
                              
@@ -68,7 +68,7 @@
                              "displayName": "stylus force",
                              "classType": "LiveSignal",
                              "order": 7,
-                             "style": "stylus",
+                             "style": "sensor",
                              "settings": {}
                              },
                              
@@ -79,7 +79,7 @@
                              "displayName": "stylus angle",
                              "classType": "LiveSignal",
                              "order": 8,
-                             "style": "stylus",
+                             "style": "sensor",
                              "settings": {}
                              },
                              
@@ -89,7 +89,7 @@
                              "displayName": "stylus event",
                              "classType": "StylusEvent",
                              "order": 9,
-                             "style": "stylus",
+                             "style": "sensor",
                              "settings": {}
                              },
                              
@@ -98,7 +98,7 @@
                              "displayName": "stylus euclidean distance",
                              "classType": "LiveSignal",
                              "order": 10,
-                             "style": "stylus",
+                             "style": "sensor",
                              "settings": {}
                              },
                              
@@ -107,7 +107,7 @@
                              "displayName": "stylus x distance",
                              "classType": "LiveSignal",
                              "order": 11,
-                             "style": "stylus",
+                             "style": "sensor",
                              "settings": {}
                              },
                              
@@ -117,7 +117,7 @@
                              "displayName": "stylus y distance",
                              "classType": "LiveSignal",
                              "order": 12,
-                             "style": "stylus",
+                             "style": "sensor",
                              "settings": {}
                              },
                              
@@ -126,7 +126,7 @@
                              "displayName": "stylus speed",
                              "classType": "LiveSignal",
                              "order": 13,
-                             "style": "stylus",
+                             "style": "sensor",
                              "settings": {}
                              },
                              
@@ -135,7 +135,7 @@
                              "displayName": "stylus delta angle ",
                              "classType": "LiveSignal",
                              "order": 14,
-                             "style": "stylus",
+                             "style": "sensor",
                              "settings": {}
                              }
                              

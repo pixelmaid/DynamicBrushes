@@ -190,7 +190,6 @@ h1{
 .methods{
   margin: 10px 5px 5px;
   min-height: 20px;
-  max-width: 250px;
   min-width: 200px;
   display: inline-block;
   text-align: center;
@@ -1152,3 +1151,18 @@ position: absolute;
         margin-top: 20px;
     }
 
+/* actions */
+.methodArguments {
+  overflow: hidden;
+}
+.argumentLabel {
+  display: inline-block;
+  float: left;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  margin: 0px 6px 0px 8px;
+}
+.methodsContainer {
+  max-width: 350px;
+}
