@@ -451,7 +451,12 @@ class BehaviorManager{
                     let signalCollection:LiveCollection;
                     if metadata["name"] == "stylus"{
                         signalCollection = StylusCollection(data:metadata);
-                        StylusManager.registerStylus(id: signalCollection.id, stylusCollection:signalCollection as! StylusCollection);
+                        stylusManager.registerCollection(id: signalCollection.id, collection:signalCollection as! StylusCollection);
+                    }
+                    else if metadata["name"] == "ui"{
+                        signalCollection = UICollection(data:metadata);
+                        uiManager.registerCollection(id: signalCollection.id, collection:signalCollection as! UICollection);
+
                     }
                     else{
                         signalCollection = LiveCollection(data:metadata);
@@ -477,7 +482,7 @@ class BehaviorManager{
                     print("metadata id",metadata["id"].stringValue);
 
                     if(metadata["id"].stringValue == "recording_preset"){
-                        StylusManager.setRecordingPresetData(data: metadata);
+                        stylusManager.setRecordingPresetData(data: metadata);
                     }
                     else{
                         let signalCollection = RecordingCollection(data:metadata);

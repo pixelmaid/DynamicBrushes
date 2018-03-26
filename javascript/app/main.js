@@ -66,6 +66,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
 
             } else if (data.type == "synchronize") {
                 hideOverlay();
+                signalView.clearPalette();
                 var currentBehaviorName = data["currentBehaviorName"];
                 var currentBehaviorFile = data["currentFile"];
                 console.log("currentBehaviorName=", currentBehaviorName, currentBehaviorFile);

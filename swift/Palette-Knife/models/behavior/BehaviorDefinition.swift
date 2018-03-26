@@ -842,8 +842,6 @@ class BehaviorDefinition {
             }
         }
         
-        uiInput.invalidateAllProperties();
-        
         
     }
     

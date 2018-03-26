@@ -76,10 +76,10 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         collectionView?.dataSource = self
         collectionView?.delegate = self
 //        collectionView?.prefetchDataSource = self
-        _ = StylusManager.recordEvent.addHandler(target:self, handler: RecordingViewController.recordingCreatedHandler, key: recordingKey)
+        _ = stylusManager.recordEvent.addHandler(target:self, handler: RecordingViewController.recordingCreatedHandler, key: recordingKey)
         collectionView?.register(RecordingFrameCell.self, forCellWithReuseIdentifier: "cell")
-        _ = StylusManager.visualizationEvent.addHandler(target: self, handler: RecordingViewController.highlightCellForPlayback, key: keyframeKey)
-        _ = StylusManager.visualizationEvent.addHandler(target: self, handler: RecordingViewController.deselectLastKeyframe, key: keyframeKey)
+        _ = stylusManager.visualizationEvent.addHandler(target: self, handler: RecordingViewController.highlightCellForPlayback, key: keyframeKey)
+        _ = stylusManager.visualizationEvent.addHandler(target: self, handler: RecordingViewController.deselectLastKeyframe, key: keyframeKey)
 
     }
     
@@ -345,14 +345,14 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
             print ("^^ loop pressed from ", RecordingViewController.recording_start, " to ", RecordingViewController.recording_end)
             let start_id = RecordingViewController.getGestureId(index: RecordingViewController.recording_start)
             let end_id = RecordingViewController.getGestureId(index: RecordingViewController.recording_end)
-            if (StylusManager.liveStatus()) {
+            if (stylusManager.liveStatus()) {
                 isRecordingLoop = true
-                StylusManager.setToRecording(idStart: start_id, idEnd: end_id)
+                stylusManager.setToRecording(idStart: start_id, idEnd: end_id)
                 //erase strokes associated with the recording
-                StylusManager.eraseStrokesForLooping(idStart:start_id, idEnd:end_id)
+                stylusManager.eraseStrokesForLooping(idStart:start_id, idEnd:end_id)
                 
             } else { //stop recording
-                StylusManager.setToLive()
+                stylusManager.setToLive()
                 firstLoopCompleted = true
             }
         }

@@ -8,44 +8,26 @@
 
 import Foundation
 import UIKit
+import SwiftyJSON
 
-class UIInput: TimeSeries {
+class UICollection: LiveCollection {
    
-    var initEvent = Event<(WebTransmitter,String)>()
-    
-    
-    let hue:Observable<Float>
-    let lightness:Observable<Float>
-    let saturation:Observable<Float>
-    let alpha:Observable<Float>
-    let diameter:Observable<Float>
+    var hue:Float = 0
+    var lightness:Float = 25
+     var saturation:Float = 100
+    var alpha:Float = 100;
+     var diameter:Float = 20
 
-    override init(){
-        self.hue = Observable<Float>(0.5)
-        self.lightness = Observable<Float>(0.25)
-        self.saturation = Observable<Float>(1)
-        self.diameter = Observable<Float>(20)
-        self.diameter.printname = "ui_diameter"
-        self.alpha = Observable<Float>(1.0)
-        
-       
-        
-        super.init();
-        
-        self.name = "uiinput"
-        self.id = "ui";
-
-        self.events = []
-        self.createKeyStorage();
-
-    }
-    
-    func invalidateAllProperties(){
-        self.diameter.invalidate(oldValue: self.diameter.get(id: nil), newValue: self.diameter.get(id: nil));
-        self.alpha.invalidate(oldValue: self.alpha.get(id: nil), newValue: self.alpha.get(id: nil));
-        self.hue.invalidate(oldValue: self.hue.get(id: nil), newValue: self.hue.get(id: nil));
-        self.lightness.invalidate(oldValue: self.lightness.get(id: nil), newValue: self.lightness.get(id: nil));
-        self.saturation.invalidate(oldValue: self.saturation.get(id: nil), newValue: self.saturation.get(id: nil));
+    required init(data: JSON) {
+        super.init(data: data);
+        var protodata:JSON = [:]
+        protodata["hue"] = JSON(0);
+        protodata["lightness"] = JSON(0);
+        protodata["saturation"] = JSON(0);
+        protodata["alpha"] = JSON(0);
+        protodata["diameter"] = JSON(0);
+        protodata["time"] = JSON(0);
+        super.addProtoSample(data: protodata);
     }
     
     func setColor(color:UIColor){
@@ -55,26 +37,51 @@ class UIInput: TimeSeries {
         var _alpha = CGFloat(0)
         let success = color.getHue(&_hue, saturation: &_saturation, brightness: &_brightness, alpha: &_alpha)
         if(success){
-            self.hue.set(newValue: MathUtil.map(value:Float(_hue), low1:0, high1:1, low2:0, high2: 100))
-            self.lightness.set(newValue: MathUtil.map(value:Float(_brightness), low1:0, high1:1, low2:0, high2: 100))
-            self.saturation.set(newValue:MathUtil.map(value:Float(_saturation), low1:0, high1:1, low2:0, high2: 100))
-            
+            self.hue = MathUtil.map(value:Float(_hue), low1:0, high1:1, low2:0, high2: 100);
+            self.lightness = MathUtil.map(value:Float(_brightness), low1:0, high1:1, low2:0, high2: 100);
+            self.saturation = MathUtil.map(value:Float(_saturation), low1:0, high1:1, low2:0, high2: 100);
+            _ = self.exportData();
+
         }
     }
     
     
     func setDiameter(val:Float){
-        self.diameter.set(newValue: val);
+        self.diameter = val;
+         self.exportData();
     }
     
     func setAlpha(val:Float){
-        self.alpha.set(newValue: val);
+        self.alpha = val;
+         self.exportData();
     }
     
-    func transmitData(){
-        //TODO: implement transmit data
+   
+     override func exportData()->JSON{
+        //export data
+        var data = super.exportData();
+        data["hue"] = JSON(self.hue);
+        data["lightness"] = JSON(self.lightness);
+        data["saturation"] = JSON(self.saturation);
+        data["alpha"] = JSON(self.alpha);
+        data["diameter"] = JSON(self.diameter);
+    
+     
+        self.addProtoSample(data: data)
+        return data;
     }
     
-
+    //TODO: INIT UI PROPERTIES
+    override public func initializeSignal(fieldName:String, displayName:String, settings:JSON, classType:String, style:String, isProto:Bool, order:Int?)->String{
+        if(classType == "TimeSignal"){
+            return super.initializeSignal(fieldName: fieldName, displayName: displayName, settings: settings, classType: classType, style:style, isProto: isProto, order: order);
+        }
+        
+        let id = NSUUID().uuidString
+        let signal = LiveSignal(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:settings);
+        self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
+        return id;
+    }
     
+ 
 }

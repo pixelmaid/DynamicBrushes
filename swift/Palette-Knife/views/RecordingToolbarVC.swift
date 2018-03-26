@@ -30,7 +30,7 @@ class RecordingToolbarVC: UIViewController, Requester {
         loopRecording.addTarget(self, action: #selector(RecordingToolbarVC.loop), for: .touchUpInside)
         exportButton.addTarget(self, action: #selector(RecordingToolbarVC.showExportDialog), for: .touchUpInside)
 
-        _ = StylusManager.visualizationEvent.addHandler(target: self, handler: RecordingToolbarVC.recordImgOn, key: recordImgEventKey)
+        _ = stylusManager.visualizationEvent.addHandler(target: self, handler: RecordingToolbarVC.recordImgOn, key: recordImgEventKey)
 
     }
     
@@ -48,7 +48,7 @@ class RecordingToolbarVC: UIViewController, Requester {
         speedLabel.text = "\(speed)x"
         
         //TODO hook this up to the playback speed now
-        StylusManager.setPlaybackRate(v: speed);
+        stylusManager.setPlaybackRate(v: speed);
 
     }
     
@@ -83,7 +83,7 @@ class RecordingToolbarVC: UIViewController, Requester {
             print("# exporting from ", start_id, " to ", end_id)
             print("# index ", RecordingViewController.recording_start, RecordingViewController.recording_end)
             
-            var collection = StylusManager.exportRecording(startId: start_id, endId: end_id)
+            var collection = stylusManager.exportRecording(startId: start_id, endId: end_id)
             collection!["name"].stringValue = name!;
             
             var collectionList:JSON = [:];

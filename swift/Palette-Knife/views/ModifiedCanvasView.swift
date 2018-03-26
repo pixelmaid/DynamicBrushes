@@ -272,7 +272,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
                     let y = Float(point.y)
                     let force = Float(touch.force);
                     let angle = Float(touch.azimuthAngle(in: self))
-                    StylusManager.onStylusDown(x: x, y: y, force: force, angle: angle);
+                    stylusManager.onStylusDown(x: x, y: y, force: force, angle: angle);
 
                 }
         
@@ -368,7 +368,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
                 let force = Float(touch.force);
                 let angle = Float(touch.azimuthAngle(in: self))
                 //let mappedAngle = MathUtil.map(value: angle, low1: 0, high1: 2*Float.pi, low2: 0, high2: 1);
-                StylusManager.onStylusMove(x: x, y: y, force: force, angle: angle)
+                stylusManager.onStylusMove(x: x, y: y, force: force, angle: angle)
 
             }
         
@@ -382,7 +382,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
         
         context.setStrokeColor(UIColor.red.cgColor)
         //TODO: will need to fine tune this
-        context.setLineWidth(CGFloat(uiInput.diameter.get(id: nil)))
+        context.setLineWidth(20)
         context.setLineCap(.round)
         context.setAlpha(CGFloat(1));
         context.setBlendMode(CGBlendMode.clear)
@@ -401,7 +401,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
             let y = Float(point.y)
             let force = Float(touch.force);
             let angle = Float(touch.azimuthAngle(in: self))
-            StylusManager.onStylusUp(x: x, y: y, force: force, angle: angle)
+            stylusManager.onStylusUp(x: x, y: y, force: force, angle: angle)
         }
         
     }
