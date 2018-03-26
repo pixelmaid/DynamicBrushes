@@ -30,6 +30,8 @@
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>photo is used for export</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>microphone is used for data recording</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
