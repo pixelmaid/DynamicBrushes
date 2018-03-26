@@ -172,15 +172,7 @@ class BehaviorDefinition {
         let transitionId = data["transitionId"].stringValue;
         let fieldName = data["fieldName"].stringValue;
         let displayName = data["displayName"].stringValue;
-        let methodId:String;
-        var isInit = true;
-        if(data["methodId"] == JSON.null){
-            methodId = NSUUID().uuidString;
-            isInit = false;
-        }
-        else{
-            methodId = data["methodId"].stringValue;
-        }
+        let methodId:String = data["methodId"].stringValue;
         var arguments:[ArgumentData] = [];
         let argumentList = data["argumentList"].arrayValue
         for i in 0..<argumentList.count{
@@ -189,28 +181,24 @@ class BehaviorDefinition {
             let isDropdown = argumentJSON["isDropdown"].boolValue;
             let defaultVal = argumentJSON["defaultVal"].stringValue;
             let expressionId:String?
-            if(!isInit){
-                 expressionId = NSUUID().uuidString;
-                if(isExpression){
-                    self.addExpression(id: expressionId!, emitterOperandList: [], expressionText: defaultVal)
-                }
-                
-            }
-            else{
-                expressionId = argumentJSON["expressionId"].stringValue;
-            }
             let argumentData:ArgumentData;
             
             if(isExpression){
+                if(argumentJSON["expressionId"]==JSON.null){
+                    expressionId = NSUUID().uuidString;
+                    self.addExpression(id: expressionId!, emitterOperandList: [], expressionText: defaultVal)
+                }
+                else{
+                    expressionId = argumentJSON["expressionId"].stringValue;
+                }
                 argumentData = ExpressionArgument(expressionId: expressionId!, defaultVal: defaultVal);
             }
             else{
                 argumentData = DropdownArgument(defaultVal: defaultVal)
             }
             arguments.append(argumentData);
-           
         }
-    
+        
         self.addMethod(transitionId: transitionId, methodId: methodId, fieldName: fieldName, displayName: displayName, arguments: arguments);
         return self.methodToJSON(methodId: methodId)!;
     }

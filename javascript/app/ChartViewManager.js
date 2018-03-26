@@ -345,8 +345,8 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                     this.onMappingAdded(mappingId, name, fieldName, type, expressionId, stateId, behaviorId);
                 }.bind(this));
 
-                chartView.addListener("ON_METHOD_ADDED", function(behaviorId, transitionId, methodId, expressionId, targetMethod, args) {
-                    this.onMethodAdded(behaviorId, transitionId, methodId, expressionId, targetMethod, args);
+                chartView.addListener("ON_METHOD_ADDED", function(behaviorId, transitionId, methodId, fieldName, displayName, argumentList) {
+                    this.onMethodAdded(behaviorId, transitionId, methodId, fieldName, displayName, argumentList);
                 }.bind(this));
 
                 chartView.addListener("ON_METHOD_ARGUMENT_CHANGE", function(behaviorId, transitionId, methodId, targetMethod, args) {
@@ -488,7 +488,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                             break;
 
                         case "method_added":
-                            console.log("method added  called", data.data.methodArguments, data.data);
+                            console.log("method added  called", data.data);
                             this.lastAuthoringRequest.data.methodArguments = data.data.methodArguments;
                             this.lastAuthoringRequest.data.defaultArgument = data.data.defaultArgument;
                             this.lastAuthoringRequest.data.hasArguments = data.data.hasArguments;
@@ -764,16 +764,15 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
             }
     
 
-            onMethodAdded(behaviorId, transitionId, methodId, expressionId, targetMethod, args) {
-                console.log("method added", methodId, targetMethod);
-
+            onMethodAdded(behaviorId, transitionId, methodId, fieldName, displayName, argumentList) {
+                console.log("method added ",argumentList)
                 var transmit_data = {
                     behaviorId: behaviorId,
-                    targetTransition: transitionId,
+                    transitionId: transitionId,
                     methodId: methodId,
-                    expressionId: expressionId,
-                    targetMethod: targetMethod,
-                    args: args,
+                    fieldName: fieldName,
+                    displayName: displayName,
+                    argumentList: argumentList,
                     type: "method_added"
                 };
 
