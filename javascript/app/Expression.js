@@ -212,7 +212,7 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
 
             addReference(referenceId, referenceType, referenceDisplayName, style) {
                 this.references[referenceId] = [referenceType, referenceDisplayName];
-                console.log("added reference", referenceDisplayName);
+                console.log("added reference", referenceDisplayName,referenceType,referenceId,style);
                 this.addReferenceCheck = true;
                 this.mirror.setValue(this.mirror.getValue() + "%" + referenceId + "%");
                 this.addReferenceCheck = false;
