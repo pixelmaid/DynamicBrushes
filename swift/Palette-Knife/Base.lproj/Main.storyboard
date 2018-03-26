@@ -118,17 +118,17 @@
                                 <state key="normal" image="save_button2x.png"/>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="civ-vQ-wsY">
-                                <rect key="frame" x="1306" y="4" width="40" height="40"/>
+                                <rect key="frame" x="1263" y="4" width="40" height="40"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="layer_button2x.png"/>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tLC-Sz-Orh">
-                                <rect key="frame" x="1220" y="4" width="40" height="40"/>
+                                <rect key="frame" x="1164" y="4" width="40" height="40"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="behavior_button2x.png"/>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="p2B-Eq-Wjm">
-                                <rect key="frame" x="1266" y="4" width="40" height="40"/>
+                                <rect key="frame" x="1214" y="4" width="40" height="40"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gVA-ZT-zoR" userLabel="Erase Button">
@@ -142,15 +142,15 @@
                                 <state key="normal" image="brush_button2x.png"/>
                             </button>
                             <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="50" minValue="1" maxValue="200" translatesAutoresizingMaskIntoConstraints="NO" id="tsh-Qc-EHp" userLabel="diameter slider">
-                                <rect key="frame" x="511" y="9" width="222" height="31"/>
+                                <rect key="frame" x="504" y="9" width="187" height="31"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </slider>
                             <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="0.0" maxValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="soS-Q4-Hj5" userLabel="alpha slider">
-                                <rect key="frame" x="820" y="8" width="222" height="31"/>
+                                <rect key="frame" x="767" y="8" width="222" height="31"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </slider>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="alpha" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hou-hb-Rwi">
-                                <rect key="frame" x="765" y="12" width="42" height="21"/>
+                                <rect key="frame" x="712" y="12" width="42" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -174,21 +174,26 @@
                                 <state key="normal" image="airbrush_button2x.png"/>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="backing up" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5Jr-jJ-F9P">
-                                <rect key="frame" x="157" y="15" width="85" height="21"/>
+                                <rect key="frame" x="142" y="16" width="85" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zj8-xR-5ec">
-                                <rect key="frame" x="1078" y="8" width="59" height="30"/>
+                                <rect key="frame" x="1000" y="8" width="59" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="program"/>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nds-iM-XVH">
-                                <rect key="frame" x="1164" y="10" width="35" height="30"/>
+                                <rect key="frame" x="1078" y="8" width="35" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="undo"/>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="x6I-zH-HWh">
+                                <rect key="frame" x="233" y="5" width="37" height="37"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="mic_off2x.png"/>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
@@ -208,6 +213,7 @@
                         <outlet property="exportButton" destination="raq-oY-wRn" id="xMl-nY-4EZ"/>
                         <outlet property="fileListButton" destination="SLf-eG-2ZY" id="b55-NL-sCF"/>
                         <outlet property="layerPanelButton" destination="civ-vQ-wsY" id="2tW-cw-hVQ"/>
+                        <outlet property="micButton" destination="x6I-zH-HWh" id="74w-qJ-OeM"/>
                         <outlet property="penButton" destination="QPW-J3-rUs" id="NpX-gX-qlq"/>
                         <outlet property="programViewToggle" destination="zj8-xR-5ec" id="z8o-5E-Frm"/>
                         <outlet property="saveButton" destination="8gS-nz-efH" id="Hzl-b5-jO9"/>
@@ -216,7 +222,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cO4-mP-nr5" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="333" y="973"/>
+            <point key="canvasLocation" x="332.94289897510981" y="972.65624999999989"/>
         </scene>
         <!--Layer Panel View Controller-->
         <scene sceneID="cZd-Nb-Aah">
@@ -641,6 +647,7 @@
         <image name="layer_button2x.png" width="121" height="120"/>
         <image name="layeradd_button.png" width="33" height="33"/>
         <image name="loop_button_off2x.png" width="167" height="154"/>
+        <image name="mic_off2x.png" width="188" height="188"/>
         <image name="record_on2x.png" width="122" height="122"/>
         <image name="recording_export_button.png" width="64" height="70"/>
         <image name="refresh_button2x.png" width="121" height="101"/>

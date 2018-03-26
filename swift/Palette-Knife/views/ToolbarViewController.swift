@@ -24,6 +24,7 @@ class ToolbarViewController: UIViewController {
     @IBOutlet weak var airbrushButton: UIButton!
     @IBOutlet weak var diameterSlider: UISlider!
     
+    @IBOutlet weak var micButton: UIButton!
     @IBOutlet weak var alphaSlider: UISlider!
     
     @IBOutlet weak var backupLabel: UILabel!
@@ -34,6 +35,8 @@ class ToolbarViewController: UIViewController {
     var activePanel:String?
     var activeMode:String = "pen";
     var eraseActive:Bool = false;
+    
+    var micActive:Bool = false;
 
     var shapeLayer: CAShapeLayer?
     let eraseHighlight = UIImage(named: "erase_button_active2x")
@@ -45,6 +48,8 @@ class ToolbarViewController: UIViewController {
     let airbrushHighlight = UIImage(named: "airbrush_button_active2x")
     let airbrushStandard = UIImage(named: "airbrush_button2x")
 
+    let micOff = UIImage(named: "mic_off2x")
+    let micOn = UIImage(named: "mic_on2x")
 
     
     
@@ -80,9 +85,12 @@ class ToolbarViewController: UIViewController {
         behaviorPanelButton.addTarget(self, action: #selector(ToolbarViewController.panelToggled), for: .touchUpInside)
         programViewToggle.addTarget(self, action: #selector(ToolbarViewController.panelToggled), for: .touchUpInside)
 
+        micButton.addTarget(self, action: #selector(ToolbarViewController.micToggled), for: .touchUpInside)
+
         diameterSlider.addTarget(self, action: #selector(ToolbarViewController.diameterSliderChanged), for: .valueChanged)
           alphaSlider.addTarget(self, action: #selector(ToolbarViewController.alphaSliderChanged), for: .valueChanged)
         penToggled();
+        
     }
     
     func setColor(color:UIColor){
@@ -179,6 +187,23 @@ class ToolbarViewController: UIViewController {
             
         
     }
+    
+    func micToggled(){
+        if !micActive {
+            micButton.setImage(micOn, for: UIControlState.normal)
+            print("@ mic turned on")
+            micActive = true;
+            toolEvent.raise(data: ("MIC_ON"));
+        } else {
+            micButton.setImage(micOff, for: UIControlState.normal)
+            print("@ mic turned off")
+            micActive = false;
+            toolEvent.raise(data: ("MIC_OFF"));
+        }
+        
+        
+    }
+    
     
     func undoToggled(){
   

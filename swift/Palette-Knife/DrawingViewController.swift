@@ -8,6 +8,7 @@
 
 import UIKit
 import SwiftyJSON
+import AVFoundation
 
 
 let behaviorMapper = BehaviorMapper()
@@ -28,10 +29,14 @@ let kTopMargin =	10.0
 let kRightMargin =      10.0
 let pX = Float(1366)
 let pY = Float(1024)
-class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
+class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAudioRecorderDelegate, Requester{
     
     
+    //recording vars
     
+    var recordingSession: AVAudioSession!
+    var micRecorder: AVAudioRecorder!
+    var recordingTimer: Timer!
     // MARK: Properties
     
     
@@ -242,6 +247,14 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
         case "ALPHA_CHANGED":
             uiManager.setAlpha(val: (toolbarController?.alphaSlider.value)!);
             break;
+        case "MIC_ON":
+            print("mic on dvc @")
+            startRecording()
+            break
+        case "MIC_OFF":
+            print("mic off dvc @")
+            finishRecording(success: true)
+            break
         default:
             break;
         }
@@ -379,7 +392,100 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
         self.navigationController?.isNavigationBarHidden = true
         
         self.initInterface();
+        
+        //recording fns
+        recordingSession = AVAudioSession.sharedInstance()
+        do {
+            try recordingSession.setCategory(AVAudioSessionCategoryPlayAndRecord)
+            try recordingSession.setActive(true)
+            recordingSession.requestRecordPermission() { [unowned self] allowed in
+                DispatchQueue.main.async {
+                    if allowed {
+                        print("recording permissions granted @")
+                    } else {
+                        print("recording permissions not granted @")
+                    }
+                }
+            }
+        } catch {
+            print("@ failed in catch")
+        }
+    
 
+    }
+    
+    func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
+        if !flag {
+            finishRecording(success: false)
+        } else {
+            print("@ succ finish in handler")
+        }
+    }
+    func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder!, successfully flag: Bool) {
+        print("@ Audio Record Encode Error")
+    }
+    
+    class func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        let documentsDirectory = paths[0]
+        return documentsDirectory
+    }
+    
+    
+    class func getRecordingURL() -> URL {
+        //writes this new file to app owned directory
+        return getDocumentsDirectory().appendingPathComponent("recordings.m4a")
+    }
+    
+    
+    @objc func updateAudioMeter() {
+        if (micRecorder.isRecording == true) {
+            micRecorder.updateMeters()
+            var peak = micRecorder.averagePower(forChannel: 0)
+            print ("peak is @@ ", peak)
+//            self.meterView.peak = CGFloat(0.8 - peak / -60.0)
+        }
+    }
+    
+    func startRecording() {
+        let audioURL = Foundation.URL(string: "/dev/null"); //throw away actual data bc we just need vals
+//        let audioURL = DrawingViewController.getRecordingURL()
+        print("audio url is @ ", audioURL)
+        
+        let settings = [
+            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+            AVSampleRateKey: 12000,
+            AVNumberOfChannelsKey: 1,
+            AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+        ]
+        
+        do {
+            micRecorder = try AVAudioRecorder(url: audioURL!, settings: settings)
+            micRecorder.delegate = self
+            recordingTimer = Timer.scheduledTimer(timeInterval: 0.1, target:self, selector: #selector(updateAudioMeter), userInfo:nil,repeats:true)
+            micRecorder.record()
+            print("@ started recording!")
+        } catch {
+            finishRecording(success: false)
+        }
+    }
+    
+    func finishRecording(success: Bool) {
+        
+        micRecorder.stop()
+        micRecorder = nil
+        recordingTimer.invalidate()
+        recordingTimer = nil
+        
+        if success {
+            print("recording was a succes @")
+            
+        } else {
+            print("recording was a failure :( @")
+
+            
+            
+        }
     }
     
     

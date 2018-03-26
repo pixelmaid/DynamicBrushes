@@ -137,6 +137,8 @@
 		5FFC457A1EE5C6D6007B7597 /* BehaviorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFC45791EE5C6D6007B7597 /* BehaviorCell.swift */; };
 		5FFDAB091D21B5C400632A26 /* SocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFDAB081D21B5C400632A26 /* SocketManager.swift */; };
 		5FFFD797204F5E5D0038A0BA /* SignalCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFFD796204F5E5D0038A0BA /* SignalCollection.swift */; };
+		7219D0E020699EEF0096CB4B /* mic_off2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7219D0DE20699EEE0096CB4B /* mic_off2x.png */; };
+		7219D0E120699EEF0096CB4B /* mic_on2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7219D0DF20699EEF0096CB4B /* mic_on2x.png */; };
 		72478CDD2029043800D24C92 /* Palette-Knife in Resources */ = {isa = PBXBuildFile; fileRef = 72478CDA2029043700D24C92 /* Palette-Knife */; };
 		72478CDE2029043800D24C92 /* Palette-KnifeUITests in Resources */ = {isa = PBXBuildFile; fileRef = 72478CDB2029043800D24C92 /* Palette-KnifeUITests */; };
 		72478CDF2029043800D24C92 /* Palette-KnifeTests in Resources */ = {isa = PBXBuildFile; fileRef = 72478CDC2029043800D24C92 /* Palette-KnifeTests */; };
@@ -315,6 +317,8 @@
 		5FFC45791EE5C6D6007B7597 /* BehaviorCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BehaviorCell.swift; sourceTree = "<group>"; };
 		5FFDAB081D21B5C400632A26 /* SocketManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketManager.swift; sourceTree = "<group>"; };
 		5FFFD796204F5E5D0038A0BA /* SignalCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SignalCollection.swift; path = data/SignalCollection.swift; sourceTree = "<group>"; };
+		7219D0DE20699EEE0096CB4B /* mic_off2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mic_off2x.png; sourceTree = "<group>"; };
+		7219D0DF20699EEF0096CB4B /* mic_on2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mic_on2x.png; sourceTree = "<group>"; };
 		72478CDA2029043700D24C92 /* Palette-Knife */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Palette-Knife"; sourceTree = "<group>"; };
 		72478CDB2029043800D24C92 /* Palette-KnifeUITests */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Palette-KnifeUITests"; sourceTree = "<group>"; };
 		72478CDC2029043800D24C92 /* Palette-KnifeTests */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Palette-KnifeTests"; sourceTree = "<group>"; };
@@ -631,6 +635,8 @@
 		5FD6CD101DE0EE0E007D94AA /* image_assets */ = {
 			isa = PBXGroup;
 			children = (
+				7219D0DE20699EEE0096CB4B /* mic_off2x.png */,
+				7219D0DF20699EEF0096CB4B /* mic_on2x.png */,
 				72F3CED2204DFD050010A3D0 /* loop_button_off2x.png */,
 				72F3CED1204DFD040010A3D0 /* loop_button_on2x.png */,
 				72F3CED0204DFD040010A3D0 /* record_off2x.png */,
@@ -990,12 +996,14 @@
 				5FBDF0E71ED8D95300022B07 /* quad.vsh in Resources */,
 				5FE7AB602060860F00FBCD9E /* CollectionPresets.json in Resources */,
 				5FE32F991ECF6DC900ADC01E /* save_button2x.png in Resources */,
+				7219D0E020699EEF0096CB4B /* mic_off2x.png in Resources */,
 				5FEE2ACA1DE127D800080095 /* lg_pen_blue.png in Resources */,
 				5FE32F7D1ECF6D5300ADC01E /* behavior_activate_button_active2x.png in Resources */,
 				5F50372C1EAC025E004ABAC1 /* particle_hard.png in Resources */,
 				5FE32F811ECF6D5300ADC01E /* behavior_button2x.png in Resources */,
 				5FE32F821ECF6D5300ADC01E /* brush_button_active.png in Resources */,
 				5FE32F6B1ECF625400ADC01E /* layer_button2x.png in Resources */,
+				7219D0E120699EEF0096CB4B /* mic_on2x.png in Resources */,
 				5F5037221EA95D7B004ABAC1 /* Particle.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
