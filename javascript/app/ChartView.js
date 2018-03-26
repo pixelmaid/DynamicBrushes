@@ -584,10 +584,12 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                         var referenceType = $(ui.draggable).attr('type');
                         var referenceId = $(ui.draggable).attr('id');
                         var referenceDisplayName = $(ui.draggable).html();
+                        var style = $(ui.draggable).attr('blockstyle');
+                        console.log("!style in drop is ", style, $(ui.draggable));
                       
                       $(ui.draggable).remove();
 
-                    var expression = self.addReferenceToExpression(expressionTargetId, referenceId, referenceType, referenceDisplayName);
+                    var expression = self.addReferenceToExpression(expressionTargetId, referenceId, referenceType, referenceDisplayName, style);
                     var eventArgs = [self.id, expression.id, expression.getText(), expression.getPropertyList()];
 
                         self.trigger("ON_EXPRESSION_MODIFIED", eventArgs);
@@ -608,9 +610,9 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
             }
 
-            addReferenceToExpression(mappingId, referenceId, referenceType, referenceDisplayName) {
+            addReferenceToExpression(mappingId, referenceId, referenceType, referenceDisplayName, style) {
                 var expression = this.expressions[mappingId];
-                var el = expression.addReference(referenceId, referenceType, referenceDisplayName);
+                var el = expression.addReference(referenceId, referenceType, referenceDisplayName, style);
                 console.log("el to make draggable");
                 this.makeDraggable(el);
                 this.addInspector(el);

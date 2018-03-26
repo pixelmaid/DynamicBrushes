@@ -3,7 +3,7 @@
 		<li><span class="data-label">{{collectionName}}</span><br/>
 			<ul class="data-block">
 				{{#each signals}}
-					<li collectionId = "{{../collectionId}}" fieldName="{{fieldName}}" displayName="{{displayName}}" type= "{{../classType}}" class = "{{item_class}} tooltip">{{displayName}}<span class="tooltiptext tooltip-top">{{{help_text}}}</span></li>
+					<li collectionId = "{{../collectionId}}" fieldName="{{fieldName}}" displayName="{{displayName}}" blockstyle={{style}} type= "{{classType}}" class = "{{item_class}} tooltip">{{displayName}}<span class="tooltiptext tooltip-top">{{{help_text}}}</span></li>
 				{{/each}}
 			</ul>
 		</li>

@@ -24,8 +24,6 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 					var collectionId = collections[i]["id"];
 					var collectionName = collections[i]["name"];
 					var collectionSignals = collections[i]["signals"];
-					var style = collections[i]["style"];
-					var item_class = style + " palette block property "
 
 					//stylus, ui, generator, recording, dataset
 					// switch (classType) {
@@ -61,6 +59,9 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 					for (var j=0; j<collectionSignals.length;j++) {
 							var signalClassType = collectionSignals[j]["classType"];
 							var order = collectionSignals[j]["order"];
+							var style = collectionSignals[j]["style"];
+							var item_class = style + " palette block property "
+
 							// console.log("! signal order is ", order);
 							if (signalClassType === "TimeSignal") continue;
 							signals[order] = {
@@ -68,7 +69,8 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 							  classType: signalClassType,
 			                  fieldName: collectionSignals[j]["fieldName"],
 			                  displayName: collectionSignals[j]["displayName"],
-			                  help_text: ""
+			                  help_text: "",
+			                  style: style,
 							};
 						}								
 					items[0].signals = signals;

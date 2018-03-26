@@ -172,19 +172,24 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
                 for (var key in expressionPropertyList) {
                     if (expressionPropertyList.hasOwnProperty(key)) {
                         var propList = expressionPropertyList[key];
+                        console.log("!proplist is ", propList);
                         var type;
+                        var style;
                         if (propList[0] == "stylus") {
                             type = "sensor_prop";
+                            style = "sensor";
                         } 
                         else if (propList[0] == "ui") {
                             type = "ui_prop";
+                            style = "ui";
                         } else {
                             type = "generator";
+                            style = "generator";
                         }
                         var name = propList[1][0];
                          var referenceDisplayName = propList[2][0];
                       
-                        els.push($(this.addMark(referenceDisplayName, type, key, name, propList[0])));
+                        els.push($(this.addMark(referenceDisplayName, type, key, name, propList[0], style)));
                     }
                 }
                 this.renderMarks();
@@ -192,10 +197,12 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
             }
 
 
-            addMark(referenceId, referenceType, referenceDisplayName) {
+            addMark(referenceId, referenceType, referenceDisplayName, style) { //pass in style argument
+                console.log("!style is ", style)
                 var el = document.createElement("span");
                 el.innerHTML = referenceDisplayName;
-                el.setAttribute("class", "block property " + referenceType);
+                //HERE
+                el.setAttribute("class", style + " palette block property ");
                 el.setAttribute("type", referenceType);
                 el.setAttribute("parent_id", this.id);
                 el.setAttribute("id", referenceId);
@@ -203,13 +210,13 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
                 return el;
             }
 
-            addReference(referenceId, referenceType, referenceDisplayName) {
+            addReference(referenceId, referenceType, referenceDisplayName, style) {
                 this.references[referenceId] = [referenceType, referenceDisplayName];
                 console.log("added reference", referenceDisplayName);
                 this.addReferenceCheck = true;
                 this.mirror.setValue(this.mirror.getValue() + "%" + referenceId + "%");
                 this.addReferenceCheck = false;
-                var el = this.addMark(referenceId, referenceType, referenceDisplayName);
+                var el = this.addMark(referenceId, referenceType, referenceDisplayName, style);
 
                 this.renderMarks();
                 return $(el);
