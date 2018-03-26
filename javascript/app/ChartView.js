@@ -243,6 +243,27 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 // set a title
 
                 $.contextMenu({
+                    selector: '#canvas',
+                    callback: function(key, options) {
+                        if (key == "newstate") {
+                            var state_id = ID();
+                            var x = $(".context-menu-visible").parent().position().left;
+                            var y = $(".context-menu-visible").parent().position().top;
+                            var name = prompt("Please give your state a name", "myState");
+                            if (name !== null) {
+                                self.trigger("ON_STATE_ADDED", [self.id, state_id, name, x, y]);
+                            }
+                        }
+                    },
+                    items: {
+                        "newstate": {
+                            name: "New State",
+                        }
+                    }
+
+                });
+
+                $.contextMenu({
                     selector: '#' + self.id + ' .mapping',
                     callback: function(key, options) {
                         if (key == "delete") {
@@ -333,16 +354,17 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                         };
                         var x = $(ui.draggable).position().left;
                         var y = $(ui.draggable).position().top;
-                        if (type == 'state') {
-                            var name = prompt("Please give your state a name", "myState");
-                            if (name !== null) {
-                                data.name = name;
-                                self.trigger("ON_STATE_ADDED", [x, y, data]);
+                        // if (type == 'state') {
+                        //     var name = prompt("Please give your state a name", "myState");
+                        //     if (name !== null) {
+                        //         data.name = name;
+                        //         self.trigger("ON_STATE_ADDED", [x, y, data]);
 
-                            }
-                            $(ui.helper).remove(); //destroy clone
-                            $(ui.draggable).remove(); //remove from list
-                        } else if (type == "brush_prop") {
+                        //     }
+                        //     $(ui.helper).remove(); //destroy clone
+                        //     $(ui.draggable).remove(); //remove from list
+                        // } 
+                         if (type == "brush_prop") {
                             var mappingId = $(ui.draggable).attr('mappingId');
                             var stateId = $(ui.draggable).attr('stateId');
 
@@ -460,7 +482,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
             newNode(state_data) {
                 var self = this;
 
-                console.log(state_data.x, state_data.y, $("#" + this.id).offset(), this.id, state_data.name);
+                console.log(state_data.x, state_data.y, $("#" + this.id).offset(), this.id, state_data.stateName);
                 if (!state_data) {
                     state_data = {
                         name: "state " + state_counter,
@@ -474,11 +496,11 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 var id = state_data.stateId;
                 d.className = "w";
 
-                if (state_data.name == "setup") {
+                if (state_data.stateName == "setup") {
                     console.log("state data  is setup");
                     d.className = "setup w";
                     html = startTemplate(state_data);
-                } else if (state_data.name == "die") {
+                } else if (state_data.stateName == "die") {
                     d.className = "die w";
                     html = startTemplate(state_data);
                 } else {
@@ -495,7 +517,8 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 d.style.left = state_data.x + "px";
                 d.style.top = state_data.y + "px";
                 this.instance.getContainer().appendChild(d);
-                this.initNode(d, state_data.stateId, state_data.name);
+
+                this.initNode(d, state_data.stateId, state_data.stateName);
 
                 console.log("state", $('#' + id));
                 $("#" + id).attr("name", state_data.stateName);
@@ -534,8 +557,10 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 this.instance.remove(data.stateId);
             }
 
-            initializeExpression(expressionId, mappingId) {
-                var ex_el = $("#" + mappingId + " .reference_expression .text_entry")[0];
+            initializeExpression(expressionId, mappingId) {                    
+                console.log("init expression",expressionId, mappingId);
+
+                var ex_el = $("#" + expressionId + " .text_entry")[0];
                 var expression = new Expression(ex_el, mappingId, expressionId);
 
                 this.expressions[mappingId] = expression;
@@ -701,7 +726,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 var html = methodTemplate(data);
                  $($('#' + data.transitionId).find(".methods")[0]).append(html);
                  for (var i=0;i<data.argumentList.length;i++){
-                    var expression = this.initializeExpression(data.argumentList.expressionId, data.methodId);
+                    var expression = this.initializeExpression(data.argumentList[i].expressionId, data.methodId);
                 }
             }
 

@@ -22,11 +22,11 @@ class Sine:Generator{
     
     
     
-    required init(id:String, fieldName:String, displayName:String, collectionId:String, settings:JSON){
+    required init(id:String, fieldName:String, displayName:String, collectionId:String, style:String, settings:JSON){
         self.freq = settings["freq"].floatValue;
         self.phase = settings["phase"].floatValue;
         self.amp = settings["amp"].floatValue;
-        super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, settings:settings);
+        super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
     }
     
     
@@ -54,7 +54,7 @@ class Sawtooth:Generator{
     var min:Int;
     var max:Int;
     
-    required init(id:String, fieldName:String, displayName:String, collectionId:String, settings:JSON){
+    required init(id:String, fieldName:String, displayName:String, collectionId:String, style:String, settings:JSON){
          start = settings["start"].floatValue
          stop = settings["stop"].floatValue
          min = settings["min"].intValue
@@ -64,7 +64,7 @@ class Sawtooth:Generator{
         for i in min...max-1{
             val.append(start+increment*Float(i))
         }
-        super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, settings:settings);
+        super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
 
     }
     
@@ -92,11 +92,11 @@ class Triangle:Signal{
     var min:Float
     var max:Float
     
- required init(id:String, fieldName:String, displayName:String, collectionId:String, settings:JSON){
+ required init(id:String, fieldName:String, displayName:String, collectionId:String, style:String, settings:JSON){
         self.freq = settings["freq"].floatValue;
         self.min = settings["min"].floatValue;
         self.max = settings["max"].floatValue;
-    super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, settings:settings);
+    super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style,  settings:settings);
 
     }
     
@@ -128,13 +128,13 @@ class Square:Signal{
     var currentVal:Float
     
     
-    required init(id:String, fieldName:String, displayName:String, collectionId:String, settings:JSON){
+    required init(id:String, fieldName:String, displayName:String, collectionId:String, style:String, settings:JSON){
 
         self.freq = settings["freq"].floatValue;
         self.min = settings["min"].floatValue;
         self.max = settings["max"].floatValue;
         self.currentVal = min;
-        super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, settings:settings);
+        super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
 
     }
     
@@ -169,8 +169,8 @@ class Square:Signal{
 class Alternate:Signal{
     var val = [Float]();
     
-    required init(id:String, fieldName:String, displayName:String, collectionId:String, settings:JSON){
-        super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, settings:settings);
+    required init(id:String, fieldName:String, displayName:String, collectionId:String, style:String, settings:JSON){
+        super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
         let jsonval = settings["values"].arrayValue;
         for v in jsonval{
             val.append(v.floatValue)
@@ -203,12 +203,12 @@ class Random: Signal{
     let end:Float
     var val:Float;
     
-    required init(id:String, fieldName:String, displayName:String, collectionId:String, settings:JSON){
+    required init(id:String, fieldName:String, displayName:String, collectionId:String, style:String, settings:JSON){
         self.start = settings["start"].floatValue;
         self.end = settings["end"].floatValue;
         val = Float(arc4random()) / Float(UINT32_MAX) * abs(self.start - self.end) + min(self.start, self.end)
 
-        super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, settings:settings);
+        super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
         
     }
     
@@ -236,7 +236,7 @@ class Interval:Generator{
     let inc:Float
     let times:Int?
     
-    required init(id:String, fieldName:String, displayName:String, collectionId:String, settings:JSON){
+    required init(id:String, fieldName:String, displayName:String, collectionId:String, style:String, settings:JSON){
         
         self.inc = settings["inc"].floatValue
         
@@ -254,7 +254,7 @@ class Interval:Generator{
            self.times = nil;
         }
         
-        super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, settings:settings);
+        super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
     }
     
     

@@ -53,10 +53,11 @@ class SignalCollection: Object{
             let fieldName = allSignalData[i]["fieldName"].stringValue;
             let displayName = allSignalData[i]["displayName"].stringValue;
             let classType =  allSignalData[i]["classType"].stringValue;
+            let style =  allSignalData[i]["style"].stringValue;
             let settings = allSignalData[i]["settings"]
             let order = i;
             
-            self.registerSignalType(fieldName: fieldName, displayName:displayName, settings:settings, classType: classType, order: order);
+            self.registerSignalType(fieldName: fieldName, displayName:displayName, settings:settings, classType: classType, style:style, order: order);
             guard let  signal = self.protoSignals[fieldName] else {
                 print("ERROR======SIGNAL PROTO NOT FOUND==============",fieldName)
                 throw SignalError.protoNotFound
@@ -105,11 +106,11 @@ class SignalCollection: Object{
     }
     
     
-    public func registerSignalType(fieldName:String, displayName:String, settings:JSON, classType:String, order:Int){
+    public func registerSignalType(fieldName:String, displayName:String, settings:JSON, classType:String, style:String, order:Int){
         if(self.registeredSignals[fieldName] == nil){
             self.registeredSignals[fieldName] = classType;
             self.initializedSignals[fieldName] = [String:Signal]();
-            _ = self.initializeSignal(fieldName: fieldName, displayName: displayName, settings: settings, classType:classType, isProto: true, order:order)
+            _ = self.initializeSignal(fieldName: fieldName, displayName: displayName, settings: settings, classType:classType, style: style, isProto: true, order:order)
             
         }
         else{
@@ -118,14 +119,14 @@ class SignalCollection: Object{
     }
     
     
-    public func initializeSignal(fieldName:String, displayName:String, settings:JSON, classType:String, isProto:Bool, order:Int?)->String{
+    public func initializeSignal(fieldName:String, displayName:String, settings:JSON, classType:String, style:String, isProto:Bool, order:Int?)->String{
         let id = NSUUID().uuidString
         let signal:Signal;
         if(classType == "TimeSignal"){
-            signal = TimeSignal(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+            signal = TimeSignal(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, style: style, settings:settings);
         }
         else{
-         signal = Signal(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+         signal = Signal(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, style: style, settings:settings);
         }
         self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
         return id;
@@ -236,9 +237,9 @@ class GeneratorCollection:SignalCollection{
      }
      }*/
     
-    public override func initializeSignal(fieldName:String, displayName:String, settings:JSON, classType:String, isProto:Bool, order:Int?)->String{
+    public override func initializeSignal(fieldName:String, displayName:String, settings:JSON, classType:String, style:String, isProto:Bool, order:Int?)->String{
         if(classType == "TimeSignal"){
-            return super.initializeSignal(fieldName: fieldName, displayName: displayName, settings: settings, classType: classType, isProto: isProto, order: order);
+            return super.initializeSignal(fieldName: fieldName, displayName: displayName, settings: settings, classType: classType, style: style, isProto: isProto, order: order);
         }
         
         let id = NSUUID().uuidString
@@ -253,31 +254,31 @@ class GeneratorCollection:SignalCollection{
        
         switch(fieldName){
         case "sine":
-            signal = Sine(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:pSettings);
+            signal = Sine(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:pSettings);
         break;
         case "sawtooth":
-            signal = Sawtooth(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:pSettings);
+            signal = Sawtooth(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style,settings:pSettings);
         break;
         case "interval":
-            signal = Interval(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:pSettings);
+            signal = Interval(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id,style:style, settings:pSettings);
             break;
         case "square":
-            signal = Square(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:pSettings);
+            signal = Square(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:pSettings);
             break;
         case "triangle":
-            signal = Triangle(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:pSettings);
+            signal = Triangle(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:pSettings);
             break;
         case "random":
-            signal = Random(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:pSettings);
+            signal = Random(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:pSettings);
             break;
         case "alternate":
-            signal = Alternate(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:pSettings);
+            signal = Alternate(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:pSettings);
             break;
         case "alternate":
-            signal = Alternate(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:pSettings);
+            signal = Alternate(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:pSettings);
             break;
         default:
-            signal = Generator(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:pSettings);
+            signal = Generator(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, style: style, settings:pSettings);
             break;
         }
         self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
@@ -310,13 +311,13 @@ class BrushCollection:SignalCollection{
      }
      }*/
     //TODO: INIT BRUSH PROPERTIES
-   override public func initializeSignal(fieldName:String, displayName:String, settings:JSON, classType:String, isProto:Bool, order:Int?)->String{
+   override public func initializeSignal(fieldName:String, displayName:String, settings:JSON, classType:String, style:String, isProto:Bool, order:Int?)->String{
     if(classType == "TimeSignal"){
-        return super.initializeSignal(fieldName: fieldName, displayName: displayName, settings: settings, classType: classType, isProto: isProto, order: order);
+        return super.initializeSignal(fieldName: fieldName, displayName: displayName, settings: settings, classType: classType, style:style, isProto: isProto, order: order);
     }
     
     let id = NSUUID().uuidString
-        let signal = Signal(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+    let signal = Signal(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, style: style, settings:settings);
     self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
         return id;
     }
@@ -350,13 +351,13 @@ class UICollection:SignalCollection{
      }*/
     
     //TODO: INIT UI PROPERTIES
-    override public func initializeSignal(fieldName:String, displayName:String, settings:JSON, classType:String, isProto:Bool, order:Int?)->String{
+    override public func initializeSignal(fieldName:String, displayName:String, settings:JSON, classType:String, style:String, isProto:Bool, order:Int?)->String{
         if(classType == "TimeSignal"){
-            return super.initializeSignal(fieldName: fieldName, displayName: displayName, settings: settings, classType: classType, isProto: isProto, order: order);
+            return super.initializeSignal(fieldName: fieldName, displayName: displayName, settings: settings, classType: classType, style:style, isProto: isProto, order: order);
         }
         
         let id = NSUUID().uuidString
-        let signal = LiveSignal(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+        let signal = LiveSignal(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:settings);
         self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
         return id;
     }
@@ -392,18 +393,18 @@ class LiveCollection:SignalCollection{
      self.name = "stylus";
      }*/
     
-    override public func initializeSignal(fieldName:String, displayName:String, settings:JSON, classType:String, isProto:Bool, order:Int?)->String{
+    override public func initializeSignal(fieldName:String, displayName:String, settings:JSON, classType:String, style:String, isProto:Bool, order:Int?)->String{
         if(classType == "TimeSignal"){
-            return super.initializeSignal(fieldName: fieldName, displayName: displayName, settings: settings, classType: classType, isProto: isProto, order: order);
+            return super.initializeSignal(fieldName: fieldName, displayName: displayName, settings: settings, classType: classType, style:style, isProto: isProto, order: order);
         }
         
         let id = NSUUID().uuidString
         let signal:Signal;
         if(fieldName == "StylusEvent"){
-            signal = StylusEvent(id:id, fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+            signal = StylusEvent(id:id, fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:settings);
         }
         else{
-            signal = LiveSignal(id:id, fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+            signal = LiveSignal(id:id, fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:settings);
         }
         self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
         return id;
@@ -452,18 +453,18 @@ class RecordingCollection:LiveCollection{
     }
     
     
-    override public func initializeSignal(fieldName:String, displayName:String, settings:JSON, classType:String, isProto:Bool, order:Int?)->String{
+    override public func initializeSignal(fieldName:String, displayName:String, settings:JSON, classType:String, style:String, isProto:Bool, order:Int?)->String{
         if(classType == "TimeSignal"){
-            return super.initializeSignal(fieldName: fieldName, displayName: displayName, settings: settings, classType: classType, isProto: isProto, order: order);
+            return super.initializeSignal(fieldName: fieldName, displayName: displayName, settings: settings, classType: classType, style:style, isProto: isProto, order: order);
         }
         
         let id = NSUUID().uuidString
         let signal:Signal;
         if(fieldName == "StylusEvent"){
-            signal = StylusEventRecording(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+            signal = StylusEventRecording(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:settings);
         }
         else{
-            signal = Recording(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, settings:settings);
+            signal = Recording(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:settings);
         }
         self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
         return id;

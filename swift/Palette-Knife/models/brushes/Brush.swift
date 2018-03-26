@@ -695,7 +695,7 @@ class Brush: TimeSeries, Hashable{
     func addStateTransition(id:String, name:String, reference:Emitter, fromStateId: String, toStateId:String){
         
         let transition:StateTransition
-        
+        print("states",self.states);
         let state = self.states[fromStateId]
         transition = state!.addStateTransitionMapping(id: id,name:name,reference: reference, toStateId:toStateId)
         self.transitions[id] = transition;

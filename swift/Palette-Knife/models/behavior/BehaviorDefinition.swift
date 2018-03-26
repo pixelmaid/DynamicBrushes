@@ -208,8 +208,10 @@ class BehaviorDefinition {
     
     
     func parseStateJSON(data:JSON){
-        let stateId = data["id"].stringValue
-        let stateName = data["name"].stringValue
+        let stateId = data["stateId"].stringValue
+        let stateName = data["stateName"].stringValue
+        print("parse state",stateId,stateName);
+
         let stateX = data["x"].floatValue
         let stateY = data["y"].floatValue
         self.addState(stateId: stateId, stateName: stateName, stateX: stateX, stateY: stateY)
@@ -258,7 +260,7 @@ class BehaviorDefinition {
                 
                 var settings:JSON = [:]
                 settings["inc"] = condition_list[0];
-                let interval_id =  BehaviorManager.generators["default"]!.initializeSignal(fieldName:"interval",displayName:"interval",settings:settings,classType: "Interval",isProto:false , order:nil);
+                let interval_id =  BehaviorManager.generators["default"]!.initializeSignal(fieldName:"interval",displayName:"interval",settings:settings,classType: "Interval", style:"generator", isProto:false , order:nil);
                 
                 
                 switch(event){
@@ -355,8 +357,8 @@ class BehaviorDefinition {
         var statesArray = [JSON]();
         for (key,data) in states {
             var stateJSON:JSON = [:]
-            stateJSON["id"] = JSON(key);
-            stateJSON["name"] = JSON(data.0);
+            stateJSON["stateId"] = JSON(key);
+            stateJSON["stateName"] = JSON(data.0);
             stateJSON["x"] = JSON(data.1);
             stateJSON["y"] = JSON(data.2);
             statesArray.append(stateJSON);

@@ -193,7 +193,7 @@ class BehaviorManager{
               let stateId = data["stateId"].stringValue;
              let x  = data["x"].floatValue
              let y = data["y"].floatValue
-
+             
              BehaviorManager.behaviors[behaviorId]!.setStatePosition(stateId:stateId,x:x,y:y);
             resultJSON["result"] = "success";
             return resultJSON;
@@ -370,20 +370,20 @@ class BehaviorManager{
         let collectionId = data["collectionId"].stringValue;
         let fieldName = data["fieldName"].stringValue;
         let displayName = data["displayName"].stringValue;
-
+        let style = data["style"].stringValue;
         let settings  = data["settings"];
         let id:String
 
     do {
     switch classType{
         case "generator":
-            id = BehaviorManager.generators["default"]!.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType, isProto: false, order:nil);
+            id = BehaviorManager.generators["default"]!.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType, style:style, isProto: false, order:nil);
         break;
         case "imported":
             guard let dataCollection = BehaviorManager.imported[collectionId] else {
                 throw BehaviorError.collectionDoesNotExist;
             }
-             id = dataCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType, isProto: false, order:nil);
+             id = dataCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType, style:style, isProto: false, order:nil);
 
         break;
         case "live":
@@ -391,7 +391,7 @@ class BehaviorManager{
                 throw BehaviorError.collectionDoesNotExist;
 
             }
-             id = liveCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType, isProto: false, order:nil);
+            id = liveCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType,style:style, isProto: false, order:nil);
 
         break;
         case "recording":
@@ -399,7 +399,7 @@ class BehaviorManager{
                 throw BehaviorError.collectionDoesNotExist;
                 
             }
-             id = recordingCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType, isProto: false, order:nil);
+             id = recordingCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType, style:style,isProto: false, order:nil);
 
         break;
     //TODO: INIT BRUSH SETUP
