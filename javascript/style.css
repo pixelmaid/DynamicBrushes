@@ -848,7 +848,7 @@ span.refresh{
 .recording {
     background-color: #a8233c;
 }
-.dataset {
+.imported {
     background-color: rgb(235, 104, 75);
 }
 .sensor, .sensor_prop{
@@ -1164,5 +1164,4 @@ position: absolute;
   margin: 0px 6px 0px 8px;
 }
 .methodsContainer {
-  max-width: 350px;
 }

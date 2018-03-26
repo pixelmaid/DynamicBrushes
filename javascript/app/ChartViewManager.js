@@ -76,6 +76,13 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                         }
                     }
                 };
+
+                $( "#canvas" ).dblclick(function() {
+                    console.log("dblclick",self.currentView);
+                    if(self.currentView !== null){
+                        self.currentView.activateStateMenu();
+                    }
+                 });
                 
                 $("#behavior_template_menu span").click(function(event) {
 
@@ -763,7 +770,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
     
 
             onMethodAdded(behaviorId, transitionId, methodId, fieldName, displayName, argumentList) {
-                console.log("method added ",argumentList)
+                console.log("method added ",argumentList);
                 var transmit_data = {
                     behaviorId: behaviorId,
                     transitionId: transitionId,

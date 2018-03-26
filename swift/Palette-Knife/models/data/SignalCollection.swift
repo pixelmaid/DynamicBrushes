@@ -38,7 +38,6 @@ class SignalCollection: Object{
             try self.loadDataFromJSON(data: data);
         }
         catch {
-    
             print("ERROR ---------SIGNAL ERROR ON INIT-----------")
         }
     }

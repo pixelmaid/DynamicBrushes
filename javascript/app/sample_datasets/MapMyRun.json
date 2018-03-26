@@ -1,5 +1,4 @@
 {
-
       "id": "fdef-9sfh",
       "name": "Map My Run",
       "classType":"imported",
@@ -44,7 +43,7 @@
           "fieldName": "average_pace",
           "style": "imported",
           "order": 4,
-          "settings" :{}
+          "settings" : {}
         },
 
         {

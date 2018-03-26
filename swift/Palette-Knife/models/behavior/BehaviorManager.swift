@@ -20,11 +20,11 @@ enum BehaviorError: Error {
 
 class BehaviorManager{
     static var behaviors = [String:BehaviorDefinition]()
-    static var imported = [String:SignalCollection]();
-    static var recordings = [String:SignalCollection]();
-    static var generators = [String:GeneratorCollection]();
-    static var liveInputs = [String:LiveCollection]();
-    static var signalCollections = [imported,recordings,generators,liveInputs];
+  // static var imported = [String:SignalCollection]();
+  //  static var recordings = [String:SignalCollection]();
+   // static var generators = [String:GeneratorCollection]();
+   // static var liveInputs = [String:LiveCollection]();
+    static var signalCollections = [[String:SignalCollection](), [String:SignalCollection](),[String:GeneratorCollection](),[String:LiveCollection]()];
 
     var canvas:Canvas
     init(canvas:Canvas){
@@ -377,17 +377,17 @@ class BehaviorManager{
     do {
     switch classType{
         case "generator":
-            id = BehaviorManager.generators["default"]!.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType, style:style, isProto: false, order:nil);
+            id = BehaviorManager.signalCollections[2]["default"]!.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType, style:style, isProto: false, order:nil);
         break;
         case "imported":
-            guard let dataCollection = BehaviorManager.imported[collectionId] else {
+            guard let dataCollection = BehaviorManager.signalCollections[0][collectionId] else {
                 throw BehaviorError.collectionDoesNotExist;
             }
              id = dataCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType, style:style, isProto: false, order:nil);
 
         break;
         case "live":
-            guard let liveCollection = BehaviorManager.liveInputs[collectionId] else {
+            guard let liveCollection = BehaviorManager.signalCollections[3][collectionId] else {
                 throw BehaviorError.collectionDoesNotExist;
 
             }
@@ -395,7 +395,7 @@ class BehaviorManager{
 
         break;
         case "recording":
-            guard let recordingCollection = BehaviorManager.recordings[collectionId] else {
+            guard let recordingCollection = BehaviorManager.signalCollections[1][collectionId] else {
                 throw BehaviorError.collectionDoesNotExist;
                 
             }
@@ -461,20 +461,20 @@ class BehaviorManager{
                     else{
                         signalCollection = LiveCollection(data:metadata);
                     }
-                    BehaviorManager.liveInputs[signalCollection.id] = signalCollection;
+                   BehaviorManager.signalCollections[3][signalCollection.id] = signalCollection;
 
                 }
                 break;
             case "imported":
                 for metadata in collectionList{
                     let signalCollection = SignalCollection(data:metadata);
-                    BehaviorManager.imported[signalCollection.id] = signalCollection;
+                   BehaviorManager.signalCollections[0][signalCollection.id] = signalCollection;
                 }
                 break;
             case "generators":
                 for metadata in collectionList{
                     let signalCollection = GeneratorCollection(data:metadata);
-                    BehaviorManager.generators[signalCollection.id] = signalCollection;
+                    BehaviorManager.signalCollections[2][signalCollection.id] = signalCollection;
                 }
                 break;
             case "recordings":
@@ -486,7 +486,7 @@ class BehaviorManager{
                     }
                     else{
                         let signalCollection = RecordingCollection(data:metadata);
-                        BehaviorManager.recordings[signalCollection.id] = signalCollection;
+                       BehaviorManager.signalCollections[1][signalCollection.id] = signalCollection;
                     }
                 }
                 break;
@@ -502,7 +502,7 @@ class BehaviorManager{
     
     
     static func register(collectionId:String,recording:SignalCollection){
-        BehaviorManager.recordings[collectionId] = recording;
+        BehaviorManager.signalCollections[1][collectionId] = recording;
     }
     
     
@@ -510,7 +510,8 @@ class BehaviorManager{
     print("imported data",data);
     let id = data["id"].stringValue;
     let signalCollection = SignalCollection(data: data);
-    BehaviorManager.imported[id] = signalCollection;
+    signalCollections[0][id] = signalCollection;
+    print("imported count",signalCollections[0]);
     return signalCollection;
   
     }
