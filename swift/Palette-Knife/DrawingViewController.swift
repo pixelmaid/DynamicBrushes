@@ -425,23 +425,10 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
         print("@ Audio Record Encode Error")
     }
     
-    class func getDocumentsDirectory() -> URL {
-        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        let documentsDirectory = paths[0]
-        return documentsDirectory
-    }
-    
-    
-    class func getRecordingURL() -> URL {
-        //writes this new file to app owned directory
-        return getDocumentsDirectory().appendingPathComponent("recordings.m4a")
-    }
-    
-    
     @objc func updateAudioMeter() {
         if (micRecorder.isRecording == true) {
             micRecorder.updateMeters()
-            var peak = micRecorder.averagePower(forChannel: 0)
+            var peak = micRecorder.peakPower(forChannel: 0)
             print ("peak is @@ ", peak)
 //            self.meterView.peak = CGFloat(0.8 - peak / -60.0)
         }
@@ -449,8 +436,6 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
     
     func startRecording() {
         let audioURL = Foundation.URL(string: "/dev/null"); //throw away actual data bc we just need vals
-//        let audioURL = DrawingViewController.getRecordingURL()
-        print("audio url is @ ", audioURL)
         
         let settings = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
@@ -462,6 +447,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
         do {
             micRecorder = try AVAudioRecorder(url: audioURL!, settings: settings)
             micRecorder.delegate = self
+            micRecorder.isMeteringEnabled = true
             recordingTimer = Timer.scheduledTimer(timeInterval: 0.1, target:self, selector: #selector(updateAudioMeter), userInfo:nil,repeats:true)
             micRecorder.record()
             print("@ started recording!")
@@ -482,9 +468,6 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
             
         } else {
             print("recording was a failure :( @")
-
-            
-            
         }
     }
     
