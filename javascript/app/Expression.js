@@ -43,6 +43,13 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
                 });
 
                 this.mirror.setSize("auto", 24);
+                // now disallow adding newlines in the following simple way
+
+                this.mirror.on("beforeChange", function(instance, change) {
+                    var newtext = change.text.join("").replace(/\n/g, ""); // remove ALL \n !
+                    change.update(change.from, change.to, [newtext]);
+                    return true;
+                });
                 this.mirror.on("change", function() {
                     this.onChange();
                 }.bind(this));
@@ -51,6 +58,8 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
                 }.bind(this));
                 this.mirror.setValue("");
 
+                $(".CodeMirror-scroll").css('overflow', 'hidden');
+
 
             }
 
@@ -58,20 +67,20 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
                 //does not trigger if change is the result of adding a reference
                 if (!this.addReferenceCheck) {
                     console.log("code mirror", this.mappingId, "changed", this.mirror.getValue());
-                     var removedReferences = [];
-                     var text = this.getText();
-                     for(var p in this.references){
-                        if(this.references.hasOwnProperty(p)){
+                    var removedReferences = [];
+                    var text = this.getText();
+                    for (var p in this.references) {
+                        if (this.references.hasOwnProperty(p)) {
                             var inText = text.search(p);
-                            if(inText == -1){
+                            if (inText == -1) {
                                 removedReferences.push(p);
                             }
                         }
 
                     }
 
-                    console.log("changed",removedReferences,text);
-                    this.trigger("ON_TEXT_CHANGED", [this,removedReferences]);
+                    console.log("changed", removedReferences, text);
+                    this.trigger("ON_TEXT_CHANGED", [this, removedReferences]);
                 }
             }
 
@@ -85,18 +94,18 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
 
             getPropertyList() {
                 var propList = [];
-                for (var key in this.references){
-                 if(this.references.hasOwnProperty(key)){
+                for (var key in this.references) {
+                    if (this.references.hasOwnProperty(key)) {
                         propList.push(key);
                     }
                 }
                 return propList;
             }
 
-            containsActive(){
-                for(var p in this.references){
-                    if(this.references.hasOwnProperty(p)){
-                        if(this.references[p][0] == "stylus" || this.references[p][0] == "ui" ){
+            containsActive() {
+                for (var p in this.references) {
+                    if (this.references.hasOwnProperty(p)) {
+                        if (this.references[p][0] == "stylus" || this.references[p][0] == "ui") {
                             return true;
                         }
                     }
@@ -168,7 +177,7 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
                 this.mirror.setValue(expressionText);
                 this.addReferenceCheck = false;
                 this.references = expressionPropertyList;
-               var els = [];
+                var els = [];
                 for (var key in expressionPropertyList) {
                     if (expressionPropertyList.hasOwnProperty(key)) {
                         var propList = expressionPropertyList[key];
@@ -178,8 +187,7 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
                         if (propList[0] == "stylus") {
                             type = "sensor_prop";
                             style = "sensor";
-                        } 
-                        else if (propList[0] == "ui") {
+                        } else if (propList[0] == "ui") {
                             type = "ui_prop";
                             style = "ui";
                         } else {
@@ -187,8 +195,8 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
                             style = "generator";
                         }
                         var name = propList[1][0];
-                         var referenceDisplayName = propList[2][0];
-                      
+                        var referenceDisplayName = propList[2][0];
+
                         els.push($(this.addMark(referenceDisplayName, type, key, name, propList[0], style)));
                     }
                 }
@@ -198,11 +206,11 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
 
 
             addMark(referenceId, referenceType, referenceDisplayName, style) { //pass in style argument
-                console.log("!style is ", style)
+                console.log("!style is ", style);
                 var el = document.createElement("span");
                 el.innerHTML = referenceDisplayName;
                 //HERE
-                el.setAttribute("class", style + " palette block property ");
+                el.setAttribute("class", style + " block property ");
                 el.setAttribute("type", referenceType);
                 el.setAttribute("parent_id", this.id);
                 el.setAttribute("id", referenceId);
@@ -212,7 +220,7 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
 
             addReference(referenceId, referenceType, referenceDisplayName, style) {
                 this.references[referenceId] = [referenceType, referenceDisplayName];
-                console.log("added reference", referenceDisplayName,referenceType,referenceId,style);
+                console.log("added reference", referenceDisplayName, referenceType, referenceId, style);
                 this.addReferenceCheck = true;
                 this.mirror.setValue(this.mirror.getValue() + "%" + referenceId + "%");
                 this.addReferenceCheck = false;

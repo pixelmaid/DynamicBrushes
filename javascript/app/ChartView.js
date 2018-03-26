@@ -613,7 +613,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                       $(ui.draggable).remove();
 
 
-                        var expression = self.addReferenceToExpression(parentId, expressionId, referenceId, referenceType, referenceDisplayName);
+                        var expression = self.addReferenceToExpression(parentId, expressionId, referenceId, referenceType, referenceDisplayName, style);
                         var eventArgs = [self.id, expression.id, expression.getText(), expression.getPropertyList()];
                     
                  
@@ -636,9 +636,9 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
             }
 
-            addReferenceToExpression(mappingId, expressionId, referenceId, referenceType, referenceDisplayName) {
+            addReferenceToExpression(mappingId, expressionId, referenceId, referenceType, referenceDisplayName,style) {
                 var expression = this.expressions[mappingId][expressionId];
-                var el = expression.addReference(referenceId, referenceType, referenceDisplayName);
+                var el = expression.addReference(referenceId, referenceType, referenceDisplayName,style);
 
                 console.log("el to make draggable");
                 this.makeDraggable(el);
