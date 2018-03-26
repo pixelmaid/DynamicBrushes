@@ -562,8 +562,11 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                 var ex_el = $("#" + expressionId + " .text_entry")[0];
                 var expression = new Expression(ex_el, mappingId, expressionId);
+                if(!this.expressions[mappingId]){
 
-                this.expressions[mappingId] = expression;
+                    this.expressions[mappingId] = {};
+                }
+                this.expressions[mappingId][expressionId] = expression;
                 expression.addListener("ON_TEXT_CHANGED", function(expression, removedReferences) {
                     this.expressionModified(expression, removedReferences);
                 }.bind(this));
@@ -587,14 +590,14 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                 console.log("target droppable", $('#' + mapping_data.mappingId).find(".reference_expression"));
                 var el = $($('#' + mapping_data.mappingId).find(".reference_expression")[0]);
-                this.setDropFunctionsForExpression(el, mapping_data.mappingId);
+                this.setDropFunctionsForExpression(el, expression.id,mapping_data.mappingId);
                 this.instance.repaintEverything();
 
                 //need to extension
 
             }
 
-            setDropFunctionsForExpression(el, expressionTargetId) {
+            setDropFunctionsForExpression(el, expressionId, parentId) {
                 var self = this;
                 el.droppable({
                     greedy: true,
@@ -602,10 +605,10 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                         var referenceType = $(ui.draggable).attr('type');
                         var referenceId = $(ui.draggable).attr('id');
                         var referenceDisplayName = $(ui.draggable).html();
-
+                        var expressionId = el.attr("id");
                         $(ui.draggable).remove();
 
-                        var expression = self.addReferenceToExpression(expressionTargetId, referenceId, referenceType, referenceDisplayName);
+                        var expression = self.addReferenceToExpression(parentId, expressionId, referenceId, referenceType, referenceDisplayName);
                         var eventArgs = [self.id, expression.id, expression.getText(), expression.getPropertyList()];
 
                         self.trigger("ON_EXPRESSION_MODIFIED", eventArgs);
@@ -626,8 +629,8 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
             }
 
-            addReferenceToExpression(mappingId, referenceId, referenceType, referenceDisplayName) {
-                var expression = this.expressions[mappingId];
+            addReferenceToExpression(mappingId, expressionId, referenceId, referenceType, referenceDisplayName) {
+                var expression = this.expressions[mappingId][expressionId];
                 var el = expression.addReference(referenceId, referenceType, referenceDisplayName);
                 console.log("el to make draggable");
                 this.makeDraggable(el);
@@ -727,6 +730,9 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                  $($('#' + data.transitionId).find(".methods")[0]).append(html);
                  for (var i=0;i<data.argumentList.length;i++){
                     var expression = this.initializeExpression(data.argumentList[i].expressionId, data.methodId);
+                     var el = $($('#' + data.argumentList[i].expressionId)[0]);
+                    this.setDropFunctionsForExpression(el, data.argumentList[i].expressionId, data.methodId);
+                    this.instance.repaintEverything();
                 }
             }
 
@@ -864,7 +870,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
             expressionReferenceRemoved(referenceId, expressionId) {
                 if (expressionId) {
                     var mappingId = $("#" + expressionId).attr("parent_id");
-                    var expression = this.expressions[mappingId];
+                    var expression = this.expressions[mappingId][expressionId];
                     expression.removeReference(referenceId);
                     var expressionPropertyList = expression.getPropertyList();
                     var expressionText = expression.getText();
@@ -907,7 +913,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 for (var k = 0; k < data.mappings.length; k++) {
                     var mapping_data = data.mappings[k];
                     this.addMapping(mapping_data);
-                    var els = this.expressions[mapping_data.mappingId].updateReferences(mapping_data.expressionText, mapping_data.expressionPropertyList);
+                    var els = this.expressions[mapping_data.mappingId][mapping_data.expressionId].updateReferences(mapping_data.expressionText, mapping_data.expressionPropertyList);
                     els.every(function(el) {
                         console.log("el to make draggable", el);
                         self.makeDraggable(el);

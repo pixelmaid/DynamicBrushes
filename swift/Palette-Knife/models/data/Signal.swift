@@ -11,7 +11,7 @@ import SwiftyJSON
 
 
 class Signal:Observable<Float>{
-    internal var index:Int = 0;
+    internal var index:Int = -1;
     internal var signalBuffer = [Float]();
     
     internal var position:Int = 0
@@ -41,17 +41,18 @@ class Signal:Observable<Float>{
         self.order = i;
     }
     
- 
+    //TODO: will need to change this depending on external datasets/ live data;
     func cloneRawData(protoData:[Float]){
-        self.signalBuffer = protoData
+        self.signalBuffer = protoData;
+        self.setIndex(i:protoData.count-1);
     }
     
     override func get(id:String?) -> Float {
-        
+        print("target index",self.id,self.fieldName,index,signalBuffer.count);
         let v:Float;
-        
         v = signalBuffer[self.index];
-        
+        print("value",v);
+
         self.setSilent(newValue: v);
         return super.get(id: id);
         
@@ -85,6 +86,7 @@ class Signal:Observable<Float>{
         else{
             prevV = v;
         }
+        self.incrementIndex();
         self.didChange.raise(data: (self.id, prevV, v))
       
     }

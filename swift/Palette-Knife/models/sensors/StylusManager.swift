@@ -64,6 +64,25 @@ final class StylusManager{
     static private func beginRecording(start:Date)->RecordingCollection{
         print("preset data",recordingPresetData)
         let rPackage = RecordingCollection(id: NSUUID().uuidString,start:start,targetLayer:StylusManager.layerId,data:recordingPresetData)
+        var protodata:JSON = [:]
+        protodata["x"] = JSON(0);
+        protodata["y"] = JSON(0);
+        protodata["ox"] = JSON(0);
+        protodata["oy"] = JSON(0);
+        protodata["dx"] = JSON(0);
+        protodata["dy"] = JSON(0);
+        protodata["force"] = JSON(0);
+        protodata["angle"] = JSON(0);
+        protodata["deltaAngle"] = JSON(0);
+        protodata["xDistance"] = JSON(0);
+        protodata["yDistance"] = JSON(0);
+        protodata["euclidDistance"] = JSON(0);
+        protodata["xDistance"] = JSON(0);
+        protodata["yDistance"] = JSON(0);
+        protodata["stylusEvent"] = JSON(0);
+        protodata["time"] = JSON(0);
+        
+        rPackage.addProtoSample(data: protodata);
         if(firstRecording == nil){
             firstRecording = rPackage.id;
         }
