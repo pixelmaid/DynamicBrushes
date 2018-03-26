@@ -574,7 +574,7 @@ class Brush: TimeSeries, Hashable{
             let methodName = method.fieldName;
             
             #if DEBUG
-                print("executing method:\(method.fieldName,self.id,self.name)");
+                print("executing method:\(method.fieldName,self.id,self.name,method.arguments)");
             #endif
             switch (methodName){
             case "newStroke",

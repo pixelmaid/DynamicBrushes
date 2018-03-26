@@ -145,12 +145,11 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
 
 
-
-               // CONTEXT MENUL FOR PROPERTY ITEMS
+                // CONTEXT MENUL FOR PROPERTY ITEMS
                 $.contextMenu({
                     trigger: 'left',
-                    className: "property_menu",                    
-                    selector: '#' + self.id +' .state .prop_button',                 
+                    className: "property_menu",
+                    selector: '#' + self.id + ' .state .prop_button',
                     callback: function(key, options) {
                         var name = key;
                         var mapping_id = ID();
@@ -158,13 +157,13 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                         var id = options.$trigger.parent().parent().parent().attr('id');
                         var type = "brush_prop";
                         var fieldName = key;
-                        if (key == "delta x"){
+                        if (key == "delta x") {
                             fieldName = "dx";
-                        }else if (key == "delta y"){
+                        } else if (key == "delta y") {
                             fieldName = "dy";
-                        }else if (key == "scale x"){
+                        } else if (key == "scale x") {
                             fieldName = "sx";
-                        }else if (key == "scale y"){
+                        } else if (key == "scale y") {
                             fieldName = "sy";
                         }
                         console.log(mapping_id, name, fieldName, type, expressionId, $(options.$trigger[0]), self.id);
@@ -176,61 +175,72 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                         console.log(global_brush_properties);
                         var p_items = {};
                         var parent = $(trigger[0]).parent().parent().parent();
-                        for(var i = 0; i < global_brush_properties.length; i++){
+                        for (var i = 0; i < global_brush_properties.length; i++) {
                             var p_name = global_brush_properties[i].fieldName;
-                            p_items[p_name] = {className: 'property_menu_item', name: global_brush_properties[i].displayName, disabled: Object.values(brush_properties_added[self.id][parent.attr("id")]).indexOf(p_name) > -1, fieldName: global_brush_properties[i].fieldName};//function(){
-                       }
+                            p_items[p_name] = {
+                                className: 'property_menu_item',
+                                name: global_brush_properties[i].displayName,
+                                disabled: Object.values(brush_properties_added[self.id][parent.attr("id")]).indexOf(p_name) > -1,
+                                fieldName: global_brush_properties[i].fieldName
+                            }; //function(){
+                        }
 
                         var options = {
-                            items:p_items
-                       };
+                            items: p_items
+                        };
                         return options;
-                    }             
+                    }
 
                 });
 
-// CONTEXT MENUL FOR ACTION ITEMS
+                // CONTEXT MENUL FOR ACTION ITEMS
                 $.contextMenu({
                     trigger: 'left',
-                    className: "methods_menu",                    
-                    selector: '#' + self.id +' .methodsContainer .prop_button',                 
+                    className: "methods_menu",
+                    selector: '#' + self.id + ' .methodsContainer .prop_button',
                     callback: function(key, options) {
                         var name = key;
                         var methodId = ID();
                         var expressionId = ID();
-                        var id = options.$trigger.parent().parent().parent().attr('id');
-                        console.log(action_id, name, $(options.$trigger[0]), self.id);
-                        var targetMethod = $(ui.draggable).attr('name');
-                                                   var defaultArgument = $(ui.draggable).attr('defaultArgument');
-                                                   //data.name = name;
-                                                   self.trigger("ON_METHOD_ADDED", [self.id, null, methodId, targetMethod, defaultArgument]);
-                                                   $(ui.helper).remove(); //destroy clone
-                                                   $(ui.draggable).remove(); //remove from list
-
-                     
+                        var transitionId = options.$trigger.parent().parent().parent().attr('id');
+                        var methodData = self.action_properties.filter(function(item) {
+                            return item.fieldName == key;
+                        })[0];
+                        var fieldName = methodData.fieldName;
+                        var displayName = methodData.displayName;
+                        var argumentList = methodData.argumentList;
+                        var behaviorId = self.id;
+                        console.log("method data",methodData);
+                        self.trigger("ON_METHOD_ADDED", [behaviorId, transitionId, methodId, fieldName, displayName, argumentList]);
                     },
+
+
 
                     build: function(trigger) {
                         console.log(self.action_properties);
                         var p_items = {};
                         var parent = $(trigger[0]).parent().parent().parent();
-                        for(var i = 0; i < self.action_properties.length; i++){
+                        for (var i = 0; i < self.action_properties.length; i++) {
                             var p_name = self.action_properties[i].fieldName;
                             var displayName = self.action_properties[i].displayName;
                             console.log(displayName, p_name);
 
-                            p_items[p_name] = {className: 'property_menu_item', name:displayName, fieldName: p_name};//function(){
-                       }
+                            p_items[p_name] = {
+                                className: 'property_menu_item',
+                                name: displayName,
+                                fieldName: p_name
+                            }; //function(){
+                        }
 
                         var options = {
-                            items:p_items
-                       };
+                            items: p_items
+                        };
                         return options;
-                    }             
+                    }
 
                 });
 
-     // set a title
+                // set a title
 
                 $.contextMenu({
                     selector: '#canvas',
@@ -264,7 +274,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                             self.trigger("ON_MAPPING_REMOVED", [self.id, mappingId, stateId]);
                             //new extension
                             var parent = $(options.$trigger[0]).parent().parent().parent();
-                            console.log("mapping-deleted callback",parent);
+                            console.log("mapping-deleted callback", parent);
                             //self.trigger("ON_MAPPING_DATA_REQUEST", [self.id]);
                         }
                     },
@@ -367,7 +377,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                             }
 
                         }
-                       
+
 
 
                     }
@@ -398,16 +408,21 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 this.instance.cleanupListeners();
             }
 
-            updateProperties(prop_data){
+            updateProperties(prop_data) {
                 brush_properties_added[prop_data.data.behaviorId] = prop_data.data.states;
-                for (var st in brush_properties_added[prop_data.data.behaviorId]){
-                    var mpArray = [];
-                    for(var mp in brush_properties_added[prop_data.data.behaviorId][st]){     
-                        mpArray.push(brush_properties_added[prop_data.data.behaviorId][st][mp]["relativePropertyFieldName"]);
+                for (var st in brush_properties_added[prop_data.data.behaviorId]) {
+                    if (brush_properties_added[prop_data.data.behaviorId].hasOwnProperty(st)) {
+                        var mpArray = [];
+                        for (var mp in brush_properties_added[prop_data.data.behaviorId][st]) {
+                            if (brush_properties_added[prop_data.data.behaviorId][st].hasOwnProperty(mp)) {
+
+                                mpArray.push(brush_properties_added[prop_data.data.behaviorId][st][mp]["relativePropertyFieldName"]);
+                            }
+                        }
+                        brush_properties_added[prop_data.data.behaviorId][st] = mpArray;
                     }
-                    brush_properties_added[prop_data.data.behaviorId][st] = mpArray;
                 }
-                console.log("brush props added",brush_properties_added);
+                console.log("brush props added", brush_properties_added);
             }
 
 
@@ -490,9 +505,9 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     html = startTemplate(state_data);
                 } else {
                     html = stateTemplate(state_data);
-                    console.log('state html',html);
+                    console.log('state html', html);
 
-                    }
+                }
                 d.id = id;
 
                 d.innerHTML = html;
@@ -502,6 +517,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 d.style.left = state_data.x + "px";
                 d.style.top = state_data.y + "px";
                 this.instance.getContainer().appendChild(d);
+
                 this.initNode(d, state_data.stateId, state_data.stateName);
 
                 console.log("state", $('#' + id));
@@ -541,8 +557,10 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 this.instance.remove(data.stateId);
             }
 
-            initializeExpression(expressionId, mappingId) {
-                var ex_el = $("#" + mappingId + " .reference_expression .text_entry")[0];
+            initializeExpression(expressionId, mappingId) {                    
+                console.log("init expression",expressionId, mappingId);
+
+                var ex_el = $("#" + expressionId + " .text_entry")[0];
                 var expression = new Expression(ex_el, mappingId, expressionId);
 
                 this.expressions[mappingId] = expression;
@@ -568,17 +586,17 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 var expression = this.initializeExpression(mapping_data.expressionId, mapping_data.mappingId);
 
                 console.log("target droppable", $('#' + mapping_data.mappingId).find(".reference_expression"));
-                var el =  $($('#' + mapping_data.mappingId).find(".reference_expression")[0]);
-                this.setDropFunctionsForExpression(el,mapping_data.mappingId);
+                var el = $($('#' + mapping_data.mappingId).find(".reference_expression")[0]);
+                this.setDropFunctionsForExpression(el, mapping_data.mappingId);
                 this.instance.repaintEverything();
 
                 //need to extension
 
             }
 
-            setDropFunctionsForExpression(el, expressionTargetId){
+            setDropFunctionsForExpression(el, expressionTargetId) {
                 var self = this;
-              el.droppable({
+                el.droppable({
                     greedy: true,
                     drop: function(event, ui) {
                         var referenceType = $(ui.draggable).attr('type');
@@ -707,71 +725,10 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
             addMethod(data) {
                 console.log("method data =", data);
-                var self = this;
-                var argumentList = "";
-
-                for (var arg in data.methodArguments) {
-                    if (data.methodArguments.hasOwnProperty(arg)) {
-                        argumentList += arg + "|" + data.methodArguments[arg] + ";";
-                    }
-                }
-                var methodTemplateData = {};
-
-                argumentList = argumentList.slice(0, -1);
-                console.log("data.methodArguments", data.methodArguments, argumentList);
-
-                methodTemplateData.targetMethod = data.targetMethod;
-                methodTemplateData.methodId = data.methodId;
-                console.log("has arguments?", data.hasArguments);
-                if (data.hasArguments) {
-                    methodTemplateData.argumentList = argumentList;
-                    methodTemplateData.hasArguments = true;
-                    if (data.currentArguments) {
-                        methodTemplateData.defaultArgumentName = data.methodArguments[data.currentArguments[0]];
-                        methodTemplateData.defaultArgumentId = data.currentArguments[0];
-
-                    } else {
-                        methodTemplateData.defaultArgumentName = data.methodArguments[data.defaultArgument];
-                        methodTemplateData.defaultArgumentId = data.defaultArgument;
-                    }
-
-                    methodTemplateData.methodTextId = data.methodId + "_text";
-                    if (data.targetMethod == "spawn") {
-                        methodTemplateData.methodNumberId = data.methodId + "_num";
-                        if (data.currentArguments) {
-                            methodTemplateData.defaultNumberArgument = data.currentArguments[1];
-
-                        } else {
-                            methodTemplateData.defaultNumberArgument = 1;
-                        }
-
-                    }
-
-                }
-                var html = methodTemplate(methodTemplateData);
-                console.log("target transition:", data.targetTransition, $('#' + data.targetTransition), $($('#' + data.targetTransition).find(".methods")));
-                if (data.targetTransition && data.targetTransition != "globalTransition") {
-                    $($('#' + data.targetTransition).find(".methods")[0]).append(html);
-
-                } else {
-
-                    $('#' + self.id).append(html);
-
-                }
-                // this.makeDraggable($("#" + data.methodId));
-                if (data.hasArguments) {
-                    console.log("get text box by id", document.getElementById(methodTemplateData.methodTextId), methodTemplateData.methodTextId);
-                    //EditableSelect.createEditableSelect(document.getElementById(methodTemplateData.methodTextId));
-                var expression = this.initializeExpression(data.expressionId, data.methodId);
-                    console.log("method added event", $("#" + data.targetTransition + " .methods .block"), data, $('#' + methodTemplateData.methodTextId));
-                    $('#' + methodTemplateData.methodTextId).change(function() {
-                        console.log("change!");
-                        self.methodArgumentChanged(self.id, data.targetTransition, data.methodId, data.targetMethod);
-                    });
-                    $('#' + data.methodId + "_num").change(function() {
-                        console.log("change!");
-                        self.methodArgumentChanged(self.id, data.targetTransition, data.methodId, data.targetMethod);
-                    });
+                var html = methodTemplate(data);
+                 $($('#' + data.transitionId).find(".methods")[0]).append(html);
+                 for (var i=0;i<data.argumentList.length;i++){
+                    var expression = this.initializeExpression(data.argumentList[i].expressionId, data.methodId);
                 }
             }
 
@@ -786,7 +743,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 var methodHTML = $('#' + methodId);
 
                 var currentArgument = $('#' + methodId + "_text").attr('argumentid');
-                if(currentArgument == "nil"){
+                if (currentArgument == "nil") {
                     currentArgument = $('#' + methodId + "_text").attr("value");
                 }
                 console.log("method argument changed for ", methodId, currentArgument);
@@ -798,7 +755,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 this.trigger("ON_METHOD_ARGUMENT_CHANGE", [behaviorId, transitionId, methodId, targetMethod, args]);
             }
 
-           
+
 
             //TODO: I think remove unbinds events of child elements but need to confirm here
             removeMapping(data) {
@@ -811,17 +768,23 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
             }
 
-            addInspector(target){
-                var inspectorModel = new InspectorModel(this.id,target.attr("id"));
+            addInspector(target) {
+                var inspectorModel = new InspectorModel(this.id, target.attr("id"));
                 var el = inspectorModel.view.el;
                 target.hover(
                     function() {
-                        var position = $(this).offset(); 
-                        el.css({left:position.left, top:position.top+30,visibility:"visible"});
+                        var position = $(this).offset();
+                        el.css({
+                            left: position.left,
+                            top: position.top + 30,
+                            visibility: "visible"
+                        });
                     },
                     function() {
-                       
-                          el.css({visibility:"hidden"});
+
+                        el.css({
+                            visibility: "hidden"
+                        });
 
                     });
             }
@@ -1052,36 +1015,12 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     }
                 });
 
-                $($('#' + id).find(".methods")[0]).droppable({
-                    greedy: true,
-                    drop: function(event, ui) {
-                        console.log("drop method");
-                        var type = $(ui.draggable).attr('type');
-                        var behaviorId = self.id;
-                        var transitionId = id;
-                        var methodId = ID();
-                         var expressionId = ID();
-                        var targetMethod = $(ui.draggable).attr('name');
-                        console.log("type=", type);
-
-                        if (type == 'action') {
-
-                            //data.name = name;
-                            self.trigger("ON_METHOD_ADDED", [behaviorId, transitionId, methodId, expressionId, targetMethod, null]);
-                            $(ui.helper).remove(); //destroy clone
-                            $(ui.draggable).remove(); //remove from list
-
-                        }
-                    }
-                });
-
-
 
                 connection.getOverlay("transition_" + id).hide();
                 var selector = $("#" + id).parent().closest('div').attr('id');
                 console.log("selector:", selector);
                 $.contextMenu({
-                    selector: "#" + selector +" .methods",
+                    selector: "#" + selector + " .methods",
                     callback: function(key, options) {
                         if (key == "minimize") {
                             connection.getOverlay("transition_" + id).hide();
@@ -1097,7 +1036,6 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     }
 
                 });
-             
 
 
 

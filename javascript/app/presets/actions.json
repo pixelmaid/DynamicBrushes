@@ -1,7 +1,7 @@
 [{
 	"displayName": "spawn",
 	"fieldName": "spawn",
-	"arguments": [{
+	"argumentList": [{
 		"displayName": "behavior name",
 		"fieldName": "behavior",
 		"isExpression": false,
@@ -17,7 +17,7 @@
 }, {
 	"displayName": "set origin",
 	"fieldName": "setOrigin",
-	"arguments": [{
+	"argumentList": [{
 		"displayName": "x",
 		"fieldName": "x",
 		"isExpression": true,
@@ -33,7 +33,7 @@
 }, {
 	"displayName": "new stroke",
 	"fieldName": "newStroke",
-	"arguments": [{
+	"argumentList": [{
 		"displayName": "x",
 		"fieldName": "x",
 		"isExpression": true,
@@ -49,9 +49,9 @@
 }, {
 	"displayName": "start timer",
 	"fieldName": "startTimer",
-	"arguments": [{}]
+	"argumentList": [{}]
 }, {
 	"displayName": "stop timer",
 	"fieldName": "stopTimer",
-	"arguments": [{}]
+	"argumentList": [{}]
 }]

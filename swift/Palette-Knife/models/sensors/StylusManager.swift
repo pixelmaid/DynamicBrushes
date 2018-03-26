@@ -374,7 +374,13 @@ final class StylusManager{
     }
     static public func addResultantStroke(layerId:String, strokeId:String){
         if(isLive){
+            if(currentRecordingPackage != nil){
             currentRecordingPackage.addResultantStroke(layerId: layerId, strokeId: strokeId);
+            }
+            else{
+                print("==============WARNING CANNOT ADD RESULTANT STROKE, NO RECORDING PACKAGE INIT=====================");
+            }
+            
         }
         else{
             currentLoopingPackage.addResultantStroke(layerId: layerId, strokeId: strokeId);

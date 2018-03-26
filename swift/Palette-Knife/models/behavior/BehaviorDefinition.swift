@@ -172,15 +172,7 @@ class BehaviorDefinition {
         let transitionId = data["transitionId"].stringValue;
         let fieldName = data["fieldName"].stringValue;
         let displayName = data["displayName"].stringValue;
-        let methodId:String;
-        var isInit = true;
-        if(data["methodId"] == JSON.null){
-            methodId = NSUUID().uuidString;
-            isInit = false;
-        }
-        else{
-            methodId = data["methodId"].stringValue;
-        }
+        let methodId:String = data["methodId"].stringValue;
         var arguments:[ArgumentData] = [];
         let argumentList = data["argumentList"].arrayValue
         for i in 0..<argumentList.count{
@@ -188,29 +180,28 @@ class BehaviorDefinition {
             let isExpression = argumentJSON["isExpression"].boolValue;
             let isDropdown = argumentJSON["isDropdown"].boolValue;
             let defaultVal = argumentJSON["defaultVal"].stringValue;
+            let argDisplayName = argumentJSON["displayName"].stringValue;
+            let argFieldName = argumentJSON["fieldName"].stringValue;
+
             let expressionId:String?
-            if(!isInit){
-                 expressionId = NSUUID().uuidString;
-                if(isExpression){
-                    self.addExpression(id: expressionId!, emitterOperandList: [], expressionText: defaultVal)
-                }
-                
-            }
-            else{
-                expressionId = argumentJSON["expressionId"].stringValue;
-            }
             let argumentData:ArgumentData;
             
             if(isExpression){
-                argumentData = ExpressionArgument(expressionId: expressionId!, defaultVal: defaultVal);
+                if(argumentJSON["expressionId"]==JSON.null){
+                    expressionId = NSUUID().uuidString;
+                    self.addExpression(id: expressionId!, emitterOperandList: [], expressionText: defaultVal)
+                }
+                else{
+                    expressionId = argumentJSON["expressionId"].stringValue;
+                }
+                argumentData = ExpressionArgument(expressionId: expressionId!, fieldName:argFieldName, displayName: argDisplayName, defaultVal: defaultVal);
             }
             else{
-                argumentData = DropdownArgument(defaultVal: defaultVal)
+                argumentData = DropdownArgument(fieldName:argFieldName, displayName: argDisplayName, defaultVal: defaultVal)
             }
             arguments.append(argumentData);
-           
         }
-    
+        
         self.addMethod(transitionId: transitionId, methodId: methodId, fieldName: fieldName, displayName: displayName, arguments: arguments);
         return self.methodToJSON(methodId: methodId)!;
     }
@@ -965,9 +956,12 @@ class BehaviorDefinition {
 
 class ArgumentData{
     let defaultVal:String;
-    
-    init(defaultVal:String){
+    let fieldName:String;
+    let displayName:String;
+    init(fieldName:String,displayName:String, defaultVal:String){
         self.defaultVal = defaultVal;
+        self.displayName = displayName;
+        self.fieldName = fieldName;
     }
     public func testSelected(id:String)->Bool{
         return false;
@@ -981,6 +975,9 @@ class ArgumentData{
     public func toJSON()->JSON{
         var argumentJSON:JSON = [:]
         argumentJSON["defaultVal"] = JSON(defaultVal);
+        argumentJSON["displayName"] = JSON(displayName);
+        argumentJSON["fieldName"] = JSON(fieldName);
+
         return argumentJSON;
         
     }
@@ -1012,9 +1009,9 @@ class DropdownArgument:ArgumentData{
 class ExpressionArgument:ArgumentData{
     let expressionId:String
    
-    init(expressionId:String,defaultVal:String){
+    init(expressionId:String,fieldName:String,displayName:String,defaultVal:String){
         self.expressionId = expressionId;
-        super.init(defaultVal:defaultVal);
+        super.init(fieldName:fieldName, displayName:displayName, defaultVal:defaultVal);
     }
     override public func toJSON() -> JSON {
         var argumentJSON = super.toJSON();
