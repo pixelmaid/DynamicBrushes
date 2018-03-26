@@ -27,14 +27,31 @@ class StylusCollection:LiveCollection {
     var yDistance:Float = 0;
     var euclidDistance:Float = 0;
     var speed:Float = 0;
-    var speedDate:Date;
     var prevTime:Float = 0;
     var stylusEvent:Float = 0;
     
  
     required init(data: JSON) {
-        self.speedDate = Date();
         super.init(data: data);
+        var protodata:JSON = [:]
+        protodata["x"] = JSON(0);
+        protodata["y"] = JSON(0);
+        protodata["ox"] = JSON(0);
+        protodata["oy"] = JSON(0);
+        protodata["dx"] = JSON(0);
+        protodata["dy"] = JSON(0);
+        protodata["force"] = JSON(0);
+        protodata["angle"] = JSON(0);
+        protodata["deltaAngle"] = JSON(0);
+        protodata["xDistance"] = JSON(0);
+        protodata["yDistance"] = JSON(0);
+        protodata["euclidDistance"] = JSON(0);
+        protodata["xDistance"] = JSON(0);
+        protodata["yDistance"] = JSON(0);
+        protodata["stylusEvent"] = JSON(0);
+        protodata["time"] = JSON(0);
+
+        super.addProtoSample(data: protodata);
     }
     
     func onStylusUp(x:Float,y:Float){
@@ -50,7 +67,7 @@ class StylusCollection:LiveCollection {
         self.speed = 0;
         self.stylusEvent = Signal.stylusUp;
         
-        self.exportData();
+         _ = self.exportData();
     }
     
     func onStylusDown(x:Float,y:Float,force:Float,angle:Float){
@@ -70,7 +87,7 @@ class StylusCollection:LiveCollection {
         self.euclidDistance = 0;
         self.prevTime = self.getTimeElapsed();
         
-        self.exportData();
+        _ = self.exportData();
 
     }
     
@@ -103,13 +120,13 @@ class StylusCollection:LiveCollection {
         
         self.prevTime = currentTime;
         self.stylusEvent = Signal.stylusMove;
-        self.exportData();
+        _ = self.exportData();
      
     }
     
-    func exportData(){
+    override func exportData()->JSON{
         //export data
-        var data:JSON = [:];
+        var data = super.exportData();
         data["x"] = JSON(self.x);
         data["y"] = JSON(self.y);
         data["dx"] = JSON(self.dx);
@@ -125,18 +142,11 @@ class StylusCollection:LiveCollection {
         data["speed"] = JSON(self.speed);
         data["deltaAngle"] = JSON(self.deltaAngle);
         
-        //TODO:RESOLVE TIME
-        data["time"] = JSON(self.getTimeElapsed());
-        
         self.addProtoSample(data: data)
+        return data;
     }
   
     
-    func getTimeElapsed()->Float{
-        let currentTime = NSDate();
-        let t = currentTime.timeIntervalSince(speedDate as Date)
-        return Float(t);
-    }
     
     
     

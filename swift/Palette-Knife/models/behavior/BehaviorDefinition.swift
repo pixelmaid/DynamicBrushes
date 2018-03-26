@@ -260,7 +260,7 @@ class BehaviorDefinition {
                 
                 var settings:JSON = [:]
                 settings["inc"] = condition_list[0];
-                let interval_id =  BehaviorManager.generators["default"]!.initializeSignal(fieldName:"interval",displayName:"interval",settings:settings,classType: "Interval", style:"generator", isProto:false , order:nil);
+                let interval_id =  BehaviorManager.signalCollections[2]["default"]!.initializeSignal(fieldName:"interval",displayName:"interval",settings:settings,classType: "Interval", style:"generator", isProto:false , order:nil);
                 
                 
                 switch(event){
@@ -841,8 +841,6 @@ class BehaviorDefinition {
                 self.initBrushBehavior(targetBrush:targetBrush);
             }
         }
-        
-        uiInput.invalidateAllProperties();
         
         
     }

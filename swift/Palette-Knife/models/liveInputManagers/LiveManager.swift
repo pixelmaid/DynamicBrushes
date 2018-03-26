@@ -9,61 +9,107 @@
 import Foundation
 import SwiftyJSON
 
-//feeds stylus live or pre-recorded data depending on state of system
-final class StylusManager{
+
+ class LiveManager{
+  internal var liveCollections = [String:LiveCollection]();
+
+     public func registerCollection(id:String, collection:LiveCollection){
+        self.liveCollections[id] = collection;
+    }
+}
+
+final class UIManager:LiveManager{
     
-    static let stylusUp = Float(0.0);
-    static let stylusMove = Float(1.0);
-    static let stylusDown = Float(2.0);
-
-    static public var isLive = true;
-    static private var currentRecordingPackage:RecordingCollection!
-    static private var currentLoopingPackage:RecordingCollection!
-
-    static private var playbackTimer:Timer!
-    //todo: get rid of this and use linked list structure
-    static private var recordingPackages = [String:RecordingCollection]()
-    static var layerId:String!
-    static private var currentStartDate:Date!
-    //producer consumer props
-    static private let queue = DispatchQueue(label: "stylus-queue")
-    static private var producer = StylusDataProducer()
-    static private var consumer = StylusDataConsumer()
-    static private var samples = [JSON]();
-    static private var usedSamples = [JSON]();
-    static private var firstRecording:String!
-    static private var lastRecording:String!
-
-    //events
-    static public let eraseEvent = Event<(String,[String:[String]])>();
-
-    static public let recordEvent = Event<(String,RecordingCollection)>();
-    static public let keyframeEvent = Event<(Int)>();
-    static public var stylusCollections = [String:StylusCollection]();
-
-    static public let layerEvent = Event<(String,String)>();
-    static public let stylusDataEvent = Event<(String, [Float])>();
-    static public let visualizationEvent = Event<String>();
-    static private var playbackMultiplier = 10;
-    static private var startTime:Date!
-    static private var prevTriggerTime:Date!
-    static private var prevHash:Float = 0;
-    static private var playbackRate:Float = 1;
-    static private var revertToLiveOnLoopEnd = false;
-    static private var idStart:String!
-    static private var idEnd:String!
-    static private var recordingPresetData:JSON = [:]
+     public func setDiameter(val:Float){
+        for (_,uiCollection) in self.liveCollections{
+            (uiCollection as! UICollection).setDiameter(val: val);
+        }
+    }
     
-
-    init(){
+     public func setAlpha(val:Float){
+        for (_,uiCollection) in self.liveCollections{
+            (uiCollection as! UICollection).setAlpha(val: val);
+        }
+    }
+    
+     public func setColor(color:UIColor){
+        for (_,uiCollection) in self.liveCollections{
+            (uiCollection as! UICollection).setColor(color: color);
+        }
         
     }
-
-  
     
-    static private func beginRecording(start:Date)->RecordingCollection{
+}
+
+
+//feeds stylus live or pre-recorded data depending on state of system
+final class StylusManager:LiveManager{
+    
+     static let stylusUp = Float(0.0);
+     static let stylusMove = Float(1.0);
+     static let stylusDown = Float(2.0);
+
+     public var isLive = true;
+    private var currentRecordingPackage:RecordingCollection!
+     private var currentLoopingPackage:RecordingCollection!
+
+     private var playbackTimer:Timer!
+    //todo: get rid of this and use linked list structure
+     private var recordingPackages = [String:RecordingCollection]()
+     var layerId:String!
+     private var currentStartDate:Date!
+    //producer consumer props
+     private let queue = DispatchQueue(label: "stylus-queue")
+     private var producer = StylusDataProducer()
+     private var consumer = StylusDataConsumer()
+     private var samples = [JSON]();
+     private var usedSamples = [JSON]();
+     private var firstRecording:String!
+     private var lastRecording:String!
+
+    //events
+     public let eraseEvent = Event<(String,[String:[String]])>();
+
+     public let recordEvent = Event<(String,RecordingCollection)>();
+     public let keyframeEvent = Event<(Int)>();
+
+     public let layerEvent = Event<(String,String)>();
+     public let stylusDataEvent = Event<(String, [Float])>();
+     public let visualizationEvent = Event<String>();
+     private var playbackMultiplier = 10;
+     private var startTime:Date!
+     private var prevTriggerTime:Date!
+     private var prevHash:Float = 0;
+     private var playbackRate:Float = 1;
+     private var revertToLiveOnLoopEnd = false;
+     private var idStart:String!
+     private var idEnd:String!
+     private var recordingPresetData:JSON = [:]
+    
+ 
+    
+     private func beginRecording(start:Date)->RecordingCollection{
         print("preset data",recordingPresetData)
-        let rPackage = RecordingCollection(id: NSUUID().uuidString,start:start,targetLayer:StylusManager.layerId,data:recordingPresetData)
+        let rPackage = RecordingCollection(id: NSUUID().uuidString,start:start,targetLayer:self.layerId,data:recordingPresetData)
+        var protodata:JSON = [:]
+        protodata["x"] = JSON(0);
+        protodata["y"] = JSON(0);
+        protodata["ox"] = JSON(0);
+        protodata["oy"] = JSON(0);
+        protodata["dx"] = JSON(0);
+        protodata["dy"] = JSON(0);
+        protodata["force"] = JSON(0);
+        protodata["angle"] = JSON(0);
+        protodata["deltaAngle"] = JSON(0);
+        protodata["xDistance"] = JSON(0);
+        protodata["yDistance"] = JSON(0);
+        protodata["euclidDistance"] = JSON(0);
+        protodata["xDistance"] = JSON(0);
+        protodata["yDistance"] = JSON(0);
+        protodata["stylusEvent"] = JSON(0);
+        protodata["time"] = JSON(0);
+        
+        rPackage.addProtoSample(data: protodata);
         if(firstRecording == nil){
             firstRecording = rPackage.id;
         }
@@ -79,7 +125,7 @@ final class StylusManager{
         
     }
     
-    static private func endRecording()->RecordingCollection?{
+     private func endRecording()->RecordingCollection?{
         if(currentRecordingPackage != nil){
             recordEvent.raise(data:("END_RECORDING",currentRecordingPackage));
             return currentRecordingPackage;
@@ -89,28 +135,28 @@ final class StylusManager{
     
     
     
-    static public func setRecordingPresetData(data:JSON){
-        StylusManager.recordingPresetData = data;
+     public func setRecordingPresetData(data:JSON){
+        self.recordingPresetData = data;
     }
 
     
-    static public func liveStatus()->Bool{
+     public func liveStatus()->Bool{
         return self.isLive
     }
     
-    static public func setToLive(){
+     public func setToLive(){
         revertToLiveOnLoopEnd = true;
     }
     
    
     
-    static public func setPlaybackRate(v:Float){
+     public func setPlaybackRate(v:Float){
         playbackRate = v;
         
     }
     
     
-    static public func eraseStrokesForLooping(idStart:String,idEnd:String) {
+     public func eraseStrokesForLooping(idStart:String,idEnd:String) {
         //jl - TODO write code that only erases the strokes between idStart and idEnd
         //jl - i changed the args to be an idStart and idEnd, same as setToRecording, since we would only ever temporarily erase the strokes we are concerned with in the looping
         
@@ -120,7 +166,7 @@ final class StylusManager{
     
     
     
-    static public func setToRecording(idStart:String,idEnd:String){
+     public func setToRecording(idStart:String,idEnd:String){
         self.isLive = false;
         self.idStart = idStart;
         self.idEnd = idEnd;
@@ -164,7 +210,7 @@ final class StylusManager{
     
     
    
-    static private func killLiveMode(){
+     private func killLiveMode(){
         self.isLive = true;
         self.idStart = nil;
         self.idEnd = nil;
@@ -172,13 +218,13 @@ final class StylusManager{
         samples.removeAll();
         usedSamples.removeAll();
         currentLoopingPackage = nil;
-        StylusManager.visualizationEvent.raise(data:"RECORD_IMG_ON")
-        StylusManager.visualizationEvent.raise(data:"DESELECT_LAST")
+        self.visualizationEvent.raise(data:"RECORD_IMG_ON")
+        self.visualizationEvent.raise(data:"DESELECT_LAST")
 
     }
     
     
-    static private func killLoopTimer(delayRestart:Bool){
+     private func killLoopTimer(delayRestart:Bool){
         if playbackTimer != nil {
             playbackTimer.invalidate()
             playbackTimer = nil
@@ -187,11 +233,11 @@ final class StylusManager{
             playbackTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(delayTimerReinit), userInfo: nil, repeats: false)
         }
         else{
-            StylusManager.visualizationEvent.raise(data:"ERASE_REQUEST")
+            self.visualizationEvent.raise(data:"ERASE_REQUEST")
         }
     }
     
-    @objc static private func delayTimerReinit(){
+    @objc private func delayTimerReinit(){
         if(playbackTimer != nil){
             playbackTimer.invalidate()
             playbackTimer = nil
@@ -217,13 +263,13 @@ final class StylusManager{
             }
         
         eraseEvent.raise(data:("ERASE_REQUEST",strokesToErase));
-        StylusManager.visualizationEvent.raise(data:"ERASE_REQUEST")
+        self.visualizationEvent.raise(data:"ERASE_REQUEST")
 
         playbackTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(advanceRecording), userInfo: nil, repeats: true)
 
     }
     
-    @objc static private func advanceRecording(){
+    @objc private func advanceRecording(){
       
         
         queue.sync {
@@ -256,7 +302,7 @@ final class StylusManager{
                             currentLoopingPackage = recordingPackages[currentSample["recordingId"].stringValue];
                         }
                         print("sample hash",currentSample["hash"].stringValue);
-                        self.consumer.consume(sample:currentSample);
+                        self.consumer.consume(liveManager:self, sample:currentSample);
                         
                        // print(currentSample.stylusEvent,"sample hash, last hash",currentSample.hash,currentSample.lastHash)
                         usedSamples.append(currentSample);
@@ -287,7 +333,7 @@ final class StylusManager{
     
    
     //TOOD: NEED TO MAKE THESE SYMMETRICAL TO STYLUSCOLLECTION EVENTS TO CALCULATE ACCURATE DATA
-    static public func onStylusMove(x:Float,y:Float,force:Float,angle:Float){
+     public func onStylusMove(x:Float,y:Float,force:Float,angle:Float){
         if(isLive){
             let currentTime = Date();
             let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
@@ -318,15 +364,14 @@ final class StylusManager{
             
             currentRecordingPackage.addProtoSample(data:sample);
             
-            for (_,stylusCollection) in self.stylusCollections{
-            //TOOD: SHOULD NOT STORE DATA HERE...
+            for (_,stylusCollection) in self.liveCollections{
 
-                stylusCollection.onStylusMove(x: x, y: y, force: force, angle: angle)
+                (stylusCollection as! StylusCollection).onStylusMove(x: x, y: y, force: force, angle: angle)
             }
         }
     }
     
-    static public func onStylusUp(x:Float,y:Float,force:Float,angle:Float){
+     public func onStylusUp(x:Float,y:Float,force:Float,angle:Float){
         if(isLive){
             let currentTime = Date();
             let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
@@ -342,14 +387,14 @@ final class StylusManager{
             
             currentRecordingPackage.addProtoSample(data:sample);
             _ = self.endRecording();
-             for (_,stylusCollection) in self.stylusCollections{
-                stylusCollection.onStylusUp(x: x, y:y);
+             for (_,stylusCollection) in self.liveCollections{
+                (stylusCollection as! StylusCollection).onStylusUp(x: x, y:y);
             }
             
         }
     }
     
-    static public func onStylusDown(x:Float,y:Float,force:Float,angle:Float){
+     public func onStylusDown(x:Float,y:Float,force:Float,angle:Float){
         if(isLive){
             currentStartDate = Date();
             let currentTime = Date();
@@ -367,12 +412,12 @@ final class StylusManager{
             
             currentRecordingPackage.addProtoSample(data:sample);
 
-            for (_,stylusCollection) in self.stylusCollections{
-            stylusCollection.onStylusDown(x: x, y: y, force: force, angle: angle);
+            for (_,stylusCollection) in self.liveCollections{
+           (stylusCollection as! StylusCollection).onStylusDown(x: x, y: y, force: force, angle: angle);
             }
         }
     }
-    static public func addResultantStroke(layerId:String, strokeId:String){
+     public func addResultantStroke(layerId:String, strokeId:String){
         if(isLive){
             if(currentRecordingPackage != nil){
             currentRecordingPackage.addResultantStroke(layerId: layerId, strokeId: strokeId);
@@ -387,11 +432,11 @@ final class StylusManager{
         }
     }
     
-    static public func setLayerId(layerId:String){
-        StylusManager.layerId = layerId;
+     public func setLayerId(layerId:String){
+        self.layerId = layerId;
     }
     
-    static public func  handleDeletedLayer(deletedId: String){
+     public func  handleDeletedLayer(deletedId: String){
         if(firstRecording != nil){
             var targetRecordingPackage = recordingPackages[firstRecording]
             while(true){
@@ -416,14 +461,14 @@ final class StylusManager{
         }
     }
     
-    static public func exportRecording(startId:String, endId:String)->JSON?{
+     public func exportRecording(startId:String, endId:String)->JSON?{
         let compiledId = NSUUID().uuidString;
-        guard let startRecordingCollection = StylusManager.recordingPackages[startId] else{
+        guard let startRecordingCollection = self.recordingPackages[startId] else{
             print("================ERROR no recording collection by that id===================");
             return nil;
         }
         
-        let compiledRecordingCollection = RecordingCollection(id: compiledId, start: startRecordingCollection.start, targetLayer: startRecordingCollection.targetLayer, data: StylusManager.recordingPresetData)
+        let compiledRecordingCollection = RecordingCollection(id: compiledId, start: startRecordingCollection.start, targetLayer: startRecordingCollection.targetLayer, data: self.recordingPresetData)
         var targetRecordingCollection = startRecordingCollection;
         while(true){
             compiledRecordingCollection.addDataFrom(recordingCollection:targetRecordingCollection);
@@ -438,9 +483,7 @@ final class StylusManager{
         return compiledRecordingCollection.protoToJSON();
     }
     
-    static public func registerStylus(id:String, stylusCollection:StylusCollection){
-        self.stylusCollections[id] = stylusCollection;
-    }
+ 
    
 }
 
@@ -460,30 +503,30 @@ class StylusDataProducer{
 
 class StylusDataConsumer{
     
-    func consume(sample:JSON){
+    func consume(liveManager:LiveManager, sample:JSON){
         print("consume sample",sample["x"].floatValue,sample["y"].floatValue,sample["force"].floatValue,sample["targetLayer"].stringValue)
-        
+        let stylusManager = liveManager as! StylusManager;
         switch(sample["stylusEvent"].floatValue){
         case StylusManager.stylusUp:
-            for (_,stylusCollection) in StylusManager.stylusCollections{
-                stylusCollection.onStylusUp(x: sample["x"].floatValue, y: sample["y"].floatValue);
+            for (_,stylusCollection) in liveManager.liveCollections{
+                (stylusCollection as! StylusCollection).onStylusUp(x: sample["x"].floatValue, y: sample["y"].floatValue);
             }
-            StylusManager.stylusDataEvent.raise(data:("STYLUS_UP", [sample["x"].floatValue, sample["y"].floatValue]))
+            stylusManager.stylusDataEvent.raise(data:("STYLUS_UP", [sample["x"].floatValue, sample["y"].floatValue]))
             break;
         case StylusManager.stylusDown:
-            StylusManager.stylusDataEvent.raise(data:("STYLUS_DOWN", [sample["x"].floatValue, sample["y"].floatValue]))
-            StylusManager.layerEvent.raise(data:("REQUEST_CORRECT_LAYER",sample["targetLayer"].stringValue));
+            stylusManager.stylusDataEvent.raise(data:("STYLUS_DOWN", [sample["x"].floatValue, sample["y"].floatValue]))
+            stylusManager.layerEvent.raise(data:("REQUEST_CORRECT_LAYER",sample["targetLayer"].stringValue));
             
-            for (_,stylusCollection) in StylusManager.stylusCollections{
-                stylusCollection.onStylusDown(x: sample["x"].floatValue, y: sample["y"].floatValue, force: sample["force"].floatValue, angle: sample["angle"].floatValue);
+            for (_,stylusCollection) in stylusManager.liveCollections{
+                (stylusCollection as! StylusCollection).onStylusDown(x: sample["x"].floatValue, y: sample["y"].floatValue, force: sample["force"].floatValue, angle: sample["angle"].floatValue);
             }
             
-            StylusManager.visualizationEvent.raise(data:"ADVANCE_KEYFRAME")
+            stylusManager.visualizationEvent.raise(data:"ADVANCE_KEYFRAME")
             break;
         case StylusManager.stylusMove:
-            StylusManager.stylusDataEvent.raise(data:("STYLUS_MOVE", [sample["x"].floatValue, sample["y"].floatValue]))
-            for (_,stylusCollection) in StylusManager.stylusCollections{
-                stylusCollection.onStylusMove(x: sample["x"].floatValue, y: sample["y"].floatValue, force: sample["force"].floatValue, angle: sample["angle"].floatValue);
+            stylusManager.stylusDataEvent.raise(data:("STYLUS_MOVE", [sample["x"].floatValue, sample["y"].floatValue]))
+            for (_,stylusCollection) in stylusManager.liveCollections{
+                (stylusCollection as! StylusCollection).onStylusMove(x: sample["x"].floatValue, y: sample["y"].floatValue, force: sample["force"].floatValue, angle: sample["angle"].floatValue);
             }
             break;
         default:

@@ -38,7 +38,6 @@ class SignalCollection: Object{
             try self.loadDataFromJSON(data: data);
         }
         catch {
-    
             print("ERROR ---------SIGNAL ERROR ON INIT-----------")
         }
     }
@@ -324,52 +323,22 @@ class BrushCollection:SignalCollection{
 }
 
 
-class UICollection:SignalCollection{
-    
-    required init(data:JSON){
-        super.init(data:data);
-        
-    }
-    /*override init(){
-     super.init();
-     do{
-     /*try self.registerSignalType(fieldName: "hue", classType: "Signal");
-     try self.registerSignalType(fieldName: "lightness", classType: "Signal");
-     try self.registerSignalType(fieldName: "saturation", classType: "Signal");
-     try self.registerSignalType(fieldName: "diameter", classType: "Signal");
-     try self.registerSignalType(fieldName: "alpha", classType: "Signal");*/
-     
-     }
-     catch SignalError.signalTypeAlreadyRegistered{
-     print("ERRROR ---------Signal Type already Registered-----------")
-     }
-     catch {
-     
-     }
-     self.name = "stylus";
-     
-     }*/
-    
-    //TODO: INIT UI PROPERTIES
-    override public func initializeSignal(fieldName:String, displayName:String, settings:JSON, classType:String, style:String, isProto:Bool, order:Int?)->String{
-        if(classType == "TimeSignal"){
-            return super.initializeSignal(fieldName: fieldName, displayName: displayName, settings: settings, classType: classType, style:style, isProto: isProto, order: order);
-        }
-        
-        let id = NSUUID().uuidString
-        let signal = LiveSignal(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:settings);
-        self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
-        return id;
-    }
-}
-
 
 class LiveCollection:SignalCollection{
-    
+    var startDate:Date;
+
     required init(data:JSON){
+        self.startDate = Date();
+
         super.init(data:data);
         
         
+    }
+    
+    func getTimeElapsed()->Float{
+        let currentTime = NSDate();
+        let t = currentTime.timeIntervalSince(startDate as Date)
+        return Float(t);
     }
     
     /* override init(){
@@ -427,6 +396,13 @@ class LiveCollection:SignalCollection{
                 }
             }
         self.signalLength += 1;
+    }
+    
+    internal func exportData()->JSON{
+        var data:JSON = [:]
+        //TOOD: resolve time
+        data["time"] = JSON(self.getTimeElapsed());
+        return data;
     }
 }
 
@@ -513,5 +489,7 @@ class RecordingCollection:LiveCollection{
         }
     }
     
+    
+  
     
 }

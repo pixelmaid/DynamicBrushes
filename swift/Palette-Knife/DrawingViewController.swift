@@ -11,7 +11,8 @@ import SwiftyJSON
 
 
 let behaviorMapper = BehaviorMapper()
-let uiInput = UIInput();
+let stylusManager = StylusManager();
+let uiManager = UIManager();
 //CONSTANTS:
 
 let kBrightness =       1.0
@@ -140,7 +141,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     
     func colorPickerEventHandler(data:(UIColor), key: String){
         toolbarController?.setColor(color:data);
-        uiInput.setColor(color:data);
+        uiManager.setColor(color:data);
     }
     
     func stylusManagerEventHandler(data:(String,Any),key:String){
@@ -236,10 +237,10 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
             
             break
         case "DIAMETER_CHANGED":
-            uiInput.setDiameter(val: (toolbarController?.diameterSlider.value)!);
+            uiManager.setDiameter(val: (toolbarController?.diameterSlider.value)!);
             break;
         case "ALPHA_CHANGED":
-            uiInput.setAlpha(val: (toolbarController?.alphaSlider.value)!);
+            uiManager.setAlpha(val: (toolbarController?.alphaSlider.value)!);
             break;
         default:
             break;
@@ -252,7 +253,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
         switch(data.0){
         case "LAYER_SELECTED":
             layerContainerView.selectActiveLayer(id:data.1);
-            StylusManager.setLayerId(layerId: data.1)
+            stylusManager.setLayerId(layerId: data.1)
             break;
         case "LAYER_ADDED":
             self.userInitLayer();
@@ -363,7 +364,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
     }
     
     func strokeGeneratedHandler(data:(String),key:String){
-        StylusManager.addResultantStroke(layerId: layerContainerView.activeLayer!.id, strokeId: data)
+        stylusManager.addResultantStroke(layerId: layerContainerView.activeLayer!.id, strokeId: data)
         self.layerContainerView.addStroke(id:data);
     }
     
@@ -427,9 +428,9 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
         
         colorPickerContainerView.isHidden = true;
         
-        uiInput.setDiameter(val: (toolbarController?.diameterSlider.value)!);
-        uiInput.setAlpha(val: (toolbarController?.alphaSlider.value)!);
-        uiInput.setColor(color: (colorPickerView?.color)!)
+        uiManager.setDiameter(val: (toolbarController?.diameterSlider.value)!);
+        uiManager.setAlpha(val: (toolbarController?.alphaSlider.value)!);
+        uiManager.setColor(color: (colorPickerView?.color)!)
         
         fileListContainerView.layer.cornerRadius = 8.0
         fileListContainerView.clipsToBounds = true
@@ -582,10 +583,10 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
         let confirmAction = UIAlertAction(title: "Confirm", style: .default) { (_) in
             let activeId = self.layerContainerView.deleteLayer(id: layerId)
             self.layerPanelController?.removeLayer(layerId: layerId)
-            StylusManager.handleDeletedLayer(deletedId: layerId);
+            stylusManager.handleDeletedLayer(deletedId: layerId);
             if(activeId != nil){
                 self.layerPanelController?.setActive(layerId:activeId!);
-                StylusManager.setLayerId(layerId: activeId!)
+                stylusManager.setLayerId(layerId: activeId!)
             }
         }
         
@@ -993,7 +994,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
      
             let id = self.layerContainerView.newLayer(name: (self.layerPanelController?.getNextName())!,id:nil, size:self.targetSize);
         self.layerPanelController?.addLayer(layerId: id);
-        StylusManager.setLayerId(layerId:id);
+        stylusManager.setLayerId(layerId:id);
         
     }
     
@@ -1369,9 +1370,9 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate,Reque
         
         _ = currentCanvas!.currentDrawing?.strokeRemovedEvent.addHandler(target: self, handler: DrawingViewController.strokeRemovedHandler, key: strokeRemovedKey)
         
-        _ = StylusManager.eraseEvent.addHandler(target: self, handler: DrawingViewController.stylusManagerEventHandler, key: stylusManagerKey)
+        _ = stylusManager.eraseEvent.addHandler(target: self, handler: DrawingViewController.stylusManagerEventHandler, key: stylusManagerKey)
         
-        _ = StylusManager.layerEvent.addHandler(target: self, handler: DrawingViewController.stylusManagerEventHandler, key: stylusManagerKey)
+        _ = stylusManager.layerEvent.addHandler(target: self, handler: DrawingViewController.stylusManagerEventHandler, key: stylusManagerKey)
 
     }
     

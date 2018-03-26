@@ -53,6 +53,39 @@
                              "displayName": "weight",
                              "classType": "BrushProperty",
                              "order": 8
+                             },
+                             
+
+                              {
+                             "fieldName": "hue",
+                             "displayName": "hue",
+                             "classType": "BrushProperty",
+                             "order": 9
+                             },
+                              
+
+                              {
+                             "fieldName": "saturation",
+                             "displayName": "saturation",
+                             "classType": "BrushProperty",
+                             "order": 10
+                             },
+                              
+
+                              {
+                             "fieldName": "lightness",
+                             "displayName": "lightness",
+                             "classType": "BrushProperty",
+                             "order": 11
+                             },
+                             
+                              
+
+                              {
+                             "fieldName": "alpha",
+                             "displayName": "alpha",
+                             "classType": "BrushProperty",
+                             "order": 12
                              }
                               
 ]

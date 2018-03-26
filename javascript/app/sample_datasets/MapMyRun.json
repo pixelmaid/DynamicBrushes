@@ -1,5 +1,4 @@
 {
-
       "id": "fdef-9sfh",
       "name": "Map My Run",
       "classType":"imported",
@@ -10,31 +9,41 @@
           "displayName": "Workout Date",
           "classType": "date",
           "fieldName": "workout_date",
-          "position": 0
+          "style": "imported",
+          "order": 0,
+          "settings" :{}
         }, {
           "id": "7010c5d6",
           "displayName": "Activity Type",
           "classType": "string",
           "fieldName": "activity_type",
-          "position": 1
+          "style": "imported",
+          "order": 1,
+          "settings" :{}
         }, {
           "id": "7010c518",
           "displayName": "Distance",
           "classType": "number",
           "fieldName": "distance",
-          "position": 2
+          "style": "imported",
+          "order": 2,
+          "settings" :{}
         }, {
           "id": "7010c450",
           "displayName": "Workout Time",
           "classType": "number",
           "fieldName": "workout_time",
-          "position": 3
+          "style": "imported",
+          "order": 3,
+          "settings" :{}
         }, {
           "id": "7010c392",
           "displayName": "Average Pace",
           "classType": "number",
           "fieldName": "average_pace",
-          "position": 4
+          "style": "imported",
+          "order": 4,
+          "settings" : {}
         },
 
         {
@@ -42,7 +51,9 @@
           "displayName": "Max max_pace",
           "classType": "number",
           "fieldName": "max_pace",
-          "position": 5
+          "style": "imported",
+          "order": 5,
+          "settings" :{}
         },
 
         {
@@ -50,19 +61,25 @@
           "displayName": "Average Speed",
           "classType": "number",
           "fieldName": "average_speed",
-          "position": 6
+          "style": "imported",
+          "order": 6,
+          "settings" :{}
         }, {
           "id": "7010bcc6",
           "displayName": "Max Speed",
           "classType": "number",
           "fieldName": "max_speed",
-          "position": 7
+          "style": "imported",
+          "order": 7,
+          "settings" :{}
         }, {
           "id": "7010bbea",
           "displayName": "Steps",
           "classType": "number",
           "fieldName": "steps",
-          "position": 8
+          "style": "imported",
+          "order": 8,
+          "settings" :{}
         }
       ],
 

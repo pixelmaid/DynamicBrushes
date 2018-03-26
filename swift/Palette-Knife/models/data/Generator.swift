@@ -32,6 +32,7 @@ class Sine:Generator{
     
     override func get(id:String?) -> Float {
         let v =  sin(Float(self.index)*freq+phase)*amp/2+amp/2;
+        self.incrementIndex();
         return v;
     }
     

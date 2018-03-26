@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0AAEAB6A20698BFB0082F6E4 /* StylusCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAEAB6920698BFB0082F6E4 /* StylusCollection.swift */; };
+		0AAEAB6C20698C030082F6E4 /* LiveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAEAB6B20698C030082F6E4 /* LiveManager.swift */; };
+		0AAEAB6E20698C880082F6E4 /* UICollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAEAB6D20698C880082F6E4 /* UICollection.swift */; };
 		5F0EB6621EB5775100225A6E /* ModifiedCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F0EB6611EB5775100225A6E /* ModifiedCanvasView.swift */; };
 		5F13B69A1FC3A40C00E37A37 /* ProgrammingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F13B6991FC3A40C00E37A37 /* ProgrammingViewController.swift */; };
 		5F13B69C1FC3AEBF00E37A37 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F13B69B1FC3AEBF00E37A37 /* Router.swift */; };
@@ -35,7 +38,6 @@
 		5F5CED2B1ED10AED00A253A0 /* ColorWheel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5CED261ED10AED00A253A0 /* ColorWheel.swift */; };
 		5F5CED2C1ED10AED00A253A0 /* SelectedColorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5CED271ED10AED00A253A0 /* SelectedColorView.swift */; };
 		5F5CED2D1ED10AED00A253A0 /* SwiftHSVColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5CED281ED10AED00A253A0 /* SwiftHSVColorPicker.swift */; };
-		5F5CED301ED1132600A253A0 /* UIInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5CED2F1ED1132600A253A0 /* UIInput.swift */; };
 		5F6903361FBBB75F00EB3437 /* MapFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6903351FBBB75900EB3437 /* MapFunctions.swift */; };
 		5F90F5411E9D59D4006BB9FE /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5381E9D59D4006BB9FE /* Emitter.swift */; };
 		5F90F5421E9D59D4006BB9FE /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5391E9D59D4006BB9FE /* Event.swift */; };
@@ -59,7 +61,6 @@
 		5F90F5691E9D5BCC006BB9FE /* Expression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5621E9D5BCC006BB9FE /* Expression.swift */; };
 		5F90F56A1E9D5BCC006BB9FE /* Signal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5631E9D5BCC006BB9FE /* Signal.swift */; };
 		5F90F56B1E9D5BCC006BB9FE /* State.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5641E9D5BCC006BB9FE /* State.swift */; };
-		5F90F56E1E9D5BE3006BB9FE /* StylusCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F56D1E9D5BE3006BB9FE /* StylusCollection.swift */; };
 		5F9118D81DEE345100A6B247 /* draw_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F9118D61DEE345100A6B247 /* draw_icon.png */; };
 		5F9118D91DEE345100A6B247 /* select_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F9118D71DEE345100A6B247 /* select_icon.png */; };
 		5F9F25A21DEFE38B005CB5D8 /* radial2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5F9F25A11DEFE38B005CB5D8 /* radial2x.png */; };
@@ -78,7 +79,6 @@
 		5FA4C72E1CDA7B5B004A728C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5FA4C72C1CDA7B5B004A728C /* LaunchScreen.storyboard */; };
 		5FA4C7391CDA7B5B004A728C /* Palette_KnifeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7381CDA7B5B004A728C /* Palette_KnifeTests.swift */; };
 		5FA4C7441CDA7B5B004A728C /* Palette_KnifeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA4C7431CDA7B5B004A728C /* Palette_KnifeUITests.swift */; };
-		5FB74959202128FE007D9E12 /* StylusManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FB74958202128FD007D9E12 /* StylusManager.swift */; };
 		5FBDF0E71ED8D95300022B07 /* quad.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 5FBDF0E11ED8D95300022B07 /* quad.vsh */; };
 		5FBDF0E81ED8D95300022B07 /* coloredpoint.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 5FBDF0E21ED8D95300022B07 /* coloredpoint.vsh */; };
 		5FBDF0E91ED8D95300022B07 /* colorlesspoint.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 5FBDF0E31ED8D95300022B07 /* colorlesspoint.vsh */; };
@@ -172,6 +172,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0AAEAB6920698BFB0082F6E4 /* StylusCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StylusCollection.swift; path = data/StylusCollection.swift; sourceTree = "<group>"; };
+		0AAEAB6B20698C030082F6E4 /* LiveManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveManager.swift; sourceTree = "<group>"; };
+		0AAEAB6D20698C880082F6E4 /* UICollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UICollection.swift; path = data/UICollection.swift; sourceTree = "<group>"; };
 		498164694B9DBA035C9503A9 /* Pods_PaletteKnifeUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PaletteKnifeUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5EBFC69578F7678EA1BBD757 /* Pods-PaletteKnifeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeTests/Pods-PaletteKnifeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5F0EB6611EB5775100225A6E /* ModifiedCanvasView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModifiedCanvasView.swift; sourceTree = "<group>"; };
@@ -205,7 +208,6 @@
 		5F5CED261ED10AED00A253A0 /* ColorWheel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorWheel.swift; sourceTree = "<group>"; };
 		5F5CED271ED10AED00A253A0 /* SelectedColorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectedColorView.swift; sourceTree = "<group>"; };
 		5F5CED281ED10AED00A253A0 /* SwiftHSVColorPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftHSVColorPicker.swift; sourceTree = "<group>"; };
-		5F5CED2F1ED1132600A253A0 /* UIInput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIInput.swift; sourceTree = "<group>"; };
 		5F6903351FBBB75900EB3437 /* MapFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MapFunctions.swift; path = "Palette-Knife/models/MapFunctions.swift"; sourceTree = SOURCE_ROOT; };
 		5F90F5381E9D59D4006BB9FE /* Emitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Emitter.swift; sourceTree = "<group>"; };
 		5F90F5391E9D59D4006BB9FE /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
@@ -229,7 +231,6 @@
 		5F90F5621E9D5BCC006BB9FE /* Expression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Expression.swift; sourceTree = "<group>"; };
 		5F90F5631E9D5BCC006BB9FE /* Signal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Signal.swift; path = data/Signal.swift; sourceTree = "<group>"; };
 		5F90F5641E9D5BCC006BB9FE /* State.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = State.swift; sourceTree = "<group>"; };
-		5F90F56D1E9D5BE3006BB9FE /* StylusCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StylusCollection.swift; sourceTree = "<group>"; };
 		5F90F5731E9D5CE8006BB9FE /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		5F90F5741E9D5CE8006BB9FE /* ExceptionCatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionCatcher.h; sourceTree = "<group>"; };
 		5F9118D61DEE345100A6B247 /* draw_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = draw_icon.png; sourceTree = "<group>"; };
@@ -256,7 +257,6 @@
 		5FA4C73F1CDA7B5B004A728C /* DynamicBrushes.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DynamicBrushes.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FA4C7431CDA7B5B004A728C /* Palette_KnifeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette_KnifeUITests.swift; sourceTree = "<group>"; };
 		5FA4C7451CDA7B5B004A728C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5FB74958202128FD007D9E12 /* StylusManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StylusManager.swift; sourceTree = "<group>"; };
 		5FBDF0E11ED8D95300022B07 /* quad.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = quad.vsh; sourceTree = "<group>"; };
 		5FBDF0E21ED8D95300022B07 /* coloredpoint.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = coloredpoint.vsh; sourceTree = "<group>"; };
 		5FBDF0E31ED8D95300022B07 /* colorlesspoint.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = colorlesspoint.vsh; sourceTree = "<group>"; };
@@ -387,6 +387,8 @@
 		5F15BB5E1F8D94A5005E5B08 /* data */ = {
 			isa = PBXGroup;
 			children = (
+				0AAEAB6D20698C880082F6E4 /* UICollection.swift */,
+				0AAEAB6920698BFB0082F6E4 /* StylusCollection.swift */,
 				5FDE68EA205C93F0005A49C3 /* Generator.swift */,
 				5F90F5631E9D5BCC006BB9FE /* Signal.swift */,
 				5FFFD796204F5E5D0038A0BA /* SignalCollection.swift */,
@@ -437,14 +439,6 @@
 				5F5CED281ED10AED00A253A0 /* SwiftHSVColorPicker.swift */,
 			);
 			path = ColorPicker;
-			sourceTree = "<group>";
-		};
-		5F5CED2E1ED1131800A253A0 /* uiinputs */ = {
-			isa = PBXGroup;
-			children = (
-				5F5CED2F1ED1132600A253A0 /* UIInput.swift */,
-			);
-			path = uiinputs;
 			sourceTree = "<group>";
 		};
 		5F90F5371E9D59D4006BB9FE /* base */ = {
@@ -503,13 +497,12 @@
 			path = behavior;
 			sourceTree = "<group>";
 		};
-		5F90F56C1E9D5BE3006BB9FE /* sensors */ = {
+		5F90F56C1E9D5BE3006BB9FE /* liveInputManagers */ = {
 			isa = PBXGroup;
 			children = (
-				5F90F56D1E9D5BE3006BB9FE /* StylusCollection.swift */,
-				5FB74958202128FD007D9E12 /* StylusManager.swift */,
+				0AAEAB6B20698C030082F6E4 /* LiveManager.swift */,
 			);
-			path = sensors;
+			path = liveInputManagers;
 			sourceTree = "<group>";
 		};
 		5F90F5721E9D5CE8006BB9FE /* objc_headers */ = {
@@ -595,8 +588,7 @@
 			isa = PBXGroup;
 			children = (
 				5F15BB5E1F8D94A5005E5B08 /* data */,
-				5F5CED2E1ED1131800A253A0 /* uiinputs */,
-				5F90F56C1E9D5BE3006BB9FE /* sensors */,
+				5F90F56C1E9D5BE3006BB9FE /* liveInputManagers */,
 				5F90F55D1E9D5BCC006BB9FE /* behavior */,
 				5F90F55A1E9D5A5C006BB9FE /* brushes */,
 				5F90F54F1E9D5A41006BB9FE /* drawings */,
@@ -1166,23 +1158,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0AAEAB6C20698C030082F6E4 /* LiveManager.swift in Sources */,
 				5F90F5481E9D59D4006BB9FE /* TimeSeries.swift in Sources */,
 				5F90F5411E9D59D4006BB9FE /* Emitter.swift in Sources */,
 				5F90F5561E9D5A41006BB9FE /* Drawing.swift in Sources */,
 				5F13B69C1FC3AEBF00E37A37 /* Router.swift in Sources */,
 				5F50372E1EAD48BB004ABAC1 /* MathUtil.swift in Sources */,
 				5F90F5551E9D5A41006BB9FE /* Canvas.swift in Sources */,
-				5F5CED301ED1132600A253A0 /* UIInput.swift in Sources */,
 				5F90F5691E9D5BCC006BB9FE /* Expression.swift in Sources */,
 				5FDE68EB205C93F0005A49C3 /* Generator.swift in Sources */,
-				5FB74959202128FE007D9E12 /* StylusManager.swift in Sources */,
 				5F90F5491E9D59D4006BB9FE /* WebTransmitter.swift in Sources */,
 				7267DCC5202A8ECF0093245A /* RecordingFrameCell.swift in Sources */,
 				72FD33732032AE3D00CD4FAF /* RecordingToolbarVC.swift in Sources */,
 				5F50371B1EA9533A004ABAC1 /* shaderUtil.swift in Sources */,
 				5F90F56B1E9D5BCC006BB9FE /* State.swift in Sources */,
 				5F50371A1EA9533A004ABAC1 /* fileUtil.swift in Sources */,
-				5F90F56E1E9D5BE3006BB9FE /* StylusCollection.swift in Sources */,
 				5F90F55C1E9D5A5C006BB9FE /* Brush.swift in Sources */,
 				5F5CED2C1ED10AED00A253A0 /* SelectedColorView.swift in Sources */,
 				5F90F56A1E9D5BCC006BB9FE /* Signal.swift in Sources */,
@@ -1197,6 +1187,8 @@
 				5F90F5661E9D5BCC006BB9FE /* BehaviorManager.swift in Sources */,
 				5F5CED2A1ED10AED00A253A0 /* ColorUtils.swift in Sources */,
 				5FE34C7B1F1FA61300E26C06 /* PathFunctions.swift in Sources */,
+				0AAEAB6E20698C880082F6E4 /* UICollection.swift in Sources */,
+				0AAEAB6A20698BFB0082F6E4 /* StylusCollection.swift in Sources */,
 				5FFAC4D71E9D84040009DC5E /* SaveManager.swift in Sources */,
 				5F5037201EA95833004ABAC1 /* NumTypes+Conversion.swift in Sources */,
 				5F90F5671E9D5BCC006BB9FE /* BehaviorMapper.swift in Sources */,
