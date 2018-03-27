@@ -1,4 +1,7 @@
 PODS:
+  - AudioKit (4.1):
+    - AudioKit/UI (= 4.1)
+  - AudioKit/UI (4.1)
   - AWSCognito (2.5.3):
     - AWSCore (= 2.5.3)
   - AWSCore (2.5.3)
@@ -11,6 +14,7 @@ PODS:
   - SwiftyJSON (3.1.4)
 
 DEPENDENCIES:
+  - AudioKit (~> 4.1)
   - AWSCognito
   - AWSCore
   - AWSS3
@@ -19,6 +23,7 @@ DEPENDENCIES:
   - SwiftyJSON
 
 SPEC CHECKSUMS:
+  AudioKit: 0bb2b3e61e4ac908fe576ad7a1d89c597156bb47
   AWSCognito: 74be06e52a2a063ab932a9d457a89e003d68631d
   AWSCore: 344e21892790650cf902246d436402257a545bde
   AWSS3: 88095d68f9d588eaa042d7f502f350234f98f606
@@ -27,6 +32,6 @@ SPEC CHECKSUMS:
   SwiftKVC: 95a7c435ad4e93c06ac68434fac795d72a792a7a
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
 
-PODFILE CHECKSUM: c3808ae1bcb2e3fb26e30b1668304f63e8ea9171
+PODFILE CHECKSUM: 3de09913aded6297380c7e54bd430aada3760320
 
-COCOAPODS: 1.0.1
+COCOAPODS: 1.4.0

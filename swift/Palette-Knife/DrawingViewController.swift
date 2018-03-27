@@ -8,7 +8,7 @@
 
 import UIKit
 import SwiftyJSON
-import AVFoundation
+import AudioKit
 
 
 let behaviorMapper = BehaviorMapper()
@@ -19,24 +19,24 @@ let uiManager = UIManager();
 let kBrightness =       1.0
 let kSaturation =       0.45
 
-let kPaletteHeight =	30
-let kPaletteSize =	5
-let kMinEraseInterval =	0.5
+let kPaletteHeight =    30
+let kPaletteSize =    5
+let kMinEraseInterval =    0.5
 
 // Padding for margins
-let kLeftMargin =	10.0
-let kTopMargin =	10.0
+let kLeftMargin =    10.0
+let kTopMargin =    10.0
 let kRightMargin =      10.0
 let pX = Float(1366)
 let pY = Float(1024)
-class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAudioRecorderDelegate, Requester{
+class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requester{
     
     
     //recording vars
-    
-    var recordingSession: AVAudioSession!
-    var micRecorder: AVAudioRecorder!
-    var recordingTimer: Timer!
+    var mic: AKMicrophone!
+    var tracker: AKFrequencyTracker!
+    var silence: AKBooster!
+    var recordingTimer : Timer!
     // MARK: Properties
     
     
@@ -54,7 +54,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
     let behaviorEventKey = NSUUID().uuidString
     let programmingEventKey = NSUUID().uuidString
     let stylusManagerKey = NSUUID().uuidString
-
+    
     let brushEventKey = NSUUID().uuidString
     let dataEventKey = NSUUID().uuidString
     let strokeGeneratedKey = NSUUID().uuidString
@@ -76,7 +76,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
     private var loggedIn = false;
     //for checking if person is drawing
     var touchesDown:Bool = false;
-
+    
     var colorPickerView: SwiftHSVColorPicker?
     override var prefersStatusBarHidden: Bool {
         return true
@@ -88,7 +88,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
     //var cancelBackupTimer:Timer!
     var backupInterval = 60*3; //set to backup every 5 min
     var cancelBackupInterval = 60*2; //set to cancel after 2 min
-
+    
     var backupNeeded:Bool = false;
     
     var currentBehaviorName = ""
@@ -129,7 +129,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
             fileListController = segue.destination as? SavedFilesPanelViewController;
             _ = fileListController?.fileEvent.addHandler(target: self, handler: DrawingViewController.fileEventHandler, key: fileEventKey)
         }
-        
+            
         else if(segue.identifier == "behaviorPanelSegue"){
             behaviorPanelController = segue.destination as? BehaviorPanelViewController;
             _ =  behaviorPanelController?.behaviorEvent.addHandler(target: self, handler: DrawingViewController.behaviorEventHandler, key: behaviorEventKey)
@@ -140,7 +140,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
         }
         else if(segue.identifier == "recordingViewControllerSegue"){
             recordingViewController = segue.destination as? RecordingViewController;
-      }
+        }
         
     }
     
@@ -150,21 +150,21 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
     }
     
     func stylusManagerEventHandler(data:(String,Any),key:String){
-       switch(data.0){
-            case "ERASE_REQUEST":
-               
-              //  _ = layerContainerView.activeLayer?.jotView.undo();
-                layerContainerView.undoById(layerList:data.1 as! [String:[String]])
+        switch(data.0){
+        case "ERASE_REQUEST":
+            
+            //  _ = layerContainerView.activeLayer?.jotView.undo();
+            layerContainerView.undoById(layerList:data.1 as! [String:[String]])
             break;
-            case "REQUEST_CORRECT_LAYER":
-                layerContainerView.selectActiveLayer(id:data.1 as! String);
+        case "REQUEST_CORRECT_LAYER":
+            layerContainerView.selectActiveLayer(id:data.1 as! String);
             break;
-            case "VIS_STROKE_DOWN":
+        case "VIS_STROKE_DOWN":
             break;
-            default:
+        default:
             break;
         }
-
+        
     }
     
     func toolEventHandler(data: (String), key: String){
@@ -192,7 +192,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
             self.layerContainerView.removeAllStrokes()
             layerContainerView.setAirbrushActive();
             break;
-
+            
             
         case "TOGGLE_LAYER_PANEL":
             if(layerPanelContainerView?.isHidden == true){
@@ -203,7 +203,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
             }
             colorPickerContainerView?.isHidden = true
             behaviorPanelContainerView?.isHidden = true
-
+            
             
             break;
         case "TOGGLE_BEHAVIOR_PANEL":
@@ -215,19 +215,19 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
             }
             colorPickerContainerView?.isHidden = true
             layerPanelContainerView?.isHidden = true
-
+            
             
             break;
         case "TOGGLE_FILE_PANEL":
-           
             
-           if(fileListContainerView?.isHidden == true){
+            
+            if(fileListContainerView?.isHidden == true){
                 fileListContainerView?.isHidden = false
             }
             else{
                 fileListContainerView?.isHidden = true
             }
-           
+            
             break;
         case "TOGGLE_COLOR_PANEL":
             if(colorPickerContainerView?.isHidden == true){
@@ -238,7 +238,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
             }
             layerPanelContainerView?.isHidden = true
             behaviorPanelContainerView?.isHidden = true
-
+            
             
             break
         case "DIAMETER_CHANGED":
@@ -295,9 +295,9 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
             var data:JSON = [:]
             data["data"] = authoringData
             do {
-           try _ = behaviorManager?.handleAuthoringRequest(authoring_data: data)
+                try _ = behaviorManager?.handleAuthoringRequest(authoring_data: data)
                 self.synchronizeWithAuthoringClient();
-
+                
             }
             catch{
                 #if DEBUG
@@ -315,7 +315,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
             do {
                 try _ = behaviorManager?.handleAuthoringRequest(authoring_data: data)
                 self.synchronizeWithAuthoringClient();
-
+                
             }
             catch{
                 #if DEBUG
@@ -364,7 +364,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
             break;
         }
     }
-
+    
     
     func recordingEventHandler(data: (String), key: String){
         switch(data){
@@ -394,81 +394,36 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
         self.initInterface();
         
         //recording fns
-        recordingSession = AVAudioSession.sharedInstance()
-        do {
-            try recordingSession.setCategory(AVAudioSessionCategoryPlayAndRecord)
-            try recordingSession.setActive(true)
-            recordingSession.requestRecordPermission() { [unowned self] allowed in
-                DispatchQueue.main.async {
-                    if allowed {
-                        print("recording permissions granted @")
-                    } else {
-                        print("recording permissions not granted @")
-                    }
-                }
-            }
-        } catch {
-            print("@ failed in catch")
-        }
-    
-
+        AKSettings.audioInputEnabled = true
+        mic = AKMicrophone()
+        tracker = AKFrequencyTracker(mic,hopSize:512,peakCount:20)
+        //        tracker = AKFrequencyTracker(mic, minimumFrequency: 200, maximumFrequency: 2000)
+        silence = AKBooster(tracker, gain: 0)
+        
     }
     
-    func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
-        if !flag {
-            finishRecording(success: false)
-        } else {
-            print("@ succ finish in handler")
-        }
-    }
-    func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder!, successfully flag: Bool) {
-        print("@ Audio Record Encode Error")
-    }
+    
     
     @objc func updateAudioMeter() {
-        if (micRecorder.isRecording == true) {
-            micRecorder.updateMeters()
-            var peak = micRecorder.peakPower(forChannel: 0)
-            print ("peak is @@ ", peak)
-//            self.meterView.peak = CGFloat(0.8 - peak / -60.0)
+        if tracker.isStarted {
+            print("amplitude @", tracker.amplitude)
+            print("freq @", tracker.frequency)
         }
     }
     
     func startRecording() {
-        let audioURL = Foundation.URL(string: "/dev/null"); //throw away actual data bc we just need vals
+        mic.start()
+        tracker.start()
+        recordingTimer = Timer.scheduledTimer(timeInterval: 0.1, target:self, selector: #selector(updateAudioMeter), userInfo:nil,repeats:true)
+        //note--recording always happens, this is just start/stopping timer
         
-        let settings = [
-            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-            AVSampleRateKey: 12000,
-            AVNumberOfChannelsKey: 1,
-            AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
-        ]
-        
-        do {
-            micRecorder = try AVAudioRecorder(url: audioURL!, settings: settings)
-            micRecorder.delegate = self
-            micRecorder.isMeteringEnabled = true
-            recordingTimer = Timer.scheduledTimer(timeInterval: 0.1, target:self, selector: #selector(updateAudioMeter), userInfo:nil,repeats:true)
-            micRecorder.record()
-            print("@ started recording!")
-        } catch {
-            finishRecording(success: false)
-        }
     }
     
     func finishRecording(success: Bool) {
-        
-        micRecorder.stop()
-        micRecorder = nil
+        mic.stop()
+        tracker.stop()
         recordingTimer.invalidate()
         recordingTimer = nil
-        
-        if success {
-            print("recording was a succes @")
-            
-        } else {
-            print("recording was a failure :( @")
-        }
     }
     
     
@@ -503,7 +458,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
         layerPanelContainerView.clipsToBounds = true
         self.newLayer();
         self.newVisualizationLayer();
-
+        
         layerPanelContainerView.isHidden = true;
         
         
@@ -551,14 +506,23 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
         if(!loggedIn){
             self.loginAlert(isIncorrect: false);
         }
-
+        
+        AudioKit.output = silence
+        do {
+            try
+                AudioKit.start()
+            print("@ Audiokit started")
+        } catch {
+            print("@ AudioKit did not start!")
+        }
+        
     }
     
     func addConnectionRequests(){
         let connectRequest = Request(target: "socket", action: "connect", data:JSON([]), requester: self)
         RequestHandler.addRequest(requestData:connectRequest);
-       loggedIn = true;
-      print("logged in state after connection",loggedIn)
+        loggedIn = true;
+        print("logged in state after connection",loggedIn)
     }
     
     func addProjectInitRequests(){
@@ -576,7 +540,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
         
         self.startBackupTimer(interval:self.backupInterval);
         
-
+        
     }
     
     
@@ -691,28 +655,28 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
     func saveFileToTempDir(data:NSData,filename:String,ext:String)->String{
         let fileManager = FileManager.default
         let path = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent("\(filename).\(ext)")
-       
+        
         fileManager.createFile(atPath: path as String, contents: data as Data, attributes: nil)
         return path;
     }
     
     func uploadProject(type:String,filename:String){
-       // if(type != "backup"){
+        // if(type != "backup"){
         DispatchQueue.global(qos: .userInteractive).async {
-           
+            
             DispatchQueue.main.async {
                 let alert = UIAlertController(title: "Saving", message: "Saving Project", preferredStyle: .alert)
                 let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in
                     self.cancelBackupCallback()
-                
+                    
                 }
                 alert.addAction(cancelAction)
-
+                
                 self.present(alert, animated: true, completion: { _ in }
                 )
             }
         }
-       // }
+        // }
         
         UserDefaults.standard.set(type, forKey: "save_type")
         UserDefaults.standard.set(filename, forKey: "save_filename")
@@ -723,9 +687,9 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
         self.behaviorManager?.refreshAllBehaviors();
         //TODO: this is a hack. need to create a delay in case it's saving a stroke to the texture
         
-            self.layerContainerView.save();
+        self.layerContainerView.save();
         
-
+        
     }
     
     
@@ -764,7 +728,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
             if(val != "no_image"){
                 var uploadData:JSON = [:]
                 uploadData["content_type"] = JSON("image/png")
-                 uploadData["save_type"] = JSON(type)
+                uploadData["save_type"] = JSON(type)
                 uploadData["filename"] = JSON("saved_files/"+artistName!+prefix+filename+"/"+"ink_"+key+".png")
                 uploadData["path"] = JSON(val)
                 uploadData["targetFolder"] = JSON("saved_files/"+artistName!+prefix)
@@ -780,18 +744,18 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
         
         for (_, strokes) in save_strokes{
             for s in strokes{
-            var uploadData:JSON = [:]
-            uploadData["content_type"] = JSON("text/strokedata")
-            uploadData["save_type"] = JSON(type)
-            uploadData["filename"] = JSON("saved_files/"+artistName!+prefix+filename+"/"+s+".strokedata")
-            let path = documentDirectory.appending("/"+s+".strokedata")
-            uploadData["path"] = JSON(path)
+                var uploadData:JSON = [:]
+                uploadData["content_type"] = JSON("text/strokedata")
+                uploadData["save_type"] = JSON(type)
+                uploadData["filename"] = JSON("saved_files/"+artistName!+prefix+filename+"/"+s+".strokedata")
+                let path = documentDirectory.appending("/"+s+".strokedata")
+                uploadData["path"] = JSON(path)
                 print("stroke data upload path",path);
-            uploadData["targetFolder"] = JSON("saved_files/"+artistName!+prefix)
-            let uploadRequest = Request(target: "storage", action: "upload_image", data:uploadData, requester: self)
-            RequestHandler.addRequest(requestData:uploadRequest);
+                uploadData["targetFolder"] = JSON("saved_files/"+artistName!+prefix)
+                let uploadRequest = Request(target: "storage", action: "upload_image", data:uploadData, requester: self)
+                RequestHandler.addRequest(requestData:uploadRequest);
             }
-
+            
         }
         var count = 0;
         
@@ -813,7 +777,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
             
         }
         self.requestProjectList()
-
+        
     }
     
     func startBackupTimer(interval:Int){
@@ -822,13 +786,13 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
         self.dismiss(animated: true, completion: nil)
         //self.endCancelTimer();
         backupTimer  = Timer.scheduledTimer(timeInterval:TimeInterval(interval), target: self, selector: #selector(DrawingViewController.backupCallback), userInfo: nil, repeats: true)
-
+        
     }
     
     
     /*func startCancelBackupTimer(){
-        cancelBackupTimer  = Timer.scheduledTimer(timeInterval:TimeInterval(cancelBackupInterval), target: self, selector: #selector(ViewController.cancelBackupCallback), userInfo: nil, repeats: true)
-    }*/
+     cancelBackupTimer  = Timer.scheduledTimer(timeInterval:TimeInterval(cancelBackupInterval), target: self, selector: #selector(ViewController.cancelBackupCallback), userInfo: nil, repeats: true)
+     }*/
     func endBackupTimer(){
         if(backupTimer != nil){
             backupTimer.invalidate();
@@ -836,10 +800,10 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
     }
     
     /*func endCancelTimer(){
-        if(cancelBackupTimer != nil){
-            cancelBackupTimer.invalidate();
-        }
-    }*/
+     if(cancelBackupTimer != nil){
+     cancelBackupTimer.invalidate();
+     }
+     }*/
     
     func backupProject(filename:String){
         self.uploadProject(type: "backup", filename: filename)
@@ -899,7 +863,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
             uploadData["isLast"] = JSON(true)
             uploadData["save_type"] = "backup"
             uploadData["content_type"] = "image/png"
-
+            
             uploadData["targetFolder"] = JSON("saved_files/"+artistName!+"/")
             let uploadRequest = Request(target: "storage", action: "upload_image", data:uploadData, requester: self)
             RequestHandler.addRequest(requestData:uploadRequest);
@@ -909,7 +873,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
     
     func exportImage(){
         self.endBackupTimer()
-       _ = self.layerContainerView.exportEvent.addHandler(target: self, handler: DrawingViewController.handleExportRequest, key: exportKey)
+        _ = self.layerContainerView.exportEvent.addHandler(target: self, handler: DrawingViewController.handleExportRequest, key: exportKey)
         self.behaviorManager?.refreshAllBehaviors();
         //TODO: this is a hack. need to create a delay in case it's saving a stroke to the texture
         DispatchQueue.global(qos: .userInteractive).async {
@@ -921,7 +885,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
                     
                 }
                 alert.addAction(cancelAction)
-
+                
                 self.present(alert, animated: true, completion: { _ in }
                 )
             }
@@ -929,7 +893,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
         
         
         self.layerContainerView.exportPNG();
-
+        
         
     }
     
@@ -941,7 +905,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
         layerContainerView.exportEvent.removeHandler(key: exportKey);
         if(contentToShare != nil){
             
-         
+            
             let pngImageData: Data? = UIImagePNGRepresentation(contentToShare!)
             let pngSmallImage = UIImage(data: pngImageData!)
             UIImageWriteToSavedPhotosAlbum(pngSmallImage!, self, nil, nil)
@@ -956,22 +920,22 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
             self.present(activityViewController, animated: true, completion: nil)
             self.dismiss(animated: true, completion: nil)
             self.startBackupTimer(interval:self.backupInterval);
-             /*DispatchQueue.global(qos: .userInteractive).async {
-                
-                 DispatchQueue.main.async {
-                    let alert = UIAlertController(title: "Saved", message: "Your image has been saved to the photo album", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-                    
-                    self.present(alert, animated: true, completion: { _ in }
-                    )
-                }
-            }*/
+            /*DispatchQueue.global(qos: .userInteractive).async {
+             
+             DispatchQueue.main.async {
+             let alert = UIAlertController(title: "Saved", message: "Your image has been saved to the photo album", preferredStyle: .alert)
+             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+             
+             self.present(alert, animated: true, completion: { _ in }
+             )
+             }
+             }*/
             
             /*let nsContent = NSData(data: contentToShare!)
-            let activityViewController = UIActivityViewController(activityItems: [nsContent], applicationActivities: nil)
-            // let activityViewController = UIActivityViewController(activityItems: [shareContent as NSString], applicationActivities: nil)
-            activityViewController.popoverPresentationController?.sourceView = toolbarController?.exportButton
-            present(activityViewController, animated: true, completion: {})*/
+             let activityViewController = UIActivityViewController(activityItems: [nsContent], applicationActivities: nil)
+             // let activityViewController = UIActivityViewController(activityItems: [shareContent as NSString], applicationActivities: nil)
+             activityViewController.popoverPresentationController?.sourceView = toolbarController?.exportButton
+             present(activityViewController, animated: true, completion: {})*/
         }
         else{
             #if DEBUG
@@ -1013,40 +977,40 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
         #endif
         if(backupNeeded && layerContainerView.isReadyToExport() && !self.touchesDown){
             self.endBackupTimer();
-           // self.startCancelBackupTimer();
+            // self.startCancelBackupTimer();
             let alertController = UIAlertController(title:"Backup", message: "Backup project now?", preferredStyle: .alert)
             
             let confirmAction = UIAlertAction(title: "Yes", style: .default) { (_) in
-           
-            self.endBackupTimer()
-            #if DEBUG
-                print("begining backup")
-            #endif
-            self.toolbarController?.disableSaveLoad();
-            let filename = String(Int((NSDate().timeIntervalSince1970)*100000));
-            UserDefaults.standard.set(filename, forKey: "backup_filename")
-            UserDefaults.standard.synchronize()
-            
+                
+                self.endBackupTimer()
+                #if DEBUG
+                    print("begining backup")
+                #endif
+                self.toolbarController?.disableSaveLoad();
+                let filename = String(Int((NSDate().timeIntervalSince1970)*100000));
+                UserDefaults.standard.set(filename, forKey: "backup_filename")
+                UserDefaults.standard.synchronize()
+                
                 self.behaviorManager?.refreshAllBehaviors();
-            
+                
                 self.backupProject(filename:filename)
-               
+                
                 
                 
                 self.backupNeeded = false;
             }
             
             let cancelAction = UIAlertAction(title: "Later", style: .cancel) { (_) in
-        
+                
                 self.startBackupTimer(interval:60*5)
-            
+                
             }
             
             alertController.addAction(confirmAction)
             alertController.addAction(cancelAction)
             
             self.present(alertController, animated: true, completion: nil)
-
+            
             
         }
         else if(backupNeeded){
@@ -1059,14 +1023,14 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
     
     func userInitLayer(){
         
-            DispatchQueue.main.async {
-                let alert = UIAlertController(title: "Layers", message: "Adding Layer", preferredStyle: .alert)
-                
-                self.present(alert, animated: true, completion: { _ in }
-                )
-            }
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Layers", message: "Adding Layer", preferredStyle: .alert)
+            
+            self.present(alert, animated: true, completion: { _ in }
+            )
+        }
         
-
+        
         let when = DispatchTime.now() + 1;
         DispatchQueue.main.asyncAfter(deadline: when) {
             self.dismiss(animated: true, completion: nil)
@@ -1077,11 +1041,11 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
     
     func newLayer(){
         endBackupTimer()
-       
+        
         self.behaviorManager?.refreshAllBehaviors();
         //TODO: this is a hack. need to create a delay in case it's saving a stroke to the texture
-     
-            let id = self.layerContainerView.newLayer(name: (self.layerPanelController?.getNextName())!,id:nil, size:self.targetSize);
+        
+        let id = self.layerContainerView.newLayer(name: (self.layerPanelController?.getNextName())!,id:nil, size:self.targetSize);
         self.layerPanelController?.addLayer(layerId: id);
         stylusManager.setLayerId(layerId:id);
         
@@ -1103,19 +1067,19 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
     
     //from Requester protocol. Handles result of request
     internal func processRequest(data: (String, JSON?)) {
-               #if DEBUG
+        #if DEBUG
             //print("process request",data.0)
         #endif
         switch(data.0){
-        
+            
         case "disconnected":
             recconnectAlert();
             break;
         case "incorrect_key":
             loggedIn = false;
-
+            
             print("incorrect key logged in",loggedIn)
-
+            
             self.loginAlert(isIncorrect: true)
             break;
         case "correct_key":
@@ -1128,27 +1092,27 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
             let isLast = data.1?["isLast"].boolValue
             let saveType = data.1?["save_type"].stringValue
             let content_type = data.1?["content_type"].stringValue
-                if isLast != nil && isLast == true {
-                    if(saveType == "backup" && content_type == "text/plist"){
-                        #if DEBUG
+            if isLast != nil && isLast == true {
+                if(saveType == "backup" && content_type == "text/plist"){
+                    #if DEBUG
                         print("backing up image")
-                        #endif
-                        self.backupImage()
-                        
-                    }
-                    else if(saveType == "backup" && content_type == "image/png"){
-                        #if DEBUG
-                            print("backing up behavior")
-                        #endif
-
-                        let filename = UserDefaults.standard.string(forKey: "backup_filename")!
-                        self.backupBehavior(filename: filename)
-                    }
-                    else{
-                        self.requestProjectList()
-                        self.dismiss(animated: true, completion: nil)
-                        self.startBackupTimer(interval:self.backupInterval);
-                    }
+                    #endif
+                    self.backupImage()
+                    
+                }
+                else if(saveType == "backup" && content_type == "image/png"){
+                    #if DEBUG
+                        print("backing up behavior")
+                    #endif
+                    
+                    let filename = UserDefaults.standard.string(forKey: "backup_filename")!
+                    self.backupBehavior(filename: filename)
+                }
+                else{
+                    self.requestProjectList()
+                    self.dismiss(animated: true, completion: nil)
+                    self.startBackupTimer(interval:self.backupInterval);
+                }
             }
             break;
         case "filelist_complete":
@@ -1185,7 +1149,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
                 fileListContainerView?.isHidden = true
                 self.dismiss(animated: true, completion: nil)
                 self.startBackupTimer(interval:self.backupInterval)
- 
+                
             }
             
             break;
@@ -1193,7 +1157,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
             let fileData = data.1!["data"];
             let newLayers = layerContainerView.loadFromData(fileData: fileData,size:targetSize)
             layerPanelController?.loadLayers(newLayers:newLayers);
-
+            
             let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
             let documentDirectory = paths[0] as! String
             
@@ -1209,7 +1173,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
                     let imageUrl = documentDirectory.appending("/ink_"+id+".png")
                     imageDownloadData["id"] = JSON(id)
                     imageDownloadData["url"] = JSON(imageUrl)
-                     imageDownloadData["content_type"] = JSON("ink")
+                    imageDownloadData["content_type"] = JSON("ink")
                     let image_filename = "saved_files/"+artistName+"/drawings/"+projectName+"/ink_"+id+".png"
                     imageDownloadData["filename"] = JSON(image_filename);
                     let image_load_request = Request(target:"storage",action:"download_project_file",data:imageDownloadData,requester:self)
@@ -1220,7 +1184,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
                     for stroke in saved_strokes{
                         let stroke_id = stroke.stringValue
                         print("stroke id",stroke_id)
-
+                        
                         var strokeDownloadData:JSON = [:]
                         let strokeURL = documentDirectory.appending("/"+stroke_id+".strokedata")
                         strokeDownloadData["id"] = JSON(id)
@@ -1231,7 +1195,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
                         strokeDownloadData["filename"] = JSON(stroke_filename);
                         let stroke_load_request = Request(target:"storage",action:"download_project_file",data:strokeDownloadData,requester:self)
                         RequestHandler.addRequest(requestData: stroke_load_request)
-
+                        
                     }
                     
                     
@@ -1241,11 +1205,11 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
                     plistDownloadData["id"] = JSON(id)
                     plistDownloadData["url"] = JSON(plistURL)
                     plistDownloadData["content_type"] = JSON("plist")
-
+                    
                     let plist_filename = "saved_files/"+artistName+"/drawings/"+projectName+"/state_"+id+".plist"
                     plistDownloadData["filename"] = JSON(plist_filename);
                     if(i == jsonLayerArray.count-1){
-                       plistDownloadData["isLast"]  = JSON(true)
+                        plistDownloadData["isLast"]  = JSON(true)
                     }
                     let plist_load_request = Request(target:"storage",action:"download_project_file",data:plistDownloadData,requester:self)
                     RequestHandler.addRequest(requestData: plist_load_request)
@@ -1272,7 +1236,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
             break;
         case "data_request":
             let requestData = data.1! as JSON;
-
+            
             
             let data = behaviorManager!.handleDataRequest(requestData: requestData)
             
@@ -1292,18 +1256,18 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
                 else if(data["type"].stringValue == "delete_behavior_request"){
                     behaviorPanelController?.removeBehavior(behaviorId: data["behaviorId"].stringValue)
                 }
-                
+                    
                 else if(data["type"].stringValue == "set_behavior_active"){
                     let active = data["active_status"].boolValue
                     if(active){
-                    behaviorPanelController?.setActive(id: data["behaviorId"].stringValue)
+                        behaviorPanelController?.setActive(id: data["behaviorId"].stringValue)
                     }
                     else{
                         behaviorPanelController?.setInactive(id: data["behaviorId"].stringValue)
- 
+                        
                     }
                 }
-
+                
                 let socketRequest = Request(target: "socket", action: "authoring_response", data: attempt, requester: self)
                 
                 RequestHandler.addRequest(requestData:socketRequest);
@@ -1364,7 +1328,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
         var syncJSON:JSON = [:]
         syncJSON["behaviors"] = behavior;
         syncJSON["collections"] = collections;
-
+        
         let request = Request(target: "socket", action: "synchronize", data: syncJSON, requester: self)
         RequestHandler.addRequest(requestData: request)
     }
@@ -1462,7 +1426,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
         _ = stylusManager.eraseEvent.addHandler(target: self, handler: DrawingViewController.stylusManagerEventHandler, key: stylusManagerKey)
         
         _ = stylusManager.layerEvent.addHandler(target: self, handler: DrawingViewController.stylusManagerEventHandler, key: stylusManagerKey)
-
+        
     }
     
     
@@ -1478,7 +1442,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         if(layerContainerView.activeLayer != nil){
             self.touchesDown = false;
-           layerContainerView.activeLayer?.layerTouchesEnded(touches, with: event)
+            layerContainerView.activeLayer?.layerTouchesEnded(touches, with: event)
         }
         
     }
@@ -1523,7 +1487,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
     func handleRotate(recognizer : UIRotationGestureRecognizer) {
         if let view = recognizer.view {
             self.layerContainerView.removeAllStrokes()
-
+            
             view.transform = view.transform.rotated(by: recognizer.rotation)
             recognizer.rotation = 0
         }
@@ -1533,7 +1497,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, AVAu
         let translation = recognizer.translation(in: self.view)
         if let view = recognizer.view {
             self.layerContainerView.removeAllStrokes()
-
+            
             view.center = CGPoint(x:view.center.x + translation.x,
                                   y:view.center.y + translation.y)
         }

@@ -17,20 +17,20 @@ extension Value {
     /// Handles failure silently.
     public subscript (key: String) -> Any? {
         get {
-            return try? get(key)
+            return try? get(key: key)
         }
         set {
-            _ = try? set(newValue as Any, key: key)
+            _ = try? set(value: newValue as Any, key: key)
         }
     }
     
     /// Get value for key; may throw Reflection error.
-    public func get(_ key: String) throws -> Any {
+    public func get(key: String) throws -> Any {
         return try Reflection.get(key, from: self)
     }
     
     /// Set value for key; may throw Reflection error.
-    public mutating func set(_ value: Any, key: String) throws {
+    public mutating func set(value: Any, key: String) throws {
         try Reflection.set(value, key: key, for: &self)
     }
     
@@ -45,20 +45,20 @@ extension Object {
     /// Handles failure silently.
     public subscript (key: String) -> Any? {
         get {
-            return try? get(key)
+            return try? get(key: key)
         }
         set {
-            _ = try? set(newValue as Any, key: key)
+            _ = try? set(value: newValue as Any, key: key)
         }
     }
     
     /// Get value for key; may throw Reflection error.
-    public func get(_ key: String) throws -> Any {
+    public func get(key: String) throws -> Any {
         return try Reflection.get(key, from: self)
     }
     
     /// Set value for key; may throw Reflection error.
-    public func set(_ value: Any, key: String) throws {
+    public func set(value: Any, key: String) throws {
         try Reflection.set(value, key: key, for: self)
     }
     
