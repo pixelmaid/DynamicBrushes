@@ -147,6 +147,7 @@
 		726443622045E00D005A2E9D /* VisualizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 726443612045E00D005A2E9D /* VisualizationView.swift */; };
 		7267DCC120290D9F0093245A /* RecordingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7267DCC020290D9E0093245A /* RecordingViewController.swift */; };
 		7267DCC5202A8ECF0093245A /* RecordingFrameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7267DCC4202A8ECF0093245A /* RecordingFrameCell.swift */; };
+		72D72C092069DF8400C1C9C8 /* MicCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D72C082069DF8400C1C9C8 /* MicCollection.swift */; };
 		72F3CED4204DFD050010A3D0 /* record_off2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F3CED0204DFD040010A3D0 /* record_off2x.png */; };
 		72F3CED5204DFD050010A3D0 /* loop_button_on2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F3CED1204DFD040010A3D0 /* loop_button_on2x.png */; };
 		72F3CED6204DFD050010A3D0 /* loop_button_off2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F3CED2204DFD050010A3D0 /* loop_button_off2x.png */; };
@@ -326,6 +327,7 @@
 		726443612045E00D005A2E9D /* VisualizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualizationView.swift; sourceTree = "<group>"; };
 		7267DCC020290D9E0093245A /* RecordingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordingViewController.swift; sourceTree = "<group>"; };
 		7267DCC4202A8ECF0093245A /* RecordingFrameCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingFrameCell.swift; sourceTree = "<group>"; };
+		72D72C082069DF8400C1C9C8 /* MicCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicCollection.swift; sourceTree = "<group>"; };
 		72F3CED0204DFD040010A3D0 /* record_off2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = record_off2x.png; sourceTree = "<group>"; };
 		72F3CED1204DFD040010A3D0 /* loop_button_on2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = loop_button_on2x.png; sourceTree = "<group>"; };
 		72F3CED2204DFD050010A3D0 /* loop_button_off2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = loop_button_off2x.png; sourceTree = "<group>"; };
@@ -397,6 +399,7 @@
 				5F90F5631E9D5BCC006BB9FE /* Signal.swift */,
 				5FFFD796204F5E5D0038A0BA /* SignalCollection.swift */,
 				5F6903351FBBB75900EB3437 /* MapFunctions.swift */,
+				72D72C082069DF8400C1C9C8 /* MicCollection.swift */,
 			);
 			name = data;
 			sourceTree = "<group>";
@@ -1253,6 +1256,7 @@
 				5F90F54D1E9D5A16006BB9FE /* Color.swift in Sources */,
 				5F90F5651E9D5BCC006BB9FE /* BehaviorDefinition.swift in Sources */,
 				5F90F5471E9D59D4006BB9FE /* SVGGenerator.swift in Sources */,
+				72D72C092069DF8400C1C9C8 /* MicCollection.swift in Sources */,
 				5F90F5581E9D5A41006BB9FE /* Line.swift in Sources */,
 				5FFC457A1EE5C6D6007B7597 /* BehaviorCell.swift in Sources */,
 				5F90F5441E9D59D4006BB9FE /* Matrix.swift in Sources */,

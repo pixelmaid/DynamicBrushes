@@ -854,6 +854,9 @@ span.refresh{
 .sensor, .sensor_prop{
   background-color: #7D4FAE;
 }
+.mic {
+  background-color: #265f55;
+}
 
 .ui, .ui_prop{
   background-color: #7fc605;

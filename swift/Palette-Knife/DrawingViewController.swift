@@ -14,6 +14,8 @@ import AudioKit
 let behaviorMapper = BehaviorMapper()
 let stylusManager = StylusManager();
 let uiManager = UIManager();
+let micManager = MicManager();
+
 //CONSTANTS:
 
 let kBrightness =       1.0
@@ -397,7 +399,6 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         AKSettings.audioInputEnabled = true
         mic = AKMicrophone()
         tracker = AKFrequencyTracker(mic,hopSize:512,peakCount:20)
-        //        tracker = AKFrequencyTracker(mic, minimumFrequency: 200, maximumFrequency: 2000)
         silence = AKBooster(tracker, gain: 0)
         
     }
@@ -406,8 +407,11 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     
     @objc func updateAudioMeter() {
         if tracker.isStarted {
-            print("amplitude @", tracker.amplitude)
+            let amplitude = tracker.amplitude*10.0
+            print("amplitude but X 10 @", amplitude)
             print("freq @", tracker.frequency)
+            micManager.setFrequency(val: tracker.frequency)
+            micManager.setAmplitude(val: amplitude)
         }
     }
     

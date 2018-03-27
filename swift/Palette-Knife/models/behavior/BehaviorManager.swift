@@ -458,6 +458,10 @@ class BehaviorManager{
                         uiManager.registerCollection(id: signalCollection.id, collection:signalCollection as! UICollection);
 
                     }
+                    else if metadata["name"] == "mic" {
+                        signalCollection = MicCollection(data:metadata);
+                        micManager.registerCollection(id: signalCollection.id, collection:signalCollection as! MicCollection);
+                    }
                     else{
                         signalCollection = LiveCollection(data:metadata);
                     }

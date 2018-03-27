@@ -18,6 +18,21 @@ import SwiftyJSON
     }
 }
 
+final class MicManager:LiveManager{
+    public func setFrequency(val:Double) {
+        for (_,micCollection) in self.liveCollections{
+            (micCollection as! MicCollection).setFrequency(val: Float(val));
+        }
+    }
+    public func setAmplitude(val:Double) {
+//        print("@ amp inside manager is ", val)
+
+        for (_,micCollection) in self.liveCollections{
+            (micCollection as! MicCollection).setAmplitude(val: Float(val));
+        }
+    }
+}
+
 final class UIManager:LiveManager{
     
      public func setDiameter(val:Float){

@@ -199,6 +199,36 @@
                              "settings": {}
                              }
                              ]
+                 },
+                 {
+                 "classType": "live",
+                 "id": "mic",
+                 "name": "mic",
+                 "signals": [{
+                             
+                             "fieldName": "time",
+                             "displayName": "ui time",
+                             "classType": "TimeSignal",
+                             "order": 0,
+                             "style": "ui",
+                             "settings": {}
+                             },
+                             {
+                             "fieldName": "frequency",
+                             "displayName": "frequency",
+                             "classType": "LiveSignal",
+                             "order": 1,
+                             "style": "mic",
+                             "settings": {}
+                             },
+                             {
+                             "fieldName": "amplitude",
+                             "displayName": "amplitude",
+                             "classType": "LiveSignal",
+                             "order": 1,
+                             "style": "mic",
+                             "settings": {}
+                             }]
                  }
                  ],
         "imported": [],
