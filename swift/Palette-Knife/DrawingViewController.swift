@@ -407,8 +407,8 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     
     @objc func updateAudioMeter() {
         if tracker.isStarted {
-            let amplitude = tracker.amplitude*10.0
-            print("amplitude but X 10 @", amplitude)
+            let amplitude = tracker.amplitude*1000.0
+            print("amplitude but X 10 @", amplitude,tracker.frequency)
             print("freq @", tracker.frequency)
             micManager.setFrequency(val: tracker.frequency)
             micManager.setAmplitude(val: amplitude)
