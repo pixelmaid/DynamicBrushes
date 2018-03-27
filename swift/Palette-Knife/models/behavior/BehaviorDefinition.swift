@@ -18,7 +18,7 @@ class BehaviorDefinition {
     var conditions = [(String,Any?,[String]?,Any?,[String]?,String)]()
     // var generators = [String:(String,[Any?])]()
     var methods = [String:(transitionId:String,methodId:String,fieldName:String,displayName:String,arguments:[ArgumentData])]()
-    var transitions = [String:(String,Emitter?,Bool,String?,String,String,String?,String)]()
+    var transitions = [String:(transitionId:String,transitionDisplayName: String, conditionId:String, fromStateId:String, toStateId:String)]()
     var behaviorMapper = BehaviorMapper()
     var mappings = [String:(Any?,[String]?,String,String,String,String)]()
     
@@ -307,7 +307,6 @@ class BehaviorDefinition {
         
         self.addTransition(transitionId: data["transitionId"].stringValue, name: data["name"].stringValue, eventEmitter: emitter, parentFlag: data["parentFlag"].boolValue, event: data["eventName"].stringValue, fromStateId: data["fromStateId"].stringValue, toStateId: data["toStateId"].stringValue, condition: conditionName,displayName:data["displayName"].stringValue)
         
-        
     }
     
     
@@ -559,8 +558,8 @@ class BehaviorDefinition {
         }
     }
     
-    func addTransition(transitionId:String, name:String, eventEmitter:Emitter?,parentFlag:Bool, event:String?, fromStateId:String,toStateId:String, condition:String?, displayName:String){
-        transitions[transitionId]=((name,eventEmitter, parentFlag, event, fromStateId,toStateId,condition, displayName));
+    func addTransition(transitionId:String,transitionDisplayName: String, conditionId:String, fromStateId:String, toStateId:String){
+        transitions[transitionId] = (transitionId:transitionId, transitionDisplayName:transitionDisplayName, conditionId:conditionId,fromStateId:fromStateId,toStateId:toStateId);
     }
     
     func setTransitionToDefaultEvent(transitionId:String) throws{
@@ -589,7 +588,7 @@ class BehaviorDefinition {
     
     func removeTransitionsForState(stateId:String){
         for (key,transition) in transitions{
-            if(transition.5 == stateId || transition.4 == stateId){
+            if(transition.fromStateId == stateId || transition.toStateId == stateId){
                 do {
                     try removeTransition(id: key);
                 }
@@ -881,38 +880,14 @@ class BehaviorDefinition {
         }
         
         for (key,transition) in transitions{
-            if((transition.3?.isEmpty) == false){
-                var reference:Any
-                if(transition.1 == nil){
-                    if(transition.2){
-                        reference = targetBrush.parent!
-                    }
-                    else{
-                        reference = targetBrush
-                    }
-                }
-                else{
-                    reference = transition.1!;
-                }
-                let condition:Condition?
-                if((transition.6) != nil){
-                    condition = storedConditions[id]![transition.6!]
-                }
-                else{
-                    condition = nil
-                }
-                
-                
-                
-                behaviorMapper.createStateTransition(id: key,name: transition.0,reference:reference as! Emitter, relative: targetBrush, eventName: transition.3!, fromStateId:transition.4,toStateId:transition.5, condition: condition)
+            let condition = self.storedConditions[id]![transition.conditionId];
+            guard condition != nil else{
+                #if DEBUG
+                    print("================ERROR: CONDITION NOT FOUND==================")
+                #endif
+                break;
             }
-                
-                
-            else{
-                print("could not generate transition \(key) because event is empty")
-                
-            }
-            
+            targetBrush.addStateTransition(id: transition.transitionId, name: transition.transitionDisplayName, condition: condition!, fromStateId: transition.fromStateId, toStateId: transition.toStateId)
         }
         
         for (_,method) in methods{

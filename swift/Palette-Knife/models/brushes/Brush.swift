@@ -117,6 +117,7 @@ class Brush: TimeSeries, Hashable{
     let childDieHandlerKey = NSUUID().uuidString;
     var deltaChangeBuffer = [DeltaStorage]();
     var undergoing_transition = false;
+    var transitionEvents = [Disposable]();
     
     init(name:String, behaviorDef:BehaviorDefinition?, parent:Brush?, canvas:Canvas){
         
@@ -497,20 +498,11 @@ class Brush: TimeSeries, Hashable{
         
     }
     
-    dynamic func stateTransitionHandler(notification: NSNotification){
-        
-        
-        let key = notification.userInfo?["key"] as! String
-        if(key == self.id){
-            let mapping = states[currentState]?.getTransitionMapping(key: notification.name.rawValue)
-            
-            
+    func stateTransitionHandler(data:(String),key:String){
+            let mapping = states[currentState]?.getTransitionMapping(key: data)
             if(mapping != nil){
                 let stateTransition = mapping
-                
                 self.transitionToState(transition: stateTransition!)
-                
-            }
         }
         
     }
@@ -692,13 +684,15 @@ class Brush: TimeSeries, Hashable{
         
     }
     
-    func addStateTransition(id:String, name:String, reference:Emitter, fromStateId: String, toStateId:String){
+    func addStateTransition(id:String, name:String, condition:Condition, fromStateId: String, toStateId:String){
         
         let transition:StateTransition
         print("states",self.states);
         let state = self.states[fromStateId]
-        transition = state!.addStateTransitionMapping(id: id,name:name,reference: reference, toStateId:toStateId)
+        transition = state!.addStateTransitionMapping(id: id,name:name,condition: condition, toStateId:toStateId);
         self.transitions[id] = transition;
+        let transitionEvent = transition.didTrigger.addHandler(target: self, handler: Brush.stateTransitionHandler, key: id);
+        self.transitionEvents.append(transitionEvent);
     }
     
     func removeStateTransition(data:(Brush, String, Emitter),key:String){
@@ -849,6 +843,9 @@ class Brush: TimeSeries, Hashable{
         self.removeMappingEvent.removeAllHandlers()
         self.removeTransitionEvent.removeAllHandlers()
         self.dieEvent.removeAllHandlers()
+        for t in transitionEvents{
+            t.dispose();
+        }
     }
     
     override func destroy() {

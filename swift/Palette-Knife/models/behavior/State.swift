@@ -50,8 +50,8 @@ class State {
     }
     
     
-     func addStateTransitionMapping(id:String, name:String, reference:Emitter,toStateId:String)->StateTransition{
-        let mapping = StateTransition(id:id, name:name, reference:reference,toStateId:toStateId)
+     func addStateTransitionMapping(id:String, name:String, condition:Condition,toStateId:String)->StateTransition{
+        let mapping = StateTransition(id:id, name:name, condition:condition,toStateId:toStateId)
         transitions[id] = mapping;
         return mapping;
     }
@@ -147,21 +147,35 @@ class Method{
 }
 
 class StateTransition{
-    var reference:Emitter
+    var condition:Condition
     var toStateId: String
     var methods = [Method]()
     let name: String
     let id: String
-    
-    init(id:String, name:String, reference:Emitter, toStateId:String){
-        self.reference = reference
+    let didTrigger = Event<(String)>();
+    var disposables = [Disposable]()
+
+    init(id:String, name:String, condition:Condition, toStateId:String){
+        self.condition = condition
         self.toStateId = toStateId
         self.name = name
         self.id = id;
+        let disposable = condition.didChange.addHandler(target: self, handler: StateTransition.conditionValidatedHandler, key: self.id)
+        self.disposables.append(disposable)
     }
     
     func addMethod(id:String, fieldName:String,  arguments:[Expression]){
         methods.append(Method(id:id, fieldName:fieldName, arguments:arguments));
+    }
+    
+    func conditionValidatedHandler(data:(String, Bool, Bool),key:String){
+        self.didTrigger.raise(data: (self.id));
+    }
+    
+    func destroy(){
+        for d in disposables{
+            d.dispose();
+        }
     }
     
 

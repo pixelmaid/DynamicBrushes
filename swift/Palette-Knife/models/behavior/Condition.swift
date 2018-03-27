@@ -8,60 +8,70 @@
 
 import Foundation
 
-class Condition:Observable<Float> {
-    var referenceA:Observable<Float>
-    var referenceB:Observable<Float>
+class Condition:Observable<Bool> {
+    var referenceA:Expression
+    var referenceB:Expression
     var relational:String
+    var interval:ConditionalInterval;
+    let id:String;
+    var disposables = [Disposable]()
     
-    
-    init(a:Observable<Float>,b:Observable<Float>, relational:String){
-        self.referenceA = a
-        self.referenceB = b
+    init(id:String, a:Expression,b:Expression, relational:String){
+        self.id = id;
+        self.referenceA = a;
+        self.referenceB = b;
+        
         self.relational  = relational;
-        super.init(0);
+        self.interval = ConditionalInterval();
+        super.init(false);
+        
+        disposables.append(self.referenceA.didChange.addHandler(target: self, handler: Condition.expressionChangeHandler, key: self.id));
+        disposables.append(self.referenceB.didChange.addHandler(target: self, handler: Condition.expressionChangeHandler, key: self.id));
+
     }
     
     func reset(){
-        if(relational == "within"){
-            let interval = self.referenceB as! Interval
-            interval.reset();
- 
+        interval.setIndex(val:0);
+    }
+    
+    func changeRelational(relational:String){
+        self.relational = relational;
+        self.checkIsValid();
+    }
+    
+    func expressionChangeHandler(data:(String, Float, Float),key:String){
+        self.checkIsValid();
+    }
+    
+    func checkIsValid(){
+        let isValid = self.evaluate();
+        if(isValid){
+            self.didChange.raise(data: (self.id,isValid,isValid));
         }
     }
     
     func evaluate()->Bool{
+        let a = referenceA.get(id: nil)
+        let b = referenceB.get(id: nil)
         switch (relational){
         case "<":
-            let a = referenceA.get(id: nil)
-            let b = referenceB.get(id: nil)
+            
             return a < b;
             
         case ">":
-            return referenceA.get(id: nil) > referenceB.get(id: nil);
+            return a > b;
             
         case "==":
-            let a = referenceA.get(id: nil)
-            let b = referenceB.get(id: nil)
             return a == b;
         case "!=":
-            let a = referenceA.get(id: nil)
-            let b = referenceB.get(id: nil)
             return a != b;
         case "within":
-            let interval = self.referenceB as! Interval
-            let value = interval.get(id: nil);
+            let value = interval.get(inc:b);
             if(value > 0){
-                if(referenceA.get(id: nil)>value){
+                if(a>value){
                     interval.incrementIndex();
                     return true;
                 }
-            }
-            return false;
-          case "&&":
-            let a = (referenceA as! Condition).evaluate();
-            let b = (referenceB as! Condition).evaluate();
-            if(a && b){
-                return true;
             }
             return false;
         default:
@@ -69,4 +79,39 @@ class Condition:Observable<Float> {
         }
         
     }
+    
+    override func destroy(){
+        for d in disposables{
+            d.dispose();
+        }
+        super.destroy();
+    }
+}
+
+
+
+
+class ConditionalInterval{
+    var val = [Float]();
+    var index = 0;
+    
+    
+    
+    func get(inc:Float) -> Float {
+        let inf = Float(self.index)*inc
+        return inf;
+    }
+    
+    func incrementIndex(){
+        self.index += 1;
+    }
+    
+    func setIndex(val:Int){
+        self.index = val;
+    }
+    
+  
+    
+    
+    
 }
