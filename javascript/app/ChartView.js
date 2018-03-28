@@ -618,10 +618,9 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                         var expressionId = el.attr("id");
                         var style = $(ui.draggable).attr('blockstyle');
-                        console.log("!style in drop is ", style, $(ui.draggable));
 
                         $(ui.draggable).remove();
-
+                        $(".reference_expression").css("border", "1px solid #ccc");
 
                         var expression = self.addReferenceToExpression(parentId, expressionId, referenceId, referenceType, referenceDisplayName, style);
                         var eventArgs = [self.id, expression.id, expression.getText(), expression.getPropertyList()];

@@ -144,33 +144,15 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
 
             highlightExpressionAreas(id){
                 $(".reference_expression").css("border", "2px solid #00ff00");
-                console.log("id is ", $( "#"+id ));
                 $( "#"+id ).mouseover(function() {
-                    console.log("% mouseover palette");
                     $(".reference_expression").css("border", "2px solid #00ff00");
-                    // console.log("new exps ", $(".reference_expression"));
 
-                    // var expressions = $(".reference_expression");
-                    // for (var i = 0; i < expressions.length; i++){
-                    //     expressions[i].css("border", "1 px solid #00ff00");
-                    //     console.log("changed css of ", expressions[i]);
-                    // }
-                    // console.log("% ref exps are ", $(".reference_expression"));
                 });
 
                 $( "#"+id  ).mouseout(function() {
-                  console.log("% mouseout palette");
                     $(".reference_expression").css("border", "1px solid #ccc");
-
-
-                  // var expressions = $(".reference_expression");
-                  //   for (var i = 0; i < expressions.length; i++){
-                  //       expressions[i].css("border", "1 px solid #ccc");
-                  //       console.log("changed css of ", expressions[i]);
-                  //   }
                 });
 
-                console.log("% highlight expression drops")
             }
 
 
