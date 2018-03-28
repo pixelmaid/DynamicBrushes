@@ -58,7 +58,6 @@
 		5F90F55C1E9D5A5C006BB9FE /* Brush.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F55B1E9D5A5C006BB9FE /* Brush.swift */; };
 		5F90F5651E9D5BCC006BB9FE /* BehaviorDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F55E1E9D5BCC006BB9FE /* BehaviorDefinition.swift */; };
 		5F90F5661E9D5BCC006BB9FE /* BehaviorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F55F1E9D5BCC006BB9FE /* BehaviorManager.swift */; };
-		5F90F5671E9D5BCC006BB9FE /* BehaviorMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5601E9D5BCC006BB9FE /* BehaviorMapper.swift */; };
 		5F90F5681E9D5BCC006BB9FE /* Condition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5611E9D5BCC006BB9FE /* Condition.swift */; };
 		5F90F5691E9D5BCC006BB9FE /* Expression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5621E9D5BCC006BB9FE /* Expression.swift */; };
 		5F90F56A1E9D5BCC006BB9FE /* Signal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5631E9D5BCC006BB9FE /* Signal.swift */; };
@@ -229,7 +228,6 @@
 		5F90F55B1E9D5A5C006BB9FE /* Brush.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Brush.swift; sourceTree = "<group>"; };
 		5F90F55E1E9D5BCC006BB9FE /* BehaviorDefinition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BehaviorDefinition.swift; sourceTree = "<group>"; };
 		5F90F55F1E9D5BCC006BB9FE /* BehaviorManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BehaviorManager.swift; sourceTree = "<group>"; };
-		5F90F5601E9D5BCC006BB9FE /* BehaviorMapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BehaviorMapper.swift; sourceTree = "<group>"; };
 		5F90F5611E9D5BCC006BB9FE /* Condition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Condition.swift; sourceTree = "<group>"; };
 		5F90F5621E9D5BCC006BB9FE /* Expression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Expression.swift; sourceTree = "<group>"; };
 		5F90F5631E9D5BCC006BB9FE /* Signal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Signal.swift; path = data/Signal.swift; sourceTree = "<group>"; };
@@ -496,7 +494,6 @@
 			children = (
 				5F90F55E1E9D5BCC006BB9FE /* BehaviorDefinition.swift */,
 				5F90F55F1E9D5BCC006BB9FE /* BehaviorManager.swift */,
-				5F90F5601E9D5BCC006BB9FE /* BehaviorMapper.swift */,
 				5F90F5611E9D5BCC006BB9FE /* Condition.swift */,
 				5F90F5621E9D5BCC006BB9FE /* Expression.swift */,
 				5F90F5641E9D5BCC006BB9FE /* State.swift */,
@@ -1242,7 +1239,6 @@
 				0AAEAB6A20698BFB0082F6E4 /* StylusCollection.swift in Sources */,
 				5FFAC4D71E9D84040009DC5E /* SaveManager.swift in Sources */,
 				5F5037201EA95833004ABAC1 /* NumTypes+Conversion.swift in Sources */,
-				5F90F5671E9D5BCC006BB9FE /* BehaviorMapper.swift in Sources */,
 				5FFDAB091D21B5C400632A26 /* SocketManager.swift in Sources */,
 				5F2CF3D51ED32D0B0066AC8E /* SavedFilesPanelViewController.swift in Sources */,
 				5FE32F671ECE66AE00ADC01E /* LayerCell.swift in Sources */,

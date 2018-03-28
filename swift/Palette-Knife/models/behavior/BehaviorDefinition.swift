@@ -19,7 +19,6 @@ class BehaviorDefinition {
     // var generators = [String:(String,[Any?])]()
     var methods = [String:(transitionId:String,methodId:String,fieldName:String,displayName:String,arguments:[ArgumentData])]()
     var transitions = [String:(transitionId:String,transitionDisplayName: String, conditionId:String, fromStateId:String, toStateId:String)]()
-    var behaviorMapper = BehaviorMapper()
     var mappings = [String:(Any?,[String]?,String,String,String,String)]()
     
     var storedExpressions = [String:[String:Expression]]()
@@ -708,10 +707,6 @@ class BehaviorDefinition {
                 operand = storedExpressions[id]![propId!]!;
                 
             }
-            else if(storedConditions[id]![propId!] != nil){
-                operand = storedConditions[id]![propId!]!;
-                
-            }
             else{
                 operand = (emitter as! Object)[propId!]! as! Observable<Float>
             }
@@ -725,14 +720,10 @@ class BehaviorDefinition {
         
     }
     
-    func generateCondition(targetBrush:Brush, conditionId:String, operand1:Observable<Float>, operand2:Observable<Float>, relational:String){
+    func generateCondition(targetBrush:Brush, conditionId:String, operand1:Expression, operand2:Expression, relational:String){
         
         let id = targetBrush.id;
-        // let operands = generateOperands(targetBrush: targetBrush, data:(data.1,data.2,data.3,data.4,data.5))
-        //let operand1 = operands.0;
-        //let operand2 = operands.1;
-        
-        let condition = Condition(a: operand1, b: operand2, relational: relational)
+        let condition = Condition(id:conditionId, a: operand1, b: operand2, relational: relational);
         storedConditions[id]![conditionId] = condition;
         
     }

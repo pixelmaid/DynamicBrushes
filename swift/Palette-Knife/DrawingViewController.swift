@@ -11,7 +11,6 @@ import SwiftyJSON
 import AudioKit
 
 
-let behaviorMapper = BehaviorMapper()
 let stylusManager = StylusManager();
 let uiManager = UIManager();
 let micManager = MicManager();

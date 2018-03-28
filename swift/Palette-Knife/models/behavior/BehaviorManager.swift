@@ -598,30 +598,7 @@ class BehaviorManager{
         }
         return nil;
     }
-    
-    func defaultSetup(name:String) throws->BehaviorDefinition {
-        let b = BehaviorDefinition(id:NSUUID().uuidString,name: name)
-        //TODO: add check for if name is a duplicate
-        if(BehaviorManager.behaviors[name] != nil){
-            throw BehaviorError.duplicateName;
-        }
-        else{
-            
-            BehaviorManager.behaviors[name] = b;
-            
-            b.addState(stateId: NSUUID().uuidString,stateName:"start", stateX: 20.0, stateY:150.0)
-            
-            b.addState(stateId: NSUUID().uuidString,stateName:"default", stateX: 1000.0, stateY: 150.0)
-            
-            b.addTransition(transitionId: NSUUID().uuidString, name: "setup", eventEmitter: nil, parentFlag: false, event: "STATE_COMPLETE", fromStateId: "start", toStateId:"default", condition: nil, displayName: "state complete")
-            return b;
-        }
-        
-        
-    }
-    
-    
-    
+
     
     
     

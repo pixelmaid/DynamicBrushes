@@ -100,9 +100,6 @@ class Brush: TimeSeries, Hashable{
     var geometryModified = Event<(Geometry,String,String)>()
     var initEvent = Event<(Brush,String)>()
     var dieEvent = Event<(String)>()
-    
-    let removeMappingEvent = Event<(Brush,String,Observable<Float>)>()
-    let removeTransitionEvent = Event<(Brush,String,Emitter)>()
     //Events
     
     
@@ -298,7 +295,7 @@ class Brush: TimeSeries, Hashable{
         #endif
         if(!self.undergoing_transition){
             let _delta = self.position.sub(point: self.bPosition)
-            let polarPos = MathUtil.cartToPolar(p1: self.bPosition, p2: self.position);
+            //let polarPos = MathUtil.cartToPolar(p1: self.bPosition, p2: self.position);
            // self.polarPosition.setSilent(newValue: (polarPos));
             self.calculateProperties(_delta:_delta)
         
@@ -729,9 +726,8 @@ class Brush: TimeSeries, Hashable{
     func removeTransition(key:String){
         for (key,val) in states {
             if(val.hasTransitionKey(key: key)){
-                let removal =  val.removeTransitionMapping(key: key)!
-                let data = (self, key, removal.reference)
-                removeTransitionEvent.raise(data: data)
+                let transition =  val.removeTransitionMapping(key: key)!
+                transition.destroy();
                 break
             }
         }
@@ -827,7 +823,7 @@ class Brush: TimeSeries, Hashable{
             let removedTransitions = state.removeAllTransitions();
             for i in 0..<removedTransitions.count{
                 let transition = removedTransitions[i]
-                self.removeTransitionEvent.raise(data: (self,transition.id,transition.reference));
+                transition.destroy();
             }
             
             state.removeAllConstraintMappings(brush:self);
@@ -840,8 +836,7 @@ class Brush: TimeSeries, Hashable{
     func clearAllEventHandlers(){
         self.initEvent.removeAllHandlers()
         self.geometryModified.removeAllHandlers()
-        self.removeMappingEvent.removeAllHandlers()
-        self.removeTransitionEvent.removeAllHandlers()
+    
         self.dieEvent.removeAllHandlers()
         for t in transitionEvents{
             t.dispose();

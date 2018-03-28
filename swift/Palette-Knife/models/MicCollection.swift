@@ -26,12 +26,12 @@ class MicCollection: LiveCollection {
     
     func setFrequency(val:Float){
         self.frequency = val;
-        self.exportData();
+        _ = self.exportData();
     }
     
     func setAmplitude(val:Float){
         self.amplitude = val;
-        self.exportData();
+        _ = self.exportData();
     }
     
     
