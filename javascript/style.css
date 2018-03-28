@@ -116,7 +116,7 @@ h1{
 
 .events {
   background-color: #efac1f;
-  min-height: 30px;
+  min-height: 35px;
   text-align: center;
   padding: 2px;
 }
@@ -126,8 +126,14 @@ h1{
   width: 40px;
   height: 24px;
   padding: 4px;
+  margin-top: 3px;
   font-weight: bold;
   color: white;
+}
+
+.transitionConditions {
+  padding: 4px;
+  margin: 3px -18px 0px 5px !important;
 }
 
 .event_block {
@@ -206,6 +212,14 @@ h1{
   float: left;
   padding-top: 4px;
   padding-bottom: 4px;
+}
+
+.selectBox{
+  margin-right: 20px;
+}
+.selectBoxInput{
+  letter-spacing:0;
+  width:70px !important;
 }
 
 .relative_expression{
@@ -303,8 +317,8 @@ li.collapsibleListClosed{
 }
 
 
-.property{
-  background-color:#47c1c3;
+.property {
+  background-color: #eb4a63;
 }
 
 .method{
@@ -355,7 +369,7 @@ li.collapsibleListClosed{
   height: 0; 
   border-top: 6px solid transparent;
   border-bottom: 6px solid transparent; 
-  border-left:6px solid #47c1c3; 
+  border-left:6px solid #eb4a63; 
   background-color: #000;
 }
 
@@ -367,7 +381,7 @@ li.collapsibleListClosed{
 }
 
 .arrow-tail.green{
-  background-color: #47c1c3;
+  background-color: #eb4a63;
 
 }
 

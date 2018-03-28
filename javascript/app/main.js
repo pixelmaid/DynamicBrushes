@@ -273,6 +273,15 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
         signalModel.datasetLoader.addListener("ON_IMPORTED_DATASET_READY", onDataReady);
         promptConnect();
 
+        $( ".palette block" ).mousedown(function() {
+          $(".reference_expression expression").css("border", "1 px solid #00ff00");
+          console.log("mousedown palette");
+        });
+        $( ".palette block" ).mouseup(function() {
+            $(".reference_expression expression").css("border", "1 px solid #ccc");
+          console.log("mouseup palette");
+        });
+
 
     }
     );

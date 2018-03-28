@@ -2,9 +2,31 @@
 	<div class="transition_statement" id="{{transitionId}}">
 	  <div class="events">
 	  	<div class="event_label">on</div>  
-	 	 <div class="event_block">
-	       	 	
-	 	 </div>
+	  	<div id="{{expressionIdLeft}}" parent_id="{{mappingId}}"  class = "reference_expression expression">       
+                <textarea  class="text_entry">
+       				 {{default}}
+                </textarea>  
+        </div>
+	    <div class="transitionConditions resizeDiv">
+	        <div class= "selectBox selectBoxNumber">
+			 
+						  <!-- <input class="selectBoxInput selectBoxNumber" id="{{transitionNumberId}}" type="number" value="0"> -->
+
+			  <select class="selectBoxInput" id="{{transitionNumberId}}" name="{{transitionNumberId}}">
+			  	<option value="equal"> == </option>
+			  	<option value="less"> &lt; </option>
+			  	<option value="greater"> &gt; </option>
+			  	<option value="nequal"> !== </option>
+			  	<option value="within"> within </option>
+			  </select>
+			</div>
+		</div>
+        <div id="{{expressionIdRight}}" parent_id="{{mappingId}}" class = "reference_expression expression">       
+                <textarea class="text_entry">
+                {{default}}
+                </textarea>  
+        </div> 
+	 	 <!-- <div class="event_block"></div> -->
 	  </div>
 	  <div class = "methodsContainer">
 	  <div class="methods">
