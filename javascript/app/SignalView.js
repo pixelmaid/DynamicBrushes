@@ -111,6 +111,7 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
                         var collectionId = $(event.target).attr('collectionId');
                         var classType = $(event.target).attr('type');
                         var displayName = $(event.target).attr('displayName');
+                        var style = $(event.target).attr('class').split(" ")[0];
 
                         var id = ID();
                      self.initQueue.push(clone);
@@ -121,6 +122,7 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
                         displayName: displayName,
                         collectionId: collectionId,
                         classType:classType,
+                        style: style,
                         id:id
                     };
 

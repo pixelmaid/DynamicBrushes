@@ -180,24 +180,8 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
                 var els = [];
                 for (var key in expressionPropertyList) {
                     if (expressionPropertyList.hasOwnProperty(key)) {
-                        var propList = expressionPropertyList[key];
-                        console.log("!proplist is ", propList);
-                        var type;
-                        var style;
-                        if (propList[0] == "stylus") {
-                            type = "sensor_prop";
-                            style = "sensor";
-                        } else if (propList[0] == "ui") {
-                            type = "ui_prop";
-                            style = "ui";
-                        } else {
-                            type = "generator";
-                            style = "generator";
-                        }
-                        var name = propList[1][0];
-                        var referenceDisplayName = propList[2][0];
-
-                        els.push($(this.addMark(referenceDisplayName, type, key, name, propList[0], style)));
+                        var property = expressionPropertyList[key];
+                        els.push($(this.addMark(property.id, property.classType, property.displayName, property.style)));
                     }
                 }
                 this.renderMarks();

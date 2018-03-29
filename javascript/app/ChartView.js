@@ -595,6 +595,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 var target = $("#" + mapping_data.mappingId + " .relative_expression .block");
 
                 console.log("expressionId =", mapping_data.expressionId);
+                console.log("relativePropertyName =", mapping_data.relativePropertyName);
 
                 var expression = this.initializeExpression(mapping_data.expressionId, mapping_data.mappingId);
 
@@ -747,7 +748,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 $($('#' + data.transitionId).find(".methods")[0]).append(html);
                 for (var i = 0; i < data.argumentList.length; i++) {
 
-                    console.log("method id, parent ", data.argumentList[i].expressionId, data.methodId)
+                    console.log("method id, parent ", data.argumentList[i].expressionId, data.methodId);
 
                     var expression = this.initializeExpression(data.argumentList[i].expressionId, data.methodId);
                     var el = $($('#' + data.argumentList[i].expressionId)[0]);
@@ -933,7 +934,9 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 for (var k = 0; k < data.mappings.length; k++) {
                     var mapping_data = data.mappings[k];
                     this.addMapping(mapping_data);
-                    var els = this.expressions[mapping_data.mappingId][mapping_data.expressionId].updateReferences(mapping_data.expressionText, mapping_data.expressionPropertyList);
+                    let expressionData = data.expressions.filter(function(exp){return (exp.expressionId == mapping_data.expressionId);})[0];
+                    console.log("Expression search",mapping_data.expressionId,expressionData,data.expressions);
+                    var els = this.expressions[mapping_data.mappingId][mapping_data.expressionId].updateReferences(expressionData.expressionText, expressionData.expressionPropertyList);
                     els.every(function(el) {
                         console.log("el to make draggable", el);
                         self.makeDraggable(el);
@@ -966,7 +969,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 console.log("connection is", connection);
                 connection.addOverlay(["Custom", {
                     create: function(component) {
-                        console.log("% transition data is ", transition_data)
+                        console.log("% transition data is ", transition_data);
                         var html = transitionTemplate(transition_data);
                         return $(html);
                     },
@@ -1070,7 +1073,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 //init the new expressions
                 var expressionOn = this.initializeExpression(transition_data.expressionIdLeft, transition_data.mappingId);
                 var expressionThen = this.initializeExpression(transition_data.expressionIdRight, transition_data.mappingId);
-                console.log("% init transition exp ", expressionOn, expressionThen)
+                console.log("% init transition exp ", expressionOn, expressionThen);
 
             }
 

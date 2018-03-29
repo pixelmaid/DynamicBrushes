@@ -14,8 +14,8 @@ class BehaviorDefinition {
     
     var brushInstances = [Brush]();
     var states = [String:(String,Float,Float)]()
-    var expressions = [String:([String],String)]();
-    var conditions = [(String,Any?,[String]?,Any?,[String]?,String)]()
+    var expressions = [String:(expressionPropertyList:[String],expressionText:String)]();
+    var conditions = [String:(conditionId:String,referenceAId:String,referenceBId:String,relational:String)]();
     // var generators = [String:(String,[Any?])]()
     var methods = [String:(transitionId:String,methodId:String,fieldName:String,displayName:String,arguments:[ArgumentData])]()
     var transitions = [String:(transitionId:String,transitionDisplayName: String, conditionId:String, fromStateId:String, toStateId:String)]()
@@ -53,7 +53,11 @@ class BehaviorDefinition {
         let mappingJSON = json["mappings"].arrayValue;
         let methodJSON = json["methods"].arrayValue;
         let conditionJSON = json["conditions"].arrayValue;
-        
+        let expressionJSON = json["expressions"].arrayValue;
+
+        for i in 0..<expressionJSON.count{
+            self.parseExpressionJSON(data: expressionJSON[i]);
+        }
         for i in 0..<conditionJSON.count{
             self.parseConditionJSON(data:conditionJSON[i])
         }
@@ -79,64 +83,12 @@ class BehaviorDefinition {
     
     //TODO: fix condition to avoid static references ie stylus
     func parseConditionJSON(data:JSON){
-        let name = data["name"].stringValue
-        var reference:Any? = nil
-        if(data["reference"] != JSON.null){
-            let refString = data["reference"].stringValue
-            switch(refString){
-            case "stylus":
-                //reference = stylus
-                break
-            case "parent":
-                reference = "parent"
-                break
-            default:
-                break;
-            }
-        }
-        else{
-            reference = nil
-        }
+        let conditionId = data["conditionId"].stringValue;
+        let referenceAId = data["referenceAId"].stringValue;
+        let referenceBId = data["referenceBId"].stringValue;
+        let relational = data["relational"].stringValue;
         
-        var referenceNames:[String]? = nil
-        if(data["referenceNames"] != JSON.null){
-            let referenceNamesJSON = data["referenceNames"].arrayValue;
-            referenceNames = [String]()
-            for i in 0..<referenceNamesJSON.count{
-                referenceNames?.append(referenceNamesJSON[i].stringValue)
-                
-            }
-        }
-        
-        var relative:Any? = nil
-        if(data["relative"] != JSON.null){
-            let refString = data["relative"].stringValue
-            switch(refString){
-            case "stylus":
-               // relative = stylus
-                break
-            case "parent":
-                relative = "parent"
-                break
-            default:
-                break;
-            }
-        }
-        
-        
-        var relativeNames:[String]? = nil
-        if(data["relativeNames"] != JSON.null){
-            let relativeNamesJSON = data["relativeNames"].arrayValue;
-            relativeNames = [String]()
-            for i in 0..<relativeNamesJSON.count{
-                relativeNames?.append(relativeNamesJSON[i].stringValue)
-                
-            }
-        }
-        
-        let relational = data["relational"].stringValue
-        
-        self.addCondition(name: name, reference: reference, referenceNames: referenceNames, relative: relative, relativeNames: relativeNames, relational: relational)
+        self.addCondition(conditionId: conditionId, referenceAId: referenceAId, referenceBId: referenceBId, relational: relational)
     }
     
     func parseExpressionJSON(data:JSON){
@@ -154,12 +106,11 @@ class BehaviorDefinition {
         #endif
         
         
-        self.addExpression(id: expressionId, emitterOperandList: operandList, expressionText: expressionText)
+        self.addExpression(id: expressionId, expressionPropertyList: operandList, expressionText: expressionText)
     }
     
     
     func parseMappingJSON(data:JSON){
-        self.parseExpressionJSON(data:data)
         
         let expressionId = data["expressionId"].stringValue;
         
@@ -188,7 +139,7 @@ class BehaviorDefinition {
             if(isExpression){
                 if(argumentJSON["expressionId"]==JSON.null){
                     expressionId = NSUUID().uuidString;
-                    self.addExpression(id: expressionId!, emitterOperandList: [], expressionText: defaultVal)
+                    self.addExpression(id: expressionId!, expressionPropertyList: [], expressionText: defaultVal)
                 }
                 else{
                     expressionId = argumentJSON["expressionId"].stringValue;
@@ -217,94 +168,12 @@ class BehaviorDefinition {
     }
     
     func parseTransitionJSON(data:JSON){
-        let event = data["eventName"].stringValue;
-        let emitter:Emitter?
-        //TODO: remove need for static stylus reference
-        if(data["emitter"] != JSON.null){
-            switch(data["emitter"].stringValue){
-            case "stylus":
-                //emitter = stylus;
-                emitter = nil
-                break;
-            default:
-                emitter = nil;
-                break;
-            }
-        }
-        else{
-            switch(event){
-                //TODO: remove need for static stylus reference
-
-            case "STYLUS_UP","STYLUS_DOWN","STYLUS_MOVE_BY","STYLUS_X_MOVE_BY","STYLUS_Y_MOVE_BY":
-               // emitter = stylus
-                emitter = nil
-                break;
-            default:
-                emitter = nil
-                break;
-            }
-        }
-        
-        var conditionName:String?
-        
-        if(data["conditionName"] != JSON.null){
-            conditionName = data["conditionName"].stringValue;
-        }
-        else{
-            
-            let condition_list = data["conditions"].arrayValue;
-            conditionName = "condition_" + NSUUID().uuidString
-            //TODO: CLEAN THIS UP TO REMOVE CONDITIONAL on event check
-            if(event != "STATE_COMPLETE"){
-                
-                var settings:JSON = [:]
-                settings["inc"] = condition_list[0];
-                let interval_id =  BehaviorManager.signalCollections[2]["default"]!.initializeSignal(fieldName:"interval",displayName:"interval",settings:settings,classType: "Interval", style:"generator", isProto:false , order:nil);
-                
-                
-                switch(event){
-                case "TIME_INTERVAL":
-                    self.addCondition(name: conditionName!, reference: nil, referenceNames: ["time"], relative: nil, relativeNames: [interval_id], relational: "within")
-                    break;
-                case "DISTANCE_INTERVAL":
-                    self.addCondition(name: conditionName!, reference: nil, referenceNames: ["distance"], relative: nil, relativeNames: [interval_id], relational: "within")
-                    break;
-                case "INTERSECTION":
-                    self.addCondition(name: conditionName!, reference: nil, referenceNames: ["intersections"], relative: nil, relativeNames: [interval_id], relational: "within")
-                    break;
-                case "STYLUS_MOVE_BY","STYLUS_X_MOVE_BY","STYLUS_Y_MOVE_BY":
-                    let referenceName:String
-                    if(event == "STYLUS_MOVE_BY"){
-                        referenceName = "distance"
-                    }
-                    else if(event == "STYLUS_X_MOVE_BY"){
-                        referenceName = "xDistance"
-                    }
-                    else{
-                        referenceName = "yDistance"
-                    }
-                    //TODO: remove need for static stylus reference
-
-                  //  self.addCondition(name: conditionName!, reference: stylus, referenceNames: [referenceName], relative: nil, relativeNames: [interval_id], relational: "within")
-                    break;
-                    
-                    
-                default:
-                    conditionName = nil
-
-                    break;
-                    
-                }
-                
-            }
-            else{
-                conditionName = nil
-
-            }
-        }
-        
-        
-        self.addTransition(transitionId: data["transitionId"].stringValue, name: data["name"].stringValue, eventEmitter: emitter, parentFlag: data["parentFlag"].boolValue, event: data["eventName"].stringValue, fromStateId: data["fromStateId"].stringValue, toStateId: data["toStateId"].stringValue, condition: conditionName,displayName:data["displayName"].stringValue)
+        let transitionId = data["transitionId"].stringValue;
+        let transitionDisplayName = data["name"].stringValue;
+        let fromStateId = data["fromStateId"].stringValue;
+        let toStateId = data["toStateId"].stringValue;
+        let conditionId = data["conditionId"].stringValue;
+        self.addTransition(transitionId: transitionId, transitionDisplayName: transitionDisplayName, conditionId: conditionId, fromStateId: fromStateId, toStateId: toStateId);
         
     }
     
@@ -316,40 +185,39 @@ class BehaviorDefinition {
         json_obj["active_status"] = JSON(self.active_status);
         json_obj["auto_spawn_num"] = JSON(self.auto_spawn_num);
         
-        var conditionArray = [JSON]();
-        for i in 0..<conditions.count {
-            let data = conditions[i];
-            var conditionJSON:JSON = [:]
-            let name = data.0;
-            if(data.1 != nil){
-                //TODO: remove need for static stylus reference
-               /* if((data.1 as? Stylus) == stylus){
-                    conditionJSON["reference"] = JSON("stylus")
-                }
-                else*/ if((data.1 as? String) == "parent"){
-                    conditionJSON["reference"] = JSON("parent")
-                }
-            }
-            if(data.2 != nil){
-                conditionJSON["referenceNames"] = JSON(data.2!)
-            }
-            if(data.3 != nil){
-               /* if((data.3 as? Stylus) == stylus){
-                    conditionJSON["relative"] = JSON("stylus")
-                }
-                else */if((data.3 as? String) == "parent"){
-                    conditionJSON["relative"] = JSON("parent")
-                }
-            }
-            if(data.4 != nil){
-                conditionJSON["relativeNames"] = JSON(data.4!)
+        var expressionArray = [JSON]();
+        for (key,value) in expressions {
+            var expressionJSON:JSON = [:]
+            expressionJSON["expressionId"] = JSON(key);
+            expressionJSON["expressionText"] = JSON(value.expressionText);
+            var expressionPropertyList:JSON = [:];
+            for i in 0..<value.expressionPropertyList.count {
+                let signal = BehaviorManager.getSignal(id: value.expressionPropertyList[i])!;
+                var signalJSON = signal.getMetaJSON();
+                signalJSON["id"] = JSON(signal.id);
+                expressionPropertyList[signal.id] = signalJSON;
             }
             
-            let relational = data.5
-            conditionJSON["name"] = JSON(name);
-            conditionJSON["relational"] = JSON(relational)
+            expressionJSON["expressionPropertyList"] = expressionPropertyList;
+            expressionArray.append(expressionJSON);
+        }
+        
+        var conditionArray = [JSON]();
+        for (_,value) in conditions {
+            var conditionJSON:JSON = [:]
+            let conditionId = value.conditionId;
+            let referenceAId = value.referenceAId;
+            let referenceBId = value.referenceBId;
+            let relational = value.relational
+            
+            conditionJSON["conditionId"] = JSON(conditionId);
+            conditionJSON["referenceAId"] = JSON(referenceAId);
+            conditionJSON["referenceBId"] = JSON(referenceBId);
+            conditionJSON["relational"] = JSON(relational);
+
             conditionArray.append(conditionJSON);
         }
+       
         
         
         var statesArray = [JSON]();
@@ -363,36 +231,19 @@ class BehaviorDefinition {
         }
         var transitionsArray = [JSON]();
         
-        for (key,data) in transitions {
+        for (_,data) in transitions {
             var transitionJSON:JSON = [:]
-            //(name,eventEmitter, parentFlag, event, fromStateId,toStateId,condition)
-            let name = data.0
-            let emitter = data.1
-            let parentFlag = data.2
-            let event = data.3
-            let fromStateId = data.4
-            let toStateId = data.5
-            let conditionName = data.6
-            let displayName = data.7
+            let transitionId =  data.transitionId
+            let transitionDisplayName = data.transitionDisplayName
+            let fromStateId = data.fromStateId;
+            let toStateId = data.toStateId;
+            let conditionId = data.fromStateId;
             
-            transitionJSON["transitionId"] = JSON(key);
-            transitionJSON["name"] = JSON(name);
-            if(conditionName != nil){
-                transitionJSON["conditionName"] = JSON(conditionName!);
-            }
+            transitionJSON["transitionId"] =  JSON(transitionId);
+            transitionJSON["name"] = JSON(transitionDisplayName);
+            transitionJSON["conditionId"] =  JSON(conditionId);
             transitionJSON["fromStateId"] = JSON(fromStateId);
             transitionJSON["toStateId"] = JSON(toStateId);
-            
-            if(emitter != nil){
-                //TODO: remove need for static stylus reference
-               /* if(emitter == stylus){
-                    transitionJSON["emitter"] = JSON("stylus");
-                }*/
-            }
-            
-            transitionJSON["eventName"] = JSON(event!);
-            transitionJSON["parentFlag"] = JSON(parentFlag)
-            transitionJSON["displayName"] = JSON(displayName);
             transitionsArray.append(transitionJSON);
         }
         
@@ -411,31 +262,6 @@ class BehaviorDefinition {
             let mappingId = key;
             let relativePropertyFieldName = data.5;
             let expressionId = data.1![0]
-            let expression = expressions[expressionId];
-            let expressionText = expression?.1;
-            let expressionPropertyList = expression?.0;
-            var expressionPropertyListJSON:JSON = [:]
-            
-            for pId in expressionPropertyList! {
-                
-                let signal = BehaviorManager.getSignal(id: pId);
-                
-                var propEmitter = [JSON]();
-                let emitter = signal?.getCollectionName();
-                let propertyList = signal?.fieldName;
-                let displayNameList = signal?.displayName;
-                
-                if(emitter != nil){
-                    propEmitter.append(JSON(emitter!));
-                }
-                else{
-                    propEmitter.append(JSON("NULL"));
-                }
-                propEmitter.append(JSON(propertyList!));
-                propEmitter.append(JSON(displayNameList!));
-                expressionPropertyListJSON[pId] = JSON(propEmitter);
-                
-            }
             let relativePropertyName = data.2
             let stateId = data.3
             let type = data.4
@@ -443,8 +269,6 @@ class BehaviorDefinition {
             mappingJSON["relativePropertyName"] = JSON(relativePropertyName);
             mappingJSON["stateId"] = JSON(stateId);
             mappingJSON["expressionId"] = JSON(expressionId);
-            mappingJSON["expressionText"] = JSON(expressionText!);
-            mappingJSON["expressionPropertyList"] = expressionPropertyListJSON
             mappingJSON["constraintType"] = JSON(type)
             mappingJSON["relativePropertyFieldName"] = JSON(relativePropertyFieldName);
             mappingsArray.append(mappingJSON);
@@ -456,7 +280,8 @@ class BehaviorDefinition {
         json_obj["mappings"] = JSON(mappingsArray);
         json_obj["methods"] = JSON(methodArray);
         json_obj["conditions"] = JSON(conditionArray);
-        
+        json_obj["expressions"] = JSON(expressionArray);
+
         return json_obj;
     }
     
@@ -495,9 +320,9 @@ class BehaviorDefinition {
     
     
     
-    func addCondition(name:String, reference:Any?, referenceNames:[String]?, relative:Any?, relativeNames:[String]?, relational:String){
+    func addCondition(conditionId:String, referenceAId:String, referenceBId:String, relational:String){
         
-        conditions.append((name,reference,referenceNames,relative,relativeNames,relational))
+        conditions[id] = (conditionId:id, referenceAId:referenceAId, referenceBId:referenceBId, relational);
         
     }
     
@@ -561,16 +386,6 @@ class BehaviorDefinition {
         transitions[transitionId] = (transitionId:transitionId, transitionDisplayName:transitionDisplayName, conditionId:conditionId,fromStateId:fromStateId,toStateId:toStateId);
     }
     
-    func setTransitionToDefaultEvent(transitionId:String) throws{
-        if(transitions[transitionId] != nil){
-            transitions[transitionId]!.1 = nil;
-            transitions[transitionId]!.3 = "STATE_COMPLETE";
-            return;
-        }
-        
-        throw BehaviorError.transitionDoesNotExist;
-        
-    }
     
     
     func removeTransition(id:String) throws{
@@ -578,11 +393,50 @@ class BehaviorDefinition {
         removeMethodsForTransition(transitionId: id);
         
         if(transitions[id] != nil){
-            transitions.removeValue(forKey: id);
+           let t =  transitions.removeValue(forKey: id)!;
+            do{
+                try  self.removeCondition(id:t.conditionId);
+            }
+            catch {
+                print("===========ERROR ATTEMPTED TO REMOVE CONDITION IN TRANSITION THAT DOES NOT EXIST=====================")
+
+                throw BehaviorError.conditionDoesNotExist;
+
+            }
             return;
         }
+        print("===========ERROR ATTEMPTED TO REMOVE TRANSITION THAT DOES NOT EXIST=====================")
+
         throw BehaviorError.transitionDoesNotExist;
         
+    }
+    
+    func removeCondition(id:String) throws{
+        if(conditions[id] != nil){
+            let c =  conditions.removeValue(forKey: id)!;
+             do{
+                try self.removeExpression(id:c.referenceAId);
+                try self.removeExpression(id:c.referenceAId);
+            }
+             catch {
+                print("===========ERROR ATTEMPTED TO REMOVE EXPRESSION IN CONDITION THAT DOES NOT EXIST=====================")
+
+                throw BehaviorError.expressionDoesNotExist;
+                
+            }
+            return;
+        }
+        throw  BehaviorError.conditionDoesNotExist
+    }
+    
+    func removeExpression(id:String) throws{
+        if(expressions[id] != nil){
+            expressions.removeValue(forKey: id);
+            return
+        }
+        print("===========ERROR ATTEMPTED TO REMOVE EXPRESSION THAT DOES NOT EXIST=====================")
+
+        throw BehaviorError.expressionDoesNotExist;
     }
     
     func removeTransitionsForState(stateId:String){
@@ -592,7 +446,7 @@ class BehaviorDefinition {
                     try removeTransition(id: key);
                 }
                 catch{
-                    print("no transition by that id for that state");
+                    print("===========ERROR NO TRANSIITONS FOR STATE=====================")
                 }
                 
             }
@@ -647,14 +501,22 @@ class BehaviorDefinition {
             if(mapping!.0 == nil){
                 if(mapping!.1 != nil){
                     let mappingKey = mapping!.1![0];
-                    if(expressions[mappingKey] != nil){
-                        expressions.removeValue(forKey: mappingKey);
+                    do{
+                        try self.removeMapping(id: mappingKey);
+                    }
+                    catch{
+                        print("===========ERROR ATTEMPTED TO REMOVE EXPRESSION THAT DOES NOT EXIST=====================")
+
+                        throw BehaviorError.expressionDoesNotExist;
+
                     }
                 }
             }
             mappings.removeValue(forKey: id);
             return;
         }
+        print("===========ERROR ATTEMPTED TO REMOVE MAPPING THAT DOES NOT EXIST=====================")
+
         throw BehaviorError.mappingDoesNotExist;
         
     }
@@ -669,8 +531,8 @@ class BehaviorDefinition {
         
     }
     
-    func addExpression(id:String, emitterOperandList:[String], expressionText:String){
-        expressions[id]=(emitterOperandList,expressionText);
+    func addExpression(id:String, expressionPropertyList:[String], expressionText:String){
+        expressions[id]=(expressionPropertyList:expressionPropertyList,expressionText:expressionText);
     }
     
     func generateSignal(id:String)->Signal?{
@@ -697,7 +559,6 @@ class BehaviorDefinition {
             emitter = targetEmitter!
         }
         
-        
         if(propId != nil){
             let signal = generateSignal(id:propId!);
             if(signal != nil){
@@ -720,10 +581,10 @@ class BehaviorDefinition {
         
     }
     
-    func generateCondition(targetBrush:Brush, conditionId:String, operand1:Expression, operand2:Expression, relational:String){
+    func generateCondition(targetBrush:Brush, conditionId:String, operandA:Expression, operandB:Expression, relational:String){
         
         let id = targetBrush.id;
-        let condition = Condition(id:conditionId, a: operand1, b: operand2, relational: relational);
+        let condition = Condition(id:conditionId, a: operandA, b: operandB, relational: relational);
         storedConditions[id]![conditionId] = condition;
         
     }
@@ -840,37 +701,31 @@ class BehaviorDefinition {
         storedConditions[id] = [String:Condition]();
         storedExpressions[id] = [String:Expression]();
         
-        
-        
-        for i in 0..<conditions.count{
-            let conditionId = conditions[i].0;
-            var propId1:String? = nil;
-            var propId2:String? = nil;
-            
-            if conditions[i].2 != nil{
-                propId1 = conditions[i].2![0]
-            }
-            if conditions[i].4 != nil{
-                propId2 = conditions[i].4![0]
-            }
-            let operand1 = generateOperand(targetBrush: targetBrush, targetEmitter: conditions[i].1, propId: propId1);
-            let operand2 = generateOperand(targetBrush: targetBrush, targetEmitter: conditions[i].3, propId: propId2);
-            
-            let relational = conditions[i].5;
-            
-            self.generateCondition(targetBrush: targetBrush, conditionId: conditionId, operand1: operand1, operand2: operand2, relational: relational);
-        }
-        
         for (key,expression_data) in expressions{
             self.generateExpression(targetBrush: targetBrush, name: key, signalIds: expression_data.0, expressionText: expression_data.1);
         }
+        
+        for (_,value) in conditions{
+            let conditionId = value.conditionId;
+            let referenceAId = value.referenceAId;
+            let referenceBId = value.referenceBId;
+            let relational = value.relational;
+          
+            let operandA = generateOperand(targetBrush: targetBrush, targetEmitter: nil, propId: referenceAId) as! Expression;
+            let operandB = generateOperand(targetBrush: targetBrush, targetEmitter: nil, propId: referenceBId) as! Expression;
+
+            
+            self.generateCondition(targetBrush: targetBrush, conditionId: conditionId, operandA: operandA, operandB: operandB, relational: relational);
+        }
+        
+       
         
         for (id,state) in states{
             targetBrush.createState(id: id, name:state.0);
             
         }
         
-        for (key,transition) in transitions{
+        for (_,transition) in transitions{
             let condition = self.storedConditions[id]![transition.conditionId];
             guard condition != nil else{
                 #if DEBUG

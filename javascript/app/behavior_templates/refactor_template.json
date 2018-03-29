@@ -41,52 +41,67 @@
       "active_status": true,
       "transitions": [{
         "name": "setup",
-        "eventName": "STATE_COMPLETE",
         "transitionId": "_jsplumb_c_1495732354038",
         "fromStateId": "_y5p6lqn2a",
         "toStateId": "_s865vlzry",
-        "parentFlag": false,
-        "displayName": "stateComplete"
+        "conditionId": "_xxxxxxx"
       }],
+      "expressions": [
+        {   "expressionId": "_23v0ckj5l",
+          "expressionText": "1",
+          "expressionPropertyList": {
+
+          }
+        },{
+         "expressionId": "_1230c235l",
+          "expressionText": "1",
+          "expressionPropertyList": {
+
+          }
+        },{
+         "expressionId": "_aaaaaaa",
+          "expressionText": "0",
+          "expressionPropertyList": {
+
+          }
+        },{
+         "expressionId": "_bbbbbbb",
+          "expressionText": "0",
+          "expressionPropertyList": {
+
+          }
+        }
+      ],
+
       "mappings": [
 
         {
-          "stateId": "_4ef5vl65d",
-          "constraintType": "passive",
-          "mappingId": "_436gecqx",
-          "expressionId": "_werc35ds",
-          "expressionText": "1",
-          "relativePropertyName": "dx",
-          "expressionPropertyList": {
-
-          },
-          "relativePropertyFieldName": "delta x"
-        }, {
           "stateId": "_s865vlzry",
           "constraintType": "passive",
           "mappingId": "_16y80ecqx",
           "expressionId": "_23v0ckj5l",
-          "expressionText": "1",
           "relativePropertyName": "x",
-          "expressionPropertyList": {
-
-          },
           "relativePropertyFieldName": "x"
+
+        
         }, {
           "stateId": "_s865vlzry",
           "constraintType": "passive",
           "mappingId": "_543y80ecsf",
           "expressionId": "_1230c235l",
-          "expressionText": "1",
           "relativePropertyName": "y",
-          "expressionPropertyList": {
-
-          },
           "relativePropertyFieldName": "y"
+
         }
+         
 
       ],
-      "conditions": [
+      "conditions": [{
+        "conditionId":"_xxxxxxx",
+        "referenceAId": "_aaaaaaa",
+         "referenceBId": "_bbbbbbb",
+          "relational": "=="
+      }
 
       ]
     }

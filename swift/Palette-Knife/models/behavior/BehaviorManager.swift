@@ -14,6 +14,8 @@ enum BehaviorError: Error {
     case behaviorDoesNotExist
     case mappingDoesNotExist;
     case transitionDoesNotExist;
+    case conditionDoesNotExist;
+    case expressionDoesNotExist;
     case requestDoesNotExist;
     case collectionDoesNotExist
 }
@@ -206,9 +208,14 @@ class BehaviorManager{
             resultJSON["result"] = "success";
             return resultJSON;
             
-        case "transition_added","transition_event_added", "transition_event_condition_changed":
-            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseTransitionJSON(data:data)
-            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)
+        case "transition_added":
+            let behaviorID = data["behaviorId"].stringValue;
+            let targetBehavior = BehaviorManager.behaviors[behaviorID]!
+            targetBehavior.parseExpressionJSON(data: data["referenceA"]);
+            targetBehavior.parseExpressionJSON(data: data["referenceB"]);
+            targetBehavior.parseConditionJSON(data: data["condition"]);
+            targetBehavior.parseTransitionJSON(data:data)
+            targetBehavior.createBehavior(canvas:canvas)
             
             resultJSON["result"] = "success";
             return resultJSON;
@@ -219,23 +226,14 @@ class BehaviorManager{
                 BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)
                 
                 resultJSON["result"] = "success";
-                return resultJSON;            }
+                return resultJSON;
+                
+            }
             catch{
                 print("transition id does not exist, cannot remove");
                 resultJSON["result"] = "failure";
                 return resultJSON;
             }
-        case "transition_event_removed" :
-            do{
-                try BehaviorManager.behaviors[data["behaviorId"].stringValue]!.setTransitionToDefaultEvent(transitionId: data["transitionId"].stringValue)
-                BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas);
-                resultJSON["result"] = "success";
-                return resultJSON;            }
-            catch{
-                resultJSON["result"] = "failure";
-                return resultJSON;            }
-            
-   
             
         case "method_added":
             let behaviorId = data["behaviorId"].stringValue
@@ -267,7 +265,7 @@ class BehaviorManager{
             
         case "mapping_added":
             let behaviorId = data["behaviorId"].stringValue;
-            
+            BehaviorManager.behaviors[behaviorId]!.parseExpressionJSON(data:data)
             BehaviorManager.behaviors[behaviorId]!.parseMappingJSON(data:data)
             BehaviorManager.behaviors[behaviorId]!.createBehavior(canvas:canvas)
             
