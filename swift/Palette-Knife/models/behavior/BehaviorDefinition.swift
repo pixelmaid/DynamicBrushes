@@ -15,7 +15,7 @@ class BehaviorDefinition {
     var brushInstances = [Brush]();
     var states = [String:(String,Float,Float)]()
     var expressions = [String:(expressionPropertyList:[String],expressionText:String)]();
-    var conditions = [String:(conditionId:String,referenceAId:String,referenceBId:String,relational:String)]();
+    internal var conditions = [String:(conditionId:String,referenceAId:String,referenceBId:String,relational:String)]();
     // var generators = [String:(String,[Any?])]()
     var methods = [String:(transitionId:String,methodId:String,fieldName:String,displayName:String,arguments:[ArgumentData])]()
     var transitions = [String:(transitionId:String,transitionDisplayName: String, conditionId:String, fromStateId:String, toStateId:String)]()
@@ -203,6 +203,7 @@ class BehaviorDefinition {
         }
         
         var conditionArray = [JSON]();
+        print("conditions",conditions)
         for (_,value) in conditions {
             var conditionJSON:JSON = [:]
             let conditionId = value.conditionId;
@@ -237,7 +238,7 @@ class BehaviorDefinition {
             let transitionDisplayName = data.transitionDisplayName
             let fromStateId = data.fromStateId;
             let toStateId = data.toStateId;
-            let conditionId = data.fromStateId;
+            let conditionId = data.conditionId;
             
             transitionJSON["transitionId"] =  JSON(transitionId);
             transitionJSON["name"] = JSON(transitionDisplayName);
@@ -322,7 +323,7 @@ class BehaviorDefinition {
     
     func addCondition(conditionId:String, referenceAId:String, referenceBId:String, relational:String){
         
-        conditions[id] = (conditionId:id, referenceAId:referenceAId, referenceBId:referenceBId, relational);
+        conditions[id] = (conditionId:conditionId, referenceAId:referenceAId, referenceBId:referenceBId, relational);
         
     }
     

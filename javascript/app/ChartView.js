@@ -918,10 +918,14 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     });
                     var connection_id = data.transitions[j].transitionId;
                     connection.setParameter("id", connection_id);
-
-                    console.log("connection id", data.transitions[j], connection.id);
-                    self.addOverlayToConnection(data.transitions[j]);
+                    var conditionData = data.conditions.filter(function(cond){return cond.conditionId == data.transitions[j].conditionId;})[0];
+                    self.addOverlayToConnection(data.transitions[j],conditionData);
                     self.addTransitionEvent(data.transitions[j], data.generators, data.conditions);
+
+                    this.setupReferencesForExpression(connection_id,conditionData.referenceAId,data.expressions);
+                    this.setupReferencesForExpression(connection_id,conditionData.referenceBId,data.expressions);
+
+
                 }
                 this.instance.bind("connection", function(info) {
                     console.log("state transition made", info);
@@ -934,33 +938,38 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 for (var k = 0; k < data.mappings.length; k++) {
                     var mapping_data = data.mappings[k];
                     this.addMapping(mapping_data);
-                    let expressionData = data.expressions.filter(function(exp){return (exp.expressionId == mapping_data.expressionId);})[0];
-                    console.log("Expression search",mapping_data.expressionId,expressionData,data.expressions);
-                    var els = this.expressions[mapping_data.mappingId][mapping_data.expressionId].updateReferences(expressionData.expressionText, expressionData.expressionPropertyList);
-                    els.every(function(el) {
-                        console.log("el to make draggable", el);
-                        self.makeDraggable(el);
-                        self.addInspector(el);
-                    });
+                    this.setupReferencesForExpression(mapping_data.mappingId,mapping_data.expressionId,data.expressions);
                 }
 
                 for (var m = 0; m < data.methods.length; m++) {
                     var method_data = data.methods[m];
                     this.addMethod(method_data);
-
-
+                     for (var n = 0; n < method_data.argumentList.length;n++) {
+                         this.setupReferencesForExpression(method_data.methodId,method_data.argumentList[n].expressionId,data.expressions);
+                     }
                 }
             }
 
-            addOverlayToConnection(transition_data) {
-                //add expressionIds to transition_data 
-                transition_data.expressionIdLeft = ID();
-                transition_data.expressionIdRight = ID();
-                transition_data.mappingId = ID();
+            setupReferencesForExpression(parentId,expressionId,expressions){
+                var self = this;
+                 let targetExpression = expressions.filter(function(exp){return (exp.expressionId == expressionId);})[0];
+                    var els = this.expressions[parentId][expressionId].updateReferences(targetExpression.expressionText, targetExpression.expressionPropertyList);
+                    els.every(function(el) {
+                        console.log("el to make draggable", el);
+                        self.makeDraggable(el);
+                        self.addInspector(el);
+                    });
+            }
+
+            addOverlayToConnection(transitionData,conditionData) {
+              
 
                 var self = this;
 
-                var id = transition_data.transitionId;
+                var id = transitionData.transitionId;
+                transitionData.referenceAId = conditionData.referenceAId;
+                transitionData.referenceBId = conditionData.referenceBId;
+
                 console.log("transition id=", id);
                 var connections = this.instance.getConnections();
                 var connection = connections.find(function(c) {
@@ -969,8 +978,8 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 console.log("connection is", connection);
                 connection.addOverlay(["Custom", {
                     create: function(component) {
-                        console.log("% transition data is ", transition_data);
-                        var html = transitionTemplate(transition_data);
+                        console.log("% transition data is ", transitionData);
+                        var html = transitionTemplate(transitionData);
                         return $(html);
                     },
                     location: 0.5,
@@ -1021,19 +1030,19 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 }]);
 
                 console.log("droppable target:", $('#' + id).find(".events .event_block"));
-                console.log("transition_data", transition_data);
+                console.log("transition_data", transitionData);
 
                 $($('#' + id).find(".events .event_block")[0]).droppable({
                     greedy: true,
                     drop: function(event, ui) {
-                        console.log("drop_event_data", transition_data);
+                        console.log("drop_event_data", transitionData);
 
                         var eventName = $(ui.draggable).attr('name');
                         var displayName = $(ui.draggable).html();
                         var type = $(ui.draggable).attr('type');
-                        var sourceId = transition_data.fromStateId;
-                        var targetId = transition_data.toStateId;
-                        var sourceName = transition_data.name;
+                        var sourceId = transitionData.fromStateId;
+                        var targetId = transitionData.toStateId;
+                        var sourceName = transitionData.name;
 
                         console.log("type=", type);
 
@@ -1070,10 +1079,11 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                 });
 
+                console.log("conditionData",conditionData);
                 //init the new expressions
-                var expressionOn = this.initializeExpression(transition_data.expressionIdLeft, transition_data.mappingId);
-                var expressionThen = this.initializeExpression(transition_data.expressionIdRight, transition_data.mappingId);
-                console.log("% init transition exp ", expressionOn, expressionThen);
+                var expressionA = this.initializeExpression(conditionData.referenceAId, id);
+                var expressionB = this.initializeExpression(conditionData.referenceBId, id);
+                console.log("% init transition exp ", expressionA, expressionB);
 
             }
 

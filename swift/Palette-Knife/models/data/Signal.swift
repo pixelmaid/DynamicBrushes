@@ -35,6 +35,7 @@ class Signal:Observable<Float>{
         self.displayName = displayName;
         self.style = style;
         super.init(0)
+        
     }
     
     public func setOrder(i:Int){
