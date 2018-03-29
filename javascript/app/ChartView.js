@@ -568,7 +568,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
             }
 
             initializeExpression(expressionId, mappingId) {
-                console.log("init expression", expressionId, mappingId);
+                console.log("% init expression", expressionId, mappingId);
 
                 var ex_el = $("#" + expressionId + " .text_entry")[0];
                 var expression = new Expression(ex_el, mappingId, expressionId);
@@ -618,10 +618,9 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                         var expressionId = el.attr("id");
                         var style = $(ui.draggable).attr('blockstyle');
-                        console.log("!style in drop is ", style, $(ui.draggable));
 
                         $(ui.draggable).remove();
-
+                        $(".reference_expression").css("border", "1px solid #ccc");
 
                         var expression = self.addReferenceToExpression(parentId, expressionId, referenceId, referenceType, referenceDisplayName, style);
                         var eventArgs = [self.id, expression.id, expression.getText(), expression.getPropertyList()];
@@ -747,6 +746,9 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 var html = methodTemplate(data);
                 $($('#' + data.transitionId).find(".methods")[0]).append(html);
                 for (var i = 0; i < data.argumentList.length; i++) {
+
+                    console.log("method id, parent ", data.argumentList[i].expressionId, data.methodId)
+
                     var expression = this.initializeExpression(data.argumentList[i].expressionId, data.methodId);
                     var el = $($('#' + data.argumentList[i].expressionId)[0]);
                     this.setDropFunctionsForExpression(el, data.argumentList[i].expressionId, data.methodId);
@@ -948,6 +950,11 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
             }
 
             addOverlayToConnection(transition_data) {
+                //add expressionIds to transition_data 
+                transition_data.expressionIdLeft = ID();
+                transition_data.expressionIdRight = ID();
+                transition_data.mappingId = ID();
+
                 var self = this;
 
                 var id = transition_data.transitionId;
@@ -959,6 +966,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 console.log("connection is", connection);
                 connection.addOverlay(["Custom", {
                     create: function(component) {
+                        console.log("% transition data is ", transition_data)
                         var html = transitionTemplate(transition_data);
                         return $(html);
                     },
@@ -1059,7 +1067,10 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                 });
 
-
+                //init the new expressions
+                var expressionOn = this.initializeExpression(transition_data.expressionIdLeft, transition_data.mappingId);
+                var expressionThen = this.initializeExpression(transition_data.expressionIdRight, transition_data.mappingId);
+                console.log("% init transition exp ", expressionOn, expressionThen)
 
             }
 

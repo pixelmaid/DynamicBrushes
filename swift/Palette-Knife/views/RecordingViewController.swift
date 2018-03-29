@@ -133,8 +133,12 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         let lastGesture = RecordingViewController.gestures[idx]
         let x = lastGesture.x
         let y = lastGesture.y
-        let xstrokes = x.getTimeOrderedList()
-        let ystrokes = y.getTimeOrderedList()
+        //note - removeFirst temporary fix for 0,0 init
+        var xstrokes = x.getTimeOrderedList()
+        xstrokes.removeFirst(1)
+        var ystrokes = y.getTimeOrderedList()
+        ystrokes.removeFirst(1)
+        print("$$ xstrokes, ystrokes in timeordered list ", xstrokes, ystrokes)
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 200, height: 150))
         imageView.backgroundColor = UIColor.white
         imageView.contentMode = UIViewContentMode.scaleAspectFit
@@ -142,19 +146,25 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         drawThumbnail(xStrokes: xstrokes, yStrokes: ystrokes, image: imageView, onion: false)
         //draw onionskin
         if indexPath.item >= 1 {
-            let xstrokes1 = RecordingViewController.gestures[idx-1].x.getTimeOrderedList()
-            let ystrokes1 = RecordingViewController.gestures[idx-1].y.getTimeOrderedList()
+            var xstrokes1 = RecordingViewController.gestures[idx-1].x.getTimeOrderedList()
+            var ystrokes1 = RecordingViewController.gestures[idx-1].y.getTimeOrderedList()
+            xstrokes1.removeFirst(1)
+            ystrokes1.removeFirst(1)
             drawThumbnail(xStrokes: xstrokes1, yStrokes: ystrokes1, image: imageView, onion: true, alpha: 0.3)
             if indexPath.item >= 2 {
-                let xstrokes2 = RecordingViewController.gestures[idx-2].x.getTimeOrderedList()
-                let ystrokes2 = RecordingViewController.gestures[idx-2].y.getTimeOrderedList()
+                var xstrokes2 = RecordingViewController.gestures[idx-2].x.getTimeOrderedList()
+                var ystrokes2 = RecordingViewController.gestures[idx-2].y.getTimeOrderedList()
+                xstrokes2.removeFirst(1)
+                ystrokes2.removeFirst(1)
                 drawThumbnail(xStrokes: xstrokes2, yStrokes: ystrokes2, image: imageView, onion: true, alpha: 0.2)
                 if indexPath.item >= 3 {
                     
                     let upToStrokes = RecordingViewController.gestures.count - 3
                     for i in 0 ..< upToStrokes {
-                        let xstrokes3 = RecordingViewController.gestures[i].x.getTimeOrderedList()
-                        let ystrokes3 = RecordingViewController.gestures[i].y.getTimeOrderedList()
+                        var xstrokes3 = RecordingViewController.gestures[i].x.getTimeOrderedList()
+                        var ystrokes3 = RecordingViewController.gestures[i].y.getTimeOrderedList()
+                        xstrokes3.removeFirst(1)
+                        ystrokes3.removeFirst(1)
                         drawThumbnail(xStrokes: xstrokes3, yStrokes: ystrokes3, image: imageView, onion: true, alpha: 0.1)
                     }
                 }
@@ -183,6 +193,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
 
     func drawThumbnail(xStrokes:[Float],yStrokes:[Float],image:UIImageView, onion:Bool, alpha: CGFloat = 1.0) {
         //assert xStrokes.count == yStrokes.count
+        print("$$ xstrokes, ystrokes ", xStrokes, yStrokes)
         for idx in stride(from:0, to:xStrokes.count, by:1) {
             let c1x = xStrokes[idx] / divisor
             let c1y = yStrokes[idx] / divisor
@@ -192,6 +203,8 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
             let c2y = yStrokes[idx2] / divisor
             let p1 = CGPoint(x:Int(c1x), y:Int(c1y))
             let p2 = CGPoint(x:Int(c2x), y:Int(c2y))
+            print("$$ p1,p2 ", p1,p2)
+
             
             if !onion {
                 //draw first point in green, draw last point in red, draw everything else in blue

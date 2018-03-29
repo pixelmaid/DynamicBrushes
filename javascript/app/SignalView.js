@@ -129,6 +129,7 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
                 self.trigger("ON_AUTHORING_EVENT", [transmit_data]);
                     //}
 
+            
 
                 });
             }
@@ -137,7 +138,21 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
                  console.log("signal view process authoring response", data, data.result);
                  var lastSignal = this.initQueue.shift();
                  lastSignal.attr('id', data.data.id);
+                 this.highlightExpressionAreas(data.data.id);
  
+            }
+
+            highlightExpressionAreas(id){
+                $(".reference_expression").css("border", "2px solid #00ff00");
+                $( "#"+id ).mouseover(function() {
+                    $(".reference_expression").css("border", "2px solid #00ff00");
+
+                });
+
+                $( "#"+id  ).mouseout(function() {
+                    $(".reference_expression").css("border", "1px solid #ccc");
+                });
+
             }
 
 
