@@ -1084,6 +1084,12 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 var expressionA = this.initializeExpression(conditionData.referenceAId, id);
                 var expressionB = this.initializeExpression(conditionData.referenceBId, id);
                 console.log("% init transition exp ", expressionA, expressionB);
+                var elA = $($('#' + id).find("#"+conditionData.referenceAId)[0]);
+                var elB = $($('#' + id).find("#"+conditionData.referenceBId)[0]);
+
+                this.setDropFunctionsForExpression(elA, conditionData.referenceAId,id);
+                this.setDropFunctionsForExpression(elB, conditionData.referenceBId,id);
+
 
             }
 

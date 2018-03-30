@@ -256,7 +256,7 @@ class Brush: TimeSeries, Hashable{
     func setupTransition(){
         
         let setupTransition = self.getTransitionByName(name: "setup");
-        if(setupTransition != nil){
+        if(setupTransition != nil && (setupTransition?.condition.evaluate())!){
             
             self.transitionToState(transition: setupTransition!)
         }
@@ -506,7 +506,7 @@ class Brush: TimeSeries, Hashable{
     
     func transitionToState(transition:StateTransition){
         var constraint_mappings:[String:Constraint];
-        print("transitioning to state:\(currentState) from state: \(transition.toStateId)");
+        print("transitioning from state:\(currentState) to state: \(transition.toStateId)");
         if(states[currentState] != nil){
             constraint_mappings =  states[currentState]!.constraint_mappings
             for (_, value) in constraint_mappings{
