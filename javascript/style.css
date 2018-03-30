@@ -149,8 +149,12 @@ h1{
 .state, .expression{
   border:solid 1px #cccccc;
   background: #000;
-  border-radius: 6px;
 }
+
+.expression{
+  border-radius: 6px;
+
+  }
 
 .state{
   width: auto;
@@ -165,10 +169,12 @@ h1{
 
 .setup .state, .die .state {
   width: 40px;
-  min-width: 40px;
+  min-width: 80px;
   min-height: 40px;
   height: 40px;
   border: solid 1px #efac1f;
+  text-align: center;
+  font-weight: 900;
   /*border-radius: 12px;*/
 }
 .setup .state{
@@ -184,6 +190,8 @@ h1{
 /*border-radius: 0*/
 
 }
+
+
 
 .conditionals{
   height: 35px;
@@ -323,7 +331,7 @@ li.collapsibleListClosed{
 
 .method{
   background-color:#eb4a63;
-  width:100px;
+  min-width:200px;
   margin:8px auto;
   height:35px;
 }

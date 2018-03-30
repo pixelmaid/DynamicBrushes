@@ -508,10 +508,13 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                 if (state_data.stateName == "setup") {
                     console.log("state data  is setup");
+                    state_data.label = "START";
                     d.className = "setup w";
                     html = startTemplate(state_data);
                 } else if (state_data.stateName == "die") {
                     d.className = "die w";
+                    state_data.label = "DESTROY";
+
                     html = startTemplate(state_data);
                 } else {
                     html = stateTemplate(state_data);
@@ -657,78 +660,6 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
             }
 
 
-            addTransitionEvent(data, generator_data, condition_data) {
-                console.log("adding transition event", data);
-                //var html = "<div parent_id='" + data.transitionId + "'name='" + data.eventName + "'type='transition' class='block transition'>" + data.displayName + "</div>";
-                var self = this;
-                var eventTemplateData = {
-                    transitionId: data.transitionId,
-                    eventName: data.eventName,
-                    displayName: data.displayName,
-                };
-
-                if (conditionalEvents.indexOf(data.eventName) >= 0) {
-                    eventTemplateData.transitionNumberId = data.transitionId + "_num";
-                    eventTemplateData.value = 1;
-                }
-
-                if (data.conditionName) {
-                    var conditionName = data.conditionName;
-                    var condition = condition_data.filter(function(c) {
-                        return c.name == conditionName;
-                    });
-
-                    var relativeName = condition[0].relativeNames[0];
-                    var generator = generator_data.filter(function(g) {
-                        return g.generatorId == relativeName;
-                    });
-                    if (generator[0].generator_type == "interval") {
-                        var val = generator[0].inc;
-                        eventTemplateData.value = val;
-
-                    }
-
-                    console.log("transition has condition!", conditionName, condition, generator);
-
-                }
-
-                var html = eventTemplate(eventTemplateData);
-
-                $($('#' + data.transitionId).find(".events .event_block")[0]).empty();
-                $($('#' + data.transitionId).find(".events .event_block")[0]).prepend(html);
-                var target = $("#" + data.transitionId + " .events .event_block .block");
-
-
-
-                if (data.eventName == "STATE_COMPLETE") {
-                    target.attr("id", data.eventName);
-                } else {
-                    this.makeDraggable(target);
-
-                }
-
-                $('#' + data.transitionId + "_num").change(function() {
-                    console.log("change!");
-                    self.transitionConditionChanged(self.id, data.transitionId, data.eventName, data.fromStateId, data.toStateId, data.displayName, data.name);
-                });
-                console.log("update event", $("#" + data.transitionId + " .events .event_block .block"), data);
-
-            }
-
-            transitionConditionChanged(behaviorId, transitionId, eventName, fromStateId, toStateId, displayName, name) {
-                var transitionHTML = $('#' + transitionId);
-                var conditions = [];
-                if (conditionalEvents.indexOf(eventName) >= 0) {
-                    var num_condition = $('#' + transitionId + "_num").val();
-                    conditions.push(num_condition);
-                    console.log("transition condition  changed for ", eventName, num_condition);
-
-                }
-
-                this.trigger("ON_TRANSITION_CONDITION_CHANGED", [behaviorId, transitionId, eventName, fromStateId, toStateId, displayName, name, conditions]);
-            }
-
-
             removeTransition(data) {
                 var connections = this.instance.getConnections();
                 var connection = connections.find(function(c) {
@@ -738,9 +669,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
             }
 
-            removeTransitionEvent(data) {
-
-            }
+        
 
             addMethod(data) {
                 console.log("method data =", data);
@@ -763,22 +692,6 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
             }
 
 
-
-            methodArgumentChanged(behaviorId, transitionId, methodId, targetMethod) {
-                var methodHTML = $('#' + methodId);
-
-                var currentArgument = $('#' + methodId + "_text").attr('argumentid');
-                if (currentArgument == "nil") {
-                    currentArgument = $('#' + methodId + "_text").attr("value");
-                }
-                console.log("method argument changed for ", methodId, currentArgument);
-                var args = [currentArgument];
-                if (targetMethod == "spawn") {
-                    args.push($('#' + methodId + "_num").val());
-                }
-
-                this.trigger("ON_METHOD_ARGUMENT_CHANGE", [behaviorId, transitionId, methodId, targetMethod, args]);
-            }
 
 
 
@@ -873,18 +786,8 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 if (this.last_dragged) {
                     console.log("last dragged", target, this.last_dragged);
                     target.removeClass("last_dragged");
-
-                    switch (target.attr('type')) {
-                        case "sensor_prop":
-                        case "generator":
-                        case "ui_prop":
-                            this.expressionReferenceRemoved(target.attr("id"), target.attr("parent_id"));
-                            break;
-                        case "transition":
-                            this.trigger("ON_TRANSITION_EVENT_REMOVED", [this.id, target.attr("parent_id")]);
-                            break;
-
-                    }
+                    this.expressionReferenceRemoved(target.attr("id"), target.attr("parent_id"));
+                      
                 }
             }
 
@@ -920,7 +823,6 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     connection.setParameter("id", connection_id);
                     var conditionData = data.conditions.filter(function(cond){return cond.conditionId == data.transitions[j].conditionId;})[0];
                     self.addOverlayToConnection(data.transitions[j],conditionData);
-                    self.addTransitionEvent(data.transitions[j], data.generators, data.conditions);
 
                     this.setupReferencesForExpression(connection_id,conditionData.referenceAId,data.expressions);
                     this.setupReferencesForExpression(connection_id,conditionData.referenceBId,data.expressions);
@@ -930,7 +832,36 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 this.instance.bind("connection", function(info) {
                     console.log("state transition made", info);
                     info.connection.setParameter("id", info.connection.getId());
-                    self.trigger("ON_STATE_CONNECTION", [info.connection.getParameter("id"), info.sourceId, $(info.source).attr("name"), info.targetId, self.id]);
+                    //behaviorId, transitionId, name, fromStateId, toStateId, referenceA,referenceB,condition
+                    var behaviorId = self.id;
+                    var transitionId = info.connection.getParameter("id");
+                    var name =  $(info.source).attr("name");
+                    var fromStateId = info.sourceId;
+                    var toStateId = info.targetId;
+                   var referenceAId = ID();
+                   var referenceBId = ID();
+                   var conditionId = ID();
+
+                    var referenceA = {
+                        expressionId:referenceAId,
+                        expressionText: "0",
+                        expressionPropertyList:[]
+                    };
+
+                    var referenceB = {
+                        expressionId:referenceBId,
+                        expressionText: "0",
+                        expressionPropertyList:[]
+                    };
+
+                    var condition = {
+                        conditionId: conditionId,
+                        referenceAId:referenceAId,
+                        referenceBId:referenceBId,
+                        relational: "=="
+                    };
+
+                    self.trigger("ON_STATE_CONNECTION", [behaviorId, transitionId, name, fromStateId, toStateId, conditionId, condition, referenceA,referenceB]);
                 });
 
                 self.trigger("ON_MAPPING_DATA_REQUEST", [self.id]);
@@ -970,12 +901,10 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 transitionData.referenceAId = conditionData.referenceAId;
                 transitionData.referenceBId = conditionData.referenceBId;
 
-                console.log("transition id=", id);
                 var connections = this.instance.getConnections();
                 var connection = connections.find(function(c) {
                     return c.getParameter("id") == id;
                 });
-                console.log("connection is", connection);
                 connection.addOverlay(["Custom", {
                     create: function(component) {
                         console.log("% transition data is ", transitionData);
@@ -1029,33 +958,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     }
                 }]);
 
-                console.log("droppable target:", $('#' + id).find(".events .event_block"));
-                console.log("transition_data", transitionData);
-
-                $($('#' + id).find(".events .event_block")[0]).droppable({
-                    greedy: true,
-                    drop: function(event, ui) {
-                        console.log("drop_event_data", transitionData);
-
-                        var eventName = $(ui.draggable).attr('name');
-                        var displayName = $(ui.draggable).html();
-                        var type = $(ui.draggable).attr('type');
-                        var sourceId = transitionData.fromStateId;
-                        var targetId = transitionData.toStateId;
-                        var sourceName = transitionData.name;
-
-                        console.log("type=", type);
-
-                        if (type == 'transition') {
-                            var conditions = [1];
-                            //data.name = name;
-                            self.trigger("ON_TRANSITION_EVENT_ADDED", [id, eventName, conditions, displayName, sourceId, sourceName, targetId, self.id]);
-                            $(ui.helper).remove(); //destroy clone
-                            $(ui.draggable).remove(); //remove from list
-
-                        }
-                    }
-                });
+               
 
 
                 connection.getOverlay("transition_" + id).hide();
@@ -1079,7 +982,6 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                 });
 
-                console.log("conditionData",conditionData);
                 //init the new expressions
                 var expressionA = this.initializeExpression(conditionData.referenceAId, id);
                 var expressionB = this.initializeExpression(conditionData.referenceBId, id);
@@ -1090,7 +992,12 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 this.setDropFunctionsForExpression(elA, conditionData.referenceAId,id);
                 this.setDropFunctionsForExpression(elB, conditionData.referenceBId,id);
 
-
+                $("#"+transitionData.conditionId).val(conditionData.relational);
+                $("#"+transitionData.conditionId).change(function(event){
+                    let relational = $(event.currentTarget).val();
+                    console.log("relational changed to",$(event.currentTarget).val());
+                    self.trigger("ON_CONDITION_RELATIONAL_CHANGED",[self.id,transitionData.conditionId,relational]);
+                });
             }
 
             behaviorChange(behaviorEvent, data) {

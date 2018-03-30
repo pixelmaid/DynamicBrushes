@@ -234,6 +234,22 @@ class BehaviorManager{
                 resultJSON["result"] = "failure";
                 return resultJSON;
             }
+           
+        case "relational_changed":
+            let behaviorID = data["behaviorId"].stringValue;
+            let targetBehavior = BehaviorManager.behaviors[behaviorID]!
+             do {
+                try targetBehavior.changeConditionRelational(conditionId:data["conditionId"].stringValue,relational:data["relational"].stringValue);
+                BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)
+                resultJSON["result"] = "success";
+                return resultJSON;
+            }
+             catch{
+                print("condition id does not exist, cannot change relational");
+                resultJSON["result"] = "failure";
+                return resultJSON;
+            }
+
             
         case "method_added":
             let behaviorId = data["behaviorId"].stringValue

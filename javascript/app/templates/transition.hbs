@@ -1,27 +1,25 @@
 <div>
 	<div class="transition_statement" id="{{transitionId}}">
 	  <div class="events">
-	  	<div class="event_label">on</div>  
-	  	<div id="{{referenceAId}}" parent_id="{{transitionId}}"  class = "reference_expression expression">       
+	  	<div class="event_label">if</div>  
+	  	<div type="referenceA" id="{{referenceAId}}" parent_id="{{transitionId}}"  class = "reference_expression expression">       
                 <textarea  class="text_entry">
        				 {{default}}
                 </textarea>  
         </div>
 	    <div class="transitionConditions resizeDiv">
 	        <div class= "selectBox selectBoxNumber">
-			 
-						  <!-- <input class="selectBoxInput selectBoxNumber" id="{{transitionNumberId}}" type="number" value="0"> -->
 
-			  <select class="selectBoxInput" id="{{transitionNumberId}}" name="{{transitionNumberId}}">
-			  	<option value="equal"> == </option>
-			  	<option value="less"> &lt; </option>
-			  	<option value="greater"> &gt; </option>
-			  	<option value="nequal"> !== </option>
+			  <select class="selectBoxInput" id="{{conditionId}}">
+			  	<option value="=="> == </option>
+			  	<option value="<"> &lt; </option>
+			  	<option value=">"> &gt; </option>
+			  	<option value="!=="> !== </option>
 			  	<option value="within"> within </option>
 			  </select>
 			</div>
 		</div>
-        <div id="{{referenceBId}}" parent_id="{{transitionId}}" class = "reference_expression expression">       
+        <div type="referenceB" id="{{referenceBId}}" parent_id="{{transitionId}}" class = "reference_expression expression">       
                 <textarea class="text_entry">
                 {{default}}
                 </textarea>  

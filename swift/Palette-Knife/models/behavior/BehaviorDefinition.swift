@@ -323,8 +323,18 @@ class BehaviorDefinition {
     
     func addCondition(conditionId:String, referenceAId:String, referenceBId:String, relational:String){
         
-        conditions[id] = (conditionId:conditionId, referenceAId:referenceAId, referenceBId:referenceBId, relational);
+        conditions[conditionId] = (conditionId:conditionId, referenceAId:referenceAId, referenceBId:referenceBId, relational);
         
+    }
+    
+    func changeConditionRelational(conditionId:String,relational:String) throws{
+        if(conditions[conditionId] != nil){
+            conditions[conditionId]!.relational = relational;
+            return;
+        }
+        print("===========ERROR ATTEMPTED TO CHANGE RELATIONAL FOR CONDITION THAT DOES NOT EXIST=====================")
+
+        throw BehaviorError.conditionDoesNotExist
     }
     
     func addState(stateId:String, stateName:String, stateX:Float, stateY:Float){
@@ -417,7 +427,7 @@ class BehaviorDefinition {
             let c =  conditions.removeValue(forKey: id)!;
              do{
                 try self.removeExpression(id:c.referenceAId);
-                try self.removeExpression(id:c.referenceAId);
+                try self.removeExpression(id:c.referenceBId);
             }
              catch {
                 print("===========ERROR ATTEMPTED TO REMOVE EXPRESSION IN CONDITION THAT DOES NOT EXIST=====================")
@@ -537,7 +547,7 @@ class BehaviorDefinition {
     }
     
     func generateSignal(id:String)->Signal?{
-        #if DEBUG
+        #if DEBUG   
             print("generate signal",id);
         #endif
         guard let signal = BehaviorManager.getSignal(id:id) else{
@@ -705,7 +715,7 @@ class BehaviorDefinition {
         for (key,expression_data) in expressions{
             self.generateExpression(targetBrush: targetBrush, name: key, signalIds: expression_data.0, expressionText: expression_data.1);
         }
-        
+        print("conditions",conditions);
         for (_,value) in conditions{
             let conditionId = value.conditionId;
             let referenceAId = value.referenceAId;

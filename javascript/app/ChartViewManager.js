@@ -325,27 +325,18 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                 }
 
                 var chartView = new ChartView(data.id, data.name, data.active_status, brush_properties, actions);
-                chartView.addListener("ON_STATE_CONNECTION", function(connectionId, sourceId, sourceName, targetId, behaviorId) {
-                    this.onConnection(connectionId, sourceId, sourceName, targetId, behaviorId);
+                chartView.addListener("ON_STATE_CONNECTION", function(behaviorId, transitionId, name, fromStateId, toStateId, conditionId, condition, referenceA,referenceB) {
+                    this.onConnection(behaviorId, transitionId, name, fromStateId, toStateId, conditionId, condition, referenceA,referenceB);
                 }.bind(this));
 
 
                 chartView.addListener("ON_TRANSITION_REMOVED", function(behaviorId, transitionId) {
                     this.onTransitionRemoved(behaviorId, transitionId);
                 }.bind(this));
+                    //self.trigger("ON_CONDITION_RELATIONAL_CHANGED",[behaviorId,transitionData.conditionId,relational])
 
-
-                chartView.addListener("ON_TRANSITION_EVENT_REMOVED", function(behaviorId, transitionId) {
-                    this.onTransitionEventRemoved(behaviorId, transitionId);
-                }.bind(this));
-
-
-                chartView.addListener("ON_TRANSITION_EVENT_ADDED", function(connectionId, eventName, conditions, displayName, sourceId, sourceName, targetId, behaviorId) {
-                    this.onTransitionEventAdded(connectionId, eventName, conditions, displayName, sourceId, sourceName, targetId, behaviorId);
-                }.bind(this));
-
-                chartView.addListener("ON_TRANSITION_CONDITION_CHANGED", function(behaviorId, transitionId, eventName, fromStateId, toStateId, displayName, name, conditions) {
-                    this.onTransitionEventConditionChanged(behaviorId, transitionId, eventName, fromStateId, toStateId, displayName, name, conditions);
+                chartView.addListener("ON_CONDITION_RELATIONAL_CHANGED", function(behaviorId, conditionId, relational) {
+                    this.onConditionRelationalChanged(behaviorId, conditionId, relational);
                 }.bind(this));
 
                 chartView.addListener("ON_MAPPING_ADDED", function(mappingId, name, fieldName, type, expressionId, stateId, behaviorId) {
@@ -356,9 +347,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                     this.onMethodAdded(behaviorId, transitionId, methodId, fieldName, displayName, argumentList);
                 }.bind(this));
 
-                chartView.addListener("ON_METHOD_ARGUMENT_CHANGE", function(behaviorId, transitionId, methodId, targetMethod, args) {
-                    this.onMethodArgumentChanged(behaviorId, transitionId, methodId, targetMethod, args);
-                }.bind(this));
+              
 
                 chartView.addListener("ON_METHOD_REMOVED", function(behaviorId, methodId) {
                     this.onMethodRemoved(behaviorId, methodId);
@@ -459,8 +448,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
 
                         case "transition_added":
                             console.log("transition added  called");
-                            this.views[behaviorId].addOverlayToConnection(this.lastAuthoringRequest.data);
-                            this.views[behaviorId].addTransitionEvent(this.lastAuthoringRequest.data);
+                            this.views[behaviorId].addOverlayToConnection(this.lastAuthoringRequest.data,this.lastAuthoringRequest.data.condition);
 
                             this.lastAuthoringRequest = null;
 
@@ -471,6 +459,11 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                             this.views[behaviorId].removeTransition(this.lastAuthoringRequest.data);
                             this.lastAuthoringRequest = null;
 
+                            break;
+
+                        case "relational_changed":
+                            console.log("relational changed called");
+                            this.lastAuthoringRequest = null;
                             break;
 
                         case "transition_event_added":
@@ -644,17 +637,18 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                 this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
             }
 
-            onConnection(connectionId, sourceId, sourceName, targetId, behaviorId) {
+            onConnection(behaviorId, transitionId, name, fromStateId, toStateId, conditionId, condition, referenceA,referenceB) {
 
                 var transmit_data = {
-                    fromStateId: sourceId,
-                    toStateId: targetId,
-                    name: sourceName,
-                    eventName: "STATE_COMPLETE",
-                    displayName: "stateComplete",
-                    transitionId: connectionId,
-                    behaviorId: behaviorId,
-                    parentFlag: "false",
+                    behaviorId:behaviorId,
+                    transitionId:transitionId,
+                    name:name,
+                    fromStateId:fromStateId,
+                    toStateId:toStateId,
+                    conditionId:conditionId,
+                    condition:condition,
+                    referenceA:referenceA,
+                    referenceB:referenceB,
                     type: "transition_added"
                 };
                 this.lastAuthoringRequest = {
@@ -667,52 +661,6 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
 
             }
 
-            onTransitionEventAdded(connectionId, eventName, conditions, displayName, sourceId, sourceName, targetId, behaviorId) {
-                console.log("transition event added", connectionId, eventName, displayName);
-
-
-                var transmit_data = {
-                    fromStateId: sourceId,
-                    toStateId: targetId,
-                    eventName: eventName,
-                    conditions: conditions,
-                    displayName: displayName,
-                    name: sourceName,
-                    transitionId: connectionId,
-                    behaviorId: behaviorId,
-                    parentFlag: "false",
-                    type: "transition_event_added"
-                };
-
-                this.lastAuthoringRequest = {
-                    data: transmit_data
-                };
-
-                console.log("state transition made chart view", this);
-                this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
-            }
-
-            onTransitionEventConditionChanged(behaviorId, transitionId, eventName, fromStateId, toStateId, displayName, name, conditions) {
-
-                var transmit_data = {
-                    fromStateId: fromStateId,
-                    toStateId: toStateId,
-                    name: name,
-                    displayName: displayName,
-                    conditions: conditions,
-                    behaviorId: behaviorId,
-                    eventName: eventName,
-                    transitionId: transitionId,
-                    type: "transition_event_condition_changed"
-                };
-
-                this.lastAuthoringRequest = {
-                    data: transmit_data
-                };
-
-                console.log("state transition made chart view", this);
-                this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
-            }
 
             onTransitionRemoved(behaviorId, transitionId) {
 
@@ -730,19 +678,19 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
 
             }
 
-            onTransitionEventRemoved(behaviorId, transitionId) {
-
+         
+            onConditionRelationalChanged(behaviorId, conditionId, relational){
                 var transmit_data = {
-                    transitionId: transitionId,
                     behaviorId: behaviorId,
-                    type: "transition_event_removed"
+                    conditionId: conditionId,
+                    relational: relational,
+                    type: "relational_changed"
                 };
                 this.lastAuthoringRequest = {
                     data: transmit_data
                 };
 
                 this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
-
 
             }
 
@@ -844,27 +792,6 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
             }
 
 
-
-       
-
-            onMethodArgumentChanged(behaviorId, transitionId, methodId, targetMethod, args) {
-                console.log("method argument changed", methodId, targetMethod, transitionId);
-
-                var transmit_data = {
-                    behaviorId: behaviorId,
-                    targetTransition: transitionId,
-                    methodId: methodId,
-                    targetMethod: targetMethod,
-                    currentArguments: args,
-                    type: "method_argument_changed"
-                };
-
-                this.lastAuthoringRequest = {
-                    data: transmit_data
-                };
-
-                this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
-            }
 
             onMethodRemoved(behaviorId, methodId) {
                 console.log("method removed ", methodId, behaviorId);

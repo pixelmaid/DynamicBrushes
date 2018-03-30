@@ -49,9 +49,9 @@
 }, {
 	"displayName": "start timer",
 	"fieldName": "startTimer",
-	"argumentList": [{}]
+	"argumentList": []
 }, {
 	"displayName": "stop timer",
 	"fieldName": "stopTimer",
-	"argumentList": [{}]
+	"argumentList": []
 }]
