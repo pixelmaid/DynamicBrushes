@@ -66,8 +66,8 @@ class StylusCollection:LiveCollection {
         self.y = y;
         self.speed = 0;
         self.stylusEvent = Signal.stylusUp;
-        
-         _ = self.exportData();
+        let data = self.exportData();
+        self.addProtoSample(data: data)
     }
     
     func onStylusDown(x:Float,y:Float,force:Float,angle:Float){
@@ -86,8 +86,8 @@ class StylusCollection:LiveCollection {
         self.yDistance = 0;
         self.euclidDistance = 0;
         self.prevTime = self.getTimeElapsed();
-        
-        _ = self.exportData();
+        let data = self.exportData();
+        self.addProtoSample(data: data)
 
     }
     
@@ -120,9 +120,13 @@ class StylusCollection:LiveCollection {
         
         self.prevTime = currentTime;
         self.stylusEvent = Signal.stylusMove;
-        _ = self.exportData();
+        let data = self.exportData();
+        self.addProtoSample(data: data)
+
      
     }
+    
+  
     
     override func exportData()->JSON{
         //export data
@@ -142,7 +146,6 @@ class StylusCollection:LiveCollection {
         data["speed"] = JSON(self.speed);
         data["deltaAngle"] = JSON(self.deltaAngle);
         
-        self.addProtoSample(data: data)
         return data;
     }
   

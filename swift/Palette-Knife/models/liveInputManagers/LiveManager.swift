@@ -106,25 +106,7 @@ final class StylusManager:LiveManager{
      private func beginRecording(start:Date)->RecordingCollection{
         print("preset data",recordingPresetData)
         let rPackage = RecordingCollection(id: NSUUID().uuidString,start:start,targetLayer:self.layerId,data:recordingPresetData)
-        var protodata:JSON = [:]
-        protodata["x"] = JSON(0);
-        protodata["y"] = JSON(0);
-        protodata["ox"] = JSON(0);
-        protodata["oy"] = JSON(0);
-        protodata["dx"] = JSON(0);
-        protodata["dy"] = JSON(0);
-        protodata["force"] = JSON(0);
-        protodata["angle"] = JSON(0);
-        protodata["deltaAngle"] = JSON(0);
-        protodata["xDistance"] = JSON(0);
-        protodata["yDistance"] = JSON(0);
-        protodata["euclidDistance"] = JSON(0);
-        protodata["xDistance"] = JSON(0);
-        protodata["yDistance"] = JSON(0);
-        protodata["stylusEvent"] = JSON(0);
-        protodata["time"] = JSON(0);
-        
-        rPackage.addProtoSample(data: protodata);
+       
         if(firstRecording == nil){
             firstRecording = rPackage.id;
         }
@@ -367,22 +349,13 @@ final class StylusManager:LiveManager{
             }
             let dx = x-xLast;
             let dy = y-yLast;
-            var sample:JSON = [:]
-            sample["dx"] = JSON(dx);
-            sample["dy"] = JSON(dy);
-            sample["x"] = JSON(x);
-            sample["y"] = JSON(y);
-            sample["force"] = JSON(force);
-            sample["angle"] = JSON(angle);
-            sample["stylusEvent"] = JSON(StylusManager.stylusMove);
-            sample["time"] = JSON(elapsedTime);
-            
-            currentRecordingPackage.addProtoSample(data:sample);
-            
+          
             for (_,stylusCollection) in self.liveCollections{
 
                 (stylusCollection as! StylusCollection).onStylusMove(x: x, y: y, force: force, angle: angle)
             }
+            let sample = self.liveCollections["stylus"]!.exportData();
+            currentRecordingPackage.addProtoSample(data:sample);
         }
     }
     
@@ -390,22 +363,14 @@ final class StylusManager:LiveManager{
         if(isLive){
             let currentTime = Date();
             let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
-            var sample:JSON = [:]
-            sample["dx"] = JSON(0);
-            sample["dy"] = JSON(0);
-            sample["x"] = JSON(x);
-            sample["y"] = JSON(y);
-            sample["force"] = JSON(force);
-            sample["angle"] = JSON(angle);
-            sample["stylusEvent"] = JSON(StylusManager.stylusUp);
-            sample["time"] = JSON(elapsedTime);
-            
-            currentRecordingPackage.addProtoSample(data:sample);
-            _ = self.endRecording();
+          
              for (_,stylusCollection) in self.liveCollections{
                 (stylusCollection as! StylusCollection).onStylusUp(x: x, y:y);
             }
-            
+            let sample = self.liveCollections["stylus"]!.exportData();
+            currentRecordingPackage.addProtoSample(data:sample);
+            _ = self.endRecording();
+
         }
     }
     
@@ -415,21 +380,14 @@ final class StylusManager:LiveManager{
             let currentTime = Date();
             let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
             _ = beginRecording(start:currentStartDate);
-            var sample:JSON = [:]
-            sample["dx"] = JSON(0);
-            sample["dy"] = JSON(0);
-            sample["x"] = JSON(x);
-            sample["y"] = JSON(y);
-            sample["force"] = JSON(force);
-            sample["angle"] = JSON(angle);
-            sample["stylusEvent"] = JSON(StylusManager.stylusDown);
-            sample["time"] = JSON(elapsedTime);
-            
-            currentRecordingPackage.addProtoSample(data:sample);
+        
 
             for (_,stylusCollection) in self.liveCollections{
            (stylusCollection as! StylusCollection).onStylusDown(x: x, y: y, force: force, angle: angle);
             }
+            let sample = self.liveCollections["stylus"]!.exportData();
+            currentRecordingPackage.addProtoSample(data:sample);
+
         }
     }
      public func addResultantStroke(layerId:String, strokeId:String){

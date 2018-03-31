@@ -40,7 +40,8 @@ class UICollection: LiveCollection {
             self.hue = MathUtil.map(value:Float(_hue), low1:0, high1:1, low2:0, high2: 100);
             self.lightness = MathUtil.map(value:Float(_brightness), low1:0, high1:1, low2:0, high2: 100);
             self.saturation = MathUtil.map(value:Float(_saturation), low1:0, high1:1, low2:0, high2: 100);
-            _ = self.exportData();
+            let data = self.exportData();
+            self.addProtoSample(data: data)
 
         }
     }
@@ -48,12 +49,14 @@ class UICollection: LiveCollection {
     
     func setDiameter(val:Float){
         self.diameter = val;
-         _ = self.exportData();
+        let data = self.exportData();
+        self.addProtoSample(data: data)
     }
     
     func setAlpha(val:Float){
         self.alpha = val;
-         _ = self.exportData();
+        let data = self.exportData();
+        self.addProtoSample(data: data)
     }
     
    
@@ -67,7 +70,7 @@ class UICollection: LiveCollection {
         data["diameter"] = JSON(self.diameter);
     
      
-        self.addProtoSample(data: data)
+       
         return data;
     }
     

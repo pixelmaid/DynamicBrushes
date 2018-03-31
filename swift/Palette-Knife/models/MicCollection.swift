@@ -26,12 +26,14 @@ class MicCollection: LiveCollection {
     
     func setFrequency(val:Float){
         self.frequency = val;
-        _ = self.exportData();
+        let data = self.exportData();
+        self.addProtoSample(data: data)
     }
     
     func setAmplitude(val:Float){
         self.amplitude = val;
-        _ = self.exportData();
+        let data = self.exportData();
+        self.addProtoSample(data: data)
     }
     
     
@@ -40,7 +42,6 @@ class MicCollection: LiveCollection {
         var data = super.exportData();
         data["frequency"] = JSON(self.frequency);
         data["amplitude"] = JSON(self.amplitude);
-        self.addProtoSample(data: data)
         return data;
     }
     
