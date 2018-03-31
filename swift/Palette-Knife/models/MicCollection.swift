@@ -45,15 +45,14 @@ class MicCollection: LiveCollection {
     }
     
 
-    override public func initializeSignal(fieldName:String, displayName:String, settings:JSON, classType:String, style:String, isProto:Bool, order:Int?)->String{
+    override public func initializeSignalWithId(signalId:String, fieldName:String, displayName:String, settings:JSON, classType:String, style:String, isProto:Bool, order:Int?){
         if(classType == "TimeSignal"){
-            return super.initializeSignal(fieldName: fieldName, displayName: displayName, settings: settings, classType: classType, style:style, isProto: isProto, order: order);
+            super.initializeSignalWithId(signalId:signalId,fieldName: fieldName, displayName: displayName, settings: settings, classType: classType, style:style, isProto: isProto, order: order);
+            return;
         }
         
-        let id = NSUUID().uuidString
-        let signal = LiveSignal(id:id , fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:settings);
+        let signal = LiveSignal(id:signalId , fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:settings);
         self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
-        return id;
     }
     
     

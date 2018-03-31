@@ -9,10 +9,28 @@ import Foundation
 import SwiftyJSON
 
 class Generator:Signal{
-   
+    var prevV:Float = 0;
+
+    required init(id: String, fieldName: String, displayName: String, collectionId: String, style: String, settings: JSON) {
+        super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
+        self.index = 0;
+
+    }
+    
     func reset(){
         self.setIndex(i: 0)
     }
+    
+    func incrementAndChange(v:Float){
+        self.incrementIndex();
+        self.didChange.raise(data: (self.id, self.prevV, v));
+        self.prevV = v;
+    }
+    
+   override func incrementIndex(){
+        self.setIndex(i: self.index+1);
+    }
+    
 }
 
 class Sine:Generator{
@@ -32,7 +50,7 @@ class Sine:Generator{
     
     override func get(id:String?) -> Float {
         let v =  sin(Float(self.index)*freq+phase)*amp/2+amp/2;
-        self.incrementIndex();
+        incrementAndChange(v: v);
         return v;
     }
     
@@ -66,13 +84,16 @@ class Sawtooth:Generator{
             val.append(start+increment*Float(i))
         }
         super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
+        print("index =",self.index);
 
     }
     
     override func get(id:String?) -> Float {
-        //TODO: This won't work correctly with new hash system
-
         let v = val[Int(index)]
+        incrementAndChange(v: v);
+        if(index>=val.count){
+            self.index = 0;
+        }
         return v;
     }
     
@@ -88,7 +109,7 @@ class Sawtooth:Generator{
 }
 
 
-class Triangle:Signal{
+class Triangle:Generator{
     var freq:Float
     var min:Float
     var max:Float
@@ -107,6 +128,8 @@ class Triangle:Signal{
         let theta = ti * Float(self.index);
         let _v = 1.0 - abs(Float(theta.truncatingRemainder(dividingBy: 4)-2));
         let v = MathUtil.map(value: _v, low1: -1, high1: 1, low2: min, high2: max)
+        incrementAndChange(v: v);
+
         return v;
     }
     
@@ -122,7 +145,7 @@ class Triangle:Signal{
     
 }
 
-class Square:Signal{
+class Square:Generator{
     var freq:Float
     var min:Float
     var max:Float
@@ -149,6 +172,8 @@ class Square:Signal{
                 currentVal = min;
             }
         }
+        incrementAndChange(v: currentVal);
+
         
         return currentVal;
         
@@ -167,12 +192,12 @@ class Square:Signal{
     
 }
 
-class Alternate:Signal{
+class Alternate:Generator{
     var val = [Float]();
     
     required init(id:String, fieldName:String, displayName:String, collectionId:String, style:String, settings:JSON){
         super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
-        let jsonval = settings["values"].arrayValue;
+        let jsonval = settings["val"].arrayValue;
         for v in jsonval{
             val.append(v.floatValue)
         }
@@ -183,6 +208,10 @@ class Alternate:Signal{
         //TODO: This won't work correctly with new hash system
 
         let v = val[Int(self.index)]
+        incrementAndChange(v: v);
+        if(index>=val.count){
+            self.index = 0;
+        }
         return v;
     }
     
@@ -199,7 +228,7 @@ class Alternate:Signal{
 }
 
 
-class Random: Signal{
+class Random: Generator{
     let start:Float
     let end:Float
     var val:Float;
@@ -217,6 +246,8 @@ class Random: Signal{
         //TODO: This won't work correctly with new hash system
 
         val = Float(arc4random()) / Float(UINT32_MAX) * abs(self.start - self.end) + min(self.start, self.end)
+        incrementAndChange(v: val);
+
         return val
     }
     override func getSettingsJSON()->JSON{
@@ -268,7 +299,8 @@ class Interval:Generator{
         }
         if(self.index < val.count){
             let v = val[self.index]
-            
+            incrementAndChange(v: v);
+
             return v;
         }
         return -1;
