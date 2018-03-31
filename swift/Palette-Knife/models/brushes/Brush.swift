@@ -291,7 +291,7 @@ class Brush: TimeSeries, Hashable{
     
     func positionChange(data:(String,(Float,Float),(Float,Float)),key:String){
         #if DEBUG
-            print("position change called",self.index.get(id:nil),self.position.get(id: nil));
+           // print("position change called",self.index.get(id:nil),self.position.get(id: nil));
         #endif
         if(!self.undergoing_transition){
             let _delta = self.position.sub(point: self.bPosition)
@@ -673,7 +673,7 @@ class Brush: TimeSeries, Hashable{
     
     func setConstraint(constraint:Constraint){
         #if DEBUG
-            print("calling set constraint on",  constraint.relativeProperty.name,constraint.relativeProperty,constraint.reference.get(id: self.id))
+           // print("calling set constraint on",  constraint.relativeProperty.name,constraint.relativeProperty,constraint.reference.get(id: self.id))
         #endif
         constraint.relativeProperty.set(newValue: constraint.reference.get(id: self.id));
         

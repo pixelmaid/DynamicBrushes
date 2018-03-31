@@ -60,7 +60,7 @@ class Expression:Observable<Float>{
             
         }
         #if DEBUG
-            print("expression values",brushIndex.get(id:nil),currentVals);
+            //print("expression values",brushIndex.get(id:nil),currentVals);
         #endif
         
         for i in 0..<stringArr.count{
@@ -80,7 +80,7 @@ class Expression:Observable<Float>{
         
         }
         #if DEBUG
-            print("exception: \(exception,result)")
+            //print("exception: \(exception,result)")
         #endif
 
         return result;
