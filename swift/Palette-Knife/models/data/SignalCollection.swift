@@ -27,7 +27,6 @@ class SignalCollection: Object{
     public let id:String
     public let name:String
     public let classType:String;
-    public var signalLength:Int = 0;
     
     
     required init(data:JSON){
@@ -207,7 +206,6 @@ class SignalCollection: Object{
             }
             targetProtoSignal.addValue(v: value.floatValue)
         }
-        self.signalLength += 1;
     }
     
     public func getProtoSignalValue(fieldName:String)->Float?{
@@ -216,28 +214,45 @@ class SignalCollection: Object{
         }
         return signal.get(id:nil);
     }
-    
+  
+    public func getSignalLength()throws->Int {
+        if(self.protoSignals["time"] == nil){
+            throw SignalError.protoNotFound
+        }
+        return self.protoSignals["time"]!.signalBuffer.count;
+    }
     
     
     public func getProtoSample(index:Int)->JSON?{
-        
-        if(index > 0 && index < self.signalLength){
+        do{
+            let signalLength = try self.getSignalLength();
+        if(index < signalLength){
             var sample:JSON = [:]
             for (key,value) in self.protoSignals{
-                
+                let currentIndex = value.index;
                 value.setIndex(i: index)
                 sample[key] = JSON(value.get(id:nil));
+                value.setIndex(i: currentIndex);
+
             }
             sample["index"] = JSON(index)
-            sample["lastIndex"] = JSON(self.signalLength)
+            sample["lastIndex"] = JSON(signalLength-1)
             sample["isLastInRecording"] = JSON(false);
             sample["isLastInSeries"] = JSON(false);
             sample["sequenceHash"] = JSON(0);
             sample["recordingId"] = JSON(self.id);
             return sample;
         }
+        }
+        catch{
+            print("=================ERROR, couldn't access signal length==================");
+            return nil;
+        }
         return nil;
     }
+    
+    
+   
     
 }
 
@@ -369,30 +384,7 @@ class LiveCollection:SignalCollection{
         let t = currentTime.timeIntervalSince(startDate as Date)
         return Float(t);
     }
-    
-    
-    
-    /* override init(){
-     super.init();
-     do{
-     /*  try self.registerSignalType(fieldName: "dx", classType: "Recording");
-     try self.registerSignalType(fieldName: "dy", classType: "Recording");
-     try self.registerSignalType(fieldName: "x", classType: "Recording");
-     try self.registerSignalType(fieldName: "y", classType: "Recording");
-     try self.registerSignalType(fieldName: "force", classType: "Recording");
-     try self.registerSignalType(fieldName: "angle", classType: "Recording");
-     try self.registerSignalType(fieldName: "stylusEvent", classType: "EventRecording"); */
-     }
-     catch SignalError.signalTypeAlreadyRegistered{
-     print("ERRROR ---------Signal Type already Registered-----------")
-     }
-     catch {
-     
-     }
-     
-     self.name = "stylus";
-     }*/
-    
+
     override public func initializeSignalWithId(signalId:String, fieldName:String, displayName:String, settings:JSON, classType:String, style:String, isProto:Bool, order:Int?){
         if(classType == "TimeSignal"){
              super.initializeSignalWithId(signalId:signalId, fieldName: fieldName, displayName: displayName, settings: settings, classType: classType, style:style, isProto: isProto, order: order);
@@ -427,7 +419,6 @@ class LiveCollection:SignalCollection{
                     signal.addValue(v: value.floatValue);
                 }
             }
-        self.signalLength += 1;
     }
     
     internal func exportData()->JSON{
@@ -438,7 +429,7 @@ class LiveCollection:SignalCollection{
     }
 }
 
-class RecordingCollection:LiveCollection{
+class RecordingCollection:SignalCollection{
     
     //stylus
 //    var next:RecordingCollection?
@@ -516,7 +507,7 @@ class RecordingCollection:LiveCollection{
                 let value = sortedBuffer[i];
                 signal?.addValue(v: value);
             }
-            self.signalLength = (signal?.signalBuffer.count)!;
+            
         }
     }
     
