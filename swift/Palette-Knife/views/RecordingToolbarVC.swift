@@ -25,7 +25,7 @@ class RecordingToolbarVC: UIViewController, Requester {
     var isLooping = false
     
     public let loopEvent = Event<(String)>();
-
+    
     override func viewDidLoad() {
         loopRecording.addTarget(self, action: #selector(RecordingToolbarVC.loop), for: .touchUpInside)
         exportButton.addTarget(self, action: #selector(RecordingToolbarVC.showExportDialog), for: .touchUpInside)
@@ -63,7 +63,7 @@ class RecordingToolbarVC: UIViewController, Requester {
             isLooping = false
             
         }
-        loopEvent.raise(data: ("LOOP"));
+       loopEvent.raise(data: ("LOOP"));
     }
     
     func showExportDialog() {

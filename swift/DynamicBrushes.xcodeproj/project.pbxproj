@@ -138,6 +138,7 @@
 		5FFC457A1EE5C6D6007B7597 /* BehaviorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFC45791EE5C6D6007B7597 /* BehaviorCell.swift */; };
 		5FFDAB091D21B5C400632A26 /* SocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFDAB081D21B5C400632A26 /* SocketManager.swift */; };
 		5FFFD797204F5E5D0038A0BA /* SignalCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFFD796204F5E5D0038A0BA /* SignalCollection.swift */; };
+		7200B9822070140B008EA510 /* Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7200B9812070140B008EA510 /* Operations.swift */; };
 		7219D0E020699EEF0096CB4B /* mic_off2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7219D0DE20699EEE0096CB4B /* mic_off2x.png */; };
 		7219D0E120699EEF0096CB4B /* mic_on2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7219D0DF20699EEF0096CB4B /* mic_on2x.png */; };
 		72478CDD2029043800D24C92 /* Palette-Knife in Resources */ = {isa = PBXBuildFile; fileRef = 72478CDA2029043700D24C92 /* Palette-Knife */; };
@@ -317,6 +318,7 @@
 		5FFDAB081D21B5C400632A26 /* SocketManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketManager.swift; sourceTree = "<group>"; };
 		5FFFD796204F5E5D0038A0BA /* SignalCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SignalCollection.swift; path = data/SignalCollection.swift; sourceTree = "<group>"; };
 		6579FB0F477FF8E2E5694F2A /* Pods_DynamicBrushesTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DynamicBrushesTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7200B9812070140B008EA510 /* Operations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Operations.swift; path = data/Operations.swift; sourceTree = "<group>"; };
 		7219D0DE20699EEE0096CB4B /* mic_off2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mic_off2x.png; sourceTree = "<group>"; };
 		7219D0DF20699EEF0096CB4B /* mic_on2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mic_on2x.png; sourceTree = "<group>"; };
 		72478CDA2029043700D24C92 /* Palette-Knife */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Palette-Knife"; sourceTree = "<group>"; };
@@ -398,6 +400,7 @@
 				5FFFD796204F5E5D0038A0BA /* SignalCollection.swift */,
 				5F6903351FBBB75900EB3437 /* MapFunctions.swift */,
 				72D72C082069DF8400C1C9C8 /* MicCollection.swift */,
+				7200B9812070140B008EA510 /* Operations.swift */,
 			);
 			name = data;
 			sourceTree = "<group>";
@@ -1245,6 +1248,7 @@
 				5F90F54E1E9D5A16006BB9FE /* Point.swift in Sources */,
 				5FE32F611ECE2EBB00ADC01E /* ToolbarViewController.swift in Sources */,
 				5F5CED2D1ED10AED00A253A0 /* SwiftHSVColorPicker.swift in Sources */,
+				7200B9822070140B008EA510 /* Operations.swift in Sources */,
 				5F90F5451E9D59D4006BB9FE /* Numerical.swift in Sources */,
 				5FC91D2D1EA00C2F00A19206 /* RequestHandler.swift in Sources */,
 				5F5CED291ED10AED00A253A0 /* BrightnessView.swift in Sources */,
