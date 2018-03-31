@@ -105,20 +105,20 @@ final class StylusManager:LiveManager{
  
     
      private func beginRecording(start:Date)->RecordingCollection{
+        //TODO: find a way to clone recordingpresetdata instead of reassigning ID
+        
         print("preset data",recordingPresetData)
-        let rPackage = RecordingCollection(id: NSUUID().uuidString,start:start,targetLayer:self.layerId,data:recordingPresetData)
-       
+        let rid = NSUUID().uuidString
+        recordingPresetData["id"] = JSON(rid)
+        let rPackage = RecordingCollection(id: rid,start:start,targetLayer:self.layerId,data:recordingPresetData)
+        
         if(firstRecording == nil){
             firstRecording = rPackage.id;
         }
         lastRecording = rPackage.id;
         recordingPackages.append(rPackage);
-        
-        if(currentRecordingPackage != nil){
-            recordingPackages.append(rPackage)
-//            currentRecordingPackage.store(next: rPackage);
-        }
-        
+        print(" % appended to recording packages ", recordingPackages.count)
+
         currentRecordingPackage = rPackage;
         return currentRecordingPackage;
         
@@ -161,9 +161,10 @@ final class StylusManager:LiveManager{
         for i in 0 ..< recordingPackages.count {
             let package = recordingPackages[i]
             if package.id == idStart {
-                print("%% setting currentIndex to ", i)
+                print("%% setting internal to ", i , " recording packages has ", recordingPackages.count)
                 index = i
                 currPackage = package
+                return (index, currPackage)
             }
         }
          return (index, currPackage)
@@ -181,6 +182,8 @@ final class StylusManager:LiveManager{
         currIndex = indexandpackage.0
         currentLoopingPackage = indexandpackage.1
 //        currentLoopingPackage = recordingPackages.first(){$0.id == idStart} //set counter from here
+        print("% starting in settorecording with i = ", currIndex , " start end ids are " , idStart, idEnd)
+        print("%recording packages 0 and 1 are ", recordingPackages[0].id, recordingPackages[1].id)
         prevHash = 0;
         queue.sync {
             var hashAdd:Float = 0;
@@ -198,6 +201,8 @@ final class StylusManager:LiveManager{
             print("====advance recording break====");
             //prevTime = elapsedTime;
                 if(currentLoopingPackage.id == self.idEnd){
+                    print("% stopping in settorecording with i = ", currIndex)
+
                     samples[samples.count-1]["isLastinRecording"] = JSON(true);
                     currIndex = 0
                     break;
@@ -208,12 +213,12 @@ final class StylusManager:LiveManager{
                     hashAdd = samples[samples.count-1]["sequenceHash"].floatValue;
                     currIndex += 1
                     currentLoopingPackage = recordingPackages[currIndex]; //go to next index
+                    print(" % going to next index in settorecording with i = ", currIndex)
+
                 }
             }
         }
       
-        //jl - TODO - delete bottom line? (eraseStrokesForLooping called now in recording controller)
-
         delayTimerReinit();
         
     }
@@ -465,6 +470,7 @@ final class StylusManager:LiveManager{
         var exportIndex = indexandpackage.0
         let startRecordingCollection = indexandpackage.1
 //        let startRecordingCollection = recordingPackages.first(){$0.id == startId}!
+        recordingPresetData["id"] = JSON(compiledId)
         let compiledRecordingCollection = RecordingCollection(id: compiledId, start: startRecordingCollection.start, targetLayer: startRecordingCollection.targetLayer, data: self.recordingPresetData)
         var targetRecordingCollection = startRecordingCollection;
         while(true){
