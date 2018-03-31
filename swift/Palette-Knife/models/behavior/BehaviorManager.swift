@@ -43,7 +43,8 @@ class BehaviorManager{
     }
     
     func loadData(json:JSON){
-        //BehaviorManager.loadCollectionsFromJSON(data: json["collections"]);
+        print("data to load",json);
+        BehaviorManager.loadCollectionsFromJSON(data: json["collections"]);
         self.loadBehaviorsFromJSON(json: json["behaviors"], rewriteAll: true)
     }
     
@@ -391,29 +392,47 @@ class BehaviorManager{
     do {
     switch classType{
         case "generator":
-            id = BehaviorManager.signalCollections[2]["default"]!.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType, style:style, isProto: false, order:nil);
+            guard let generatorCollection = BehaviorManager.signalCollections[2]["default"] else {
+                print("===========ERROR GENERATOR COLLECTION DOES NOT EXIST===================")
+                
+                throw BehaviorError.collectionDoesNotExist;
+            }
+            id = generatorCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType, style:style, isProto: false, order:nil);
+            print(generatorCollection.initializedSignals);
         break;
         case "imported":
             guard let dataCollection = BehaviorManager.signalCollections[0][collectionId] else {
+                print("===========ERROR DATA COLLECTION DOES NOT EXIST===================")
+
                 throw BehaviorError.collectionDoesNotExist;
             }
              id = dataCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType, style:style, isProto: false, order:nil);
+            print(dataCollection.initializedSignals);
+
 
         break;
         case "live":
             guard let liveCollection = BehaviorManager.signalCollections[3][collectionId] else {
+                print("===========ERROR LIVE COLLECTION DOES NOT EXIST===================")
+
                 throw BehaviorError.collectionDoesNotExist;
 
             }
             id = liveCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType,style:style, isProto: false, order:nil);
+            
+            print(liveCollection.initializedSignals);
 
         break;
         case "recording":
             guard let recordingCollection = BehaviorManager.signalCollections[1][collectionId] else {
+                print("===========ERROR RECORDING COLLECTION DOES NOT EXIST===================")
+
                 throw BehaviorError.collectionDoesNotExist;
                 
             }
              id = recordingCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType, style:style,isProto: false, order:nil);
+            print(recordingCollection.initializedSignals);
+
 
         break;
     //TODO: INIT BRUSH SETUP
@@ -437,7 +456,7 @@ class BehaviorManager{
     }
         catch {
             #if DEBUG
-                print("error thrown on init signal")
+                print("===========ERROR INITIALIZING SIGNAL===================")
             #endif
             
         }
@@ -456,59 +475,58 @@ class BehaviorManager{
     
     static func loadCollectionsFromJSON(data:JSON){
         
-        let collectionData = data.dictionaryValue;
-        for (key,list) in collectionData{
-            let collectionList = list.arrayValue;
+        let collectionData = data.arrayValue;
+        for collection in collectionData{
+            let key = collection["classType"].stringValue;
+            print("key",key);
             switch (key){
             case "live":
-                for metadata in collectionList{
                     let signalCollection:LiveCollection;
-                    if metadata["name"] == "stylus"{
-                        signalCollection = StylusCollection(data:metadata);
+                    if collection["name"] == "stylus"{
+                        signalCollection = StylusCollection(data:collection);
                         stylusManager.registerCollection(id: signalCollection.id, collection:signalCollection as! StylusCollection);
                     }
-                    else if metadata["name"] == "ui"{
-                        signalCollection = UICollection(data:metadata);
+                    else if collection["name"] == "ui"{
+                        signalCollection = UICollection(data:collection);
                         uiManager.registerCollection(id: signalCollection.id, collection:signalCollection as! UICollection);
 
                     }
-                    else if metadata["name"] == "mic" {
-                        signalCollection = MicCollection(data:metadata);
+                    else if collection["name"] == "mic" {
+                        signalCollection = MicCollection(data:collection);
                         micManager.registerCollection(id: signalCollection.id, collection:signalCollection as! MicCollection);
                     }
                     else{
-                        signalCollection = LiveCollection(data:metadata);
+                        signalCollection = LiveCollection(data:collection);
                     }
                    BehaviorManager.signalCollections[3][signalCollection.id] = signalCollection;
 
-                }
+                
                 break;
             case "imported":
-                for metadata in collectionList{
-                    let signalCollection = SignalCollection(data:metadata);
+                
+                    let signalCollection = SignalCollection(data:collection);
                    BehaviorManager.signalCollections[0][signalCollection.id] = signalCollection;
-                }
+                
                 break;
-            case "generators":
-                for metadata in collectionList{
-                    let signalCollection = GeneratorCollection(data:metadata);
+            case "generator":
+                    let signalCollection = GeneratorCollection(data:collection);
                     BehaviorManager.signalCollections[2][signalCollection.id] = signalCollection;
-                }
+                
                 break;
-            case "recordings":
-                for metadata in collectionList{
-                    print("metadata id",metadata["id"].stringValue);
+            case "recording":
+               
+                    print("collection id",collection["id"].stringValue);
 
-                    if(metadata["id"].stringValue == "recording_preset"){
-                        stylusManager.setRecordingPresetData(data: metadata);
+                    if(collection["id"].stringValue == "recording_preset"){
+                        stylusManager.setRecordingPresetData(data: collection);
                     }
                     else{
-                        let signalCollection = RecordingCollection(data:metadata);
+                        let signalCollection = RecordingCollection(data:collection);
                        BehaviorManager.signalCollections[1][signalCollection.id] = signalCollection;
                     }
-                }
+                
                 break;
-            case "drawings":
+            case "drawing":
                 break;
             case "brush":
                 break;
@@ -569,7 +587,17 @@ class BehaviorManager{
         return JSON(collectionJSON);
     }
     
-    func getAllBehaviorJSON()->JSON {
+    
+   static func getAllBehaviorAndCollectionJSON()->JSON{
+        let behavior:JSON = BehaviorManager.getAllBehaviorJSON();
+        let collections:JSON = BehaviorManager.getAllCollectionJSON();
+        var syncJSON:JSON = [:]
+        syncJSON["behaviors"] = behavior;
+        syncJSON["collections"] = collections;
+        return syncJSON;
+    }
+    
+  static  func getAllBehaviorJSON()->JSON {
         var behaviorJSON = [JSON]()
         for (_, behavior) in BehaviorManager.behaviors {
             let data:JSON = behavior.toJSON();

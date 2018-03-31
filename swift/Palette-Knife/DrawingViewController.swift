@@ -482,6 +482,8 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         fileListContainerView.layer.cornerRadius = 8.0
         fileListContainerView.clipsToBounds = true
         fileListContainerView.isHidden = true;
+       
+      //  TODO:resolve loading in defaults vs loading in collections from a file
         
         do {
             if let file = Bundle.main.url(forResource: "CollectionPresets", withExtension: "json") {
@@ -532,7 +534,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         
         
         var templateJSON:JSON = [:]
-        templateJSON["filename"] = "templates/refactor_template.json"
+        templateJSON["filename"] = "templates/hello_world_template.json."
         templateJSON["type"] = JSON("load")
         let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: self)
         RequestHandler.addRequest(requestData:behaviorDownloadRequest);
@@ -1326,12 +1328,8 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     }
     
     func synchronizeWithAuthoringClient(){
-        let behavior:JSON = behaviorManager!.getAllBehaviorJSON();
-        let collections:JSON = BehaviorManager.getAllCollectionJSON();
-        var syncJSON:JSON = [:]
-        syncJSON["behaviors"] = behavior;
-        syncJSON["collections"] = collections;
-        
+       
+        let syncJSON:JSON = BehaviorManager.getAllBehaviorAndCollectionJSON();
         let request = Request(target: "socket", action: "synchronize", data: syncJSON, requester: self)
         RequestHandler.addRequest(requestData: request)
     }
@@ -1368,14 +1366,11 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     
     func saveBehavior(filename:String,artistName:String){
         endBackupTimer()
-        var behavior_json:JSON = [:]
-        for (key,val) in BehaviorManager.behaviors{
-            behavior_json[key] = val.toJSON();
-        }
+        let syncJSON = BehaviorManager.getAllBehaviorAndCollectionJSON();
         let filename = "saved_files/"+artistName+"/behaviors/"+filename
         var saveJSON:JSON = [:]
         saveJSON["filename"] = JSON(filename);
-        saveJSON["data"] = behavior_json
+        saveJSON["data"] = syncJSON;
         saveJSON["type"] = JSON("save")
         saveJSON["targetFolder"] = JSON("saved_files/"+artistName+"/behaviors/")
         let request = Request(target: "storage", action: "upload", data: saveJSON, requester: self)
@@ -1401,22 +1396,6 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     
     
     
-    
-    //event handler for incoming data
-    func dataHandler(data:(String,JSON?), key:String){
-        switch(data.0){
-        case "data_request":
-            let requestJSON:JSON = behaviorManager!.getAllBehaviorJSON();
-            
-            let socketRequest = Request(target: "socket", action: "data_request_response", data: requestJSON, requester: self)
-            
-            RequestHandler.addRequest(requestData:socketRequest);
-            break
-        default:
-            break
-        }
-        
-    }
     
     func initCanvas(){
         currentCanvas = Canvas();

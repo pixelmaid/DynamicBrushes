@@ -70,7 +70,7 @@ final class StylusManager:LiveManager{
 
      private var playbackTimer:Timer!
     //todo: get rid of this and use linked list structure
-     private var recordingPackages = [String:RecordingCollection]()
+     private var recordingPackages = [RecordingCollection]()
      var layerId:String!
      private var currentStartDate:Date!
     //producer consumer props
@@ -129,7 +129,7 @@ final class StylusManager:LiveManager{
             firstRecording = rPackage.id;
         }
         lastRecording = rPackage.id;
-        recordingPackages[rPackage.id] = rPackage;
+        recordingPackages.append(rPackage);
         
         if(currentRecordingPackage != nil){
             currentRecordingPackage.store(next: rPackage);
@@ -187,7 +187,7 @@ final class StylusManager:LiveManager{
         self.idEnd = idEnd;
         revertToLiveOnLoopEnd = false;
         currentStartDate = Date();
-        currentLoopingPackage = recordingPackages[self.idStart];
+        currentLoopingPackage = recordingPackages.first(){$0.id == idStart}
         prevHash = 0;
         queue.sync {
             var hashAdd:Float = 0;
@@ -260,7 +260,7 @@ final class StylusManager:LiveManager{
         startTime = Date();
         prevTriggerTime = startTime;
         var strokesToErase = [String:[String]]();
-        currentLoopingPackage = recordingPackages[self.idStart];
+        currentLoopingPackage = recordingPackages.first(){$0.id == self.idStart}
         while (true){
             for (key,list) in currentLoopingPackage.resultantStrokes{
                 if(strokesToErase[key] == nil){
@@ -314,7 +314,7 @@ final class StylusManager:LiveManager{
                        
                         let currentSample = samples.remove(at: 0);
                         if(currentSample["hash"].floatValue == Float(0)){
-                            currentLoopingPackage = recordingPackages[currentSample["recordingId"].stringValue];
+                            currentLoopingPackage = recordingPackages.first(){$0.id == currentSample["recordingId"].stringValue};
                         }
                         print("sample hash",currentSample["hash"].stringValue);
                         self.consumer.consume(liveManager:self, sample:currentSample);
@@ -453,10 +453,11 @@ final class StylusManager:LiveManager{
     
      public func  handleDeletedLayer(deletedId: String){
         if(firstRecording != nil){
-            var targetRecordingPackage = recordingPackages[firstRecording]
+            var targetRecordingPackage = recordingPackages.first(){$0.id == firstRecording}
             while(true){
                 if(targetRecordingPackage!.targetLayer == layerId ){
-                    recordingPackages.removeValue(forKey:targetRecordingPackage!.id);
+                    let filteredPackages = recordingPackages.filter{$0.id == targetRecordingPackage!.id}
+                    recordingPackages = filteredPackages;
 
                     
                     if(targetRecordingPackage!.prev != nil){
@@ -478,11 +479,7 @@ final class StylusManager:LiveManager{
     
      public func exportRecording(startId:String, endId:String)->JSON?{
         let compiledId = NSUUID().uuidString;
-        guard let startRecordingCollection = self.recordingPackages[startId] else{
-            print("================ERROR no recording collection by that id===================");
-            return nil;
-        }
-        
+       let startRecordingCollection = recordingPackages.first(){$0.id == startId}!
         let compiledRecordingCollection = RecordingCollection(id: compiledId, start: startRecordingCollection.start, targetLayer: startRecordingCollection.targetLayer, data: self.recordingPresetData)
         var targetRecordingCollection = startRecordingCollection;
         while(true){

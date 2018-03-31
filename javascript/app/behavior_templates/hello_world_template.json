@@ -3,7 +3,30 @@
     {
       "name" : "sample_behavior",
       "methods" : [
-
+        {
+          "argumentList" : [
+            {
+              "defaultVal" : "",
+              "displayName" : "x",
+              "isExpression" : true,
+              "expressionId" : "6BB2EF84-CCC0-4E7A-8907-C112F0870B47",
+              "isDropdown" : false,
+              "fieldName" : "x"
+            },
+            {
+              "defaultVal" : "",
+              "displayName" : "y",
+              "isExpression" : true,
+              "expressionId" : "E6C0B6EC-E0AB-4AC8-BC51-E7A4B17170E4",
+              "isDropdown" : false,
+              "fieldName" : "y"
+            }
+          ],
+          "displayName" : "new stroke",
+          "transitionId" : "_jsplumb_c_1522525756575",
+          "fieldName" : "newStroke",
+          "methodId" : "_pbx7kw7a6"
+        }
       ],
       "id" : "0",
       "states" : [
@@ -15,8 +38,8 @@
         },
         {
           "stateId" : "_y5p6lqn2a",
-          "x" : 71.988632202148438,
-          "y" : 335.99429321289062,
+          "x" : 88.991470336914062,
+          "y" : 336.98861694335938,
           "stateName" : "setup"
         },
         {
@@ -27,39 +50,151 @@
         },
         {
           "stateId" : "_s865vlzry",
-          "x" : 605,
-          "y" : 290,
+          "x" : 455.99429321289062,
+          "y" : 291.98861694335938,
           "stateName" : "state 1"
         }
       ],
       "expressions" : [
         {
-          "expressionPropertyList" : {
+          "expressionPropertyList" : [
+            {
+              "classType" : "LiveSignal",
+              "settings" : {
 
-          },
-          "expressionId" : "_aaaaaaa",
-          "expressionText" : "0"
+              },
+              "id" : "401AF8DB-6EBD-4077-B0C1-98DF83763222",
+              "fieldName" : "y",
+              "displayName" : "stylus y",
+              "style" : "sensor",
+              "order" : -1
+            }
+          ],
+          "expressionId" : "E6C0B6EC-E0AB-4AC8-BC51-E7A4B17170E4",
+          "expressionText" : "%401AF8DB-6EBD-4077-B0C1-98DF83763222%"
         },
         {
-          "expressionPropertyList" : {
+          "expressionPropertyList" : [
+            {
+              "classType" : "LiveSignal",
+              "settings" : {
 
-          },
+              },
+              "id" : "D4725095-1F47-4033-83D7-A0FE51C9D89F",
+              "fieldName" : "x",
+              "displayName" : "stylus x",
+              "style" : "sensor",
+              "order" : -1
+            }
+          ],
+          "expressionId" : "6AC22D6D-DE6E-43FD-AC1C-438AFF7CB6BB",
+          "expressionText" : "%D4725095-1F47-4033-83D7-A0FE51C9D89F%"
+        },
+        {
+          "expressionPropertyList" : [
+            {
+              "classType" : "LiveSignal",
+              "settings" : {
+
+              },
+              "id" : "80684C83-9B16-4B7B-9720-5D1FE7DFFA7C",
+              "fieldName" : "y",
+              "displayName" : "stylus y",
+              "style" : "sensor",
+              "order" : -1
+            }
+          ],
+          "expressionId" : "4B96CBBE-A592-4839-953C-A0FCCBEF3AE1",
+          "expressionText" : "%80684C83-9B16-4B7B-9720-5D1FE7DFFA7C%"
+        },
+        {
+          "expressionPropertyList" : [
+
+          ],
           "expressionId" : "_bbbbbbb",
           "expressionText" : "0"
         },
         {
-          "expressionPropertyList" : {
+          "expressionPropertyList" : [
+            {
+              "classType" : "LiveSignal",
+              "settings" : {
 
-          },
+              },
+              "id" : "00F26B86-B011-4C93-93AB-F2E71DB3CE3A",
+              "fieldName" : "x",
+              "displayName" : "stylus x",
+              "style" : "sensor",
+              "order" : -1
+            }
+          ],
           "expressionId" : "_23v0ckj5l",
-          "expressionText" : "1"
+          "expressionText" : "%00F26B86-B011-4C93-93AB-F2E71DB3CE3A%"
         },
         {
-          "expressionPropertyList" : {
+          "expressionPropertyList" : [
 
-          },
+          ],
+          "expressionId" : "_aaaaaaa",
+          "expressionText" : "0"
+        },
+        {
+          "expressionPropertyList" : [
+            {
+              "classType" : "LiveSignal",
+              "settings" : {
+
+              },
+              "id" : "84A030A6-6AF1-40A0-A975-6861E92434CB",
+              "fieldName" : "stylusEvent",
+              "displayName" : "stylus event",
+              "style" : "sensor",
+              "order" : -1
+            }
+          ],
+          "expressionId" : "_4gcww4ax6",
+          "expressionText" : "%84A030A6-6AF1-40A0-A975-6861E92434CB%"
+        },
+        {
+          "expressionPropertyList" : [
+
+          ],
+          "expressionId" : "_603xnl6jz",
+          "expressionText" : "2"
+        },
+        {
+          "expressionPropertyList" : [
+            {
+              "classType" : "LiveSignal",
+              "settings" : {
+
+              },
+              "id" : "DC15D43B-7357-4B16-A02F-6E44E4112073",
+              "fieldName" : "y",
+              "displayName" : "stylus y",
+              "style" : "sensor",
+              "order" : -1
+            }
+          ],
           "expressionId" : "_1230c235l",
-          "expressionText" : "1"
+          "expressionText" : "%DC15D43B-7357-4B16-A02F-6E44E4112073%"
+        },
+        {
+          "expressionPropertyList" : [
+            {
+              "classType" : "LiveSignal",
+              "settings" : {
+
+              },
+              "id" : "6B31F136-C712-493F-A654-BC04686B9458",
+              "fieldName" : "x",
+              "displayName" : "stylus x",
+              "style" : "sensor",
+              "order" : -1
+            }
+          ],
+          "expressionId" : "6BB2EF84-CCC0-4E7A-8907-C112F0870B47",
+          "expressionText" : "%6B31F136-C712-493F-A654-BC04686B9458%"
         }
       ],
       "auto_spawn_num" : 1,
@@ -70,6 +205,13 @@
           "conditionId" : "_xxxxxxx",
           "transitionId" : "_jsplumb_c_1495732354038",
           "fromStateId" : "_y5p6lqn2a",
+          "toStateId" : "_s865vlzry"
+        },
+        {
+          "name" : "state 1",
+          "conditionId" : "_o6vowx7nr",
+          "transitionId" : "_jsplumb_c_1522525756575",
+          "fromStateId" : "_s865vlzry",
           "toStateId" : "_s865vlzry"
         }
       ],
@@ -92,6 +234,12 @@
         }
       ],
       "conditions" : [
+        {
+          "referenceBId" : "_603xnl6jz",
+          "referenceAId" : "_4gcww4ax6",
+          "conditionId" : "_o6vowx7nr",
+          "relational" : "=="
+        },
         {
           "referenceBId" : "_bbbbbbb",
           "referenceAId" : "_aaaaaaa",
@@ -219,7 +367,7 @@
         },
         {
           "displayName" : "generator time",
-          "classType" : "TimeSignal",
+          "classType" : "Generator",
           "settings" : {
 
           },
@@ -269,18 +417,32 @@
           0
         ],
         [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
           0
         ],
         [
+          0,
+          0,
           0
         ],
         [
+          0,
+          0,
           0
         ],
         [
+          0,
+          0,
           0
         ],
         [
+          0,
+          0,
           0
         ]
       ],
@@ -328,7 +490,7 @@
         },
         {
           "displayName" : "ui time",
-          "classType" : "TimeSignal",
+          "classType" : "LiveSignal",
           "settings" : {
 
           },
@@ -396,7 +558,7 @@
         },
         {
           "displayName" : "ui time",
-          "classType" : "TimeSignal",
+          "classType" : "LiveSignal",
           "settings" : {
 
           },
@@ -430,66 +592,7 @@
     {
       "name" : "stylus",
       "classType" : "live",
-      "data" : [
-        [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        [
-          0
-        ],
-        [
-          0
-        ],
-        [
-          0
-        ],
-        [
-          0
-        ],
-        [
-          0
-        ],
-        [
-          0
-        ],
-        [
-          0
-        ],
-        [
-          0
-        ],
-        [
-          0
-        ],
-        [
-          0
-        ],
-        [
-          0
-        ],
-        [
-          0
-        ],
-        [
-
-        ],
-        [
-          0
-        ]
-      ],
+      "data" : [ ],
       "id" : "stylus",
       "signals" : [
         {
@@ -624,7 +727,7 @@
         },
         {
           "displayName" : "stylus time",
-          "classType" : "TimeSignal",
+          "classType" : "LiveSignal",
           "settings" : {
 
           },
@@ -654,10 +757,13 @@
 
         ],
         "x" : [
-
+          "48083582-9989-4215-A5FF-527B5FB137D1",
+          "D4725095-1F47-4033-83D7-A0FE51C9D89F",
+          "00F26B86-B011-4C93-93AB-F2E71DB3CE3A",
+          "6B31F136-C712-493F-A654-BC04686B9458"
         ],
         "stylusEvent" : [
-
+          "84A030A6-6AF1-40A0-A975-6861E92434CB"
         ],
         "euclidDistance" : [
 
@@ -687,7 +793,9 @@
 
         ],
         "y" : [
-
+          "401AF8DB-6EBD-4077-B0C1-98DF83763222",
+          "80684C83-9B16-4B7B-9720-5D1FE7DFFA7C",
+          "DC15D43B-7357-4B16-A02F-6E44E4112073"
         ]
       }
     }

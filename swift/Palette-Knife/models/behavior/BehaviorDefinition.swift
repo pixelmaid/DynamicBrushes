@@ -99,10 +99,10 @@ class BehaviorDefinition {
         let expressionText = data["expressionText"].stringValue;
         var operandList = [String]();
         for i in 0..<expressionPropertyList.count{
-            operandList.append(expressionPropertyList[i].stringValue);
+            operandList.append(expressionPropertyList[i]["id"].stringValue);
         }
         #if DEBUG
-            print("expression prop list",expressionPropertyList);
+            print("expression prop list",expressionPropertyList,operandList);
         #endif
         
         
@@ -190,15 +190,16 @@ class BehaviorDefinition {
             var expressionJSON:JSON = [:]
             expressionJSON["expressionId"] = JSON(key);
             expressionJSON["expressionText"] = JSON(value.expressionText);
-            var expressionPropertyList:JSON = [:];
+            var expressionPropertyList = [JSON]();
             for i in 0..<value.expressionPropertyList.count {
+                
                 let signal = BehaviorManager.getSignal(id: value.expressionPropertyList[i])!;
                 var signalJSON = signal.getMetaJSON();
                 signalJSON["id"] = JSON(signal.id);
-                expressionPropertyList[signal.id] = signalJSON;
+                expressionPropertyList.append(signalJSON);
             }
             
-            expressionJSON["expressionPropertyList"] = expressionPropertyList;
+            expressionJSON["expressionPropertyList"] = JSON(expressionPropertyList);
             expressionArray.append(expressionJSON);
         }
         
