@@ -87,31 +87,37 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         super.didReceiveMemoryWarning()
     }
     
+    func deleteFirstCell(){
+        //delete thumb and from data
+        if RecordingViewController.gestures.count > 0 {
+            RecordingViewController.gestures.removeFirst(1)
+            if RecordingViewController.recording_start > 0 { RecordingViewController.recording_start -= 1 }
+            if RecordingViewController.recording_end > 0 { RecordingViewController.recording_end -= 1 }
+            let firstIndexPath = NSIndexPath(item: 0, section:0)
+            collectionView?.deleteItems(at:[firstIndexPath as IndexPath])
+            print("% deleted first cell")
+        }
+     }
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-//        print("^^^^^ scrolled to ", scrolledToCell)
         let visibleCells = collectionView?.indexPathsForVisibleItems
-//        print("^^^^ visible cells ", visibleCells)
         let indexPath = NSIndexPath(item: scrolledToCell, section:0)
         let cell = collectionView?.cellForItem(at: indexPath as IndexPath)
 //        print("^^^^^ scrolled to cell is ", cell)
         if isRecordingLoop {
             cell?.layer.borderColor = scrolledToColor
-//            print("^^^^ set color ", scrolledToColor)
             
             let indexPath2 = NSIndexPath(item: scrolledToCell+1, section:0)
             let cell2 = collectionView?.cellForItem(at: indexPath2 as IndexPath)
             cell2?.layer.borderColor = UIColor.orange.cgColor
-//            print("^^^^^ orange cell is ", cell2)
 
         } else {
             for indexPath in visibleCells! {
                 let cell = collectionView?.cellForItem(at: indexPath as IndexPath)
                     if !anyCellsSelected {
                         cell?.layer.borderColor = UIColor.white.cgColor
-//                        print("^^^^ set color white")
                     } else if scrolledToCell >= RecordingViewController.recording_start && scrolledToCell <= RecordingViewController.recording_end {
                         cell?.layer.borderColor = UIColor.green.cgColor
-//                        print("^^^^ set color green")
                     }
             }
         }
@@ -353,7 +359,6 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     }
     
     func loopInitialized() {
-        print (RecordingViewController.recording_start, RecordingViewController.recording_end)
         if (RecordingViewController.recording_start >= 0 && RecordingViewController.recording_end >= RecordingViewController.recording_start) {
             print ("^^ loop pressed from ", RecordingViewController.recording_start, " to ", RecordingViewController.recording_end)
             let start_id = RecordingViewController.getGestureId(index: RecordingViewController.recording_start)
@@ -363,7 +368,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
                 stylusManager.setToRecording(idStart: start_id, idEnd: end_id)
                 //erase strokes associated with the recording
                 stylusManager.eraseStrokesForLooping(idStart:start_id, idEnd:end_id)
-                
+
             } else { //stop recording
                 stylusManager.setToLive()
                 firstLoopCompleted = true

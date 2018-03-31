@@ -63,7 +63,7 @@ class RecordingToolbarVC: UIViewController, Requester {
             isLooping = false
             
         }
-        loopEvent.raise(data: ("LOOP"));
+       loopEvent.raise(data: ("LOOP"));
     }
     
     func showExportDialog() {
