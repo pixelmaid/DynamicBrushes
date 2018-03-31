@@ -210,7 +210,7 @@ final class RequestHandler: Requester{
     
     private func socketRequestHandler(data:(String,JSON?), key:String) {
         #if DEBUG
-        print("socket request handler called \(String(describing: RequestHandler.activeItem))")
+        //print("socket request handler called \(String(describing: RequestHandler.activeItem))")
         #endif
         if(RequestHandler.activeItem != nil){
             RequestHandler.socketManager.requestEvent.removeHandler(key: RequestHandler.socketKey)

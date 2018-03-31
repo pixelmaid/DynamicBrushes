@@ -406,6 +406,7 @@ final class StylusManager:LiveManager{
             for (_,stylusCollection) in self.liveCollections{
            (stylusCollection as! StylusCollection).onStylusDown(x: x, y: y, force: force, angle: angle);
             }
+            //TODO: add guard statement here
             let sample = self.liveCollections["stylus"]!.exportData();
             currentRecordingPackage.addProtoSample(data:sample);
 

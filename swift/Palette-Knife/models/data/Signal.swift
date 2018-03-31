@@ -48,10 +48,9 @@ class Signal:Observable<Float>{
     }
     
     override func get(id:String?) -> Float {
-        print("target index",self.id,self.fieldName,index,signalBuffer.count);
+      //  print("target index",self.id,self.fieldName,index,signalBuffer.count);
         let v:Float;
         v = signalBuffer[self.index];
-        print("value",v);
 
         self.setSilent(newValue: v);
         return super.get(id: id);
@@ -131,42 +130,18 @@ class LiveSignal:Signal{
     }
     
     override func addValue(v: Float) {
+        self.signalBuffer.removeAll();
         super.addValue(v: v);
+        
         self.setIndex(i: self.signalBuffer.count-1);
         self.didChange.raise(data: (self.id, v, v));
     }
 }
 
 
-class Recording:LiveSignal{
-    private var next:Recording?
-    private var prev:Recording?
+class Recording:Signal{
 
-    
-
-    func getNext()->Recording?{
-        if(next != nil){
-            return next!;
-        }
-        return nil;
-    }
-    
-    func getPrev()->Recording?{
-        if(prev != nil){
-            return prev!;
-        }
-        return nil; 
-    }
-    
-    func setNext(r:Recording){
-        next = r;
-    }
-    
-    func setPrev(r:Recording){
-        prev = r;
-    }
-    
-    
+  
     func getTimeOrderedList()->[Float]{
         return self.signalBuffer;
     }
