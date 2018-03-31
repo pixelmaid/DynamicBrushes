@@ -534,7 +534,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         
         
         var templateJSON:JSON = [:]
-        templateJSON["filename"] = "templates/refactor_template.json"
+        templateJSON["filename"] = "templates/hello_world_template.json."
         templateJSON["type"] = JSON("load")
         let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: self)
         RequestHandler.addRequest(requestData:behaviorDownloadRequest);
