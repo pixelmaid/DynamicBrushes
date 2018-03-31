@@ -10,7 +10,7 @@ import Foundation
 
 final class Operations {
 
-    public func findMin(_ signalBuffer:[Float]) -> Float {
+    static func findMin(_ signalBuffer:[Float]) -> Float {
         var min:Float = signalBuffer[0]
         for signal in signalBuffer {
             if signal < min {
@@ -20,7 +20,7 @@ final class Operations {
         return min
     }
     
-    public func findMax(_ signalBuffer:[Float]) -> Float {
+    static func findMax(_ signalBuffer:[Float]) -> Float {
         var max:Float = signalBuffer[0]
         for signal in signalBuffer {
             if signal > max {
@@ -30,7 +30,7 @@ final class Operations {
         return max
     }
     
-    public func map(signalBuffer:[Float], toMin:Float, toMax:Float) -> [Float] {
+    static func map(signalBuffer:[Float], toMin:Float, toMax:Float) -> [Float] {
         let fromMin = findMin(signalBuffer)
         let fromMax = findMax(signalBuffer)
         var newSignal = [Float]()
