@@ -100,23 +100,25 @@ final class StylusManager:LiveManager{
      private var idStart:String!
      private var idEnd:String!
      private var recordingPresetData:JSON = [:]
-    
+
+     private var currIndex = 0
  
     
      private func beginRecording(start:Date)->RecordingCollection{
+        //TODO: find a way to clone recordingpresetdata instead of reassigning ID
+        
         print("preset data",recordingPresetData)
-        let rPackage = RecordingCollection(id: NSUUID().uuidString,start:start,targetLayer:self.layerId,data:recordingPresetData)
-       
+        let rid = NSUUID().uuidString
+        recordingPresetData["id"] = JSON(rid)
+        let rPackage = RecordingCollection(id: rid,start:start,targetLayer:self.layerId,data:recordingPresetData)
+        
         if(firstRecording == nil){
             firstRecording = rPackage.id;
         }
         lastRecording = rPackage.id;
         recordingPackages.append(rPackage);
-        
-        if(currentRecordingPackage != nil){
-            currentRecordingPackage.store(next: rPackage);
-        }
-        
+        print(" % appended to recording packages ", recordingPackages.count)
+
         currentRecordingPackage = rPackage;
         return currentRecordingPackage;
         
@@ -153,13 +155,20 @@ final class StylusManager:LiveManager{
     }
     
     
-     public func eraseStrokesForLooping(idStart:String,idEnd:String) {
-        //jl - TODO write code that only erases the strokes between idStart and idEnd
-        //jl - i changed the args to be an idStart and idEnd, same as setToRecording, since we would only ever temporarily erase the strokes we are concerned with in the looping
-        
+    func getIndexandCurrentPackage(idStart:String) -> (index:Int, currPackage:RecordingCollection) {
+        var currPackage:RecordingCollection = recordingPackages[0]
+        var index:Int = 0
+        for i in 0 ..< recordingPackages.count {
+            let package = recordingPackages[i]
+            if package.id == idStart {
+                print("%% setting internal to ", i , " recording packages has ", recordingPackages.count)
+                index = i
+                currPackage = package
+                return (index, currPackage)
+            }
+        }
+         return (index, currPackage)
     }
-
-
     
     
     
@@ -169,7 +178,12 @@ final class StylusManager:LiveManager{
         self.idEnd = idEnd;
         revertToLiveOnLoopEnd = false;
         currentStartDate = Date();
-        currentLoopingPackage = recordingPackages.first(){$0.id == idStart}
+        let indexandpackage = getIndexandCurrentPackage(idStart: idStart)
+        currIndex = indexandpackage.0
+        currentLoopingPackage = indexandpackage.1
+//        currentLoopingPackage = recordingPackages.first(){$0.id == idStart} //set counter from here
+        print("% starting in settorecording with i = ", currIndex , " start end ids are " , idStart, idEnd)
+        print("%recording packages 0 and 1 are ", recordingPackages[0].id, recordingPackages[1].id)
         prevHash = 0;
         queue.sync {
             var hashAdd:Float = 0;
@@ -187,20 +201,24 @@ final class StylusManager:LiveManager{
             print("====advance recording break====");
             //prevTime = elapsedTime;
                 if(currentLoopingPackage.id == self.idEnd){
+                    print("% stopping in settorecording with i = ", currIndex)
+
                     samples[samples.count-1]["isLastinRecording"] = JSON(true);
+                    currIndex = 0
                     break;
 
                 }
                 else{
                     samples[samples.count-1]["isLastInSeries"] = JSON(true);
                     hashAdd = samples[samples.count-1]["sequenceHash"].floatValue;
-                    currentLoopingPackage = currentLoopingPackage.next;
+                    currIndex += 1
+                    currentLoopingPackage = recordingPackages[currIndex]; //go to next index
+                    print(" % going to next index in settorecording with i = ", currIndex)
+
                 }
             }
         }
       
-        //jl - TODO - delete bottom line? (eraseStrokesForLooping called now in recording controller)
-
         delayTimerReinit();
         
     }
@@ -252,10 +270,13 @@ final class StylusManager:LiveManager{
             }
                 currentLoopingPackage.removeResultantStrokes();
                 if(currentLoopingPackage.id == self.idEnd){
+                    currIndex = 0
                     break;
                 }
                 else{
-                    currentLoopingPackage = currentLoopingPackage.next;
+                    currIndex += 1
+                    currentLoopingPackage = recordingPackages[currIndex];
+                    
                 }
             }
         
@@ -412,23 +433,31 @@ final class StylusManager:LiveManager{
     
      public func  handleDeletedLayer(deletedId: String){
         if(firstRecording != nil){
-            var targetRecordingPackage = recordingPackages.first(){$0.id == firstRecording}
+            let indexandpackage = getIndexandCurrentPackage(idStart: firstRecording)
+            var index = indexandpackage.0
+            var targetRecordingPackage = indexandpackage.1
+            
+//            var targetRecordingPackage = recordingPackages.first(){$0.id == firstRecording}
             while(true){
-                if(targetRecordingPackage!.targetLayer == layerId ){
-                    let filteredPackages = recordingPackages.filter{$0.id == targetRecordingPackage!.id}
+                if(targetRecordingPackage.targetLayer == layerId ){
+                    let filteredPackages = recordingPackages.filter{$0.id == targetRecordingPackage.id}
                     recordingPackages = filteredPackages;
-
-                    
-                    if(targetRecordingPackage!.prev != nil){
-                        targetRecordingPackage!.prev!.next = targetRecordingPackage!.next;
-                    }
-                    if(targetRecordingPackage!.next != nil){
-                        targetRecordingPackage!.next!.prev = targetRecordingPackage!.prev;
-                        targetRecordingPackage = targetRecordingPackage!.next
+                    index += 1
+                    if (index > recordingPackages.count) {
+                        targetRecordingPackage = recordingPackages[index]
                     }
                     else{
                         break;
                     }
+
+                    
+//                    if(targetRecordingPackage.prev != nil){
+//                        targetRecordingPackage.prev!.next = targetRecordingPackage!.next;
+//                    }
+//                    if(targetRecordingPackage.next != nil){
+//                        targetRecordingPackage.next!.prev = targetRecordingPackage.prev;
+//                        targetRecordingPackage = targetRecordingPackage!.next
+//                    }
                     
                 }
             }
@@ -438,16 +467,22 @@ final class StylusManager:LiveManager{
     
      public func exportRecording(startId:String, endId:String)->JSON?{
         let compiledId = NSUUID().uuidString;
-       let startRecordingCollection = recordingPackages.first(){$0.id == startId}!
+        let indexandpackage = getIndexandCurrentPackage(idStart: idStart)
+        var exportIndex = indexandpackage.0
+        let startRecordingCollection = indexandpackage.1
+//        let startRecordingCollection = recordingPackages.first(){$0.id == startId}!
+        recordingPresetData["id"] = JSON(compiledId)
         let compiledRecordingCollection = RecordingCollection(id: compiledId, start: startRecordingCollection.start, targetLayer: startRecordingCollection.targetLayer, data: self.recordingPresetData)
         var targetRecordingCollection = startRecordingCollection;
         while(true){
             compiledRecordingCollection.addDataFrom(recordingCollection:targetRecordingCollection);
-            if(targetRecordingCollection.id == endId || targetRecordingCollection.next == nil){
+            
+            if(targetRecordingCollection.id == endId || exportIndex == recordingPackages.count){
                 break
             }
             else{
-                targetRecordingCollection = targetRecordingCollection.next!;
+                exportIndex += 1
+                targetRecordingCollection = recordingPackages[exportIndex]
             }
 
         }

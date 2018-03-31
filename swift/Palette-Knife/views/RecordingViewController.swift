@@ -367,7 +367,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
                 isRecordingLoop = true
                 stylusManager.setToRecording(idStart: start_id, idEnd: end_id)
                 //erase strokes associated with the recording
-                stylusManager.eraseStrokesForLooping(idStart:start_id, idEnd:end_id)
+//                stylusManager.eraseStrokesForLooping(idStart:start_id, idEnd:end_id)
 
             } else { //stop recording
                 stylusManager.setToLive()

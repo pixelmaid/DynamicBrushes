@@ -441,8 +441,8 @@ class LiveCollection:SignalCollection{
 class RecordingCollection:LiveCollection{
     
     //stylus
-    var next:RecordingCollection?
-    var prev:RecordingCollection?
+//    var next:RecordingCollection?
+//    var prev:RecordingCollection?
     var start:Date;
     var resultantStrokes = [String:[String]]();
     var targetLayer:String
@@ -485,12 +485,12 @@ class RecordingCollection:LiveCollection{
         }
         return nil;
     }
-    
-    
-    func store(next:RecordingCollection){
-        self.next = next;
-        next.prev = self;
-    }
+
+//
+//    func store(next:RecordingCollection){
+//        self.next = next;
+//        next.prev = self;
+//    }
     
    
         
