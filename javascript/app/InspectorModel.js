@@ -31,7 +31,7 @@ define(["jquery", "jquery-ui", "app/Emitter", "handlebars", 'app/id',"app/Inspec
                 
                     var data = InspectorDataController.getLastData();
                     var signalData = data.signalData;
-                    console.log("last data for ",this.targetId,"=",data);
+                    // console.log("last data for ",this.targetId,"=",data);
                     for (var key in signalData) {
                         if (signalData.hasOwnProperty(key)) {
 
