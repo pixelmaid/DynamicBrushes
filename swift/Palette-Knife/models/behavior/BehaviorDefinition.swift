@@ -668,6 +668,16 @@ class BehaviorDefinition {
     
     
     func clearBehavior(){
+        //reset associated signals
+        for (_, expressionList) in self.storedExpressions {
+            for (_, expression) in expressionList {
+                for (_, signal) in expression.operandList {
+                    let signal = signal as! Signal
+                    signal.reset()
+                }
+            }
+        }
+        
         RequestHandler.clearAllObservableListenersForBehavior(behaviorId: self.id)
         for (_,value) in self.storedExpressions{
             for (_,v) in value{
@@ -691,6 +701,8 @@ class BehaviorDefinition {
             targetBrush.destroy();
             
         }
+        
+     
         self.brushInstances.removeAll();
         
     }
