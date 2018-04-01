@@ -308,7 +308,7 @@ final class StylusManager:LiveManager{
         
         
         queue.sync {
-            print("total num samples",samples.count)
+//            print("total num samples",samples.count)
             let currentTime = Date();
             let elapsedTime = currentTime.timeIntervalSince(prevTriggerTime);
             
@@ -336,7 +336,7 @@ final class StylusManager:LiveManager{
                         if(currentSample["hash"].floatValue == Float(0)){
                             currentLoopingPackage = recordingPackages.first(){$0.id == currentSample["recordingId"].stringValue};
                         }
-                        print("sample hash",currentSample["hash"].stringValue);
+//                        print("sample hash",currentSample["hash"].stringValue);
                         self.consumer.consume(liveManager:self, sample:currentSample);
                         
                         // print(currentSample.stylusEvent,"sample hash, last hash",currentSample.hash,currentSample.lastHash)
@@ -425,7 +425,7 @@ final class StylusManager:LiveManager{
             }
             //TODO: add guard statement here
             let sample = self.liveCollections["stylus"]!.exportData();
-            print("stylus down sample",sample);
+            //print("stylus down sample",sample);
             currentRecordingPackage.addProtoSample(data:sample);
             
         }
@@ -528,7 +528,7 @@ class StylusDataProducer{
 class StylusDataConsumer{
     
     func consume(liveManager:LiveManager, sample:JSON){
-        print("consume sample",sample["stylusEvent"].floatValue, sample["x"].floatValue,sample["y"].floatValue,sample["force"].floatValue,sample["targetLayer"].stringValue)
+       // print("consume sample",sample["stylusEvent"].floatValue, sample["x"].floatValue,sample["y"].floatValue,sample["force"].floatValue,sample["targetLayer"].stringValue)
         let stylusManager = liveManager as! StylusManager;
         switch(sample["stylusEvent"].floatValue){
         case StylusManager.stylusUp:

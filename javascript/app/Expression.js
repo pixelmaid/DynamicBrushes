@@ -176,13 +176,14 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
                 this.addReferenceCheck = true;
                 this.mirror.setValue(expressionText);
                 this.addReferenceCheck = false;
-                this.references = expressionPropertyList;
+                this.references = {};
                 var els = [];
-                for (var key in expressionPropertyList) {
-                    if (expressionPropertyList.hasOwnProperty(key)) {
-                        var property = expressionPropertyList[key];
+                for (var i=0;i<expressionPropertyList.length;i++){
+                       var property = expressionPropertyList[i];
+                        this.references[property.id] = [property.classType,property.displayName];
                         els.push($(this.addMark(property.id, property.classType, property.displayName, property.style)));
-                    }
+
+                    
                 }
                 this.renderMarks();
                 return els;
