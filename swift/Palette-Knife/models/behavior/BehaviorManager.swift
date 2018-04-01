@@ -201,7 +201,7 @@ class BehaviorManager{
             resultJSON["result"] = "success";
             return resultJSON;
         case "state_removed":
-            
+            print("% called state removed behavior id ", data["behaviorId"].stringValue , " stateid ",  data["stateId"].stringValue)
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.removeState(stateId: data["stateId"].stringValue);
             
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)

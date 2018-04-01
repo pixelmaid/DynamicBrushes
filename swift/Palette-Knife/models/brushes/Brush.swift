@@ -716,6 +716,7 @@ class Brush: TimeSeries, Hashable{
         let state = self.states[fromStateId]
         transition = state!.addStateTransitionMapping(id: id,name:name,condition: condition, toStateId:toStateId);
         self.transitions[id] = transition;
+        print("% added transition with id ", id)
         let transitionEvent = transition.didTrigger.addHandler(target: self, handler: Brush.stateTransitionHandler, key: id);
         self.transitionEvents.append(transitionEvent);
     }
@@ -726,8 +727,12 @@ class Brush: TimeSeries, Hashable{
     }
     
     func addMethod(transitionId:String, methodId:String, fieldName:String, arguments:[Expression]){
-        
-        (transitions[transitionId]!).addMethod(id: methodId, fieldName:fieldName, arguments:arguments)
+        let transition = transitions[transitionId]
+        print("% transitions are ", transitions.first?.key)
+
+        if (transition != nil) {
+            (transition!).addMethod(id: methodId, fieldName:fieldName, arguments:arguments)
+        }
         
         
     }

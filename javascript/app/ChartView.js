@@ -131,8 +131,9 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     reposition: false,
                     callback: function(key, options) {
                         if (key == "delete") {
-                            var parent = $(options.$trigger[0]).parent();
-                            console.log("state", parent[0].id);
+                            var parent = $(options.$trigger[0]).parent().parent();
+                            console.log("% parent is  ", parent);
+                            console.log("% state id is ", parent[0].id);
                             self.trigger("ON_STATE_REMOVED", [self.id, parent[0].id]);
                         }
                     },

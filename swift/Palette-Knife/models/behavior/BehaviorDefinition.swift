@@ -775,6 +775,7 @@ class BehaviorDefinition {
                 initializedArguments.append(expression);
 
             }
+            print("% method transition id is ", method.transitionId)
             targetBrush.addMethod(transitionId:method.transitionId,methodId:method.methodId,fieldName:method.fieldName,arguments:initializedArguments)
                 
             
