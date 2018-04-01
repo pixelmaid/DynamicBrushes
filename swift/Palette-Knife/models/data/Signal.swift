@@ -154,7 +154,7 @@ class LiveSignal:Signal{
 }
 
 
-class Recording:ImportedSignal{
+class Recording:Signal{
 
   
     func getTimeOrderedList()->[Float]{
@@ -169,6 +169,10 @@ class StylusEventRecording:Recording{
 
 class StylusEvent:LiveSignal{
    
+}
+
+class ImportedRecording:ImportedSignal {
+    
 }
 
 
@@ -189,10 +193,6 @@ class ImportedSignal:Signal{
             self.index = 0;
         }
     }
-    
-}
-
-class ImportedRecording:ImportedSignal{
     
 }
 

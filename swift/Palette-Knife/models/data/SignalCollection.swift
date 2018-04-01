@@ -42,6 +42,20 @@ class SignalCollection: Object{
     }
     
     
+    public func addDataFrom(signalCollection:SignalCollection){
+        
+        for (key,recSignal) in signalCollection.protoSignals{
+            let sortedBuffer = recSignal.signalBuffer;
+            let signal = self.protoSignals[key];
+            for i in 0..<sortedBuffer.count{
+                
+                let value = sortedBuffer[i];
+                signal?.addValue(v: value);
+            }
+            
+        }
+    }
+    
     public  func loadDataFromJSON(data:JSON) throws{
         //print("data",data)
         let allSignalData = data["signals"].arrayValue;
@@ -470,7 +484,24 @@ class LiveCollection:SignalCollection{
     }
 }
 
-class RecordingCollection:ImportedCollection{
+class ImportedRecordingCollection:ImportedCollection {
+    
+    
+    override public func initializeSignalWithId(signalId:String,fieldName:String, displayName:String, settings:JSON, classType:String, style:String, isProto:Bool, order:Int?){
+        if(classType == "TimeSignal"){
+            super.initializeSignalWithId(signalId:signalId,fieldName: fieldName, displayName: displayName, settings: settings, classType: classType, style:style, isProto: isProto, order: order);
+            return;
+        }
+        
+        let signal:Signal;
+
+        signal = ImportedRecording(id:signalId , fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:settings);
+        self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
+    }
+    
+}
+
+class RecordingCollection:SignalCollection{
     
     //stylus
 //    var next:RecordingCollection?
@@ -537,20 +568,7 @@ class RecordingCollection:ImportedCollection{
     func removeResultantStrokes(){
         resultantStrokes.removeAll();
     }
-    
-    public func addDataFrom(recordingCollection:RecordingCollection){
-        
-        for (key,recSignal) in recordingCollection.protoSignals{
-            let sortedBuffer = recSignal.signalBuffer;
-            let signal = self.protoSignals[key];
-            for i in 0..<sortedBuffer.count{
-               
-                let value = sortedBuffer[i];
-                signal?.addValue(v: value);
-            }
-            
-        }
-    }
+   
     
     
   

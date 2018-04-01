@@ -168,6 +168,7 @@ final class StylusManager:LiveManager{
         var index:Int = 0
         for i in 0 ..< recordingPackages.count {
             let package = recordingPackages[i]
+            print("%% looping thru i ", i , " package ", package)
             if package.id == idStart {
                 print("%% setting internal to ", i , " recording packages has ", recordingPackages.count)
                 index = i
@@ -485,15 +486,18 @@ final class StylusManager:LiveManager{
     
     public func exportRecording(startId:String, endId:String)->JSON?{
         let compiledId = NSUUID().uuidString;
-        let indexandpackage = getIndexandCurrentPackage(idStart: idStart)
+        print("id start / startid is % ", idStart, startId)
+        let indexandpackage = getIndexandCurrentPackage(idStart: startId)
         var exportIndex = indexandpackage.0
         let startRecordingCollection = indexandpackage.1
         //        let startRecordingCollection = recordingPackages.first(){$0.id == startId}!
         recordingPresetData["id"] = JSON(compiledId)
-        let compiledRecordingCollection = RecordingCollection(id: compiledId, start: startRecordingCollection.start, targetLayer: startRecordingCollection.targetLayer, data: self.recordingPresetData)
+        print("recordingPresetData is % " , self.recordingPresetData)
+        let compiledRecordingCollection = ImportedRecordingCollection(data:self.recordingPresetData)
+        
         var targetRecordingCollection = startRecordingCollection;
         while(true){
-            compiledRecordingCollection.addDataFrom(recordingCollection:targetRecordingCollection);
+            compiledRecordingCollection.addDataFrom(signalCollection:targetRecordingCollection);
             
             if(targetRecordingCollection.id == endId || exportIndex == recordingPackages.count){
                 break
