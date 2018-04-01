@@ -26,7 +26,7 @@ class BehaviorManager{
   //  static var recordings = [String:SignalCollection]();
    // static var generators = [String:GeneratorCollection]();
    // static var liveInputs = [String:LiveCollection]();
-    static var signalCollections = [[String:SignalCollection](), [String:SignalCollection](),[String:GeneratorCollection](),[String:LiveCollection]()];
+    static var signalCollections = [[String:ImportedCollection](), [String:SignalCollection](),[String:GeneratorCollection](),[String:LiveCollection]()];
 
     var canvas:Canvas
     init(canvas:Canvas){
@@ -504,7 +504,7 @@ class BehaviorManager{
                 break;
             case "imported":
                 
-                    let signalCollection = SignalCollection(data:collection);
+                    let signalCollection = ImportedCollection(data:collection);
                    BehaviorManager.signalCollections[0][signalCollection.id] = signalCollection;
                 
                 break;
