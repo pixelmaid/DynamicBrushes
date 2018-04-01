@@ -410,8 +410,8 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         if tracker.isStarted {
             var amplitude = Float(tracker.amplitude*1000.0)
             var frequency = Float(tracker.frequency)
-            var high_amp:Float = 300
-            var high_freq:Float = 4000
+            var high_amp:Float = 200
+            var high_freq:Float = 2000
             if amplitude > high_amp {high_amp = amplitude}
             if frequency > high_freq {high_freq = frequency}
             amplitude = MathUtil.map(value:amplitude,low1:0,high1:high_amp,low2:0,high2:100)
@@ -542,7 +542,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         
         
         var templateJSON:JSON = [:]
-        templateJSON["filename"] = "templates/hello_world_template.json."
+        templateJSON["filename"] = "templates/recording_template.json."
         templateJSON["type"] = JSON("load")
         let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: self)
         RequestHandler.addRequest(requestData:behaviorDownloadRequest);

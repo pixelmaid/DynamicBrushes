@@ -577,7 +577,7 @@ class BehaviorDefinition {
                 operand = signal!;
             }
             else if(storedExpressions[id]![propId!] != nil){
-                operand = storedExpressions[id]![propId!]!;
+                operand = storedExpressions[id]![propId!]!; 
                 
             }
             else{

@@ -29,13 +29,14 @@ define(["jquery", "jquery-ui", "app/Emitter", "handlebars", 'app/id',"app/Inspec
 
             dataUpdatedHandler() {
                 
-                //todo:updating data handler 
                     var data = InspectorDataController.getLastData();
+                    var signalData = data.signalData;
                     console.log("last data for ",this.targetId,"=",data);
-                    for (var key in data) {
-                        if (data.hasOwnProperty(key)) {
-                            var listeners = data[key]["listeners"];
-                            var values = data[key]["values"];
+                    for (var key in signalData) {
+                        if (signalData.hasOwnProperty(key)) {
+
+                            var listeners = signalData[key]["listeners"];
+                            var values = signalData[key]["values"];
                             if (listeners[this.behaviorId] !== undefined) {
                                 if (listeners[this.behaviorId].indexOf(this.targetId) != -1) {
                                     console.log("found self as listener",values);
@@ -53,10 +54,7 @@ define(["jquery", "jquery-ui", "app/Emitter", "handlebars", 'app/id',"app/Inspec
                     }
                 
 
-                   // var currentData = InspectorDataController.currentVal;
-                    //this.el.html(currentData);
-                    //clearInterval(this.updateInteva);
-                    //startUpdateInterval();
+                 
                 
             }
 

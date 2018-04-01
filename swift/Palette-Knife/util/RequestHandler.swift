@@ -303,19 +303,22 @@ final class RequestHandler: Requester{
     
     @objc private func emitterLogCallback(){
         var transmitData:JSON = [:];
+        transmitData["type"] = JSON("signal_data");
+        var signalData = [String:Any]()
         for (key, observableChangeLog) in RequestHandler.inspectorObservables{
             
             if observableChangeLog.hasNewValues{
                 let values = observableChangeLog.getValues();
                 let registeredListeners = observableChangeLog.getListeners();
-                var valueListenerJSON:JSON = [:];
-                valueListenerJSON["values"] = JSON(values);
-                valueListenerJSON["listeners"] = JSON(registeredListeners);
+                var valueListenerJSON = [String:Any]();
+                valueListenerJSON["values"] = values;
+                valueListenerJSON["listeners"] = registeredListeners;
                 
-                transmitData[key] = valueListenerJSON;
+                signalData[key] = valueListenerJSON;
                 observableChangeLog.clearValues();
             }
         }
+        transmitData["signalData"] = JSON(signalData);
         #if DEBUG
             //print("transmitData",transmitData);
         #endif
