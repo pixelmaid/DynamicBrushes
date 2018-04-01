@@ -131,16 +131,24 @@ class SignalCollection: Object{
     public func rawDataToJSON()->JSON{
         var rawData = [[Float]]();
         let sortedProtos = self.protoSignals.sorted{ $0.1.order < $1.1.order }
-        for _ in 0..<sortedProtos.count {
+     
+        do{ let rowNum = try self.getSignalLength();
+        
+        for _ in 0..<rowNum {
             rawData.append([Float]());
         }
         for i in 0..<sortedProtos.count {
             let dB = sortedProtos[i].value.signalBuffer;
            for j in 0..<dB.count {
-            rawData[i].append(dB[j]);
+            rawData[j].append(dB[j]);
             }
         }
         return JSON(rawData);
+        }
+        catch{
+            print("=============ERROR cannot get signal length when exporting raw data==================");
+            return JSON([:]);
+        }
     }
     
     
@@ -230,10 +238,11 @@ class SignalCollection: Object{
     }
   
     public func getSignalLength()throws->Int {
-        if(self.protoSignals["time"] == nil){
+        let sortedProtos = self.protoSignals.sorted{ $0.1.order < $1.1.order }
+        if(sortedProtos.count < 1){
             throw SignalError.protoNotFound
         }
-        return self.protoSignals["time"]!.signalBuffer.count;
+        return sortedProtos[0].value.signalBuffer.count;
     }
     
     
@@ -302,6 +311,25 @@ class ImportedCollection:SignalCollection{
     
     
 }
+
+
+class ImportedRecordingCollection:ImportedCollection {
+    
+    
+    override public func initializeSignalWithId(signalId:String,fieldName:String, displayName:String, settings:JSON, classType:String, style:String, isProto:Bool, order:Int?){
+        if(classType == "TimeSignal"){
+            super.initializeSignalWithId(signalId:signalId,fieldName: fieldName, displayName: displayName, settings: settings, classType: classType, style:style, isProto: isProto, order: order);
+            return;
+        }
+        
+        let signal:Signal;
+        
+        signal = ImportedRecording(id:signalId , fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:settings);
+        self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
+    }
+    
+}
+
 
 class GeneratorCollection:SignalCollection{
     
@@ -476,22 +504,6 @@ class LiveCollection:SignalCollection{
     }
 }
 
-class ImportedRecordingCollection:ImportedCollection {
-    
-    
-    override public func initializeSignalWithId(signalId:String,fieldName:String, displayName:String, settings:JSON, classType:String, style:String, isProto:Bool, order:Int?){
-        if(classType == "TimeSignal"){
-            super.initializeSignalWithId(signalId:signalId,fieldName: fieldName, displayName: displayName, settings: settings, classType: classType, style:style, isProto: isProto, order: order);
-            return;
-        }
-        
-        let signal:Signal;
-
-        signal = ImportedRecording(id:signalId , fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:settings);
-        self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
-    }
-    
-}
 
 class RecordingCollection:SignalCollection{
     

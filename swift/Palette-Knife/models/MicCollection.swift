@@ -20,6 +20,8 @@ class MicCollection: LiveCollection {
         var protodata:JSON = [:]
         protodata["frequency"] = JSON(0);
         protodata["amplitude"] = JSON(0);
+        protodata["time"] = JSON(0);
+
         super.addProtoSample(data: protodata);
     }
     
