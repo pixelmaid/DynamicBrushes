@@ -162,6 +162,9 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
             break;
         case "VIS_STROKE_DOWN":
             break;
+        case "DELETE_FIRST":
+            print("% called delete first" )
+            recordingViewController?.deleteFirstCell()
         default:
             break;
         }
@@ -403,14 +406,19 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     }
     
     
-    
     @objc func updateAudioMeter() {
         if tracker.isStarted {
-            let amplitude = tracker.amplitude*1000.0
-            print("amplitude but X 10 @", amplitude,tracker.frequency)
-            print("freq @", tracker.frequency)
-            micManager.setFrequency(val: tracker.frequency)
-            micManager.setAmplitude(val: amplitude)
+            var amplitude = Float(tracker.amplitude*1000.0)
+            var frequency = Float(tracker.frequency)
+            var high_amp:Float = 300
+            var high_freq:Float = 4000
+            if amplitude > high_amp {high_amp = amplitude}
+            if frequency > high_freq {high_freq = frequency}
+            amplitude = MathUtil.map(value:amplitude,low1:0,high1:high_amp,low2:0,high2:100)
+            frequency = MathUtil.map(value:frequency,low1:0,high1:high_freq,low2:0,high2:100)
+            print("sending amp, freq ", amplitude, frequency)
+            micManager.setFrequency(val: Double(frequency))
+            micManager.setAmplitude(val: Double(amplitude)) //sorry for all the conversions lol
         }
     }
     

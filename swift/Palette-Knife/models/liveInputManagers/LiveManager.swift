@@ -116,6 +116,14 @@ final class StylusManager:LiveManager{
             firstRecording = rPackage.id;
         }
         lastRecording = rPackage.id;
+        if (recordingPackages.count > 10) {
+            //remove last
+            recordingPackages.removeFirst(1)
+            //todo i know it's not a layerevent but too lazy
+            stylusManager.layerEvent.raise(data:("DELETE_FIRST",""));
+            print("% deleting first")
+
+        }
         recordingPackages.append(rPackage);
         print(" % appended to recording packages ", recordingPackages.count)
         
