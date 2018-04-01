@@ -125,6 +125,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                 });
 
+
                 $.contextMenu({
                     selector: '#' + self.id + ' .stateContainer',
                     reposition: false,
@@ -308,15 +309,20 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
 
 
+
+
                 this.createHTML(behavior_data);
 
             }
             
-            activateStateMenu() {
-                console.log("activate state menu");
-                $('#canvas').contextMenu();
-                // or $('.context-menu-one').trigger("contextmenu");
-                // or $('.context-menu-one').contextMenu({x: 100, y: 100});
+            activateStateMenu(x, y) {
+                console.log("activate state menu w x y ", x, y);
+                var state_id = ID();
+                var name = prompt("Please give your state a name", "myState");
+                if (name !== null) {
+                    console.log(this.id)
+                    this.trigger("ON_STATE_ADDED", [this.id, state_id, name, x, y]);
+                }
             }
 
 

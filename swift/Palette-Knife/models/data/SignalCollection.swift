@@ -43,7 +43,7 @@ class SignalCollection: Object{
     
     
     public  func loadDataFromJSON(data:JSON) throws{
-        print("data",data)
+        //print("data",data)
         let allSignalData = data["signals"].arrayValue;
        
         let rawData = data["data"].arrayValue;
@@ -257,8 +257,29 @@ class SignalCollection: Object{
 }
 
 class ImportedCollection:SignalCollection{
+   
+    
     required init(data:JSON){
         super.init(data:data);
+    }
+    
+    override public func loadDataFromJSON(data: JSON) throws {
+        do{
+            try super.loadDataFromJSON(data: data)
+            for (_,value) in self.protoSignals{
+                let newBuffer = Operations.map(signalBuffer: value.signalBuffer, toMin: 0.0, toMax: 100.0);
+                print("new buffer=",newBuffer);
+                //value.cloneRawData(protoData: newBuffer);
+            }
+        }
+        catch {
+            print("ERROR======SIGNAL PROTO NOT FOUND==============")
+            throw SignalError.protoNotFound;
+        }
+        
+        
+        
+        
     }
     
     override public func initializeSignalWithId(signalId:String,fieldName:String, displayName:String, settings:JSON, classType:String, style:String, isProto:Bool, order:Int?){
@@ -268,8 +289,12 @@ class ImportedCollection:SignalCollection{
         }
         
         let signal = ImportedSignal(id:signalId , fieldName: fieldName, displayName: displayName, collectionId: self.id, style: style, settings:settings);
+
         self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
+       
     }
+    
+    
 }
 
 class GeneratorCollection:SignalCollection{
