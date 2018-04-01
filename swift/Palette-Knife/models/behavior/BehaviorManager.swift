@@ -17,7 +17,8 @@ enum BehaviorError: Error {
     case conditionDoesNotExist;
     case expressionDoesNotExist;
     case requestDoesNotExist;
-    case collectionDoesNotExist
+    case collectionDoesNotExist;
+    case duplicateDataSet
 }
 
 class BehaviorManager{
@@ -349,11 +350,16 @@ class BehaviorManager{
              #if DEBUG
                 print("dataset loaded",data);
             #endif
-          let signalCollection = BehaviorManager.parseImported(data:data["dataset"])
+             do {
+                let signalCollection = try BehaviorManager.parseImported(data:data["dataset"])
+                resultJSON["result"] = "success";
+                resultJSON["dataset"] = JSON([signalCollection.protoToJSON()]);
+                return resultJSON;
+             } catch {
+                resultJSON["result"] = "failure";
+                return resultJSON;
+            }
           
-            resultJSON["result"] = "success";
-            resultJSON["dataset"] = JSON([signalCollection.protoToJSON()]);
-            return resultJSON;
             
         default:
             break
@@ -479,7 +485,7 @@ class BehaviorManager{
         for collection in collectionData{
             let key = collection["classType"].stringValue;
             print("key",key);
-            switch (key){
+            switch (key) {
             case "live":
                     let signalCollection:LiveCollection;
                     if collection["name"] == "stylus"{
@@ -542,10 +548,16 @@ class BehaviorManager{
     }
     
     
-   static func parseImported(data:JSON)->SignalCollection{
+   static func parseImported(data:JSON) throws->SignalCollection{
     print("imported data",data);
     let id = data["id"].stringValue;
     let signalCollection = ImportedCollection(data: data)
+    print ("% signalCollections is ",  signalCollections[0][id])
+    if signalCollections[0][id] != nil {
+        print("======== WARNING: TRYING TO PARSE AN ALREADY EXISTING DATASET =====")
+        throw BehaviorError.duplicateDataSet
+    }
+    
     signalCollection.mapData();
     signalCollections[0][id] = signalCollection;
     print("imported count",signalCollections[0]);
