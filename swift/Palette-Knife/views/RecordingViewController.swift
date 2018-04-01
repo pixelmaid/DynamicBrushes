@@ -144,7 +144,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         xstrokes.removeFirst(1)
         var ystrokes = y.getTimeOrderedList()
         ystrokes.removeFirst(1)
-        print("$$ xstrokes, ystrokes in timeordered list ", xstrokes, ystrokes)
+        //print("$$ xstrokes, ystrokes in timeordered list ", xstrokes, ystrokes)
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 200, height: 150))
         imageView.backgroundColor = UIColor.white
         imageView.contentMode = UIViewContentMode.scaleAspectFit
@@ -199,7 +199,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
 
     func drawThumbnail(xStrokes:[Float],yStrokes:[Float],image:UIImageView, onion:Bool, alpha: CGFloat = 1.0) {
         //assert xStrokes.count == yStrokes.count
-        print("$$ xstrokes, ystrokes ", xStrokes, yStrokes)
+        //print("$$ xstrokes, ystrokes ", xStrokes, yStrokes)
         for idx in stride(from:0, to:xStrokes.count, by:1) {
             let c1x = xStrokes[idx] / divisor
             let c1y = yStrokes[idx] / divisor
@@ -209,7 +209,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
             let c2y = yStrokes[idx2] / divisor
             let p1 = CGPoint(x:Int(c1x), y:Int(c1y))
             let p2 = CGPoint(x:Int(c2x), y:Int(c2y))
-            print("$$ p1,p2 ", p1,p2)
+            //print("$$ p1,p2 ", p1,p2)
 
             
             if !onion {

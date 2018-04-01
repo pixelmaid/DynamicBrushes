@@ -128,7 +128,7 @@ final class RequestHandler: Requester{
                     send_data["subData"] = "mapping_info";
                     send_data["data"] = data;
                     RequestHandler.socketManager.sendData(data: send_data);
-                    print(send_data);
+                    //print(send_data);
                     break;
                     
                 case "synchronize":
@@ -217,7 +217,7 @@ final class RequestHandler: Requester{
             
             RequestHandler.activeItem?.requester.processRequest(data:data)
             RequestHandler.activeItem = nil;
-            print(data);
+            //print(data);
 
             RequestHandler.checkRequest();
             
@@ -317,7 +317,7 @@ final class RequestHandler: Requester{
             }
         }
         #if DEBUG
-            print("transmitData",transmitData);
+            //print("transmitData",transmitData);
         #endif
         if(!transmitData.isEmpty){
             let socketRequest = Request(target: "socket", action: "send_inspector_data", data: transmitData, requester: RequestHandler.sharedInstance)

@@ -45,7 +45,7 @@ class ProgrammingViewController:UIViewController,  WKUIDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated);
-        print("view",self.view);
+        //print("view",self.view);
     }
     
     

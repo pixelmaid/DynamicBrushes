@@ -43,7 +43,7 @@ class SignalCollection: Object{
     
     
     public  func loadDataFromJSON(data:JSON) throws{
-        print("data",data)
+        //print("data",data)
         let allSignalData = data["signals"].arrayValue;
        
         let rawData = data["data"].arrayValue;
