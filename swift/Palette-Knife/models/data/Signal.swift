@@ -22,6 +22,8 @@ class Signal:Observable<Float>{
     internal let style:String!
     internal var prevV:Float = 0;
 
+    internal let maxVals = 100
+    
     static let stylusUp:Float = 0.0;
     static let stylusMove:Float = 1.0;
     static let stylusDown:Float = 2.0;
@@ -141,7 +143,9 @@ class LiveSignal:Signal{
     }
     
     override func addValue(v: Float) {
-        self.signalBuffer.removeAll();
+        if self.signalBuffer.count > self.maxVals {
+            self.signalBuffer.removeFirst(1)
+        }
         super.addValue(v: v);
         
         self.setIndex(i: self.signalBuffer.count-1);
