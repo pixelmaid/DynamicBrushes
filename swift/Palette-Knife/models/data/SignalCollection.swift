@@ -470,7 +470,7 @@ class LiveCollection:SignalCollection{
     }
 }
 
-class RecordingCollection:SignalCollection{
+class RecordingCollection:ImportedCollection{
     
     //stylus
 //    var next:RecordingCollection?

@@ -154,7 +154,7 @@ class LiveSignal:Signal{
 }
 
 
-class Recording:Signal{
+class Recording:ImportedSignal{
 
   
     func getTimeOrderedList()->[Float]{
