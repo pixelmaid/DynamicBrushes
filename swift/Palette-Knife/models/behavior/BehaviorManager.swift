@@ -545,7 +545,8 @@ class BehaviorManager{
    static func parseImported(data:JSON)->SignalCollection{
     print("imported data",data);
     let id = data["id"].stringValue;
-    let signalCollection = ImportedCollection(data: data);
+    let signalCollection = ImportedCollection(data: data)
+    signalCollection.mapData();
     signalCollections[0][id] = signalCollection;
     print("imported count",signalCollections[0]);
     return signalCollection;

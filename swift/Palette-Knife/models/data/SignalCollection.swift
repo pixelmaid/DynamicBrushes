@@ -277,22 +277,14 @@ class ImportedCollection:SignalCollection{
         super.init(data:data);
     }
     
-    override public func loadDataFromJSON(data: JSON) throws {
-        do{
-            try super.loadDataFromJSON(data: data)
+     public func mapData()  {
+        
             for (_,value) in self.protoSignals{
                 let newBuffer = Operations.map(signalBuffer: value.signalBuffer, toMin: 0.0, toMax: 100.0);
                 print("new buffer=",newBuffer);
                 value.cloneRawData(protoData: newBuffer);
-            }
+            
         }
-        catch {
-            print("ERROR======SIGNAL PROTO NOT FOUND==============")
-            throw SignalError.protoNotFound;
-        }
-        
-        
-        
         
     }
     

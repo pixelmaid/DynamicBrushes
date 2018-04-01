@@ -549,40 +549,29 @@ class Brush: TimeSeries, Hashable{
         
         //trigger state complete after functions are executed
         
-        _  = Timer.scheduledTimer(timeInterval: 0.00001, target: self, selector: #selector(Brush.completeCallback), userInfo: nil, repeats: false)
+        _  = Timer.scheduledTimer(timeInterval: 0.005, target: self, selector: #selector(Brush.completeCallback), userInfo: nil, repeats: false)
         
         if(states[currentState]?.name == "die"){
             self.die();
             return;
             }
-            for (key,tTransition) in self.transitions{
-                
-                let validate = self.validateTransitionMapping(key:key)
-                let evaluate =  tTransition.condition.evaluate()
-                if validate != nil && evaluate == true && key != transition.id{
-                   
-                        self.transitionToState(transition: tTransition)
-                        return;
-                    
-                }
-            }
+            
         }
         
     }
     
 
     @objc func completeCallback(){
-        for key in self.keyStorage["STATE_COMPLETE"]!  {
-            if(key.1 != nil){
-                let condition = key.1;
-                if(condition?.evaluate())!{
-                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STATE_COMPLETE"])
-                }
-            }
-            else{
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.0), object: self, userInfo: ["emitter":self,"key":key.2.id,"event":"STATE_COMPLETE"])
-            }
+        for (key,tTransition) in self.transitions{
             
+            let validate = self.validateTransitionMapping(key:key)
+            let evaluate =  tTransition.condition.evaluate()
+            if validate != nil && evaluate == true {
+                
+                self.transitionToState(transition: tTransition)
+                return;
+                
+            }
         }
     }
     
@@ -712,7 +701,7 @@ class Brush: TimeSeries, Hashable{
     
     func setConstraint(constraint:Constraint){
         #if DEBUG
-           // print("calling set constraint on",  constraint.relativeProperty.name,constraint.relativeProperty,constraint.reference.get(id: self.id))
+           print("calling set constraint on",  constraint.relativeProperty.name,constraint.relativeProperty,constraint.reference.get(id: self.id))
         #endif
         constraint.relativeProperty.set(newValue: constraint.reference.get(id: self.id));
         

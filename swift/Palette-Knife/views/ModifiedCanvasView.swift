@@ -177,8 +177,14 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
             
             currentStroke.lock();
              autoreleasepool {
-                
-                   _ = jotView.addLine(toAndRenderStroke: currentStroke, to: toPoint, toWidth: toWidth*4, to: toColor, andSmoothness: self.getSmoothness(), withStepWidth: self.stepWidthForStroke())
+                var finalWidth = toWidth;
+                if(finalWidth < 1){
+                    finalWidth = 1;
+                }
+                if(finalWidth > 300){
+                    finalWidth = 300;
+                }
+                   _ = jotView.addLine(toAndRenderStroke: currentStroke, to: toPoint, toWidth: finalWidth, to: toColor, andSmoothness: self.getSmoothness(), withStepWidth: self.stepWidthForStroke())
                     
                 
             
