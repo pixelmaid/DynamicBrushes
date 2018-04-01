@@ -162,6 +162,9 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
             break;
         case "VIS_STROKE_DOWN":
             break;
+        case "DELETE_FIRST":
+            print("% called delete first" )
+            recordingViewController?.deleteFirstCell()
         default:
             break;
         }
