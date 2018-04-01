@@ -52,7 +52,12 @@ class Expression:Observable<Float>{
     
     func calculateValue()->Float?{
         var valueString = "";
-
+        print("text",text);
+        if(text.isEmpty){
+            print("==========WARNING, NO TEXT IN EXPRESSION TEXT FIELD================",self.id);
+            
+            return nil
+        }
         let stringArr = text.split{$0 == "%"}.map(String.init);
         var currentVals = [String: Float]();
         
@@ -75,6 +80,11 @@ class Expression:Observable<Float>{
                 valueString += s;
             }
             
+        }
+        if(valueString.isEmpty){
+            print("==========WARNING, NO TEXT IN EXPRESSION================",self.id);
+
+            return nil
         }
        
         let expr = NSExpression(format: valueString)

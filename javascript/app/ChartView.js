@@ -181,7 +181,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                             p_items[p_name] = {
                                 className: 'property_menu_item',
                                 name: global_brush_properties[i].displayName,
-                                disabled: Object.values(brush_properties_added[self.id][parent.attr("id")]).indexOf(p_name) > -1,
+                               //disabled: Object.values(brush_properties_added[self.id][parent.attr("id")]).indexOf(p_name) > -1,
                                 fieldName: global_brush_properties[i].fieldName
                             }; //function(){
                         }
