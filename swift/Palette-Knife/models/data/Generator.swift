@@ -9,7 +9,6 @@ import Foundation
 import SwiftyJSON
 
 class Generator:Signal{
-    var prevV:Float = 0;
 
     required init(id: String, fieldName: String, displayName: String, collectionId: String, style: String, settings: JSON) {
         super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
@@ -17,16 +16,8 @@ class Generator:Signal{
 
     }
     
-    func reset(){
-        self.setIndex(i: 0)
-    }
-    
-    func incrementAndChange(v:Float){
-        self.incrementIndex();
-        self.didChange.raise(data: (self.id, self.prevV, v));
-        self.prevV = v;
-    }
-    
+   
+
    override func incrementIndex(){
         self.setIndex(i: self.index+1);
     }

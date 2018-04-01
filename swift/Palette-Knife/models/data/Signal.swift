@@ -20,6 +20,7 @@ class Signal:Observable<Float>{
     internal let collectionId:String!
     internal var order:Int = -1
     internal let style:String!
+    internal var prevV:Float = 0;
 
     static let stylusUp:Float = 0.0;
     static let stylusMove:Float = 1.0;
@@ -35,6 +36,16 @@ class Signal:Observable<Float>{
         self.displayName = displayName;
         self.style = style;
         super.init(0)
+    }
+    
+    func reset(){
+        self.setIndex(i: 0)
+    }
+    
+    func incrementAndChange(v:Float){
+        self.incrementIndex();
+        self.didChange.raise(data: (self.id, self.prevV, v));
+        self.prevV = v;
     }
     
     public func setOrder(i:Int){
@@ -155,6 +166,34 @@ class StylusEventRecording:Recording{
 class StylusEvent:LiveSignal{
    
 }
+
+
+class ImportedSignal:Signal{
+    required init(id: String, fieldName: String, displayName: String, collectionId: String, style: String, settings: JSON) {
+        super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings: settings);
+        self.signalBuffer = Operations.map(signalBuffer: self.signalBuffer, toMin: 0, toMax: 100);
+    }
+    
+    override func get(id:String?)-> Float{
+        let v = super.get(id: id);
+        incrementAndChange(v: v);
+        return v;
+    }
+    
+    override func incrementAndChange(v: Float) {
+        super.incrementAndChange(v: v);
+        if self.index >= self.signalBuffer.count{
+            self.index = 0;
+        }
+    }
+    
+}
+
+class ImportedRecording:ImportedSignal{
+    
+}
+
+
 
 
 

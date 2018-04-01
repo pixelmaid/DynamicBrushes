@@ -256,6 +256,22 @@ class SignalCollection: Object{
     
 }
 
+class ImportedCollection:SignalCollection{
+    required init(data:JSON){
+        super.init(data:data);
+    }
+    
+    override public func initializeSignalWithId(signalId:String,fieldName:String, displayName:String, settings:JSON, classType:String, style:String, isProto:Bool, order:Int?){
+        if(classType == "TimeSignal"){
+            super.initializeSignalWithId(signalId:signalId, fieldName: fieldName, displayName: displayName, settings: settings, classType: classType, style:style, isProto: isProto, order: order);
+            return;
+        }
+        
+        let signal = ImportedSignal(id:signalId , fieldName: fieldName, displayName: displayName, collectionId: self.id, style: style, settings:settings);
+        self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
+    }
+}
+
 class GeneratorCollection:SignalCollection{
     
     
