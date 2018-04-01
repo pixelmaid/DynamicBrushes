@@ -514,7 +514,7 @@ class BehaviorDefinition {
                 if(mapping!.1 != nil){
                     let mappingKey = mapping!.1![0];
                     do{
-                        try self.removeMapping(id: mappingKey);
+                        try self.removeExpression(id: mappingKey);
                     }
                     catch{
                         print("===========ERROR ATTEMPTED TO REMOVE EXPRESSION THAT DOES NOT EXIST=====================")

@@ -273,7 +273,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                             var mappingId = $(options.$trigger[0]).attr("id");
                             var stateId = $(options.$trigger[0]).attr("stateid");
 
-                            console.log("mappping", mappingId);
+                            console.log("mappping id ", mappingId);
                             self.trigger("ON_MAPPING_REMOVED", [self.id, mappingId, stateId]);
                             //new extension
                             var parent = $(options.$trigger[0]).parent().parent().parent();
