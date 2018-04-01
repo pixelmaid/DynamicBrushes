@@ -171,7 +171,6 @@ class StylusEvent:LiveSignal{
 class ImportedSignal:Signal{
     required init(id: String, fieldName: String, displayName: String, collectionId: String, style: String, settings: JSON) {
         super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings: settings);
-        self.signalBuffer = Operations.map(signalBuffer: self.signalBuffer, toMin: 0, toMax: 100);
     }
     
     override func get(id:String?)-> Float{

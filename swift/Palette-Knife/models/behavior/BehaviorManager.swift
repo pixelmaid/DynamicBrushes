@@ -347,7 +347,7 @@ class BehaviorManager{
             
         case "dataset_loaded":
              #if DEBUG
-                //print("dataset loaded",data);
+                print("dataset loaded",data);
             #endif
           let signalCollection = BehaviorManager.parseImported(data:data["dataset"])
           
@@ -545,7 +545,7 @@ class BehaviorManager{
    static func parseImported(data:JSON)->SignalCollection{
     print("imported data",data);
     let id = data["id"].stringValue;
-    let signalCollection = SignalCollection(data: data);
+    let signalCollection = ImportedCollection(data: data);
     signalCollections[0][id] = signalCollection;
     print("imported count",signalCollections[0]);
     return signalCollection;
