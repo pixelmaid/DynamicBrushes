@@ -371,23 +371,9 @@ final class StylusManager:LiveManager{
     //TOOD: NEED TO MAKE THESE SYMMETRICAL TO STYLUSCOLLECTION EVENTS TO CALCULATE ACCURATE DATA
     public func onStylusMove(x:Float,y:Float,force:Float,angle:Float){
         if(isLive){
-            let currentTime = Date();
-            let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
+            //let currentTime = Date();
+            //let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
             
-            guard let xLast = currentRecordingPackage.getProtoSignalValue(fieldName:"x") else {
-                #if DEBUG
-                    print("========ERROR========== cannot access proto signal field name ========ERROR==========")
-                #endif
-                return;
-            }
-            guard let yLast = currentRecordingPackage.getProtoSignalValue(fieldName:"y") else{
-                #if DEBUG
-                    print("========ERROR========== cannot access proto signal field name ========ERROR==========")
-                #endif
-                return
-            }
-            let dx = x-xLast;
-            let dy = y-yLast;
             
             for (_,stylusCollection) in self.liveCollections{
                 
@@ -400,8 +386,8 @@ final class StylusManager:LiveManager{
     
     public func onStylusUp(x:Float,y:Float,force:Float,angle:Float){
         if(isLive){
-            let currentTime = Date();
-            let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
+            //let currentTime = Date();
+            //let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
             
             for (_,stylusCollection) in self.liveCollections{
                 (stylusCollection as! StylusCollection).onStylusUp(x: x, y:y);
@@ -416,8 +402,8 @@ final class StylusManager:LiveManager{
     public func onStylusDown(x:Float,y:Float,force:Float,angle:Float){
         if(isLive){
             currentStartDate = Date();
-            let currentTime = Date();
-            let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
+            //let currentTime = Date();
+            //let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
             _ = beginRecording(start:currentStartDate);
             
             
@@ -490,7 +476,6 @@ final class StylusManager:LiveManager{
         let indexandpackage = getIndexandCurrentPackage(idStart: startId)
         var exportIndex = indexandpackage.0
         let startRecordingCollection = indexandpackage.1
-        //        let startRecordingCollection = recordingPackages.first(){$0.id == startId}!
         recordingPresetData["id"] = JSON(compiledId)
         print("recordingPresetData is % " , self.recordingPresetData)
         let compiledRecordingCollection = ImportedRecordingCollection(data:self.recordingPresetData)
@@ -522,7 +507,6 @@ class StylusDataProducer{
     func produce(index:Int,recordingPackage:RecordingCollection)->JSON?{
         
         let sample = recordingPackage.getProtoSample(index:index);
-        print("sample found at time",sample);
         return sample;
     }
     

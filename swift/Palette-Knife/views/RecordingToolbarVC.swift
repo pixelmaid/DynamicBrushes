@@ -85,10 +85,11 @@ class RecordingToolbarVC: UIViewController, Requester {
             
             var collection = stylusManager.exportRecording(startId: start_id, endId: end_id)
             collection!["name"].stringValue = name!;
-            
             var collectionList:JSON = [:];
-            collectionList["collections"] = JSON([collection])
+            collectionList["collections"] = JSON([collection]);
             
+            BehaviorManager.loadCollectionsFromJSON(data:collectionList["collections"]);
+
             let request = Request(target: "socket", action: "send_collection_data", data: collectionList, requester: self)
             RequestHandler.addRequest(requestData: request)
         }
