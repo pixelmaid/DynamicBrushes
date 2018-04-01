@@ -514,7 +514,7 @@ class BehaviorDefinition {
                 if(mapping!.1 != nil){
                     let mappingKey = mapping!.1![0];
                     do{
-                        try self.removeMapping(id: mappingKey);
+                        try self.removeExpression(id: mappingKey);
                     }
                     catch{
                         print("===========ERROR ATTEMPTED TO REMOVE EXPRESSION THAT DOES NOT EXIST=====================")
@@ -668,6 +668,16 @@ class BehaviorDefinition {
     
     
     func clearBehavior(){
+        //reset associated signals
+        for (_, expressionList) in self.storedExpressions {
+            for (_, expression) in expressionList {
+                for (_, signal) in expression.operandList {
+                    let signal = signal as! Signal
+                    signal.reset()
+                }
+            }
+        }
+        
         RequestHandler.clearAllObservableListenersForBehavior(behaviorId: self.id)
         for (_,value) in self.storedExpressions{
             for (_,v) in value{
@@ -691,6 +701,8 @@ class BehaviorDefinition {
             targetBrush.destroy();
             
         }
+        
+     
         self.brushInstances.removeAll();
         
     }
@@ -763,6 +775,7 @@ class BehaviorDefinition {
                 initializedArguments.append(expression);
 
             }
+            print("% method transition id is ", method.transitionId)
             targetBrush.addMethod(transitionId:method.transitionId,methodId:method.methodId,fieldName:method.fieldName,arguments:initializedArguments)
                 
             

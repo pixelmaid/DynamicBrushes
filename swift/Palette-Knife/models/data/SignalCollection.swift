@@ -287,7 +287,8 @@ class ImportedCollection:SignalCollection{
     }
     
      public func mapData()  {
-        
+            print("% map")
+            print("% map self.protoSignals are ", self.protoSignals)
             for (_,value) in self.protoSignals{
                 let newBuffer = Operations.map(signalBuffer: value.signalBuffer, toMin: 0.0, toMax: 100.0);
                 print("new buffer=",newBuffer);

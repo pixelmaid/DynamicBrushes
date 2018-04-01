@@ -131,8 +131,9 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     reposition: false,
                     callback: function(key, options) {
                         if (key == "delete") {
-                            var parent = $(options.$trigger[0]).parent();
-                            console.log("state", parent[0].id);
+                            var parent = $(options.$trigger[0]).parent().parent();
+                            console.log("% parent is  ", parent);
+                            console.log("% state id is ", parent[0].id);
                             self.trigger("ON_STATE_REMOVED", [self.id, parent[0].id]);
                         }
                     },
@@ -273,7 +274,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                             var mappingId = $(options.$trigger[0]).attr("id");
                             var stateId = $(options.$trigger[0]).attr("stateid");
 
-                            console.log("mappping", mappingId);
+                            console.log("mappping id ", mappingId);
                             self.trigger("ON_MAPPING_REMOVED", [self.id, mappingId, stateId]);
                             //new extension
                             var parent = $(options.$trigger[0]).parent().parent().parent();
