@@ -6,6 +6,7 @@
 //  Copyright © 2016 pixelmaid. All rights reserved.
 //
 import Foundation
+import SwiftyJSON
 
 struct DeltaStorage{
     var dX = Float(0)
@@ -496,16 +497,35 @@ class Brush: TimeSeries, Hashable{
     }
     
     func stateTransitionHandler(data:(String),key:String){
-            let mapping = states[currentState]?.getTransitionMapping(key: data)
-            if(mapping != nil){
-                let stateTransition = mapping
-                self.transitionToState(transition: stateTransition!)
+        guard let stateTransition = validateTransitionMapping(key:key) else{
+            return;
         }
+        self.transitionToState(transition: stateTransition)
+
+    }
+    func validateTransitionMapping(key:String)->StateTransition?{
+        let mapping = states[currentState]?.getTransitionMapping(key: key)
+        if(mapping != nil){
+            let stateTransition = mapping
+            return stateTransition;
+        }
+        return nil
         
     }
     
     func transitionToState(transition:StateTransition){
         var constraint_mappings:[String:Constraint];
+        var transmitData:JSON = [:]
+        let fromState = currentState;
+        transmitData["type"] = JSON("state_transition");
+        transmitData["behaviorId"] = JSON(self.behaviorDef!.id);
+        transmitData["toState"] = JSON(transition.toStateId);
+        transmitData["fromState"] = JSON(fromState);
+        transmitData["transitionId"] = JSON(transition.id);
+        
+        let socketRequest = Request(target: "socket", action: "send_inspector_data", data: transmitData, requester: RequestHandler.sharedInstance)
+        RequestHandler.addRequest(requestData: socketRequest)
+        
         print("transitioning from state:\(currentState) to state: \(transition.toStateId)");
         if(states[currentState] != nil){
             constraint_mappings =  states[currentState]!.constraint_mappings
@@ -533,8 +553,20 @@ class Brush: TimeSeries, Hashable{
         
         if(states[currentState]?.name == "die"){
             self.die();
-            }}
-        
+            return;
+            }
+            for (key,tTransition) in self.transitions{
+                
+                let validate = self.validateTransitionMapping(key:key)
+                let evaluate =  tTransition.condition.evaluate()
+                if validate != nil && evaluate == true && key != transition.id{
+                   
+                        self.transitionToState(transition: tTransition)
+                        return;
+                    
+                }
+            }
+        }
         
     }
     
@@ -570,7 +602,11 @@ class Brush: TimeSeries, Hashable{
                  "setOrigin":
                 let xArg = method.arguments[0];
                 let yArg = method.arguments[1];
-                self.setOrigin(x: xArg.calculateValue(), y:  yArg.calculateValue())
+                let x = xArg.calculateValue();
+                let y = yArg.calculateValue();
+                if(x != nil && y != nil){
+                    self.setOrigin(x:x!, y: y!)
+                }
                 if(methodName == "newStroke"){
                     self.newStroke();
                 }
@@ -589,8 +625,11 @@ class Brush: TimeSeries, Hashable{
                 let countArg = method.arguments[1];
                 let arg_string = behaviorArg.getSelectedId();
                 let behavior = BehaviorManager.getBehaviorById(id:arg_string);
-                let count = Int(countArg.calculateValue());
-                self.spawn(behavior:behavior!,num:count);
+                
+                let count = countArg.calculateValue();
+                if(count != nil){
+                    self.spawn(behavior:behavior!,num:Int(count!));
+                }
                 
                 break;
             default:

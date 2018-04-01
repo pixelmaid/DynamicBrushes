@@ -42,12 +42,15 @@ class Expression:Observable<Float>{
     override func get(id:String?) -> Float {
         invalidated = false;
     
-        return calculateValue();
+        guard let v = calculateValue() else{
+            return 0;
+        }
+        return v;
         
        
     }
     
-    func calculateValue()->Float{
+    func calculateValue()->Float?{
         var valueString = "";
 
         let stringArr = text.split{$0 == "%"}.map(String.init);
@@ -73,23 +76,37 @@ class Expression:Observable<Float>{
             }
             
         }
-        var result:Float = 0;
-        let exception = tryBlock {
-        let exp: NSExpression = NSExpression(format: valueString)
-           result  = exp.expressionValue(with: nil, context: nil) as! Float// 25.0
-        
-        }
-        #if DEBUG
-            //print("exception: \(exception,result)")
-        #endif
+       
+        let expr = NSExpression(format: valueString)
 
-        return result;
+        if let result = expr.expressionValue(with: nil, context: nil) as? Float {
+            #if DEBUG
+
+            print("expression success",result)
+            #endif
+            return result;
+
+        } else {
+            #if DEBUG
+
+            print("==========ERROR EXPRESSION FAILED================",self.id);
+            #endif
+            return nil;
+            
+
+        }
+    
+        
+        
+
 
     }
   
     func setHandler(data:(String,Float,Float),key:String){
         let result = self.calculateValue();
-        self.set(newValue: result)
+        if(result != nil){
+            self.set(newValue: result!)
+        }
     }
     
     override func destroy(){

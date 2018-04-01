@@ -269,7 +269,7 @@ class ImportedCollection:SignalCollection{
             for (_,value) in self.protoSignals{
                 let newBuffer = Operations.map(signalBuffer: value.signalBuffer, toMin: 0.0, toMax: 100.0);
                 print("new buffer=",newBuffer);
-                //value.cloneRawData(protoData: newBuffer);
+                value.cloneRawData(protoData: newBuffer);
             }
         }
         catch {

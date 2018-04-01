@@ -427,7 +427,17 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
             }
 
             processInspectorData(data){
+                if(data.type == "signal_data"){
                   InspectorDataController.setData(data);
+                }
+                else if(data.type == "state_transition"){
+                    console.log("state transition data",data,$("#"+data.toState+" .state"));
+                     $("#"+data.fromState+" .state").removeClass("active");
+
+                    $("#"+data.toState+" .state").addClass("active");
+
+
+                }
             }
 
 
