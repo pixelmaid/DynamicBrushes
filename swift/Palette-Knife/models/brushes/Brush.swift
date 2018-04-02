@@ -28,6 +28,12 @@ struct DeltaStorage{
     var dist = Float(0);
     var xDist = Float(0);
     var yDist = Float(0);
+    var pX = Float(0);
+    var pY = Float(0);
+    var time = Float(0);
+    var i = Float(0);
+    var sC = Float(0);
+    var lV = Float(0);
 }
 
 class Brush: TimeSeries, Hashable{
@@ -101,6 +107,7 @@ class Brush: TimeSeries, Hashable{
     var geometryModified = Event<(Geometry,String,String)>()
     var initEvent = Event<(Brush,String)>()
     var dieEvent = Event<(String)>()
+    var signalEvent = Event<(String,String,DeltaStorage)>()
     //Events
     
     
@@ -360,7 +367,7 @@ class Brush: TimeSeries, Hashable{
         let xDist = self.xDistance.get(id:nil);
         let yDist = self.yDistance.get(id:nil);
         
-        let ds = DeltaStorage(dX:dX,dY:dY,r:r,sX:sX,sY:sY,rX:rX,rY:rY,d:d,h:h,s:s,l:l,a:a,dist:dist,xDist:xDist,yDist:yDist)
+        let ds = DeltaStorage(dX:dX,dY:dY,r:r,sX:sX,sY:sY,rX:rX,rY:rY,d:d,h:h,s:s,l:l,a:a,dist:dist,xDist:xDist,yDist:yDist,pX:0,pY:0,time:self.time.getSilent(),i:self.index.getSilent(),sC:self.siblingcount.getSilent(),lV:self.level.getSilent());
         self.deltaChangeBuffer.append(ds);
         self.processDeltaBuffer();
     }
@@ -423,8 +430,11 @@ class Brush: TimeSeries, Hashable{
         self.bPosition.y.setSilent(newValue:_dy)
         
         
-        self.distanceIntervalCheck();
-        self.intersectionCheck();
+       // self.distanceIntervalCheck();
+        //self.intersectionCheck();
+       let sendDs = DeltaStorage(dX:ds.dX,dY:ds.dY,r:ds.r,sX:ds.sX,sY:ds.sY,rX:ds.rX,rY:ds.rY,d:ds.d,h:ds.h,s:ds.s,l:ds.l,a:ds.a,dist:self.distance.getSilent(),xDist:self.xDistance.getSilent(),yDist:self.yDistance.getSilent(),pX:transformedCoords.0,pY:transformedCoords.1,time:ds.time,i:ds.i,sC:ds.sC,lV:ds.lV);
+       self.signalEvent.raise(data: (self.behavior_id!,self.id,sendDs));
+
         }
     }
     
@@ -625,6 +635,26 @@ class Brush: TimeSeries, Hashable{
                 break;
             }
         }
+        
+    }
+    
+    override func startInterval(){
+        #if DEBUG
+            print("start interval")
+        #endif
+        intervalTimer  = Timer.scheduledTimer(timeInterval: 0.0001, target: self, selector: #selector(Brush.timerIntervalCallback), userInfo: nil, repeats: true)
+        
+    }
+    
+    @objc override func timerIntervalCallback()
+    {
+        
+        let currentTime = NSDate();
+        //TODO: Fix how this is calucated to deal with lag..
+        let t = Float(currentTime.timeIntervalSince(timer as Date))
+        self._time.set(newValue: t)
+        self.time.set(newValue: t);
+        
         
     }
     
@@ -869,7 +899,7 @@ class Brush: TimeSeries, Hashable{
     func clearAllEventHandlers(){
         self.initEvent.removeAllHandlers()
         self.geometryModified.removeAllHandlers()
-    
+        self.signalEvent.removeAllHandlers();
         self.dieEvent.removeAllHandlers()
         for t in transitionEvents{
             t.dispose();

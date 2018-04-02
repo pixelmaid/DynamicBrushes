@@ -1,208 +1,229 @@
 {
   "behaviors": [{
-    "name": "sample_behavior",
-    "methods": [{
-      "argumentList": [{
-        "defaultVal": "",
-        "displayName": "x",
-        "isExpression": true,
-        "expressionId": "6BB2EF84-CCC0-4E7A-8907-C112F0870B47",
-        "isDropdown": false,
-        "fieldName": "x"
+      "name": "child_behavior",
+      "methods": [],
+      "id": "1",
+      "states": [{
+        "stateId": "_xerwqn2a",
+        "x": 88.991470336914062,
+        "y": 336.98861694335938,
+        "stateName": "setup"
       }, {
-        "defaultVal": "",
-        "displayName": "y",
-        "isExpression": true,
+        "stateId": "_sdfsdfs8",
+        "x": 1018,
+        "y": 221,
+        "stateName": "die"
+      }],
+      "expressions": [],
+      "auto_spawn_num": 0,
+      "active_status": false,
+      "transitions": []
+    },
+    {
+      "name": "sample_behavior",
+      "methods": [{
+        "argumentList": [{
+          "defaultVal": "",
+          "displayName": "x",
+          "isExpression": true,
+          "expressionId": "6BB2EF84-CCC0-4E7A-8907-C112F0870B47",
+          "isDropdown": false,
+          "fieldName": "x"
+        }, {
+          "defaultVal": "",
+          "displayName": "y",
+          "isExpression": true,
+          "expressionId": "E6C0B6EC-E0AB-4AC8-BC51-E7A4B17170E4",
+          "isDropdown": false,
+          "fieldName": "y"
+        }],
+        "displayName": "new stroke",
+        "transitionId": "_jsplumb_c_1522525756575",
+        "fieldName": "newStroke",
+        "methodId": "_pbx7kw7a6"
+      }],
+      "id": "0",
+      "states": [{
+        "stateId": "_4ef5vl65d",
+        "x": 100,
+        "y": 100,
+        "stateName": "state 2"
+      }, {
+        "stateId": "_y5p6lqn2a",
+        "x": 88.991470336914062,
+        "y": 336.98861694335938,
+        "stateName": "setup"
+      }, {
+        "stateId": "_jupcoyws8",
+        "x": 1018,
+        "y": 221,
+        "stateName": "die"
+      }, {
+        "stateId": "_s865vlzry",
+        "x": 455.99429321289062,
+        "y": 291.98861694335938,
+        "stateName": "state 1"
+      }],
+      "expressions": [{
+        "expressionPropertyList": [{
+          "classType": "LiveSignal",
+          "settings": {
+
+          },
+          "id": "401AF8DB-6EBD-4077-B0C1-98DF83763222",
+          "fieldName": "y",
+          "displayName": "stylus y",
+          "style": "sensor",
+          "order": -1
+        }],
         "expressionId": "E6C0B6EC-E0AB-4AC8-BC51-E7A4B17170E4",
-        "isDropdown": false,
-        "fieldName": "y"
+        "expressionText": "%401AF8DB-6EBD-4077-B0C1-98DF83763222%"
+      }, {
+        "expressionPropertyList": [{
+          "classType": "LiveSignal",
+          "settings": {
+
+          },
+          "id": "D4725095-1F47-4033-83D7-A0FE51C9D89F",
+          "fieldName": "x",
+          "displayName": "stylus x",
+          "style": "sensor",
+          "order": -1
+        }],
+        "expressionId": "6AC22D6D-DE6E-43FD-AC1C-438AFF7CB6BB",
+        "expressionText": "%D4725095-1F47-4033-83D7-A0FE51C9D89F%"
+      }, {
+        "expressionPropertyList": [{
+          "classType": "LiveSignal",
+          "settings": {
+
+          },
+          "id": "80684C83-9B16-4B7B-9720-5D1FE7DFFA7C",
+          "fieldName": "y",
+          "displayName": "stylus y",
+          "style": "sensor",
+          "order": -1
+        }],
+        "expressionId": "4B96CBBE-A592-4839-953C-A0FCCBEF3AE1",
+        "expressionText": "%80684C83-9B16-4B7B-9720-5D1FE7DFFA7C%"
+      }, {
+        "expressionPropertyList": [
+
+        ],
+        "expressionId": "_bbbbbbb",
+        "expressionText": "0"
+      }, {
+        "expressionPropertyList": [{
+          "classType": "LiveSignal",
+          "settings": {
+
+          },
+          "id": "00F26B86-B011-4C93-93AB-F2E71DB3CE3A",
+          "fieldName": "x",
+          "displayName": "stylus x",
+          "style": "sensor",
+          "order": -1
+        }],
+        "expressionId": "_23v0ckj5l",
+        "expressionText": "%00F26B86-B011-4C93-93AB-F2E71DB3CE3A%"
+      }, {
+        "expressionPropertyList": [
+
+        ],
+        "expressionId": "_aaaaaaa",
+        "expressionText": "0"
+      }, {
+        "expressionPropertyList": [{
+          "classType": "LiveSignal",
+          "settings": {
+
+          },
+          "id": "84A030A6-6AF1-40A0-A975-6861E92434CB",
+          "fieldName": "stylusEvent",
+          "displayName": "stylus event",
+          "style": "sensor",
+          "order": -1
+        }],
+        "expressionId": "_4gcww4ax6",
+        "expressionText": "%84A030A6-6AF1-40A0-A975-6861E92434CB%"
+      }, {
+        "expressionPropertyList": [
+
+        ],
+        "expressionId": "_603xnl6jz",
+        "expressionText": "2"
+      }, {
+        "expressionPropertyList": [{
+          "classType": "LiveSignal",
+          "settings": {
+
+          },
+          "id": "DC15D43B-7357-4B16-A02F-6E44E4112073",
+          "fieldName": "y",
+          "displayName": "stylus y",
+          "style": "sensor",
+          "order": -1
+        }],
+        "expressionId": "_1230c235l",
+        "expressionText": "%DC15D43B-7357-4B16-A02F-6E44E4112073%"
+      }, {
+        "expressionPropertyList": [{
+          "classType": "LiveSignal",
+          "settings": {
+
+          },
+          "id": "6B31F136-C712-493F-A654-BC04686B9458",
+          "fieldName": "x",
+          "displayName": "stylus x",
+          "style": "sensor",
+          "order": -1
+        }],
+        "expressionId": "6BB2EF84-CCC0-4E7A-8907-C112F0870B47",
+        "expressionText": "%6B31F136-C712-493F-A654-BC04686B9458%"
       }],
-      "displayName": "new stroke",
-      "transitionId": "_jsplumb_c_1522525756575",
-      "fieldName": "newStroke",
-      "methodId": "_pbx7kw7a6"
-    }],
-    "id": "0",
-    "states": [{
-      "stateId": "_4ef5vl65d",
-      "x": 100,
-      "y": 100,
-      "stateName": "state 2"
-    }, {
-      "stateId": "_y5p6lqn2a",
-      "x": 88.991470336914062,
-      "y": 336.98861694335938,
-      "stateName": "setup"
-    }, {
-      "stateId": "_jupcoyws8",
-      "x": 1018,
-      "y": 221,
-      "stateName": "die"
-    }, {
-      "stateId": "_s865vlzry",
-      "x": 455.99429321289062,
-      "y": 291.98861694335938,
-      "stateName": "state 1"
-    }],
-    "expressions": [{
-      "expressionPropertyList": [{
-        "classType": "LiveSignal",
-        "settings": {
-
-        },
-        "id": "401AF8DB-6EBD-4077-B0C1-98DF83763222",
-        "fieldName": "y",
-        "displayName": "stylus y",
-        "style": "sensor",
-        "order": -1
+      "auto_spawn_num": 1,
+      "active_status": true,
+      "transitions": [{
+        "name": "setup",
+        "conditionId": "_xxxxxxx",
+        "transitionId": "_jsplumb_c_1495732354038",
+        "fromStateId": "_y5p6lqn2a",
+        "toStateId": "_s865vlzry"
+      }, {
+        "name": "state 1",
+        "conditionId": "_o6vowx7nr",
+        "transitionId": "_jsplumb_c_1522525756575",
+        "fromStateId": "_s865vlzry",
+        "toStateId": "_s865vlzry"
       }],
-      "expressionId": "E6C0B6EC-E0AB-4AC8-BC51-E7A4B17170E4",
-      "expressionText": "%401AF8DB-6EBD-4077-B0C1-98DF83763222%"
-    }, {
-      "expressionPropertyList": [{
-        "classType": "LiveSignal",
-        "settings": {
-
-        },
-        "id": "D4725095-1F47-4033-83D7-A0FE51C9D89F",
-        "fieldName": "x",
-        "displayName": "stylus x",
-        "style": "sensor",
-        "order": -1
+      "mappings": [{
+        "relativePropertyName": "x",
+        "stateId": "_s865vlzry",
+        "mappingId": "_16y80ecqx",
+        "expressionId": "_23v0ckj5l",
+        "constraintType": "passive",
+        "relativePropertyFieldName": "x"
+      }, {
+        "relativePropertyName": "y",
+        "stateId": "_s865vlzry",
+        "mappingId": "_543y80ecsf",
+        "expressionId": "_1230c235l",
+        "constraintType": "passive",
+        "relativePropertyFieldName": "y"
       }],
-      "expressionId": "6AC22D6D-DE6E-43FD-AC1C-438AFF7CB6BB",
-      "expressionText": "%D4725095-1F47-4033-83D7-A0FE51C9D89F%"
-    }, {
-      "expressionPropertyList": [{
-        "classType": "LiveSignal",
-        "settings": {
-
-        },
-        "id": "80684C83-9B16-4B7B-9720-5D1FE7DFFA7C",
-        "fieldName": "y",
-        "displayName": "stylus y",
-        "style": "sensor",
-        "order": -1
-      }],
-      "expressionId": "4B96CBBE-A592-4839-953C-A0FCCBEF3AE1",
-      "expressionText": "%80684C83-9B16-4B7B-9720-5D1FE7DFFA7C%"
-    }, {
-      "expressionPropertyList": [
-
-      ],
-      "expressionId": "_bbbbbbb",
-      "expressionText": "0"
-    }, {
-      "expressionPropertyList": [{
-        "classType": "LiveSignal",
-        "settings": {
-
-        },
-        "id": "00F26B86-B011-4C93-93AB-F2E71DB3CE3A",
-        "fieldName": "x",
-        "displayName": "stylus x",
-        "style": "sensor",
-        "order": -1
-      }],
-      "expressionId": "_23v0ckj5l",
-      "expressionText": "%00F26B86-B011-4C93-93AB-F2E71DB3CE3A%"
-    }, {
-      "expressionPropertyList": [
-
-      ],
-      "expressionId": "_aaaaaaa",
-      "expressionText": "0"
-    }, {
-      "expressionPropertyList": [{
-        "classType": "LiveSignal",
-        "settings": {
-
-        },
-        "id": "84A030A6-6AF1-40A0-A975-6861E92434CB",
-        "fieldName": "stylusEvent",
-        "displayName": "stylus event",
-        "style": "sensor",
-        "order": -1
-      }],
-      "expressionId": "_4gcww4ax6",
-      "expressionText": "%84A030A6-6AF1-40A0-A975-6861E92434CB%"
-    }, {
-      "expressionPropertyList": [
-
-      ],
-      "expressionId": "_603xnl6jz",
-      "expressionText": "2"
-    }, {
-      "expressionPropertyList": [{
-        "classType": "LiveSignal",
-        "settings": {
-
-        },
-        "id": "DC15D43B-7357-4B16-A02F-6E44E4112073",
-        "fieldName": "y",
-        "displayName": "stylus y",
-        "style": "sensor",
-        "order": -1
-      }],
-      "expressionId": "_1230c235l",
-      "expressionText": "%DC15D43B-7357-4B16-A02F-6E44E4112073%"
-    }, {
-      "expressionPropertyList": [{
-        "classType": "LiveSignal",
-        "settings": {
-
-        },
-        "id": "6B31F136-C712-493F-A654-BC04686B9458",
-        "fieldName": "x",
-        "displayName": "stylus x",
-        "style": "sensor",
-        "order": -1
-      }],
-      "expressionId": "6BB2EF84-CCC0-4E7A-8907-C112F0870B47",
-      "expressionText": "%6B31F136-C712-493F-A654-BC04686B9458%"
-    }],
-    "auto_spawn_num": 1,
-    "active_status": true,
-    "transitions": [{
-      "name": "setup",
-      "conditionId": "_xxxxxxx",
-      "transitionId": "_jsplumb_c_1495732354038",
-      "fromStateId": "_y5p6lqn2a",
-      "toStateId": "_s865vlzry"
-    }, {
-      "name": "state 1",
-      "conditionId": "_o6vowx7nr",
-      "transitionId": "_jsplumb_c_1522525756575",
-      "fromStateId": "_s865vlzry",
-      "toStateId": "_s865vlzry"
-    }],
-    "mappings": [{
-      "relativePropertyName": "x",
-      "stateId": "_s865vlzry",
-      "mappingId": "_16y80ecqx",
-      "expressionId": "_23v0ckj5l",
-      "constraintType": "passive",
-      "relativePropertyFieldName": "x"
-    }, {
-      "relativePropertyName": "y",
-      "stateId": "_s865vlzry",
-      "mappingId": "_543y80ecsf",
-      "expressionId": "_1230c235l",
-      "constraintType": "passive",
-      "relativePropertyFieldName": "y"
-    }],
-    "conditions": [{
-      "referenceBId": "_603xnl6jz",
-      "referenceAId": "_4gcww4ax6",
-      "conditionId": "_o6vowx7nr",
-      "relational": "=="
-    }, {
-      "referenceBId": "_bbbbbbb",
-      "referenceAId": "_aaaaaaa",
-      "conditionId": "_xxxxxxx",
-      "relational": "=="
-    }]
-  }],
+      "conditions": [{
+        "referenceBId": "_603xnl6jz",
+        "referenceAId": "_4gcww4ax6",
+        "conditionId": "_o6vowx7nr",
+        "relational": "=="
+      }, {
+        "referenceBId": "_bbbbbbb",
+        "referenceAId": "_aaaaaaa",
+        "conditionId": "_xxxxxxx",
+        "relational": "=="
+      }]
+    }
+  ],
   "collections": [{
     "name": "default",
     "classType": "generator",

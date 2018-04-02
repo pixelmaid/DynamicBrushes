@@ -23,11 +23,12 @@ class Signal:Observable<Float>{
     internal var prevV:Float = 0;
 
     internal let maxVals = 100
-    
+    var behaviorId:String! = nil
+
     static let stylusUp:Float = 0.0;
     static let stylusMove:Float = 1.0;
     static let stylusDown:Float = 2.0;
-    
+
     var dataSubscribers = [String:Observable<Float>]();
     var id:String
     //    var param = Observable<Float>(1.0);
@@ -43,6 +44,13 @@ class Signal:Observable<Float>{
     func reset(){
         self.setIndex(i: 0)
     }
+    
+    
+    func setBehaviorId(id:String){
+        self.behaviorId = id;
+    }
+    
+    
     
     func incrementAndChange(v:Float){
         self.incrementIndex();
@@ -101,6 +109,10 @@ class Signal:Observable<Float>{
       
     }
     
+    func addValueFor(behaviorId:String, brushId:String, v:Float){
+        self.addValue(v: v);
+    }
+    
     func incrementIndex(){
         self.setIndex(i: self.index+1);
     }
@@ -136,6 +148,7 @@ class TimeSignal:Signal{
 }
 
 
+
 class LiveSignal:Signal{
     required init(id: String, fieldName: String, displayName: String, collectionId: String, style: String, settings: JSON) {
         super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings: settings);
@@ -153,6 +166,56 @@ class LiveSignal:Signal{
     }
 }
 
+class BrushSignal:LiveSignal{
+    var signalMatrix = [String:[String:[Float]]]();
+    
+    override func addValue(v: Float) {
+        if self.signalBuffer.count > self.maxVals {
+            self.signalBuffer.removeFirst(1)
+        }
+        super.addValue(v: v);
+        self.didChange.raise(data: (self.id, v, v));
+    }
+    
+    override func addValueFor(behaviorId:String,brushId:String,v:Float){
+       if(signalMatrix[behaviorId] == nil){
+            signalMatrix[behaviorId] = [String:[Float]]();
+        }
+        if( signalMatrix[behaviorId]![brushId] == nil){
+            signalMatrix[behaviorId]![brushId] = [Float]();
+
+        }
+        signalMatrix[behaviorId]![brushId]!.append(v);
+        if signalMatrix[behaviorId]![brushId]!.count > self.maxVals {
+            signalMatrix[behaviorId]![brushId]!.removeFirst(1);
+            
+        }
+        self.didChange.raise(data: (self.id, v, v));
+        
+    }
+    
+    override func get(id:String?)->Float{
+     
+        guard behaviorId != nil else{
+            #if DEBUG
+                print("===========ERROR ATTEMPTED TO ACCESS BRUSH SIGNAL WHEN NO BEHAVIOR ID SET========")
+                #endif
+            return 0;
+        }
+        guard id != nil else{
+            #if DEBUG
+                print("===========ERROR ATTEMPTED TO ACCESS BRUSH SIGNAL WHEN NO BRUSH ID SET========")
+            #endif
+            return 0;
+        }
+    
+        let val = signalMatrix[behaviorId]![id!]!.last!;
+        print("calculate brush prop",self.fieldName,val);
+        return val;
+    }
+    
+    
+}
 
 class Recording:Signal{
 

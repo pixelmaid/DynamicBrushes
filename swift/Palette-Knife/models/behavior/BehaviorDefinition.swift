@@ -147,7 +147,15 @@ class BehaviorDefinition {
                 argumentData = ExpressionArgument(expressionId: expressionId!, fieldName:argFieldName, displayName: argDisplayName, defaultVal: defaultVal);
             }
             else{
-                argumentData = DropdownArgument(fieldName:argFieldName, displayName: argDisplayName, defaultVal: defaultVal)
+                let dropDownArguments:[[String:String]];
+                if(fieldName == "spawn"){
+                    dropDownArguments = BehaviorManager.getBehaviorsAsArgumentList();
+                }
+                //TODO: setup dropdown args for other types beside spawn
+                else{
+                    dropDownArguments = [[String:String]]()
+                }
+                argumentData = DropdownArgument(fieldName:argFieldName, displayName: argDisplayName, defaultVal: defaultVal,options:dropDownArguments)
             }
             arguments.append(argumentData);
         }
@@ -336,6 +344,22 @@ class BehaviorDefinition {
         print("===========ERROR ATTEMPTED TO CHANGE RELATIONAL FOR CONDITION THAT DOES NOT EXIST=====================")
 
         throw BehaviorError.conditionDoesNotExist
+    }
+    
+    func changeMethodDropdownArgument(methodId:String,fieldName:String,val:String) throws{
+        if(methods[methodId] != nil){
+            let method = methods[methodId]!
+            for a in method.arguments{
+                if(a.fieldName == fieldName){
+                    a.defaultVal = val;
+                }
+            }
+            return;
+        }
+        print("===========ERROR ATTEMPTED TO CHANGE DROPDOWN FOR METHOD THAT DOES NOT EXIST=====================")
+        
+        throw BehaviorError.methodDoesNotExist;
+    
     }
     
     func addState(stateId:String, stateName:String, stateX:Float, stateY:Float){
@@ -613,7 +637,7 @@ class BehaviorDefinition {
             operands[observableId] = operand;
             RequestHandler.registerObservableTarget(observableId: observableId, behaviorId: self.id)
         }
-        let expression = Expression(id:name,subscriberId:id,brushIndex:targetBrush.index,operandList: operands, text: expressionText);
+        let expression = Expression(id:name,brushId:id,behaviorId:self.id,operandList: operands, text: expressionText);
         
         self.storedExpressions[id]![name] = expression;
     }
@@ -634,6 +658,16 @@ class BehaviorDefinition {
     func addBrush(targetBrush:Brush){
         self.brushInstances.append(targetBrush);
         _ = targetBrush.dieEvent.addHandler(target: self, handler: BehaviorDefinition.brushDeath, key: targetBrush.id)
+    }
+    
+    func getBrushById(id:String)->Brush?{
+        for i in 0..<brushInstances.count{
+            let b = brushInstances[i];
+            if (b.id == id) {
+                return b;
+            }
+        }
+        return nil;
     }
     
     func brushDeath(data:String,key:String){
@@ -721,6 +755,7 @@ class BehaviorDefinition {
     }
     
     func initBrushBehavior(targetBrush:Brush){
+        _ = targetBrush.signalEvent.addHandler(target: brushManager, handler:BrushSignalManager.brushUpdateHandler, key: "brush_update");
         let id = targetBrush.id
         storedConditions[id] = [String:Condition]();
         storedExpressions[id] = [String:Expression]();
@@ -770,7 +805,7 @@ class BehaviorDefinition {
                     expression = self.storedExpressions[targetBrush.id]![expressionId!]!;
                 }
                 else{
-                     expression = DropdownExpression(id: NSUUID().uuidString, subscriberId: targetBrush.id, brushIndex: targetBrush.index, operandList: [:], text: arguments[i].defaultVal);
+                    expression = DropdownExpression(id: NSUUID().uuidString, brushId:targetBrush.id, behaviorId:self.id, operandList: [:], text: arguments[i].defaultVal);
                 }
                 initializedArguments.append(expression);
 
@@ -799,7 +834,7 @@ class BehaviorDefinition {
 }
 
 class ArgumentData{
-    let defaultVal:String;
+    var defaultVal:String;
     let fieldName:String;
     let displayName:String;
     init(fieldName:String,displayName:String, defaultVal:String){
@@ -829,11 +864,16 @@ class ArgumentData{
 
 class DropdownArgument:ArgumentData{
     let dropdownOptions = [(id:String,displayName:String)]();
-    var selectedDropdown:(id:String,displayName:String)? = nil;
+    let options:[[String:String]]
     
+    init(fieldName: String, displayName: String, defaultVal: String, options:[[String:String]]) {
+        self.options = options;
+        super.init(fieldName: fieldName, displayName: displayName, defaultVal: defaultVal)
+        
+    }
     override public func testSelected(id:String)->Bool{
-        if selectedDropdown != nil{
-            if(selectedDropdown!.id == id){
+        if defaultVal != "" {
+            if(defaultVal == id){
                 return true;
             }
         }
@@ -845,6 +885,13 @@ class DropdownArgument:ArgumentData{
         argumentJSON["isExpression"] = JSON(false);
         argumentJSON["isDropdown"] = JSON(true);
         argumentJSON["expressionId"] = JSON.null;
+        argumentJSON["options"] = JSON(options);
+        if defaultVal != ""{
+            argumentJSON["default"] = JSON(defaultVal);
+        }
+        else{
+            argumentJSON["default"] = JSON.null;
+        }
         return argumentJSON;
     }
 

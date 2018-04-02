@@ -13,14 +13,14 @@ class Expression:Observable<Float>{
     var text:String;
     var id: String;
     var eventHandlers = [Disposable]();
-    var brushIndex:Observable<Float>
-    var subscriberId:String
-    init(id:String,subscriberId:String,brushIndex:Observable<Float>,operandList:[String:Observable<Float>],text:String){
+    let brushId:String;
+    let behaviorId:String;
+    init(id:String,brushId:String,behaviorId:String,operandList:[String:Observable<Float>],text:String){
         self.id = id;
         self.text = text;
         self.operandList = operandList;
-        self.brushIndex = brushIndex;
-        self.subscriberId = subscriberId;
+        self.brushId = brushId;
+        self.behaviorId = behaviorId;
         super.init(0);
         var hasLive = false;
         for (_,value) in self.operandList{
@@ -28,7 +28,6 @@ class Expression:Observable<Float>{
             if(!hasLive){
                 hasLive = value.isLive()
             }
-            value.subscribe(id: self.id,brushId:subscriberId,brushIndex:brushIndex);
             let operandKey = NSUUID().uuidString;
             if(value.isLive() == true){
                 let handler = value.didChange.addHandler(target: self, handler: Expression.setHandler,key:operandKey)
@@ -52,7 +51,6 @@ class Expression:Observable<Float>{
     
     func calculateValue()->Float?{
         var valueString = "";
-        print("text",text);
         if(text.isEmpty){
             print("==========WARNING, NO TEXT IN EXPRESSION TEXT FIELD================",self.id);
             
@@ -63,14 +61,11 @@ class Expression:Observable<Float>{
         
         
         for (key,value) in self.operandList{
-            
-            currentVals[key] = value.get(id:subscriberId);
+            (value as! Signal).setBehaviorId(id: self.behaviorId);
+            currentVals[key] = value.get(id:brushId);
             
         }
-        #if DEBUG
-            //print("expression values",brushIndex.get(id:nil),currentVals);
-        #endif
-        
+       
         for i in 0..<stringArr.count{
             let s = stringArr[i];
             if let val = currentVals[s] {
@@ -92,7 +87,7 @@ class Expression:Observable<Float>{
         if let result = expr.expressionValue(with: nil, context: nil) as? Float {
             #if DEBUG
 
-            print("expression success",result)
+           // print("expression success",result)
             #endif
             return result;
 
@@ -134,7 +129,7 @@ class Expression:Observable<Float>{
 class DropdownExpression:Expression{
  
     func getSelectedId()->String{
-        return "foo";
+        return self.text;
     }
     
 }

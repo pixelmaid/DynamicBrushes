@@ -2,7 +2,7 @@
 	"displayName": "spawn",
 	"fieldName": "spawn",
 	"argumentList": [{
-		"displayName": "behavior name",
+		"displayName": "behavior",
 		"fieldName": "behavior",
 		"isExpression": false,
 		"isDropdown": true,

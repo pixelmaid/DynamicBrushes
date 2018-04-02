@@ -430,66 +430,7 @@
     {
       "name" : "stylus",
       "classType" : "live",
-      "data" : [
-        [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ],
-        [
-          0
-        ],
-        [
-          0
-        ],
-        [
-          0
-        ],
-        [
-          0
-        ],
-        [
-          0
-        ],
-        [
-          0
-        ],
-        [
-          0
-        ],
-        [
-          0
-        ],
-        [
-          0
-        ],
-        [
-          0
-        ],
-        [
-          0
-        ],
-        [
-          0
-        ],
-        [
-
-        ],
-        [
-          0
-        ]
-      ],
+      "data" : [],
       "id" : "stylus",
       "signals" : [
         {
@@ -689,6 +630,27 @@
         "y" : [
 
         ]
+      }
+    },
+    {
+      "name" : "brush",
+      "classType" : "brush",
+      "data" : [],
+      "id" : "brush",
+      "signals" : [
+        {
+          "displayName" : "brush delta y",
+          "classType" : "BrushSignal",
+          "settings" : {
+
+          },
+          "style" : "brush",
+          "fieldName" : "dy",
+          "order" : 4
+        }
+      ],
+      "initializedSignals" : {
+        "dy" : []
       }
     }
   ]

@@ -166,6 +166,9 @@ h1{
   text-align: right;
 
 }
+.state.active{
+ background-color:  #302261;
+}
 
 .setup .state, .die .state {
   width: 40px;
@@ -228,6 +231,15 @@ h1{
 .selectBoxInput{
   letter-spacing:0;
   width:70px !important;
+}
+
+.methodSelect .selectBoxInput {
+    width: 100px !important;
+}
+
+.methodSelect.selectBoxNumber {
+    width: 80px;
+    margin-top: 7px;
 }
 
 .relative_expression{

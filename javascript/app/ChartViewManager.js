@@ -347,7 +347,9 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                     this.onMethodAdded(behaviorId, transitionId, methodId, fieldName, displayName, argumentList);
                 }.bind(this));
 
-              
+              chartView.addListener("ON_METHOD_DROPDOWN_CHANGED", function(behaviorId, methodId, fieldName, val) {
+                    this.onMethodDropdownChanged(behaviorId, methodId, fieldName, val);
+                }.bind(this));
 
                 chartView.addListener("ON_METHOD_REMOVED", function(behaviorId, methodId) {
                     this.onMethodRemoved(behaviorId, methodId);
@@ -688,6 +690,20 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
 
             }
 
+            onMethodDropdownChanged(behaviorId, methodId, fieldName, val){
+                 var transmit_data = {
+                    behaviorId: behaviorId,
+                    methodId: methodId,
+                    fieldName: fieldName,
+                    val: val,
+                    type: "method_dropdown_changed"
+                };
+                this.lastAuthoringRequest = {
+                    data: transmit_data
+                };
+
+                this.trigger("ON_AUTHORING_EVENT", [transmit_data]);
+            }
          
             onConditionRelationalChanged(behaviorId, conditionId, relational){
                 var transmit_data = {

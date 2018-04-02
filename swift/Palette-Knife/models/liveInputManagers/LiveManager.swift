@@ -1,5 +1,5 @@
 //
-//  StylusManager.swift
+// LiveManager.swift
 //  DynamicBrushes
 //
 //  Created by JENNIFER MARY JACOBS on 1/30/18.
@@ -10,24 +10,28 @@ import Foundation
 import SwiftyJSON
 
 
-class LiveManager{
-    internal var liveCollections = [String:LiveCollection]();
+
+class SignalCollectionManager{
+    internal var collections = [String:LiveCollection]();
     
     public func registerCollection(id:String, collection:LiveCollection){
-        self.liveCollections[id] = collection;
+        self.collections[id] = collection;
     }
+}
+class LiveManager:SignalCollectionManager{
+  
 }
 
 final class MicManager:LiveManager{
     public func setFrequency(val:Double) {
-        for (_,micCollection) in self.liveCollections{
+        for (_,micCollection) in self.collections{
             (micCollection as! MicCollection).setFrequency(val: Float(val));
         }
     }
     public func setAmplitude(val:Double) {
         //        print("@ amp inside manager is ", val)
         
-        for (_,micCollection) in self.liveCollections{
+        for (_,micCollection) in self.collections{
             (micCollection as! MicCollection).setAmplitude(val: Float(val));
         }
     }
@@ -36,19 +40,19 @@ final class MicManager:LiveManager{
 final class UIManager:LiveManager{
     
     public func setDiameter(val:Float){
-        for (_,uiCollection) in self.liveCollections{
+        for (_,uiCollection) in self.collections{
             (uiCollection as! UICollection).setDiameter(val: val);
         }
     }
     
     public func setAlpha(val:Float){
-        for (_,uiCollection) in self.liveCollections{
+        for (_,uiCollection) in self.collections{
             (uiCollection as! UICollection).setAlpha(val: val);
         }
     }
     
     public func setColor(color:UIColor){
-        for (_,uiCollection) in self.liveCollections{
+        for (_,uiCollection) in self.collections{
             (uiCollection as! UICollection).setColor(color: color);
         }
         
@@ -375,11 +379,11 @@ final class StylusManager:LiveManager{
             //let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
             
             
-            for (_,stylusCollection) in self.liveCollections{
+            for (_,stylusCollection) in self.collections{
                 
                 (stylusCollection as! StylusCollection).onStylusMove(x: x, y: y, force: force, angle: angle)
             }
-            let sample = self.liveCollections["stylus"]!.exportData();
+            let sample = self.collections["stylus"]!.exportData();
             currentRecordingPackage.addProtoSample(data:sample);
         }
     }
@@ -389,10 +393,10 @@ final class StylusManager:LiveManager{
             //let currentTime = Date();
             //let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
             
-            for (_,stylusCollection) in self.liveCollections{
+            for (_,stylusCollection) in self.collections{
                 (stylusCollection as! StylusCollection).onStylusUp(x: x, y:y);
             }
-            let sample = self.liveCollections["stylus"]!.exportData();
+            let sample = self.collections["stylus"]!.exportData();
             currentRecordingPackage.addProtoSample(data:sample);
             _ = self.endRecording();
             
@@ -407,11 +411,11 @@ final class StylusManager:LiveManager{
             _ = beginRecording(start:currentStartDate);
             
             
-            for (_,stylusCollection) in self.liveCollections{
+            for (_,stylusCollection) in self.collections{
                 (stylusCollection as! StylusCollection).onStylusDown(x: x, y: y, force: force, angle: angle);
             }
             //TODO: add guard statement here
-            let sample = self.liveCollections["stylus"]!.exportData();
+            let sample = self.collections["stylus"]!.exportData();
             //print("stylus down sample",sample);
             currentRecordingPackage.addProtoSample(data:sample);
             
@@ -520,7 +524,7 @@ class StylusDataConsumer{
         let stylusManager = liveManager as! StylusManager;
         switch(sample["stylusEvent"].floatValue){
         case StylusManager.stylusUp:
-            for (_,stylusCollection) in liveManager.liveCollections{
+            for (_,stylusCollection) in liveManager.collections{
                 (stylusCollection as! StylusCollection).onStylusUp(x: sample["x"].floatValue, y: sample["y"].floatValue);
             }
             stylusManager.stylusDataEvent.raise(data:("STYLUS_UP", [sample["x"].floatValue, sample["y"].floatValue]))
@@ -529,7 +533,7 @@ class StylusDataConsumer{
             stylusManager.stylusDataEvent.raise(data:("STYLUS_DOWN", [sample["x"].floatValue, sample["y"].floatValue]))
             stylusManager.layerEvent.raise(data:("REQUEST_CORRECT_LAYER",sample["targetLayer"].stringValue));
             
-            for (_,stylusCollection) in stylusManager.liveCollections{
+            for (_,stylusCollection) in stylusManager.collections{
                 (stylusCollection as! StylusCollection).onStylusDown(x: sample["x"].floatValue, y: sample["y"].floatValue, force: sample["force"].floatValue, angle: sample["angle"].floatValue);
             }
             
@@ -537,7 +541,7 @@ class StylusDataConsumer{
             break;
         case StylusManager.stylusMove:
             stylusManager.stylusDataEvent.raise(data:("STYLUS_MOVE", [sample["x"].floatValue, sample["y"].floatValue]))
-            for (_,stylusCollection) in stylusManager.liveCollections{
+            for (_,stylusCollection) in stylusManager.collections{
                 (stylusCollection as! StylusCollection).onStylusMove(x: sample["x"].floatValue, y: sample["y"].floatValue, force: sample["force"].floatValue, angle: sample["angle"].floatValue);
             }
             break;
