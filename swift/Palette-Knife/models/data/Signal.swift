@@ -31,7 +31,7 @@ class Signal:Observable<Float>{
 
     var dataSubscribers = [String:Observable<Float>]();
     var id:String
-    //    var param = Observable<Float>(1.0);
+
     required init(id:String,fieldName:String, displayName:String, collectionId:String, style:String, settings:JSON){
         self.id = id;
         self.fieldName = fieldName;
@@ -62,14 +62,12 @@ class Signal:Observable<Float>{
         self.order = i;
     }
     
-    //TODO: will need to change this depending on external datasets/ live data;
     func cloneRawData(protoData:[Float]){
         self.signalBuffer = protoData;
 
     }
     
     override func get(id:String?) -> Float {
-      //  print("target index",self.id,self.fieldName,index,signalBuffer.count);
         let v:Float;
         v = signalBuffer[self.index];
 
@@ -210,7 +208,6 @@ class BrushSignal:LiveSignal{
         }
     
         let val = signalMatrix[behaviorId]![id!]!.last!;
-        print("calculate brush prop",self.fieldName,val);
         return val;
     }
     

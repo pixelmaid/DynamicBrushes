@@ -311,14 +311,17 @@ class Brush: TimeSeries, Hashable{
     }
     
     func polarPositionChange(data:(String,(Float,Float),(Float,Float)),key:String){
-        print("polar change called");
+        
+          #if DEBUG
+            //print("polar change called");
+        #endif
         if(!self.undergoing_transition){
             let t =  MathUtil.map(value: self.polarPosition.y.get(id: nil),low1: 0,high1: 100,low2: 0,high2: 360);
             let cartPos = MathUtil.polarToCart(r: self.polarPosition.x.get(id: nil),theta:t);
-           // self.position.setSilent(newValue: cartPos)
             let p = Point(x:cartPos.0+self.origin.x.get(id: nil),y:cartPos.1+self.origin.y.get(id: nil));
             let _delta = p.sub(point: self.bPosition)
-            print("polar change theta:",t,"rad:",self.polarPosition.x.get(id: nil),"cart point:",p.x.get(id:nil),p.y.get(id:nil),"delta",_delta.x.get(id:nil),_delta.y.get(id:nil))
+            
+            //print("polar change theta:",t,"rad:",self.polarPosition.x.get(id: nil),"cart point:",p.x.get(id:nil),p.y.get(id:nil),"delta",_delta.x.get(id:nil),_delta.y.get(id:nil))
 
             self.calculateProperties(_delta:_delta)
             
@@ -535,8 +538,10 @@ class Brush: TimeSeries, Hashable{
         
         let socketRequest = Request(target: "socket", action: "send_inspector_data", data: transmitData, requester: RequestHandler.sharedInstance)
         RequestHandler.addRequest(requestData: socketRequest)
-        
-        print("transitioning from state:\(currentState) to state: \(transition.toStateId)");
+         #if DEBUG
+        //print("transitioning from state:\(currentState) to state: \(transition.toStateId)");
+        #endif
+
         if(states[currentState] != nil){
             constraint_mappings =  states[currentState]!.constraint_mappings
             for (_, value) in constraint_mappings{
@@ -594,7 +599,7 @@ class Brush: TimeSeries, Hashable{
             let methodName = method.fieldName;
             
             #if DEBUG
-                print("executing method:\(method.fieldName,self.id,self.name,method.arguments)");
+               // print("executing method:\(method.fieldName,self.id,self.name,method.arguments)");
             #endif
             switch (methodName){
             case "newStroke",
@@ -640,7 +645,7 @@ class Brush: TimeSeries, Hashable{
     
     override func startInterval(){
         #if DEBUG
-            print("start interval")
+           // print("start interval")
         #endif
         intervalTimer  = Timer.scheduledTimer(timeInterval: 0.0001, target: self, selector: #selector(Brush.timerIntervalCallback), userInfo: nil, repeats: true)
         
@@ -731,7 +736,7 @@ class Brush: TimeSeries, Hashable{
     
     func setConstraint(constraint:Constraint){
         #if DEBUG
-           print("calling set constraint on",  constraint.relativeProperty.name,constraint.relativeProperty,constraint.reference.get(id: self.id))
+          // print("calling set constraint on",  constraint.relativeProperty.name,constraint.relativeProperty,constraint.reference.get(id: self.id))
         #endif
         constraint.relativeProperty.set(newValue: constraint.reference.get(id: self.id));
         
@@ -742,11 +747,9 @@ class Brush: TimeSeries, Hashable{
     func addStateTransition(id:String, name:String, condition:Condition, fromStateId: String, toStateId:String){
         
         let transition:StateTransition
-        print("states",self.states);
         let state = self.states[fromStateId]
         transition = state!.addStateTransitionMapping(id: id,name:name,condition: condition, toStateId:toStateId);
         self.transitions[id] = transition;
-        print("% added transition with id ", id)
         let transitionEvent = transition.didTrigger.addHandler(target: self, handler: Brush.stateTransitionHandler, key: id);
         self.transitionEvents.append(transitionEvent);
     }
@@ -757,8 +760,7 @@ class Brush: TimeSeries, Hashable{
     }
     
     func addMethod(transitionId:String, methodId:String, fieldName:String, arguments:[Expression]){
-        let transition = transitions[transitionId]
-        print("% transitions are ", transitions.first?.key)
+        let transition = transitions[transitionId];
 
         if (transition != nil) {
             (transition!).addMethod(id: methodId, fieldName:fieldName, arguments:arguments)
@@ -835,9 +837,7 @@ class Brush: TimeSeries, Hashable{
                 #endif
                 child.level.set(newValue: Float(self.level.get(id: nil)+1));
                 self.initEvent.raise(data: (child,"brush_init"));
-               /* #if DEBUG
-                    print("spawn called")
-                #endif*/
+               
                 behavior.initBrushBehavior(targetBrush: child);
                 _ = child.dieEvent.addHandler(target: self, handler: Brush.childDieHandler, key: childDieHandlerKey)
             }
@@ -909,7 +909,7 @@ class Brush: TimeSeries, Hashable{
     override func destroy() {
         self.stopInterval();
         #if DEBUG
-            //print("destroying brush: \(self.id)");
+            print("destroying brush: \(self.id)");
         #endif
         currentCanvas!.currentDrawing!.retireCurrentStrokes(parentID: self.id)
         self.clearBehavior();

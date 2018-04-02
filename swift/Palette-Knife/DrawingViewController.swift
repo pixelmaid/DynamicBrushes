@@ -165,7 +165,6 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         case "VIS_STROKE_DOWN":
             break;
         case "DELETE_FIRST":
-            print("% called delete first" )
             recordingViewController?.deleteFirstCell()
         default:
             break;
@@ -174,7 +173,6 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     }
     
     func toolEventHandler(data: (String), key: String){
-        print("tool event handler",data)
         switch(data){
         case "UNDO":
             //layerContainerView.activeLayer!.undo();
@@ -254,11 +252,9 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
             uiManager.setAlpha(val: (toolbarController?.alphaSlider.value)!);
             break;
         case "MIC_ON":
-            print("mic on dvc @")
             startRecording()
             break
         case "MIC_OFF":
-            print("mic off dvc @")
             finishRecording(success: true)
             break
         default:
@@ -418,7 +414,6 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
             if frequency > high_freq {high_freq = frequency}
             amplitude = MathUtil.map(value:amplitude,low1:0,high1:high_amp,low2:0,high2:100)
             frequency = MathUtil.map(value:frequency,low1:0,high1:high_freq,low2:0,high2:100)
-            print("sending amp, freq ", amplitude, frequency)
             micManager.setFrequency(val: Double(frequency))
             micManager.setAmplitude(val: Double(amplitude)) //sorry for all the conversions lol
         }
@@ -765,7 +760,6 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
                 uploadData["filename"] = JSON("saved_files/"+artistName!+prefix+filename+"/"+s+".strokedata")
                 let path = documentDirectory.appending("/"+s+".strokedata")
                 uploadData["path"] = JSON(path)
-                print("stroke data upload path",path);
                 uploadData["targetFolder"] = JSON("saved_files/"+artistName!+prefix)
                 let uploadRequest = Request(target: "storage", action: "upload_image", data:uploadData, requester: self)
                 RequestHandler.addRequest(requestData:uploadRequest);
@@ -915,7 +909,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     func handleExportRequest(data:(String,UIImage?),key:String) {
         let contentToShare = data.1;
         #if DEBUG
-            print("handle export request",contentToShare as Any)
+           // print("handle export request",contentToShare as Any)
         #endif
         layerContainerView.exportEvent.removeHandler(key: exportKey);
         if(contentToShare != nil){
@@ -925,7 +919,6 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
             let pngSmallImage = UIImage(data: pngImageData!)
             UIImageWriteToSavedPhotosAlbum(pngSmallImage!, self, nil, nil)
             let svg = (currentCanvas?.currentDrawing?.getSVG())! as NSString;
-            print("svg=",svg);
             let svg_data = svg.data(using: String.Encoding.utf8.rawValue)!
             let activityViewController = UIActivityViewController(activityItems: [svg_data], applicationActivities: nil)
             activityViewController.popoverPresentationController?.sourceView = self.view // so that iPads won't crash
@@ -1082,9 +1075,6 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     
     //from Requester protocol. Handles result of request
     internal func processRequest(data: (String, JSON?)) {
-        #if DEBUG
-            //print("process request",data.0)
-        #endif
         switch(data.0){
             
         case "disconnected":

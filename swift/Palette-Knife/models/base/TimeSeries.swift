@@ -45,7 +45,7 @@ class TimeSeries: Emitter{
     
     func startInterval(){
         #if DEBUG
-            print("start interval")
+           // print("start interval")
         #endif
         intervalTimer  = Timer.scheduledTimer(timeInterval: 0.0001, target: self, selector: #selector(TimeSeries.timerIntervalCallback), userInfo: nil, repeats: true)
         
@@ -62,7 +62,7 @@ class TimeSeries: Emitter{
 
         if(intervalTimer != nil){
             #if DEBUG
-                print("invalidate timer")
+               // print("invalidate timer")
             #endif
          intervalTimer.invalidate();
         }

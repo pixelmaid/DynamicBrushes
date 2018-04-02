@@ -102,7 +102,7 @@ class BehaviorDefinition {
             operandList.append(expressionPropertyList[i]["id"].stringValue);
         }
         #if DEBUG
-            print("expression prop list",expressionPropertyList,operandList);
+           // print("expression prop list",expressionPropertyList,operandList);
         #endif
         
         
@@ -168,8 +168,6 @@ class BehaviorDefinition {
     func parseStateJSON(data:JSON){
         let stateId = data["stateId"].stringValue
         let stateName = data["stateName"].stringValue
-        print("parse state",stateId,stateName);
-
         let stateX = data["x"].floatValue
         let stateY = data["y"].floatValue
         self.addState(stateId: stateId, stateName: stateName, stateX: stateX, stateY: stateY)

@@ -16,7 +16,9 @@ class BrushSignalManager:SignalCollectionManager{
         let behaviorId = data.0;
         let brushId = data.1;
         let deltaStorage = data.2;
+        #if DEBUG
        // print("brush update handler called:",behaviorId,brushId,deltaStorage);
+        #endif
         
         for (_,collection) in self.collections{
             let brushCollection = collection as! BrushCollection
