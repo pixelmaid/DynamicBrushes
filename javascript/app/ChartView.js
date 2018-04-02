@@ -900,12 +900,14 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
             setupReferencesForExpression(parentId,expressionId,expressions){
                 var self = this;
                  let targetExpression = expressions.filter(function(exp){return (exp.expressionId == expressionId);})[0];
+                 if(this.expressions[parentId][expressionId]){
                     var els = this.expressions[parentId][expressionId].updateReferences(targetExpression.expressionText, targetExpression.expressionPropertyList);
                     els.every(function(el) {
                         console.log("el to make draggable", el);
                         self.makeDraggable(el);
                         self.addInspector(el);
                     });
+                }
             }
 
             addOverlayToConnection(transitionData,conditionData) {
