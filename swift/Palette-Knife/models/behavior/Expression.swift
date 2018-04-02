@@ -9,21 +9,22 @@
 import Foundation
 
 class Expression:Observable<Float>{
-    var operandList:[String:Observable<Float>];
+    var observableList:[String:Observable<Float>];
     var text:String;
     var id: String;
     var eventHandlers = [Disposable]();
     let brushId:String;
     let behaviorId:String;
+    static let within:String = "|";
     init(id:String,brushId:String,behaviorId:String,operandList:[String:Observable<Float>],text:String){
         self.id = id;
         self.text = text;
-        self.operandList = operandList;
+        self.observableList = operandList;
         self.brushId = brushId;
         self.behaviorId = behaviorId;
         super.init(0);
         var hasLive = false;
-        for (_,value) in self.operandList{
+        for (_,value) in self.observableList{
             
             if(!hasLive){
                 hasLive = value.isLive()
@@ -58,9 +59,9 @@ class Expression:Observable<Float>{
         }
         let stringArr = text.split{$0 == "%"}.map(String.init);
         var currentVals = [String: Float]();
+      
         
-        
-        for (key,value) in self.operandList{
+        for (key,value) in self.observableList{
             (value as! Signal).setBehaviorId(id: self.behaviorId);
             currentVals[key] = value.get(id:brushId);
             
@@ -118,10 +119,76 @@ class Expression:Observable<Float>{
         for h in eventHandlers{
             h.dispose();
         }
-        self.operandList.removeAll();
+        self.observableList.removeAll();
         super.destroy();
     }
     
+    
+    static func parseForSignalAccessors(expressionString:String,observables:[String:Observable<Float>])->(newString:String,newObservables:[String:Observable<Float>]){
+        var newObservables = [String:Observable<Float>]();
+        var newString = "";
+        var stringArr = expressionString.split{$0 == "%"}.map(String.init);
+        var stringAnalysis = [String]();
+        while stringArr.count > 0{
+            let s = stringArr.removeFirst();
+            if observables[s] != nil {
+                stringAnalysis.append(s);
+                if(stringAnalysis.count == 3){
+                    let oId1 = stringAnalysis[0];
+                    let oId2 = stringAnalysis[1];
+                    let oId3 = stringAnalysis[2];
+                    
+                    let o1 = observables[oId1]!;
+                    let o2 = observables[oId2]!;
+                    let o3 = observables[oId3]!;
+                    
+                    if(o2.isSignalAccessor() && !o1.isSignalAccessor() && !o3.isSignalAccessor()){
+                        (o2 as! SignalAccessor).setReferences(a:o1 as! Signal,b:o3 as! Signal)
+                        newObservables[oId2] = o2;
+                        newString.append("%"+oId2+"%");
+                        stringAnalysis.removeAll();
+
+                    }
+                    else if(stringArr.count>0){
+                        newString.append("%"+oId1+"%")
+                         newObservables[oId1] = o1;
+                        stringAnalysis.removeFirst();
+                    }
+                    else{
+                        newString.append("%"+oId1+"%")
+                        newObservables[oId1] = o1;
+                        stringAnalysis.removeFirst();
+                        
+                        newString.append("%"+oId2+"%")
+                        newObservables[oId2] = o2;
+                        stringAnalysis.removeFirst();
+                        break;
+                    }
+                }
+                else if(stringArr.count == 0){
+                    for j in 0..<stringAnalysis.count{
+                        newString.append("%"+stringAnalysis[j]+"%")
+                        newObservables[stringAnalysis[j]] = observables[stringAnalysis[j]]!
+                    }
+                    stringAnalysis.removeAll();
+                    break;
+                }
+                
+            }
+            else{
+                if(stringArr.count == 0){
+                    for j in 0..<stringAnalysis.count{
+                        newString.append("%"+stringAnalysis[j]+"%")
+                        newObservables[stringAnalysis[j]] = observables[stringAnalysis[j]]!
+                    }
+                    stringAnalysis.removeAll();
+                }
+                newString.append(s);
+            }
+        }
+        
+        return (newString:newString,newObservables:newObservables);
+    }
 
 }
 

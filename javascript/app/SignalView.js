@@ -5,7 +5,7 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
     function($, jqueryui, Handlebars, paletteTemplate, ID, Emitter) {
 
 
-        var live_btn, recordings_btn, datasets_btn, generator_btn, brushes_btn, drawings_btn;
+        var live_btn, recordings_btn, datasets_btn, generator_btn, brushes_btn, drawings_btn, helpers_btn;
 
         var SignalView = class extends Emitter {
 
@@ -22,10 +22,11 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
                 datasets_btn = this.el.find('#datasets');
                 generator_btn = this.el.find('#generators');
                 brushes_btn = this.el.find('#brushes');
+                helpers_btn = this.el.find('#accessors');
                 drawings_btn = this.el.find('#drawings');
                 
 
-                this.btn_list = [live_btn, recordings_btn, datasets_btn, generator_btn, brushes_btn, drawings_btn];
+                this.btn_list = [live_btn, recordings_btn, datasets_btn, generator_btn, brushes_btn, drawings_btn, helpers_btn];
 
                 this.el.droppable({
                     drop: function(event, ui) {
@@ -44,6 +45,7 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
                     if ((currClass === "recordings" && dataClass === "recording") || 
                         (currClass === "datasets" && dataClass === "imported") ||
                         (currClass === "generators" && dataClass === "generator") ||
+                        (currClass === "accessors" && dataClass === "accessor") ||
                         (currClass === "live_input" && dataClass === "live")) {
                         this.updateSelectedPalette(self.model.data[currClass]);
                         console.log("updating palette in ON_DATA_READY");

@@ -39,6 +39,9 @@ define(['emitter', 'app/id', 'app/Emitter', 'app/DatasetLoader'],
           case "drawing":
             this.data["drawings"].items.push(items[0]); 
             break;
+          case "accessor":
+            this.data["accessors"].items.push(items[0]); 
+            break;
         }
 
         console.log("data_loaded",items,this);
@@ -58,7 +61,9 @@ define(['emitter', 'app/id', 'app/Emitter', 'app/DatasetLoader'],
 
           "datasets": { items: [] },
 
-          "drawings": { items: [] }
+          "drawings": { items: [] },
+          
+           "accessors": { items: [] }
 
         };
       }

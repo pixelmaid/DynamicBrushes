@@ -25,7 +25,9 @@ class Observable<T>:Object, DisposableObservable {
     init(_ initialValue: T) {
         value = initialValue
     }
-    
+     func isSignalAccessor()->Bool{
+        return false;
+    }
     func set(newValue: T) {
         let oldValue = value
         value = newValue

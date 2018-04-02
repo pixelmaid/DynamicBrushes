@@ -277,6 +277,24 @@ class SignalCollection: Object{
     
 }
 
+
+class AccessorCollection:SignalCollection{
+    override public func initializeSignalWithId(signalId:String,fieldName:String, displayName:String, settings:JSON, classType:String, style:String, isProto:Bool, order:Int?){
+        let signal:SignalAccessor;
+        switch(fieldName){
+        case "within":
+            signal = Within(id:signalId , fieldName: fieldName, displayName: displayName, collectionId: self.id, style: style, settings:settings);
+            break;
+        default:
+           signal = SignalAccessor(id:signalId , fieldName: fieldName, displayName: displayName, collectionId: self.id, style: style, settings:settings);
+           break;
+        }
+        
+        self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
+        
+    }
+}
+
 class ImportedCollection:SignalCollection{
    
     

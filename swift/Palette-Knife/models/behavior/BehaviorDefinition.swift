@@ -631,12 +631,15 @@ class BehaviorDefinition {
             #if DEBUG
                 print("registering observable target with id:",observableId);
             #endif
-            let operand = self.generateOperand(targetBrush: targetBrush, targetEmitter: nil, propId:observableId);
+            let operand:Observable<Float>;
+            operand = self.generateOperand(targetBrush: targetBrush, targetEmitter: nil, propId:observableId);
+            
             operands[observableId] = operand;
             RequestHandler.registerObservableTarget(observableId: observableId, behaviorId: self.id)
         }
-        let expression = Expression(id:name,brushId:id,behaviorId:self.id,operandList: operands, text: expressionText);
-        
+        let newExpressionData = Expression.parseForSignalAccessors(expressionString: expressionText, observables: operands)
+
+        let expression = Expression(id:name,brushId:id,behaviorId:self.id,operandList: newExpressionData.newObservables, text: newExpressionData.newString);
         self.storedExpressions[id]![name] = expression;
     }
     
@@ -703,7 +706,7 @@ class BehaviorDefinition {
         //reset associated signals
         for (_, expressionList) in self.storedExpressions {
             for (_, expression) in expressionList {
-                for (_, signal) in expression.operandList {
+                for (_, signal) in expression.observableList {
                     let signal = signal as! Signal
                     signal.reset()
                 }

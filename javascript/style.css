@@ -167,7 +167,7 @@ h1{
 
 }
 .state.active{
- background-color:  #302261;
+ background-color:  #302261 !important;
 }
 
 .setup .state, .die .state {
@@ -890,6 +890,10 @@ span.refresh{
 }
 .mic {
   background-color: #265f55;
+}
+
+.accessor {
+    background-color: #40b6c3;
 }
 
 .ui, .ui_prop{

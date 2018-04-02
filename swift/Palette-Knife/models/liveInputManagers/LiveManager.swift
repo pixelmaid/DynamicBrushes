@@ -374,6 +374,9 @@ final class StylusManager:LiveManager{
     
     //TOOD: NEED TO MAKE THESE SYMMETRICAL TO STYLUSCOLLECTION EVENTS TO CALCULATE ACCURATE DATA
     public func onStylusMove(x:Float,y:Float,force:Float,angle:Float){
+        guard self.collections["stylus"] != nil else{
+            return
+        }
         if(isLive){
             //let currentTime = Date();
             //let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
@@ -389,6 +392,9 @@ final class StylusManager:LiveManager{
     }
     
     public func onStylusUp(x:Float,y:Float,force:Float,angle:Float){
+        guard self.collections["stylus"] != nil else{
+            return
+        }
         if(isLive){
             //let currentTime = Date();
             //let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
@@ -404,19 +410,21 @@ final class StylusManager:LiveManager{
     }
     
     public func onStylusDown(x:Float,y:Float,force:Float,angle:Float){
+        guard self.collections["stylus"] != nil else{
+            return
+        }
         if(isLive){
             currentStartDate = Date();
-            //let currentTime = Date();
-            //let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
+          
             _ = beginRecording(start:currentStartDate);
             
             
             for (_,stylusCollection) in self.collections{
                 (stylusCollection as! StylusCollection).onStylusDown(x: x, y: y, force: force, angle: angle);
             }
-            //TODO: add guard statement here
+          
+                
             let sample = self.collections["stylus"]!.exportData();
-            //print("stylus down sample",sample);
             currentRecordingPackage.addProtoSample(data:sample);
             
         }

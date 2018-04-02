@@ -29,7 +29,9 @@ class BehaviorManager{
    // static var generators = [String:GeneratorCollection]();
    // static var liveInputs = [String:LiveCollection]();
     //static var brushProperties = [String:BrushCollection]();
-    static var signalCollections = [[String:SignalCollection](), [String:SignalCollection](),[String:SignalCollection](),[String:SignalCollection](),[String:SignalCollection]()];
+    //static var accessors = [String:AccessorCollection]();
+
+    static var signalCollections = [[String:SignalCollection](), [String:SignalCollection](),[String:SignalCollection](),[String:SignalCollection](),[String:SignalCollection](),[String:SignalCollection]()];
 
     var canvas:Canvas
     init(canvas:Canvas){
@@ -478,9 +480,19 @@ class BehaviorManager{
         
         }
         id = brushCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType, style:style,isProto: false, order:nil);
-        print(brushCollection.initializedSignals);
 
         break;
+        
+    case "accessor":
+        guard let accessorCollection = BehaviorManager.signalCollections[5][collectionId] else {
+            
+            print("===========ERROR ACCESSOR COLLECTION DOES NOT EXIST===================")
+            
+            throw BehaviorError.collectionDoesNotExist;
+            
+        }
+        id = accessorCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType, style:style,isProto: false, order:nil);
+        
         //TODO: INIT DRAWING SETUP
 
         //case "drawing":
@@ -576,9 +588,15 @@ class BehaviorManager{
                     brushManager.registerCollection(id:signalCollection.id,collection:signalCollection);
                     
                 break;
-            //TODO: implement drawing signals
-            case "drawing":
+            case "accessor":
+                
+                let signalCollection = AccessorCollection(data:collection);
+                BehaviorManager.signalCollections[5][signalCollection.id] = signalCollection;
+   
                 break;
+            //TODO: implement drawing signals
+            //case "drawing":
+              //  break;
             default:
                 break;
             }

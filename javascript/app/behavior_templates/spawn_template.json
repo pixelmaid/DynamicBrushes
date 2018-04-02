@@ -827,5 +827,73 @@
       "siblingcount": [],
       "level": []
     }
+  }, {
+  "name": "accessor",
+  "classType": "accessor",
+  "data": [],
+  "id": "accessor",
+    "signals": [{
+      "displayName": "at",
+      "classType": "Within",
+      "settings": {
+
+      },
+      "style": "accessor",
+      "fieldName": "within",
+      "order": 0
+    },{
+      "displayName": "greater than",
+      "classType": "GreaterThan",
+      "settings": {
+
+      },
+      "style": "accessor",
+      "fieldName": "greaterthan",
+      "order": 1
+    },{
+      "displayName": "less than",
+      "classType": "LessThan",
+      "settings": {
+
+      },
+      "style": "accessor",
+      "fieldName": "lessthan",
+      "order": 2
+    },{
+      "displayName": "sorted low to high",
+      "classType": "LowToHigh",
+      "settings": {
+
+      },
+      "style": "accessor",
+      "fieldName": "lowtohigh",
+      "order": 3
+    },{
+      "displayName": "sorted high to low",
+      "classType": "HighToLow",
+      "settings": {
+
+      },
+      "style": "accessor",
+      "fieldName": "hightolow",
+      "order": 4
+    }],
+    "initializedSignals": {
+      "within": [
+
+      ],
+      "greaterthan": [
+
+      ],
+      "lessthan": [
+
+      ],
+      "lowtohigh": [
+
+      ],
+      "hightolow": [
+
+      ]
+    }
   }]
 }
