@@ -177,7 +177,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
             
             currentStroke.lock();
              autoreleasepool {
-                var finalWidth = toWidth;
+                var finalWidth = toWidth * 4;
                 if(finalWidth < 1){
                     finalWidth = 1;
                 }

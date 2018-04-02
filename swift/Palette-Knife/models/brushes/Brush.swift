@@ -549,7 +549,7 @@ class Brush: TimeSeries, Hashable{
         
         //trigger state complete after functions are executed
         
-        _  = Timer.scheduledTimer(timeInterval: 0.005, target: self, selector: #selector(Brush.completeCallback), userInfo: nil, repeats: false)
+        _  = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(Brush.completeCallback), userInfo: nil, repeats: false)
         
         if(states[currentState]?.name == "die"){
             self.die();

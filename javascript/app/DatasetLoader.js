@@ -62,7 +62,7 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 							var style = collectionSignals[j]["style"];
 							var item_class = style + " palette block property "
 
-							// console.log("! signal order is ", order);
+							console.log("signal classtype, order is ", signalClassType, order);
 							if (signalClassType === "TimeSignal") continue;
 							signals[order] = {
 							  item_class: item_class,

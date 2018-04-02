@@ -34,7 +34,7 @@ class BehaviorManager{
         self.canvas = canvas;
         BehaviorManager.signalCollections.removeAll();
         BehaviorManager.signalCollections = [[String:SignalCollection](), [String:SignalCollection](),[String:SignalCollection](),[String:SignalCollection]()];
-        giBehaviorManager.behaviors.removeAll();
+        BehaviorManager.behaviors.removeAll();
       
     }
     
