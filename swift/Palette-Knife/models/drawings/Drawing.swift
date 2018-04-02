@@ -60,8 +60,7 @@ class Drawing: TimeSeries, Hashable{
             if(allStrokes[i].parentID == id){
                 stroke = allStrokes[i];
             }        }
-        print("parent stroke=\(parentStroke,id)");
-        if(stroke != nil && stroke!.segments.count>15       ){
+        if(stroke != nil && stroke!.segments.count>15 ){
             
         }
         else{
@@ -70,8 +69,6 @@ class Drawing: TimeSeries, Hashable{
         if(parentStroke != nil){
             let seg = parentStroke?.hitTest(testPoint: point,threshold:threshold,sameStroke: false);
             if(seg != nil){
-                print("parent stroke hit");
-
                 return parentStroke;
             }
         }
@@ -120,7 +117,9 @@ class Drawing: TimeSeries, Hashable{
     }
     
     func retireCurrentStrokes(parentID:String){
+        #if DEBUG
         print("retire strokes for \(parentID, activeStrokes[parentID])");
+        #endif 
         if (self.activeStrokes[parentID] != nil){
             var toRemove = [String]();
             for s in self.activeStrokes[parentID]!{

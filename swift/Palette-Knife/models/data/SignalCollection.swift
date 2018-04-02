@@ -57,7 +57,6 @@ class SignalCollection: Object{
     }
     
     public  func loadDataFromJSON(data:JSON) throws{
-        //print("data",data)
         let allSignalData = data["signals"].arrayValue;
        
         let rawData = data["data"].arrayValue;
@@ -110,9 +109,8 @@ class SignalCollection: Object{
         var initializedSignalsJSON = [String:[String]]();
         for(fieldName,value) in self.initializedSignals{
             var fieldSet = [String]();
-            print("field name init",fieldName)
+           
             for(key,_) in value{
-                print("key name init",key)
 
                 fieldSet.append(key);
             }
@@ -287,11 +285,8 @@ class ImportedCollection:SignalCollection{
     }
     
      public func mapData()  {
-            print("% map")
-            print("% map self.protoSignals are ", self.protoSignals)
             for (_,value) in self.protoSignals{
                 let newBuffer = Operations.map(signalBuffer: value.signalBuffer, toMin: 0.0, toMax: 100.0);
-                print("new buffer=",newBuffer);
                 value.cloneRawData(protoData: newBuffer);
             
         }

@@ -104,7 +104,7 @@ final class StylusManager:LiveManager{
     private var idStart:String!
     private var idEnd:String!
     private var recordingPresetData:JSON = [:]
-    
+    private let recordingLimit = 6;
     private var currIndex = 0
     
     
@@ -120,7 +120,7 @@ final class StylusManager:LiveManager{
             firstRecording = rPackage.id;
         }
         lastRecording = rPackage.id;
-        if (recordingPackages.count > 10) {
+        if (recordingPackages.count >= self.recordingLimit) {
             //remove last
             recordingPackages.removeFirst(1)
             //todo i know it's not a layerevent but too lazy

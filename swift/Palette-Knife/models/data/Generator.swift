@@ -75,7 +75,6 @@ class Sawtooth:Generator{
             val.append(start+increment*Float(i))
         }
         super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
-        print("index =",self.index);
 
     }
     
