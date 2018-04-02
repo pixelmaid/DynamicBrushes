@@ -406,44 +406,6 @@ class GeneratorCollection:SignalCollection{
 }
 
 
-
-class BrushCollection:SignalCollection{
-    
-    required init(data:JSON){
-        super.init(data:data);
-        
-    }
-    
-    
-    
-    /* override init(){
-     super.init();
-     do{
-     /* try self.registerSignalType(fieldName: "spawnIndex", classType: "Index");
-     try self.registerSignalType(fieldName: "siblingCount", classType: "SiblingCount");*/
-     }
-     catch SignalError.signalTypeAlreadyRegistered{
-     print("ERRROR ---------Signal Type already Registered-----------")
-     }
-     catch {
-     
-     }
-     }*/
-    //TODO: INIT BRUSH PROPERTIES
-    override public func initializeSignalWithId(signalId:String,fieldName:String, displayName:String, settings:JSON, classType:String, style:String, isProto:Bool, order:Int?){
-    if(classType == "TimeSignal"){
-        super.initializeSignalWithId(signalId:signalId, fieldName: fieldName, displayName: displayName, settings: settings, classType: classType, style:style, isProto: isProto, order: order);
-        return;
-    }
-    
-    let signal = Signal(id:signalId , fieldName: fieldName, displayName: displayName, collectionId: self.id, style: style, settings:settings);
-    self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
-    }
-  
-}
-
-
-
 class LiveCollection:SignalCollection{
     var startDate:Date;
 
@@ -504,6 +466,7 @@ class LiveCollection:SignalCollection{
         return data;
     }
 }
+
 
 
 class RecordingCollection:SignalCollection{

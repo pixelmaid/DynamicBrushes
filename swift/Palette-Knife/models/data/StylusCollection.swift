@@ -9,6 +9,41 @@
 import Foundation
 import SwiftyJSON
 
+
+class BrushCollection:LiveCollection{
+    
+    override public func initializeSignalWithId(signalId:String, fieldName:String, displayName:String, settings:JSON, classType:String, style:String, isProto:Bool, order:Int?){
+        if(classType == "TimeSignal"){
+            super.initializeSignalWithId(signalId:signalId, fieldName: fieldName, displayName: displayName, settings: settings, classType: classType, style:style, isProto: isProto, order: order);
+            return;
+        }
+        
+        let signal = BrushSignal(id:signalId, fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:settings);
+        
+        self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
+        
+    }
+    
+    public func addProtoSampleForId(behaviorId:String, brushId:String, data: JSON) {
+        
+        for (key,value) in data {
+            guard let targetProtoSignal = self.protoSignals[key] else {
+                print("ERROR ---------NO PROTO SIGNAL FOUND THAT CORRESPOND WITH FIELD NAME-----------",key,self.protoSignals)
+                return;
+            }
+            targetProtoSignal.addValueFor(behaviorId:behaviorId, brushId:brushId, v: value.floatValue)
+            guard let initializedList = self.initializedSignals[key] else{
+                print("ERROR ---------NO  SIGNAL LIST THAT CORRESPOND WITH FIELD NAME-----------",key)
+                return;
+            }
+            for (_,signal) in initializedList{
+                signal.addValueFor(behaviorId:behaviorId, brushId:brushId, v: value.floatValue)
+            }
+        }
+    }
+}
+
+
 // manages stylus data, notifies behaviors of stylus events
 class StylusCollection:LiveCollection {
     

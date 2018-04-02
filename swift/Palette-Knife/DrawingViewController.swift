@@ -14,6 +14,7 @@ import AudioKit
 let stylusManager = StylusManager();
 let uiManager = UIManager();
 let micManager = MicManager();
+let brushManager = BrushSignalManager();
 
 //CONSTANTS:
 

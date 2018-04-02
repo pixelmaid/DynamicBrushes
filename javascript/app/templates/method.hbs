@@ -4,11 +4,22 @@
             
             {{#each argumentList}}
                 <div class="argumentLabel">{{displayName}}</div>
-                <div id="{{expressionId}}" parent_id="{{../methodId}}" class = "reference_expression expression">       
+                {{#if expressionId}}
+                <div id="{{expressionId}}" parent_id="{{../../methodId}}" class = "reference_expression expression">       
                 <textarea  class="text_entry">
                 {{default}}
                 </textarea>  
                 </div>
+                 {{else}}
+                 <div class= "methodSelect selectBox selectBoxNumber">
+              <select fieldName = "{{../fieldName}}" class="selectBoxInput" id="{{../../methodId}}">
+                <option value=""></option>
+                {{#each options}}
+                <option value="{{id}}">{{displayName}}</option>
+                {{/each}}
+              </select>
+            </div>
+                {{/if}}
             {{/each}}
     </div>
     <div class="clearfix"></div>

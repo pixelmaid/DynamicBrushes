@@ -18,7 +18,8 @@ enum BehaviorError: Error {
     case expressionDoesNotExist;
     case requestDoesNotExist;
     case collectionDoesNotExist;
-    case duplicateDataSet
+    case duplicateDataSet;
+    case methodDoesNotExist;
 }
 
 class BehaviorManager{
@@ -27,14 +28,15 @@ class BehaviorManager{
   //  static var recordings = [String:SignalCollection]();
    // static var generators = [String:GeneratorCollection]();
    // static var liveInputs = [String:LiveCollection]();
-    static var signalCollections = [[String:SignalCollection](), [String:SignalCollection](),[String:SignalCollection](),[String:SignalCollection]()];
+    //static var brushProperties = [String:BrushCollection]();
+    static var signalCollections = [[String:SignalCollection](), [String:SignalCollection](),[String:SignalCollection](),[String:SignalCollection](),[String:SignalCollection]()];
 
     var canvas:Canvas
     init(canvas:Canvas){
         self.canvas = canvas;
-        BehaviorManager.signalCollections.removeAll();
-        BehaviorManager.signalCollections = [[String:SignalCollection](), [String:SignalCollection](),[String:SignalCollection](),[String:SignalCollection]()];
-        giBehaviorManager.behaviors.removeAll();
+       // BehaviorManager.signalCollections.removeAll();
+        //BehaviorManager.signalCollections = [[String:SignalCollection](), [String:SignalCollection](),[String:SignalCollection](),[String:SignalCollection]()];
+        //BehaviorManager.behaviors.removeAll();
       
     }
     
@@ -76,6 +78,19 @@ class BehaviorManager{
             BehaviorManager.behaviors[key] = behavior;
             
         }
+    }
+    
+    static func getBehaviorsAsArgumentList()->[[String:String]]{
+        var behaviorArgumentList = [[String:String]]();
+        for(key,value) in BehaviorManager.behaviors{
+            var behaviorDict = [String:String]();
+            let id = key;
+            let displayName = value.name;
+            behaviorDict["id"] = id;
+            behaviorDict["displayName"] = displayName;
+            behaviorArgumentList.append(behaviorDict);
+        }
+        return behaviorArgumentList;
     }
     
     
@@ -257,21 +272,29 @@ class BehaviorManager{
                 resultJSON["result"] = "failure";
                 return resultJSON;
             }
+            
+        case "method_dropdown_changed":
+            let behaviorID = data["behaviorId"].stringValue;
+            let targetBehavior = BehaviorManager.behaviors[behaviorID]!
+            let methodId = data["methodId"].stringValue;
+            let fieldName = data["fieldName"].stringValue;
+            let val = data["val"].stringValue;
+            do {
+                try targetBehavior.changeMethodDropdownArgument(methodId: methodId,fieldName: fieldName, val:val);
+                resultJSON["result"] = "success";
+                return resultJSON;
+            }
+            catch{
+                print("method id does not exist, cannot change dropdown val");
+                resultJSON["result"] = "failure";
+                return resultJSON;
+            }
 
             
         case "method_added":
             let behaviorId = data["behaviorId"].stringValue
             let methodJSON = BehaviorManager.behaviors[behaviorId]!.parseMethodJSON(data: data)
             BehaviorManager.behaviors[behaviorId]!.createBehavior(canvas:canvas);
-            let targetMethod = data["targetMethod"].stringValue
-            if(targetMethod == "spawn"){
-            var behavior_list =  methodJSON["argumentList"]
-            for (key,value) in BehaviorManager.behaviors{
-                if key != behaviorId {
-                    behavior_list[key] = JSON(value.name);
-                }
-            }
-            }
             resultJSON["result"] = "success";
             resultJSON["data"] = methodJSON;
             return resultJSON;
@@ -447,10 +470,20 @@ class BehaviorManager{
 
 
         break;
-    //TODO: INIT BRUSH SETUP
-        //case "brush":
+        case "brush":
+            guard let brushCollection = BehaviorManager.signalCollections[4][collectionId] else {
+
+            print("===========ERROR BRUSH COLLECTION DOES NOT EXIST===================")
+            
+            throw BehaviorError.collectionDoesNotExist;
         
-        //break;
+        }
+        id = brushCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType, style:style,isProto: false, order:nil);
+        print(brushCollection.initializedSignals);
+
+        break;
+        //TODO: INIT DRAWING SETUP
+
         //case "drawing":
         
         //break;
@@ -527,8 +560,6 @@ class BehaviorManager{
                 break;
             case "recording":
                
-                    print("collection id",collection["id"].stringValue);
-
                     if(collection["id"].stringValue == "recording_preset"){
                         stylusManager.setRecordingPresetData(data: collection);
                     }
@@ -538,9 +569,16 @@ class BehaviorManager{
                     }
                 
                 break;
-            case "drawing":
-                break;
+            
             case "brush":
+              
+                    let signalCollection = BrushCollection(data:collection);
+                    BehaviorManager.signalCollections[4][signalCollection.id] = signalCollection;
+                    brushManager.registerCollection(id:signalCollection.id,collection:signalCollection);
+                    
+                break;
+            //TODO: implement drawing signals
+            case "drawing":
                 break;
             default:
                 break;

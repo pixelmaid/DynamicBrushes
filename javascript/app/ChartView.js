@@ -321,7 +321,6 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 var state_id = ID();
                 var name = prompt("Please give your state a name", "myState");
                 if (name !== null) {
-                    console.log(this.id)
                     this.trigger("ON_STATE_ADDED", [this.id, state_id, name, x, y]);
                 }
             }
@@ -679,19 +678,29 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
         
 
             addMethod(data) {
+                var self = this;
                 console.log("method data =", data);
                 var html = methodTemplate(data);
                 $($('#' + data.transitionId).find(".methods")[0]).append(html);
                 for (var i = 0; i < data.argumentList.length; i++) {
 
                     console.log("method id, parent ", data.argumentList[i].expressionId, data.methodId);
-
-                    var expression = this.initializeExpression(data.argumentList[i].expressionId, data.methodId);
-                    var el = $($('#' + data.argumentList[i].expressionId)[0]);
-                    this.setDropFunctionsForExpression(el, data.argumentList[i].expressionId, data.methodId);
+                    if(data.argumentList[i].isExpression){
+                        var expression = this.initializeExpression(data.argumentList[i].expressionId, data.methodId);
+                        var el = $($('#' + data.argumentList[i].expressionId)[0]);
+                        this.setDropFunctionsForExpression(el, data.argumentList[i].expressionId, data.methodId);
+                    }
+                    else if(data.argumentList[i].isDropdown){
+                        $("#"+data.methodId+" .selectBoxInput").change(function(event){
+                        let val = $(event.currentTarget).val();
+                        let fieldName =  $(event.currentTarget).attr("fieldName");
+                        console.log("method dropdown changed to",val);
+                    self.trigger("ON_METHOD_DROPDOWN_CHANGED",[self.id, data.methodId, fieldName, val]);
+                });
+                    }
+                }
                     this.instance.repaintEverything();
                 }
-            }
 
             removeMethod(data) {
                 console.log("method:", $('#' + data.methodId));
