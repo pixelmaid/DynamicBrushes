@@ -36,12 +36,15 @@ final class Operations {
         var newSignal = [Float]()
 
         for signal in signalBuffer {
-            let val:Float;
+            var val:Float;
             if (fromMin == fromMax){
                 val = fromMin;
             }
             else{
             val = (signal - fromMin) * (toMax - toMin) / (fromMax - fromMin) + toMin
+            }
+            if(val < 1){
+                val = 1;
             }
             newSignal.append( val )
         }

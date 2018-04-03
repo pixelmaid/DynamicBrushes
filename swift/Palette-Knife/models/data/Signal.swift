@@ -242,6 +242,9 @@ class ImportedSignal:Signal{
     }
     
     override func get(id:String?)-> Float{
+        if(self.index>=signalBuffer.count){
+            self.index = 0;
+        }
         let v = super.get(id: id);
         incrementAndChange(v: v);
         return v;

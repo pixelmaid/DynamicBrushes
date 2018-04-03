@@ -241,7 +241,6 @@
 		5F90F5631E9D5BCC006BB9FE /* Signal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Signal.swift; path = data/Signal.swift; sourceTree = "<group>"; };
 		5F90F5641E9D5BCC006BB9FE /* State.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = State.swift; sourceTree = "<group>"; };
 		5F90F5731E9D5CE8006BB9FE /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
-		5F90F5741E9D5CE8006BB9FE /* ExceptionCatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionCatcher.h; sourceTree = "<group>"; };
 		5F9118D61DEE345100A6B247 /* draw_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = draw_icon.png; sourceTree = "<group>"; };
 		5F9118D71DEE345100A6B247 /* select_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = select_icon.png; sourceTree = "<group>"; };
 		5F9F25A11DEFE38B005CB5D8 /* radial2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = radial2x.png; sourceTree = "<group>"; };
@@ -525,7 +524,6 @@
 			isa = PBXGroup;
 			children = (
 				5F90F5731E9D5CE8006BB9FE /* Bridging-Header.h */,
-				5F90F5741E9D5CE8006BB9FE /* ExceptionCatcher.h */,
 			);
 			path = objc_headers;
 			sourceTree = "<group>";
