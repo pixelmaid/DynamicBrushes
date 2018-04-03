@@ -10,6 +10,7 @@
 		02DE59B87E0EE7C00B73F5D0 /* Pods_DynamicBrushes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AA0BB14BEC283C5C6629407 /* Pods_DynamicBrushes.framework */; };
 		0A56E3BD2071C09C006243A6 /* BrushSignalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56E3BC2071C09B006243A6 /* BrushSignalManager.swift */; };
 		0A56E3BF2072B916006243A6 /* SignalAccessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56E3BE2072B916006243A6 /* SignalAccessors.swift */; };
+		0A56E3C5207308FA006243A6 /* ExpressionCatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A56E3C4207308FA006243A6 /* ExpressionCatch.m */; };
 		0AAEAB6A20698BFB0082F6E4 /* StylusCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAEAB6920698BFB0082F6E4 /* StylusCollection.swift */; };
 		0AAEAB6C20698C030082F6E4 /* LiveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAEAB6B20698C030082F6E4 /* LiveManager.swift */; };
 		0AAEAB6E20698C880082F6E4 /* UICollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAEAB6D20698C880082F6E4 /* UICollection.swift */; };
@@ -180,6 +181,8 @@
 		0442020FA4D778FD391A14CD /* Pods-DynamicBrushes.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicBrushes.release.xcconfig"; path = "Pods/Target Support Files/Pods-DynamicBrushes/Pods-DynamicBrushes.release.xcconfig"; sourceTree = "<group>"; };
 		0A56E3BC2071C09B006243A6 /* BrushSignalManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrushSignalManager.swift; sourceTree = "<group>"; };
 		0A56E3BE2072B916006243A6 /* SignalAccessors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SignalAccessors.swift; path = data/SignalAccessors.swift; sourceTree = "<group>"; };
+		0A56E3C3207308FA006243A6 /* ExpressionCatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExpressionCatch.h; sourceTree = "<group>"; };
+		0A56E3C4207308FA006243A6 /* ExpressionCatch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExpressionCatch.m; sourceTree = "<group>"; };
 		0AAEAB6920698BFB0082F6E4 /* StylusCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StylusCollection.swift; path = data/StylusCollection.swift; sourceTree = "<group>"; };
 		0AAEAB6B20698C030082F6E4 /* LiveManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveManager.swift; sourceTree = "<group>"; };
 		0AAEAB6D20698C880082F6E4 /* UICollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UICollection.swift; path = data/UICollection.swift; sourceTree = "<group>"; };
@@ -721,6 +724,8 @@
 				5FC91D2C1EA00C2F00A19206 /* RequestHandler.swift */,
 				5F50372D1EAD48BB004ABAC1 /* MathUtil.swift */,
 				5FE34C7A1F1FA61300E26C06 /* PathFunctions.swift */,
+				0A56E3C3207308FA006243A6 /* ExpressionCatch.h */,
+				0A56E3C4207308FA006243A6 /* ExpressionCatch.m */,
 			);
 			path = util;
 			sourceTree = "<group>";
@@ -1252,6 +1257,7 @@
 				5FFDAB091D21B5C400632A26 /* SocketManager.swift in Sources */,
 				5F2CF3D51ED32D0B0066AC8E /* SavedFilesPanelViewController.swift in Sources */,
 				5FE32F671ECE66AE00ADC01E /* LayerCell.swift in Sources */,
+				0A56E3C5207308FA006243A6 /* ExpressionCatch.m in Sources */,
 				5F90F54E1E9D5A16006BB9FE /* Point.swift in Sources */,
 				5FE32F611ECE2EBB00ADC01E /* ToolbarViewController.swift in Sources */,
 				5F5CED2D1ED10AED00A253A0 /* SwiftHSVColorPicker.swift in Sources */,

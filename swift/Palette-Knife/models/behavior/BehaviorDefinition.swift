@@ -828,6 +828,7 @@ class BehaviorDefinition {
             }
             
         }
+        targetBrush.storeInitialValues();
         targetBrush.setupTransition();
         
     }

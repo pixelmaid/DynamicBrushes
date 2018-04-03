@@ -83,27 +83,36 @@ class Expression:Observable<Float>{
             return nil
         }
        
-        let expr = NSExpression(format: valueString)
-
-        if let result = expr.expressionValue(with: nil, context: nil) as? Float {
-            #if DEBUG
-
-           // print("expression success",result)
-            #endif
-            return result;
-
-        } else {
-            #if DEBUG
-
-            print("==========ERROR EXPRESSION FAILED================",self.id);
-            #endif
-            return nil;
+        var targetValue:Float = 0;
+        ExpressionCatch.try({ () -> Void in
+            let expr = NSExpression(format: valueString)
             
-
+            if let result = expr.expressionValue(with: nil, context: nil) as? Float {
+                #if DEBUG
+                    
+                    // print("expression success",result)
+                #endif
+                targetValue = result;
+                
+            } else {
+                #if DEBUG
+                    
+                    print("==========ERROR EXPRESSION FAILED================",self.id);
+                #endif
+                
+                
+            }
+        }, catch: { (exception) -> Void in
+            
+            print("==========ERROR EXPRESSION INTERPRETATION FAILED================",self.id);
+        }) { () -> Void in
+            //close resources
         }
+        
+      
     
         
-        
+        return targetValue;
 
 
     }

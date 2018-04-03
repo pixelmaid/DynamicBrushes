@@ -106,7 +106,8 @@ final class StylusManager:LiveManager{
     private var recordingPresetData:JSON = [:]
     private let recordingLimit = 6;
     private var currIndex = 0
-    
+    private var moveCounter = 0;
+    private var moveThreshold = 4;
     
     private func beginRecording(start:Date)->RecordingCollection{
         //TODO: find a way to clone recordingpresetdata instead of reassigning ID
@@ -210,11 +211,11 @@ final class StylusManager:LiveManager{
                         if sample != nil{
                             sample!["sequenceHash"] = JSON(sample!["hash"].floatValue+hashAdd);
                             samples.append(sample!);
-                            print("advance recording", i,samples.count);
+                           
                             
                         }
                     }
-                    print("====advance recording break====");
+                  
                     //prevTime = elapsedTime;
                     if(currentLoopingPackage.id == self.idEnd){
                         print("% stopping in settorecording with i = ", currIndex)
@@ -229,7 +230,6 @@ final class StylusManager:LiveManager{
                         hashAdd = samples[samples.count-1]["sequenceHash"].floatValue;
                         currIndex += 1
                         currentLoopingPackage = recordingPackages[currIndex]; //go to next index
-                        print(" % going to next index in settorecording with i = ", currIndex)
                         
                     }
                 }
@@ -305,7 +305,7 @@ final class StylusManager:LiveManager{
         eraseEvent.raise(data:("ERASE_REQUEST",strokesToErase));
         self.visualizationEvent.raise(data:"ERASE_REQUEST")
         
-        playbackTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(advanceRecording), userInfo: nil, repeats: true)
+        playbackTimer = Timer.scheduledTimer(timeInterval: 0.001, target: self, selector: #selector(advanceRecording), userInfo: nil, repeats: true)
         
     }
     
@@ -378,6 +378,7 @@ final class StylusManager:LiveManager{
             return
         }
         if(isLive){
+            if(self.moveCounter >= self.moveThreshold){
             //let currentTime = Date();
             //let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
             
@@ -388,6 +389,9 @@ final class StylusManager:LiveManager{
             }
             let sample = self.collections["stylus"]!.exportData();
             currentRecordingPackage.addProtoSample(data:sample);
+                self.moveCounter = 0;
+            }
+            self.moveCounter+=1;
         }
     }
     

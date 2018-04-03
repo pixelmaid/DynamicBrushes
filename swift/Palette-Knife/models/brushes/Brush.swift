@@ -260,6 +260,12 @@ class Brush: TimeSeries, Hashable{
         self.delta.name = "delta_"+self.id;
     }
     
+    
+    func storeInitialValues(){
+        let sendDs = DeltaStorage(dX:0,dY:0,r:0,sX:self.sx.getSilent(),sY:self.sy.getSilent(),rX:0,rY:0,d:1,h:100,s:100,l:100,a:100,dist:0,xDist:self.xDistance.getSilent(),yDist:self.yDistance.getSilent(),pX:0,pY:0,time:0,i:self.index.getSilent(),sC:self.siblingcount.getSilent(),lV:self.level.getSilent());
+        
+        self.signalEvent.raise(data: (self.behavior_id!,self.id,sendDs));
+    }
  
     func setupTransition(){
         
