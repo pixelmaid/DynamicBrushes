@@ -10,7 +10,7 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 			constructor(	) {
 				super();
 				 //todo: should read this dynamically from the file folder
-				this.filenames = ["BrainDrain.json","meteor.json","moment_formatted.json","MapMyRun.json", "sample_collection.json"];
+				this.filenames = ["BrainDrain.json","meteor.json","moment_formatted.json","MapMyRun.json", "sample_collection.json", "PerlinNoise.json"];
 			}
 
 			loadCollection(data) {
