@@ -90,9 +90,6 @@ class StylusCollection:LiveCollection {
     }
     
     func onStylusUp(x:Float,y:Float){
-        self.xDistance = 0;
-        self.yDistance = 0;
-        self.euclidDistance = 0;
         self.angle = 0;
         self.force = 0;
         self.dx = 0;
@@ -117,9 +114,6 @@ class StylusCollection:LiveCollection {
         self.stylusEvent = Signal.stylusDown;
         self.speed = 0;
         self.deltaAngle = 0;
-        self.xDistance = 0;
-        self.yDistance = 0;
-        self.euclidDistance = 0;
         self.prevTime = self.getTimeElapsed();
         let data = self.exportData();
         self.addProtoSample(data: data)
@@ -159,6 +153,27 @@ class StylusCollection:LiveCollection {
         self.addProtoSample(data: data)
 
      
+    }
+    
+    override public func addProtoSample (data: JSON) {
+     let sortedProtos = self.protoSignals.sorted{ $0.1.order < $1.1.order }
+        for i in 0..<sortedProtos.count {
+            let key = sortedProtos[i].key;
+            let targetProtoSignal = sortedProtos[i].value
+            guard data[key] != JSON.null else {
+                print("ERROR ---------NO PROTO SIGNAL FOUND THAT CORRESPOND WITH FIELD NAME-----------",key,self.protoSignals)
+                return;
+            }
+            let value = data[key].floatValue;
+            targetProtoSignal.addValue(v: value);
+            guard let initializedList = self.initializedSignals[key] else{
+                print("ERROR ---------NO  SIGNAL LIST THAT CORRESPOND WITH FIELD NAME-----------",key)
+                return;
+            }
+            for (_,signal) in initializedList{
+                signal.addValue(v: value);
+            }
+        }
     }
     
   

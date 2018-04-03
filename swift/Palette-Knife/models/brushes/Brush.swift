@@ -570,7 +570,7 @@ class Brush: TimeSeries, Hashable{
         
         //trigger state complete after functions are executed
         
-        _  = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(Brush.completeCallback), userInfo: nil, repeats: false)
+        _  = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(Brush.completeCallback), userInfo: nil, repeats: false)
         
         if(states[currentState]?.name == "die"){
             self.die();
@@ -653,7 +653,7 @@ class Brush: TimeSeries, Hashable{
         #if DEBUG
            // print("start interval")
         #endif
-        intervalTimer  = Timer.scheduledTimer(timeInterval: 0.0001, target: self, selector: #selector(Brush.timerIntervalCallback), userInfo: nil, repeats: true)
+        intervalTimer  = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(Brush.timerIntervalCallback), userInfo: nil, repeats: true)
         
     }
     
@@ -663,7 +663,6 @@ class Brush: TimeSeries, Hashable{
         let currentTime = NSDate();
         //TODO: Fix how this is calucated to deal with lag..
         let t = Float(currentTime.timeIntervalSince(timer as Date))
-        self._time.set(newValue: t)
         self.time.set(newValue: t);
         
         

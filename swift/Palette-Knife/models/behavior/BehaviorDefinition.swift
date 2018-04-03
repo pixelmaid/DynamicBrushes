@@ -712,6 +712,11 @@ class BehaviorDefinition {
                 }
             }
         }
+        for (_, conditions) in self.storedConditions {
+            for (_, condition) in conditions {
+                condition.reset();
+            }
+        }
         
         RequestHandler.clearAllObservableListenersForBehavior(behaviorId: self.id)
         for (_,value) in self.storedExpressions{

@@ -162,6 +162,8 @@ class LiveSignal:Signal{
         self.setIndex(i: self.signalBuffer.count-1);
         self.didChange.raise(data: (self.id, v, v));
     }
+    
+    
 }
 
 class BrushSignal:LiveSignal{

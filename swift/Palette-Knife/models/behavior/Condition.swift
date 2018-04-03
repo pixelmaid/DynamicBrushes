@@ -31,7 +31,7 @@ class Condition:Observable<Bool> {
     }
     
     func reset(){
-        interval.setIndex(val:0);
+        interval.setIndex(val:1);
     }
     
     func changeRelational(relational:String){
@@ -93,7 +93,7 @@ class Condition:Observable<Bool> {
 
 class ConditionalInterval{
     var val = [Float]();
-    var index = 0;
+    var index = 1;
     
     
     
