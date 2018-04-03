@@ -48,11 +48,18 @@
                              "order":7
                              },
 
-                              {
-                             "fieldName": "diameter",
-                             "displayName": "weight",
+                            {
+                             "fieldName": "rotation",
+                             "displayName": "rotation",
                              "classType": "BrushProperty",
                              "order": 8
+                             },
+
+                              {
+                             "fieldName": "diameter",
+                             "displayName": "diameter",
+                             "classType": "BrushProperty",
+                             "order": 9
                              },
                              
 
@@ -60,7 +67,7 @@
                              "fieldName": "hue",
                              "displayName": "hue",
                              "classType": "BrushProperty",
-                             "order": 9
+                             "order": 10
                              },
                               
 
@@ -68,7 +75,7 @@
                              "fieldName": "saturation",
                              "displayName": "saturation",
                              "classType": "BrushProperty",
-                             "order": 10
+                             "order": 11
                              },
                               
 
@@ -76,7 +83,7 @@
                              "fieldName": "lightness",
                              "displayName": "lightness",
                              "classType": "BrushProperty",
-                             "order": 11
+                             "order": 12
                              },
                              
                               
@@ -85,7 +92,7 @@
                              "fieldName": "alpha",
                              "displayName": "alpha",
                              "classType": "BrushProperty",
-                             "order": 12
+                             "order": 13
                              }
                               
 ]

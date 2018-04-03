@@ -228,7 +228,7 @@ class Brush: TimeSeries, Hashable{
         
         observables.append(bufferLimitX)
         observables.append(bufferLimitY)*/
-        //==END APPEND OBSERVABLES==//
+        //==END APPØEND OBSERVABLES==//
         
         
         self.behavior_id = behaviorDef!.id;
@@ -543,7 +543,7 @@ class Brush: TimeSeries, Hashable{
         transmitData["transitionId"] = JSON(transition.id);
         
         let socketRequest = Request(target: "socket", action: "send_inspector_data", data: transmitData, requester: RequestHandler.sharedInstance)
-        RequestHandler.addRequest(requestData: socketRequest)
+       // RequestHandler.addRequest(requestData: socketRequest)
          #if DEBUG
         //print("transitioning from state:\(currentState) to state: \(transition.toStateId)");
         #endif
@@ -692,7 +692,6 @@ class Brush: TimeSeries, Hashable{
                 }
             }
         #endif*/
-        reference.subscribe(id: self.id,brushId:self.id,brushIndex:nil);
         let active = reference.isLive()
         let type:String
         if(active){

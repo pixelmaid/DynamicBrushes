@@ -569,14 +569,14 @@ class BehaviorDefinition {
         expressions[id]=(expressionPropertyList:expressionPropertyList,expressionText:expressionText);
     }
     
-    func generateSignal(id:String)->Signal?{
+    func generateSignal(brushId:String, id:String)->Signal?{
         #if DEBUG   
             print("generate signal",id);
         #endif
         guard let signal = BehaviorManager.getSignal(id:id) else{
             return nil
         }
-        
+        signal.registerBrush(id:brushId);
         return signal;
     }
     
@@ -594,7 +594,7 @@ class BehaviorDefinition {
         }
         
         if(propId != nil){
-            let signal = generateSignal(id:propId!);
+            let signal = generateSignal(brushId:targetBrush.id, id:propId!);
             if(signal != nil){
                 operand = signal!;
             }

@@ -128,6 +128,9 @@ class Expression:Observable<Float>{
         for h in eventHandlers{
             h.dispose();
         }
+        for (key,value) in self.observableList{
+            value.removeRegisteredBrush(id:self.brushId);
+        }
         self.observableList.removeAll();
         super.destroy();
     }

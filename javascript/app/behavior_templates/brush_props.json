@@ -51,9 +51,17 @@
 
                               {
                              "fieldName": "diameter",
-                             "displayName": "weight",
+                             "displayName": "diameter",
                              "classType": "BrushProperty",
                              "order": 8,
                              },
+                               {
+                             "fieldName": "rotation",
+                             "displayName": "rotation",
+                             "classType": "BrushProperty",
+                             "order": 9,
+                             },
+
+
                               
 ]

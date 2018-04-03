@@ -16,7 +16,6 @@ class Observable<T>:Object, DisposableObservable {
     private var live = false;
     var invalidated = false;
     var constrained = false;
-    var subscribers = [String:Int]();
     var constraintTarget: Observable<T>?
     let didChange = Event<(String,T, T)>()
     var observables = [DisposableObservable]();
@@ -88,27 +87,32 @@ class Observable<T>:Object, DisposableObservable {
         return value
     }
     
-    func subscribe(id:String,brushId:String,brushIndex:Observable<Float>?){
-        subscribers[id] = 0
-    }
-    
-    func removeAllSubscribers(){
-        self.subscribers.removeAll();
-    }
-    
-    func unsubscribe(id:String){
-        subscribers.removeValue(forKey: id)
-    }
+   
     
     func destroy(){
         for observable in observables {
             observable.destroy();
         }
         self.didChange.removeAllHandlers();
-        self.removeAllSubscribers();
         self.constraintTarget = nil;
+        self.clearAllRegisteredBrushes();
         
     }
+    
+    //TODO: PLACEHOLDERS FOR GENERATOR
+    
+     func registerBrush(id:String){
+        
+    }
+    
+     func removeRegisteredBrush(id:String){
+       
+    }
+    
+    func clearAllRegisteredBrushes(){
+        
+    }
+
 
 }
 

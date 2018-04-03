@@ -9,17 +9,66 @@ import Foundation
 import SwiftyJSON
 
 class Generator:Signal{
-
+    var registeredBrushes = [String:Int]();
+    static let incrementConst = 10;
     required init(id: String, fieldName: String, displayName: String, collectionId: String, style: String, settings: JSON) {
         super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
         self.index = 0;
 
     }
     
-   
+   override func registerBrush(id:String){
+        self.registeredBrushes[id] = 0;
+    }
+    
+    override func removeRegisteredBrush(id:String){
+        guard self.registeredBrushes[id] != nil else{
+            print("=============WARNING ATTEMPTED TO REMOVE REGISTERED BRUSH FOR GENERATOR THAT IS NOT REGISTERED===========");
+            return;
+        }
+        self.registeredBrushes.removeValue(forKey: id);
+    }
+    
+    override func reset(){
+        for (key,_) in self.registeredBrushes{
+            registeredBrushes[key] = 0;
+        }
+    }
+    
+    override func clearAllRegisteredBrushes(){
+        self.registeredBrushes.removeAll();
+    }
 
+    func incrementAndChangeById(id:String,v: Float) {
+        self.incrementIndexById(id:id);
+        self.didChange.raise(data: (self.id, self.prevV, v));
+        self.prevV = v;
+    }
+    
+    func getIndexById(id:String)->Int?{
+        let i =  self.registeredBrushes[id]
+        guard i != nil else{
+            print("=============ERROR ATTEMPTED TO ACCESS INDEX FOR GENERATOR BUT ID IS NIL===========");
+            return nil;
+        }
+        
+        return i;
+    }
+    
+    
+    func incrementIndexById(id:String) {
+        let i =  self.registeredBrushes[id]
+        guard i != nil else{
+            print("=============ERROR ATTEMPTED TO INCREMENT BY INDEX FOR GENERATOR BUT ID IS NIL===========");
+            return;
+        }
+      
+        self.registeredBrushes[id] = i!+Generator.incrementConst;
+        
+    }
+    
    override func incrementIndex(){
-        self.setIndex(i: self.index+1);
+        self.setIndex(i: self.index+Generator.incrementConst);
     }
     
 }
@@ -40,8 +89,20 @@ class Sine:Generator{
     
     
     override func get(id:String?) -> Float {
-        let v =  sin(Float(self.index)*freq+phase)*amp/2+amp/2;
-        incrementAndChange(v: v);
+        guard id != nil else{
+            print("=============ERROR ATTEMPTED TO GET BY INDEX FOR GENERATOR BUT ID IS NIL===========");
+            return 0;
+        }
+    
+        let i = self.getIndexById(id: id!);
+        guard i != nil else{
+            print("=============ERROR ATTEMPTED TO GET BY INDEX FOR GENERATOR BUT INDEX IS NIL===========");
+            return 0;
+        }
+    
+        
+        let v =  sin(Float(i!)*freq+phase)*amp/2+amp/2;
+        self.incrementAndChangeById(id: id!, v: v);
         return v;
     }
     
@@ -79,11 +140,26 @@ class Sawtooth:Generator{
     }
     
     override func get(id:String?) -> Float {
-        let v = val[Int(index)]
-        incrementAndChange(v: v);
-        if(index>=val.count){
-            self.index = 0;
+        guard id != nil else{
+            
+            print("=============ERROR ATTEMPTED TO GET BY INDEX FOR GENERATOR BUT ID IS NIL===========");
+            return 0;
         }
+        
+        var i = self.getIndexById(id: id!);
+        guard i != nil else{
+            print("=============ERROR ATTEMPTED TO GET BY INDEX FOR GENERATOR BUT INDEX IS NIL===========");
+            return 0;
+        }
+        
+        if(i!>=val.count){
+            self.registeredBrushes[id!] = 0;
+            i = 0;
+        }
+        
+        let v = val[Int(i!)]
+        self.incrementAndChangeById(id: id!, v: v);
+       
         return v;
     }
     
@@ -114,11 +190,25 @@ class Triangle:Generator{
     
     
     override func get(id:String?) -> Float {
+        guard id != nil else{
+            
+            print("=============ERROR ATTEMPTED TO GET BY INDEX FOR GENERATOR BUT ID IS NIL===========");
+            return 0;
+        }
+        
+        let i = self.getIndexById(id: id!);
+        guard i != nil else{
+            print("=============ERROR ATTEMPTED TO GET BY INDEX FOR GENERATOR BUT INDEX IS NIL===========");
+            return 0;
+        }
+        
+        
+        
         let ti = 2.0 * Float.pi * (880 / 44100);
-        let theta = ti * Float(self.index);
+        let theta = ti * Float(i!);
         let _v = 1.0 - abs(Float(theta.truncatingRemainder(dividingBy: 4)-2));
         let v = MathUtil.map(value: _v, low1: -1, high1: 1, low2: min, high2: max)
-        incrementAndChange(v: v);
+        self.incrementAndChangeById(id: id!, v: v);
 
         return v;
     }
