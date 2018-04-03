@@ -154,7 +154,7 @@ class Brush: TimeSeries, Hashable{
         self.ox = origin.x;
         self.oy = origin.y;
         
-        self.scaling = Point(x:1,y:1)
+        self.scaling = Point(x:100,y:100)
         self.sx = scaling.x;
         self.sy = scaling.y;
         
@@ -407,7 +407,7 @@ class Brush: TimeSeries, Hashable{
             yScale *= -1.0;
         }
         let r = ds.r
-        self.matrix.scale(x: xScale, y: yScale, centerX: centerX, centerY: centerY);
+        self.matrix.scale(x: xScale/100, y: yScale/100, centerX: centerX, centerY: centerY);
         self.matrix.rotate(_angle: r, centerX: centerX, centerY: centerY)
         
         let xDelt = ds.dX
