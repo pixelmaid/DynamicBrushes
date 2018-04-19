@@ -54,6 +54,12 @@ DerivedData/
 !default.perspectivev3
 xcuserdata/
 
+####
+# XCode 4 workspaces - more detailed
+!xcshareddata
+!default.xcworkspace
+*.xcworkspacedata
+
 
 ## Other
 *.moved-aside
