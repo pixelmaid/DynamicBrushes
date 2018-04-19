@@ -489,25 +489,11 @@ final class StylusManager:LiveManager{
     public func exportRecording(startId:String, endId:String)->JSON?{
         let compiledId = NSUUID().uuidString;
         print("id start / startid is % ", idStart, startId)
-        let indexandpackage = getIndexandCurrentPackage(idStart: startId)
-        var exportIndex = indexandpackage.0
-        let startRecordingCollection = indexandpackage.1
-        recordingPresetData["id"] = JSON(compiledId)
-        print("recordingPresetData is % " , self.recordingPresetData)
+        self.recordingPresetData["id"] = JSON(compiledId);
         let compiledRecordingCollection = ImportedRecordingCollection(data:self.recordingPresetData)
-        
-        var targetRecordingCollection = startRecordingCollection;
-        while(true){
-            compiledRecordingCollection.addDataFrom(signalCollection:targetRecordingCollection);
-            
-            if(targetRecordingCollection.id == endId || exportIndex == recordingPackages.count){
-                break
-            }
-            else{
-                exportIndex += 1
-                targetRecordingCollection = recordingPackages[exportIndex]
-            }
-            
+        let targetRecording = self.recordingPackages.first(){$0.id == startId}
+        for (key,value) in (targetRecording?.protoSignals)!{
+            compiledRecordingCollection.protoSignals[key]?.signalBuffer = value.signalBuffer;
         }
         return compiledRecordingCollection.protoToJSON();
     }

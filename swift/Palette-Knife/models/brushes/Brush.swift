@@ -105,7 +105,6 @@ class Brush: TimeSeries, Hashable{
     
     //Events
     var geometryModified = Event<(Geometry,String,String)>()
-    var initEvent = Event<(Brush,String)>()
     var dieEvent = Event<(String)>()
     var signalEvent = Event<(String,String,DeltaStorage)>()
     //Events
@@ -123,7 +122,7 @@ class Brush: TimeSeries, Hashable{
     var deltaChangeBuffer = [DeltaStorage]();
     var undergoing_transition = false;
     var transitionEvents = [Disposable]();
-    
+    var transitionDelayTimer: Timer!;
     init(name:String, behaviorDef:BehaviorDefinition?, parent:Brush?, canvas:Canvas){
         
         //==BEGIN OBSERVABLES==//
@@ -237,9 +236,7 @@ class Brush: TimeSeries, Hashable{
         
         self.name = name;
         
-        //setup events and create listener storage
-        self.events =  ["SPAWN", "STATE_COMPLETE", "DELTA_BUFFER_LIMIT_REACHED", "DISTANCE_INTERVAL", "INTERSECTION"]
-        self.createKeyStorage();
+     
         
         
         //setup listener for delta observable
@@ -340,9 +337,9 @@ class Brush: TimeSeries, Hashable{
     
     func deltaChange(data:(String,(Float,Float),(Float,Float)),key:String){
         
-            if(!self.undergoing_transition){
-               self.calculateProperties(_delta: self.delta)
-            }
+        
+            self.calculateProperties(_delta: self.delta)
+        
         
     }
     
@@ -437,8 +434,7 @@ class Brush: TimeSeries, Hashable{
         
         self.bPosition.x.setSilent(newValue: _dx)
         self.bPosition.y.setSilent(newValue:_dy)
-        
-        
+    
        // self.distanceIntervalCheck();
         //self.intersectionCheck();
        let sendDs = DeltaStorage(dX:ds.dX,dY:ds.dY,r:ds.r,sX:ds.sX,sY:ds.sY,rX:ds.rX,rY:ds.rY,d:ds.d,h:ds.h,s:ds.s,l:ds.l,a:ds.a,dist:self.distance.getSilent(),xDist:self.xDistance.getSilent(),yDist:self.yDistance.getSilent(),pX:transformedCoords.0,pY:transformedCoords.1,time:ds.time,i:ds.i,sC:ds.sC,lV:ds.lV);
@@ -533,7 +529,12 @@ class Brush: TimeSeries, Hashable{
     }
     
     func transitionToState(transition:StateTransition){
-        var constraint_mappings:[String:Constraint];
+        
+        if(states[transition.toStateId]?.name == "die"){
+            self.die();
+            return;
+        }
+        print("transition to state ID", transition.toStateId);
         var transmitData:JSON = [:]
         let fromState = currentState;
         transmitData["type"] = JSON("state_transition");
@@ -543,16 +544,16 @@ class Brush: TimeSeries, Hashable{
         transmitData["transitionId"] = JSON(transition.id);
         
         let socketRequest = Request(target: "socket", action: "send_inspector_data", data: transmitData, requester: RequestHandler.sharedInstance)
-       // RequestHandler.addRequest(requestData: socketRequest)
+        //RequestHandler.addRequest(requestData: socketRequest)
          #if DEBUG
         //print("transitioning from state:\(currentState) to state: \(transition.toStateId)");
         #endif
-
+       
         if(states[currentState] != nil){
-            constraint_mappings =  states[currentState]!.constraint_mappings
+            let constraint_mappings =  states[currentState]!.constraint_mappings
             for (_, value) in constraint_mappings{
                 
-                self.setConstraint(constraint: value)
+         
                 value.relativeProperty.constrained = false;
                 
             }
@@ -561,21 +562,18 @@ class Brush: TimeSeries, Hashable{
         if(states[currentState] != nil){
         self.executeTransitionMethods(methods: transition.methods)
         
-        constraint_mappings =  states[currentState]!.constraint_mappings
-        for (_, value) in constraint_mappings{
-            value.relativeProperty.constrained = true;
-        }
+      
         //execute methods
         //check constraints
-        
+     
+            
+            
         //trigger state complete after functions are executed
-        
-        _  = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(Brush.completeCallback), userInfo: nil, repeats: false)
-        
-        if(states[currentState]?.name == "die"){
-            self.die();
-            return;
+            if(transitionDelayTimer != nil){
+                transitionDelayTimer.invalidate();
             }
+       transitionDelayTimer  = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(Brush.completeCallback), userInfo: nil, repeats: false)
+     
             
         }
         
@@ -583,6 +581,12 @@ class Brush: TimeSeries, Hashable{
     
 
     @objc func completeCallback(){
+        let constraint_mappings =  states[currentState]!.constraint_mappings
+        for (_, value) in constraint_mappings{
+            value.relativeProperty.constrained = true;
+            self.setConstraint(constraint: value);
+
+        }
         for (key,tTransition) in self.transitions{
             
             let validate = self.validateTransitionMapping(key:key)
@@ -653,8 +657,29 @@ class Brush: TimeSeries, Hashable{
         #if DEBUG
            // print("start interval")
         #endif
-        intervalTimer  = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(Brush.timerIntervalCallback), userInfo: nil, repeats: true)
+        self.stopInterval();
+
+        intervalTimer  = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(Brush.timerIntervalCallback), userInfo: nil, repeats: true)
         
+    }
+    
+    override func stopInterval() {
+    
+            #if DEBUG
+                // print("stop interval")
+            #endif
+            
+            if(intervalTimer != nil){
+                #if DEBUG
+                    // print("invalidate timer")
+                #endif
+                intervalTimer.invalidate();
+            }
+        timer = NSDate();
+        self.time.set(newValue: 0);
+
+        
+
     }
     
     @objc override func timerIntervalCallback()
@@ -663,9 +688,14 @@ class Brush: TimeSeries, Hashable{
         let currentTime = NSDate();
         //TODO: Fix how this is calucated to deal with lag..
         let t = Float(currentTime.timeIntervalSince(timer as Date))
-        self.time.set(newValue: t);
+        self.time.set(newValue: t*1000);
+        #if DEBUG
+            //print("current time is",self.time.getSilent());
+        #endif
         
-        
+        //todo: create persistent storage of values
+        let sendDs = DeltaStorage(dX:self.dx.getSilent(),dY:self.dy.getSilent(),r:self.rotation.getSilent(),sX:self.sx.getSilent(),sY:self.sy.getSilent(),rX:self.reflectX.getSilent(),rY:self.reflectY.getSilent(),d:self.diameter.getSilent(),h:self.hue.getSilent(),s:self.saturation.getSilent(),l:self.lightness.getSilent(),a:self.alpha.getSilent(),dist:self.distance.getSilent(),xDist:self.xDistance.getSilent(),yDist:self.yDistance.getSilent(),pX:self.position.x.getSilent(),pY:self.position.y.getSilent(),time:self.time.getSilent(),i:self.index.getSilent(),sC:self.siblingcount.getSilent(),lV:self.level.getSilent());
+        self.signalEvent.raise(data: (self.behavior_id!,self.id,sendDs));
     }
     
     //sets canvas target to output geometry into
@@ -729,11 +759,11 @@ class Brush: TimeSeries, Hashable{
         let id = data;
         for c in children.reversed(){
             if c.id == id{
-                _ = self.removeChildAt(index: Int(c.index.get(id: nil)))
+               // _ = self.removeChildAt(index: Int(c.index.get(id: nil)))
             }
         }
         for i in 0..<children.count{
-            self.children[i].index.set(newValue: Float(i));
+            //self.children[i].index.set(newValue: Float(i));
         }
     }
     
@@ -807,12 +837,7 @@ class Brush: TimeSeries, Hashable{
         self.xDistance.set(newValue: 0);
         self.yDistance.set(newValue: 0)
         
-        for key in keyStorage["DISTANCE_INTERVAL"]!{
-            if(key.1 != nil){
-                let eventCondition = key.1;
-                eventCondition!.reset();
-            }
-        }
+      
     }
     
     
@@ -840,7 +865,6 @@ class Brush: TimeSeries, Hashable{
                     print("spawn called, new index is:",child.index.get(id:nil),"of",(self.children.count))
                 #endif
                 child.level.set(newValue: Float(self.level.get(id: nil)+1));
-                self.initEvent.raise(data: (child,"brush_init"));
                
                 behavior.initBrushBehavior(targetBrush: child);
                 _ = child.dieEvent.addHandler(target: self, handler: Brush.childDieHandler, key: childDieHandlerKey)
@@ -850,10 +874,7 @@ class Brush: TimeSeries, Hashable{
                 c.siblingcount.set(newValue: Float(self.children.count))
             }
             
-            //notify listeners of spawn event
-            for key in keyStorage["SPAWN"]!  {
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: key.2.id), object: self, userInfo: ["emitter":self,"key":key.0,"event":"SPAWN"])
-            }
+            
         }
     }
     
@@ -901,7 +922,6 @@ class Brush: TimeSeries, Hashable{
     
     
     func clearAllEventHandlers(){
-        self.initEvent.removeAllHandlers()
         self.geometryModified.removeAllHandlers()
         self.signalEvent.removeAllHandlers();
         self.dieEvent.removeAllHandlers()
@@ -912,6 +932,9 @@ class Brush: TimeSeries, Hashable{
     
     override func destroy() {
         self.stopInterval();
+        if(transitionDelayTimer != nil){
+            transitionDelayTimer.invalidate();
+        }
         #if DEBUG
             print("destroying brush: \(self.id)");
         #endif

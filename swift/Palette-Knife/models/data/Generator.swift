@@ -10,7 +10,7 @@ import SwiftyJSON
 
 class Generator:Signal{
     var registeredBrushes = [String:Int]();
-    static let incrementConst = 10;
+    static let incrementConst = 1;
     required init(id: String, fieldName: String, displayName: String, collectionId: String, style: String, settings: JSON) {
         super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
         self.index = 0;
@@ -112,6 +112,17 @@ class Sine:Generator{
         json["phase"] = JSON(self.phase);
         json["amp"] = JSON(self.amp);
         return json;
+    }
+    
+    override func incrementIndexById(id:String) {
+        let i =  self.registeredBrushes[id]
+        guard i != nil else{
+            print("=============ERROR ATTEMPTED TO INCREMENT BY INDEX FOR GENERATOR BUT ID IS NIL===========");
+            return;
+        }
+        
+        self.registeredBrushes[id] = i!+10;
+        
     }
     
     

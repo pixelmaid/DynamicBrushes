@@ -39,6 +39,10 @@ class BrushSignalManager:SignalCollectionManager{
             protodata["index"] = JSON(deltaStorage.i);
             protodata["siblingcount"] = JSON(deltaStorage.sC);
             protodata["level"] = JSON(deltaStorage.lV);
+            protodata["distance"] = JSON(deltaStorage.dist);
+            protodata["xDistance"] = JSON(deltaStorage.xDist);
+            protodata["yDistance"] = JSON(deltaStorage.yDist);
+
             brushCollection.addProtoSampleForId(behaviorId:behaviorId, brushId: brushId, data: protodata);
         }
     }

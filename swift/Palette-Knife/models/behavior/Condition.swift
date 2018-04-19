@@ -52,7 +52,7 @@ class Condition:Observable<Bool> {
     
     func evaluate()->Bool{
         let a = referenceA.get(id: nil)
-        let b = referenceB.get(id: nil)
+        var b = referenceB.get(id: nil)
         switch (relational){
         case "<":
             
@@ -66,6 +66,9 @@ class Condition:Observable<Bool> {
         case "!=":
             return a != b;
         case "within":
+            if (b<1){
+                b = 1;
+            }
             let value = interval.get(inc:b);
             if(value > 0){
                 if(a>value){
