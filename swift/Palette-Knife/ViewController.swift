@@ -380,6 +380,20 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         fileListContainerView.clipsToBounds = true
         fileListContainerView.isHidden = true;
         
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(appMovedToForeground), name: Notification.Name.UIApplicationWillEnterForeground, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(appMovedToBackground), name: Notification.Name.UIApplicationDidEnterBackground, object: nil)
+        
+    }
+    
+    
+    func appMovedToForeground() {
+        print("App moved to ForeGround!")
+    }
+    
+    
+    func appMovedToBackground() {
+        print("App moved to Background!")
     }
     
     
@@ -399,7 +413,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         
         
         var templateJSON:JSON = [:]
-        templateJSON["filename"] = "templates/ui_debugging.json"
+        templateJSON["filename"] = "templates/basic.json"
         templateJSON["type"] = JSON("load")
         let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: self)
         RequestHandler.addRequest(requestData:behaviorDownloadRequest);
@@ -647,12 +661,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     }
     
     func startBackupTimer(interval:Int){
-        self.endBackupTimer();
+      /*  self.endBackupTimer();
         self.toolbarController?.enableSaveLoad();
         self.dismiss(animated: true, completion: nil)
         //self.endCancelTimer();
         backupTimer  = Timer.scheduledTimer(timeInterval:TimeInterval(interval), target: self, selector: #selector(ViewController.backupCallback), userInfo: nil, repeats: true)
-
+*/
     }
     
     

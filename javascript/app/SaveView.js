@@ -28,7 +28,7 @@ define(["jquery"],
 
                 file_select.change(function(event) {
                     console.log("file select change", file_select.val());
-                    if(file_select.val()!== "empty"){
+                    if (file_select.val() !== "empty") {
                         self.model.loadSavedFile(file_select.val());
                     }
                 });
@@ -36,7 +36,7 @@ define(["jquery"],
 
                 example_file_select.change(function(event) {
                     console.log("example file select change", example_file_select.val());
-                    if(example_file_select.val()!== "empty"){
+                    if (example_file_select.val() !== "empty") {
                         self.model.loadSavedExampleFile(example_file_select.val());
                     }
                 });
@@ -62,24 +62,40 @@ define(["jquery"],
 
             }
 
-            updateSelectedFile(){
-                console.log("update selected file",this.model.currentFile);
-                 if (this.model.currentFile) {
+            updateSelectedFile() {
+                console.log("update selected file", this.model.currentFile);
+                if (this.model.currentFile) {
                     file_select.val(this.model.currentFile);
                     console.log("currentfile", this.model.currentFile, this.model.currentName);
                 }
             }
 
 
+            getObjectKeysAlphabetical(obj) {
+                var keys = [],
+                    key;
+
+                for (key in obj) {
+                    if (obj.hasOwnProperty(key)) {
+                        keys.push(key);
+                    }
+                }
+
+                keys.sort();
+
+                return keys;
+            }
             onSavedFilesUpdated() {
                 console.log("saved files updated called");
                 var filelist = this.model.saved_files;
                 file_select.find('option').remove();
-                 file_select.append($('<option>', {
-                                value: "empty",
-                                text: ""
-                            }));
-                for (var key in filelist) {
+                file_select.append($('<option>', {
+                    value: "empty",
+                    text: ""
+                }));
+                let keys = this.getObjectKeysAlphabetical(filelist);
+                for (var i = 0; i < keys.length; i++) {
+                    let key = keys[i];
                     if (filelist.hasOwnProperty(key)) {
                         var name = filelist[key];
                         if (name !== "") {
@@ -93,14 +109,14 @@ define(["jquery"],
                 this.updateSelectedFile();
             }
 
-             onExampleFilesUpdated() {
+            onExampleFilesUpdated() {
                 console.log("example files updated called");
                 var filelist = this.model.example_files;
                 example_file_select.find('option').remove();
-                 example_file_select.append($('<option>', {
-                                value: "empty",
-                                text: ""
-                            }));
+                example_file_select.append($('<option>', {
+                    value: "empty",
+                    text: ""
+                }));
                 for (var key in filelist) {
                     if (filelist.hasOwnProperty(key)) {
                         var name = filelist[key];
@@ -113,7 +129,6 @@ define(["jquery"],
                     }
                 }
             }
-
 
 
 
