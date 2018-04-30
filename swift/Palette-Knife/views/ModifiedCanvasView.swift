@@ -101,7 +101,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
                     texture = JotDefaultBrushTexture.sharedInstance()
                 }
                 let newStroke = JotStroke(texture: texture, andBufferManager: jotView.state.bufferManager());
-                newStroke!.setId(id)
+                 newStroke!.setId(id)
                 newStroke!.delegate = jotView as JotStrokeDelegate;
                 print("added stroke with id:",newStroke!.getId())
                 
