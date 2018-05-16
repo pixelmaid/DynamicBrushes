@@ -60,7 +60,7 @@ class LayerPanelViewController: UITableViewController{
         
     }
     
-    func layerAddPressed(){
+    @objc func layerAddPressed(){
         self.layerEvent.raise(data: ("LAYER_ADDED","",nil));
     }
     

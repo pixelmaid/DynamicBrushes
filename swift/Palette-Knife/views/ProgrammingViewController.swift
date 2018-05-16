@@ -49,7 +49,7 @@ class ProgrammingViewController:UIViewController,  WKUIDelegate {
     }
     
     
-    func returnPressed(){
+    @objc func returnPressed(){
         self.programmingEvent.raise(data: ("RETURN_TO_MAIN",nil))
     }
     

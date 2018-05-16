@@ -16,7 +16,7 @@
 #import "AWSS3PreSignedURL.h"
 #import "AWSCategory.h"
 #import "AWSSignature.h"
-#import "AWSLogging.h"
+#import "AWSCocoaLumberjack.h"
 #import "AWSBolts.h"
 #import "AWSSynchronizedMutableDictionary.h"
 #import <CommonCrypto/CommonCrypto.h>
@@ -26,7 +26,7 @@ NSString *const AWSS3PresignedURLErrorDomain = @"com.amazonaws.AWSS3PresignedURL
 static NSString *const AWSS3PreSignedURLBuilderAcceleratedEndpoint = @"s3-accelerate.amazonaws.com";
 
 static NSString *const AWSInfoS3PreSignedURLBuilder = @"S3PreSignedURLBuilder";
-static NSString *const AWSS3PreSignedURLBuilderSDKVersion = @"2.5.3";
+static NSString *const AWSS3PreSignedURLBuilderSDKVersion = @"2.6.18";
 
 @interface AWSS3PreSignedURLBuilder()
 
@@ -38,6 +38,20 @@ static NSString *const AWSS3PreSignedURLBuilderSDKVersion = @"2.5.3";
 
 @property (nonatomic, strong) AWSEndpoint *endpoint;
 
+@end
+
+@interface AWSEndpoint()
+
+- (void) setRegion:(AWSRegionType)regionType service:(AWSServiceType)serviceType;
+
+@end
+
+@interface AWSS3GetPreSignedURLRequest ()
+
+@property (nonatomic, strong) NSMutableDictionary<NSString *, NSString *> *internalRequestParameters;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, NSString *> *internalRequestHeaders;
+@property NSString *uploadID;
+@property NSNumber *partNumber;
 @end
 
 @implementation AWSS3PreSignedURLBuilder
@@ -124,9 +138,15 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
 - (instancetype)initWithConfiguration:(AWSServiceConfiguration *)configuration {
     if (self = [super init]) {
         _configuration = [configuration copy];
-        _configuration.endpoint = [[AWSEndpoint alloc] initWithRegion:_configuration.regionType
-                                                              service:AWSServiceS3
-                                                         useUnsafeURL:NO];
+        
+        if(!configuration.endpoint){
+            _configuration.endpoint = [[AWSEndpoint alloc] initWithRegion:_configuration.regionType
+                                                                  service:AWSServiceS3
+                                                             useUnsafeURL:NO];
+        }else{
+            [_configuration.endpoint setRegion:_configuration.regionType
+                                       service:AWSServiceS3];
+        }
     }
 
     return self;
@@ -261,6 +281,17 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
         }
         [getPreSignedURLRequest setValue:host forRequestHeader:@"host"];
         
+        //If this is a presigned request for a multipart upload, set the uploadID and partNumber on the request.
+        if (getPreSignedURLRequest.uploadID
+            && getPreSignedURLRequest.partNumber) {
+            
+            [getPreSignedURLRequest setValue:getPreSignedURLRequest.uploadID
+                         forRequestParameter:@"uploadId"];
+            
+            [getPreSignedURLRequest setValue:[NSString stringWithFormat:@"%@", getPreSignedURLRequest.partNumber]
+                         forRequestParameter:@"partNumber"];
+        }
+        
         AWSEndpoint *newEndpoint = [[AWSEndpoint alloc]initWithRegion:configuration.regionType service:AWSServiceS3 URL:[NSURL URLWithString:[NSString stringWithFormat:@"%@://%@", endpoint.useUnsafeURL?@"http":@"https", host]]];
         
         int32_t expireDuration = [expires timeIntervalSinceNow];
@@ -281,13 +312,6 @@ static AWSSynchronizedMutableDictionary *_serviceClients = nil;
                                                                                      signBody:NO];
     }];
 }
-
-@end
-
-@interface AWSS3GetPreSignedURLRequest ()
-
-@property (nonatomic, strong) NSMutableDictionary<NSString *, NSString *> *internalRequestParameters;
-@property (nonatomic, strong) NSMutableDictionary<NSString *, NSString *> *internalRequestHeaders;
 
 @end
 

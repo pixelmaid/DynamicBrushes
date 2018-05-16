@@ -12,7 +12,6 @@
 // express or implied. See the License for the specific language governing
 // permissions and limitations under the License.
 //
-
 #import "AWSURLRequestSerialization.h"
 
 #import "AWSGZIP.h"
@@ -21,7 +20,7 @@
 #import "AWSValidation.h"
 #import "AWSSerialization.h"
 #import "AWSCategory.h"
-#import "AWSLogging.h"
+#import "AWSCocoaLumberjack.h"
 #import "AWSClientContext.h"
 
 @interface NSMutableURLRequest (AWSRequestSerializer)
@@ -62,7 +61,7 @@
 
         _serviceDefinitionJSON = JSONDefinition;
         if (_serviceDefinitionJSON == nil) {
-            AWSLogError(@"serviceDefinitionJSON of is nil.");
+            AWSDDLogError(@"serviceDefinitionJSON is nil.");
             return nil;
         }
         _actionName = actionName;
@@ -158,7 +157,7 @@
 
         _serviceDefinitionJSON = JSONDefinition;
         if (_serviceDefinitionJSON == nil) {
-            AWSLogError(@"serviceDefinitionJSON of is nil.");
+            AWSDDLogError(@"serviceDefinitionJSON is nil.");
             return nil;
         }
         _actionName = actionName;
@@ -297,7 +296,7 @@
             }
 
             //if it is a map type with headers tag, add to headers
-            if ([value isKindOfClass:[NSDictionary class]] && [rulesType isEqualToString:@"map"] && [memberRules[@"location"] isEqualToString:@"headers"] ) {
+            if ([value isKindOfClass:[NSDictionary class]] && [rulesType isEqualToString:@"map"] && [memberRules[@"location"] isEqualToString:@"headers"]) {
                 for (NSString *key in value) {
                     NSString *keyName = [memberRules[@"locationName"] stringByAppendingString:key];
                     [request addValue:value[key] forHTTPHeaderField:keyName];
@@ -348,7 +347,7 @@
             
             //if the shape is a blob stream then set the request stream
             if([memberRules[@"shape"] isEqualToString:@"BlobStream"]){
-                AWSLogVerbose(@"value type = %@", [value class]);
+                AWSDDLogVerbose(@"value type = %@", [value class]);
                 if([value isKindOfClass:[NSInputStream class]]){
                     request.HTTPBodyStream = value;
                 }else{
@@ -413,7 +412,7 @@
 
         NSRange hasQuestionMark = [rawURI rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"?"]];
         NSRange hasEqualMark = [rawURI rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"="]];
-        if ( (hasQuestionMark.location != NSNotFound) && (hasEqualMark.location == NSNotFound) ) {
+        if ((hasQuestionMark.location != NSNotFound) && (hasEqualMark.location == NSNotFound)) {
             rawURI = [rawURI stringByAppendingString:@"="];
         }
 
@@ -447,7 +446,7 @@
     if (self = [super init]) {
         _serviceDefinitionJSON = JSONDefinition;
         if (_serviceDefinitionJSON == nil) {
-            AWSLogError(@"serviceDefinitionJSON of is nil.");
+            AWSDDLogError(@"serviceDefinitionJSON of is nil.");
             return nil;
         }
         _actionName = actionName;
@@ -479,7 +478,7 @@
                 [queryString appendString:@"="];
                 [queryString appendString:[[obj stringValue] aws_stringWithURLEncoding]];
             } else {
-                AWSLogError(@"key[%@] is invalid.", key);
+                AWSDDLogError(@"key[%@] is invalid.", key);
                 [queryString appendString:[key aws_stringWithURLEncoding]];
                 [queryString appendString:@"="];
                 [queryString appendString:[[obj description]aws_stringWithURLEncoding]];
