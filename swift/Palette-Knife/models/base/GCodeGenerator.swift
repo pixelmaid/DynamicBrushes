@@ -40,9 +40,7 @@ class GCodeGenerator {
     
     
     var newStroke = false;
-    init(){
-        //TODO: set vc here
-    }
+  
     
     func setOffset(x:Float, y:Float){
         self.xOffset = x;

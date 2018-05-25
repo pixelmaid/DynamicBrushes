@@ -43,7 +43,7 @@ wss.on('connection', (ws) => {
 	}  else if (clientName == 'authoring') {
 		authoring_clients[userkey] = connection;
 		if (drawing_clients[userkey]) {
-			console.log("sending authoring connected message");
+			console.log("sending authoring connected message for data art");
 			drawing_clients[userkey].send("authoring_client_connected");
 		}
 	} 

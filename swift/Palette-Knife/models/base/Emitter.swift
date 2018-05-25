@@ -14,7 +14,7 @@ import Foundation
 class Emitter: Observable<Float>, Equatable  {
     
     var events =  [String]()
-    var keyStorage=[String:[(String,Condition!,Brush)]]()
+    var keyStorage=[String:[(String,Condition?,Brush)]]()
     var id:String = NSUUID().uuidString;
     
     init(){
@@ -24,12 +24,12 @@ class Emitter: Observable<Float>, Equatable  {
     
     func createKeyStorage(){
         for e in events{
-            self.keyStorage[e] = [(String,Condition!,Brush)]();
+            self.keyStorage[e] = [(String,Condition?,Brush)]();
         }
         
     }
     
-    dynamic func propertyInvalidated(notification: NSNotification){
+    @objc dynamic func propertyInvalidated(notification: NSNotification){
         self.invalidated = true;
         
         for key in keyStorage["INVALIDATED"]!  {

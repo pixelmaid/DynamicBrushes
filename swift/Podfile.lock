@@ -1,17 +1,17 @@
 PODS:
-  - AudioKit (4.1):
-    - AudioKit/UI (= 4.1)
-  - AudioKit/UI (4.1)
-  - AWSCognito (2.5.3):
-    - AWSCore (= 2.5.3)
-  - AWSCore (2.5.3)
-  - AWSS3 (2.5.3):
-    - AWSCore (= 2.5.3)
-  - Reflection (0.14.3)
-  - Starscream (2.0.4)
-  - SwiftKVC (3.0.0):
-    - Reflection (~> 0.14.3)
-  - SwiftyJSON (3.1.4)
+  - AudioKit (4.2.4):
+    - AudioKit/UI (= 4.2.4)
+  - AudioKit/UI (4.2.4)
+  - AWSCognito (2.6.18):
+    - AWSCore (= 2.6.18)
+  - AWSCore (2.6.18)
+  - AWSS3 (2.6.18):
+    - AWSCore (= 2.6.18)
+  - Reflection (0.16.0)
+  - Starscream (3.0.5)
+  - SwiftKVC (4.0.1):
+    - Reflection (~> 0.16.0)
+  - SwiftyJSON (4.1.0)
 
 DEPENDENCIES:
   - AudioKit (~> 4.1)
@@ -19,19 +19,19 @@ DEPENDENCIES:
   - AWSCore
   - AWSS3
   - Starscream
-  - SwiftKVC (~> 3.0.0)
+  - SwiftKVC (~> 4.0.1)
   - SwiftyJSON
 
 SPEC CHECKSUMS:
-  AudioKit: 0bb2b3e61e4ac908fe576ad7a1d89c597156bb47
-  AWSCognito: 74be06e52a2a063ab932a9d457a89e003d68631d
-  AWSCore: 344e21892790650cf902246d436402257a545bde
-  AWSS3: 88095d68f9d588eaa042d7f502f350234f98f606
-  Reflection: 93327e50981227ac33c18274fcbaed33b1127811
-  Starscream: df5974ee928b157c8eda8af8de7c620276b7dfcc
-  SwiftKVC: 95a7c435ad4e93c06ac68434fac795d72a792a7a
-  SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
+  AudioKit: 90ed0de2bc50ab68306f4b424ae1622fc9149b8e
+  AWSCognito: aab248bf535c2f33240d3e952d0af88332d36af7
+  AWSCore: 5594f02730a821907d155ac28e96593d1caa6f64
+  AWSS3: 659953f91bf85f62b6290625e86c45e3b9dd8dee
+  Reflection: 6c21d35bf5ac4a88f05187d1ca9c964c54e238c4
+  Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
+  SwiftKVC: eb711a40be96d73949487f3b81c0e9268d015aee
+  SwiftyJSON: c29297daf073d2aa016295d5809cdd68045c39b3
 
-PODFILE CHECKSUM: 3de09913aded6297380c7e54bd430aada3760320
+PODFILE CHECKSUM: 03b1707f90bc81506cad5a7be93dc2c36d50f1c4
 
 COCOAPODS: 1.4.0

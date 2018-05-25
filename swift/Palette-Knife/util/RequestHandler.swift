@@ -281,7 +281,7 @@ final class RequestHandler: Requester{
     static func registerObservableTarget(observableId:String,behaviorId:String){
         RequestHandler.inspectorObservables[observableId]!.registerListener(behaviorId:behaviorId, listenerId: observableId);
     if(inspectorTimer == nil){
-            //inspectorTimer = Timer.scheduledTimer(timeInterval:1, target: RequestHandler.sharedInstance, selector: #selector(RequestHandler.emitterLogCallback), userInfo: nil, repeats: true)
+            inspectorTimer = Timer.scheduledTimer(timeInterval:1, target: RequestHandler.sharedInstance, selector: #selector(RequestHandler.emitterLogCallback), userInfo: nil, repeats: true)
         }
     }
     

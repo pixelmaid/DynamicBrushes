@@ -53,7 +53,7 @@ class RecordingToolbarVC: UIViewController, Requester {
     }
     
     
-    func loop() {
+    @objc func loop() {
         if (!isLooping) {
             loopRecording.setImage(UIImage(named: "loop_button_on2x"), for: .normal)
             recordImg.image = UIImage(named: "record_off2x")
@@ -66,7 +66,7 @@ class RecordingToolbarVC: UIViewController, Requester {
        loopEvent.raise(data: ("LOOP"));
     }
     
-    func showExportDialog() {
+    @objc func showExportDialog() {
         //Creating UIAlertController and
         //Setting title and message for the alert dialog
         let alertController = UIAlertController(title: "Export Recording", message: "Name your recording", preferredStyle: .alert)

@@ -67,7 +67,7 @@ class ToolbarViewController: UIViewController {
         //change the fill color
         shapeLayer?.fillColor = UIColor.red.cgColor
         //you can change the stroke color
-        shapeLayer?.strokeColor = UIColor(colorLiteralRed: 0.85, green: 0.85, blue: 0.85, alpha: 1).cgColor
+        shapeLayer?.strokeColor = UIColor(red: 0.85, green: 0.85, blue: 0.85, alpha: 1).cgColor
         //you can change the line width
         shapeLayer?.lineWidth = 1.0
 
@@ -97,12 +97,12 @@ class ToolbarViewController: UIViewController {
         shapeLayer?.fillColor = color.cgColor;
     }
     
-    func diameterSliderChanged(sender:UISlider!){
+    @objc func diameterSliderChanged(sender:UISlider!){
         toolEvent.raise(data:("DIAMETER_CHANGED"))
         
     }
     
-    func alphaSliderChanged(sender:UISlider!){
+    @objc func alphaSliderChanged(sender:UISlider!){
         toolEvent.raise(data:("ALPHA_CHANGED"))
         
     }
@@ -124,7 +124,7 @@ class ToolbarViewController: UIViewController {
 
         
     }
-    func panelToggled(sender: AnyObject){
+    @objc func panelToggled(sender: AnyObject){
         let target = (sender as! UIButton);
         if(target == layerPanelButton){
           toolEvent.raise(data: ("TOGGLE_LAYER_PANEL"));
@@ -143,7 +143,7 @@ class ToolbarViewController: UIViewController {
         }
     }
     
-    func eraseToggled(){
+    @objc func eraseToggled(){
         if(eraseActive){
             eraseButton.setImage(eraseStandard, for: UIControlState.normal)
             eraseActive = false;
@@ -160,7 +160,7 @@ class ToolbarViewController: UIViewController {
         
     }
     
-    func penToggled(){
+    @objc func penToggled(){
        
             penButton.setImage(penHighlight, for: UIControlState.normal)
            airbrushButton.setImage(airbrushStandard, for: UIControlState.normal)
@@ -176,7 +176,7 @@ class ToolbarViewController: UIViewController {
         
     }
     
-    func airbrushToggled(){
+    @objc func airbrushToggled(){
             penButton.setImage(penStandard, for: UIControlState.normal)
             airbrushButton.setImage(airbrushHighlight, for: UIControlState.normal)
             
@@ -188,7 +188,7 @@ class ToolbarViewController: UIViewController {
         
     }
     
-    func micToggled(){
+    @objc func micToggled(){
         if !micActive {
             micButton.setImage(micOn, for: UIControlState.normal)
             print("@ mic turned on")
@@ -205,7 +205,7 @@ class ToolbarViewController: UIViewController {
     }
     
     
-    func undoToggled(){
+    @objc func undoToggled(){
   
         toolEvent.raise(data: ("UNDO"));
         

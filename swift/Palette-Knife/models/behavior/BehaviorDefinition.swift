@@ -316,7 +316,7 @@ class BehaviorDefinition {
     }
     
     
-    //TODO: remove eventually- this is bad
+    //TODO: remove eventually- bad design
     func getStateByName(name:String)->String?{
         for(id,state) in self.states{
             if(state.0 == name){

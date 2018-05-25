@@ -97,7 +97,7 @@ class SaveManager{
         uploadRequest?.key = filename
        // uploadRequest?.contentLength =
         uploadRequest?.contentType = uploadData["content_type"].stringValue;
-        uploadRequest?.body = fileUrl as URL!
+        uploadRequest?.body = (fileUrl as URL?)!
         uploadRequest?.serverSideEncryption = AWSS3ServerSideEncryption.awsKms
         uploadRequest?.uploadProgress = { (bytesSent, totalBytesSent, totalBytesExpectedToSend) -> Void in
             DispatchQueue.main.async(execute: {
@@ -210,7 +210,7 @@ class SaveManager{
         
         transferManager.download(downloadRequest!).continueWith(executor: AWSExecutor.mainThread(), block: { (task:AWSTask<AnyObject>) -> Any? in
             
-            if let error = task.error as? NSError {
+            if let error = task.error as NSError? {
                 if error.domain == AWSS3TransferManagerErrorDomain, let code = AWSS3TransferManagerErrorType(rawValue: error.code) {
                     switch code {
                     case .cancelled, .paused:
@@ -328,7 +328,7 @@ class SaveManager{
             let fileText = try String(contentsOf: url, encoding: String.Encoding.utf8)
             
             let dataFromString = fileText.data(using: .utf8, allowLossyConversion: false)
-            let json = JSON(data: dataFromString!)
+            let json = try JSON(data: dataFromString!)
             return json;
         }
         catch{

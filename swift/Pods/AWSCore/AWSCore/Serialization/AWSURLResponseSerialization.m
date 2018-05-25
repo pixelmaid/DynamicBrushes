@@ -12,10 +12,9 @@
 // express or implied. See the License for the specific language governing
 // permissions and limitations under the License.
 //
-
 #import "AWSURLResponseSerialization.h"
 
-#import "AWSLogging.h"
+#import "AWSCocoaLumberjack.h"
 
 #import "AWSService.h"
 #import "AWSValidation.h"
@@ -40,7 +39,7 @@
 
         _serviceDefinitionJSON = JSONDefinition;
         if (_serviceDefinitionJSON == nil) {
-            AWSLogError(@"serviceDefinitionJSON of is nil.");
+            AWSDDLogError(@"serviceDefinitionJSON is nil.");
             return nil;
         }
         _actionName = actionName;
@@ -56,15 +55,15 @@
                  currentRequest:(NSURLRequest *)currentRequest
                            data:(id)data
                           error:(NSError *__autoreleasing *)error {
-    if ([AWSLogger defaultLogger].logLevel >= AWSLogLevelDebug) {
+    if([AWSDDLog sharedInstance].logLevel & AWSDDLogFlagDebug){
         if ([data isKindOfClass:[NSData class]]) {
             if ([data length] <= 100 * 1024) {
-                AWSLogDebug(@"Response body:\n%@", [[NSString alloc] initWithData:data
-                                                                         encoding:NSUTF8StringEncoding]);
+                AWSDDLogDebug(@"Response body:\n%@", [[NSString alloc] initWithData:data
+                                                                           encoding:NSUTF8StringEncoding]);
             } else {
-                AWSLogDebug(@"Response body (Partial data. The first 100KB is displayed.):\n%@", [[NSString alloc] initWithData:[data subdataWithRange:NSMakeRange(0, 100 * 1024)]
-                                                                                                                       encoding:NSUTF8StringEncoding]);
-
+                AWSDDLogDebug(@"Response body (Partial data. The first 100KB is displayed.):\n%@", [[NSString alloc] initWithData:[data subdataWithRange:NSMakeRange(0, 100 * 1024)]
+                                                                                                                         encoding:NSUTF8StringEncoding]);
+                
             }
         }
     }
@@ -104,10 +103,11 @@
         AWSJSONDictionary *outputRules = [[AWSJSONDictionary alloc] initWithDictionary:[anActionRules objectForKey:@"output"] JSONDefinitionRule:shapeRules];
         result = [AWSXMLResponseSerializer parseResponse:response rules:outputRules bodyDictionary:[result mutableCopy] error:error];
 
-        if ([[AWSService errorCodeDictionary] objectForKey:[[[result objectForKey:@"__type"] componentsSeparatedByString:@"#"] lastObject]]) {
+        NSNumber *errorCode = [[AWSService errorCodeDictionary] objectForKey:[[[result objectForKey:@"__type"] componentsSeparatedByString:@"#"] lastObject]];
+        if (errorCode != nil) {
             if (error) {
                 *error = [NSError errorWithDomain:AWSServiceErrorDomain
-                                             code:[[[AWSService errorCodeDictionary] objectForKey:[[[result objectForKey:@"__type"] componentsSeparatedByString:@"#"] lastObject]] integerValue]
+                                             code:[errorCode integerValue]
                                          userInfo:result];
             }
         }
@@ -141,7 +141,7 @@
 
         _serviceDefinitionJSON = JSONDefinition;
         if (_serviceDefinitionJSON == nil) {
-            AWSLogError(@"serviceDefinitionJSON of is nil.");
+            AWSDDLogError(@"serviceDefinitionJSON of is nil.");
             return nil;
         }
         _actionName = actionName;
@@ -195,7 +195,7 @@
         }
 
         //if the location may contain multiple headers if it is a map type
-        if ([memberRules isKindOfClass:[NSDictionary class]] && [memberRules[@"location"] isEqualToString:@"headers"] && [memberRules[@"type"] isEqualToString:@"map"] ) {
+        if ([memberRules isKindOfClass:[NSDictionary class]] && [memberRules[@"location"] isEqualToString:@"headers"] && [memberRules[@"type"] isEqualToString:@"map"]) {
             NSString *locationName = memberRules[@"locationName"]?memberRules[@"locationName"]:@""; //if no locationName specified, match all headers.
             if (locationName) {
                 NSPredicate *metaDatapredicate = [NSPredicate predicateWithFormat:@"SELF like[c] %@",[locationName stringByAppendingString:@"*"]]; //[c] means case insensitive
@@ -233,19 +233,19 @@
                  currentRequest:(NSURLRequest *)currentRequest
                            data:(id)data
                           error:(NSError *__autoreleasing *)error {
-    if ([AWSLogger defaultLogger].logLevel >= AWSLogLevelDebug) {
+    if([AWSDDLog sharedInstance].logLevel & AWSDDLogFlagDebug){
         if ([data isKindOfClass:[NSData class]]) {
             if ([data length] <= 100 * 1024) {
-                AWSLogDebug(@"Response body:\n%@", [[NSString alloc] initWithData:data
-                                                                         encoding:NSUTF8StringEncoding]);
+                AWSDDLogDebug(@"Response body:\n%@", [[NSString alloc] initWithData:data
+                                                                           encoding:NSUTF8StringEncoding]);
             } else {
-                AWSLogDebug(@"Response body (Partial data. The first 100KB is displayed.):\n%@", [[NSString alloc] initWithData:[data subdataWithRange:NSMakeRange(0, 100 * 1024)]
-                                                                                                                       encoding:NSUTF8StringEncoding]);
-
+                AWSDDLogDebug(@"Response body (Partial data. The first 100KB is displayed.):\n%@", [[NSString alloc] initWithData:[data subdataWithRange:NSMakeRange(0, 100 * 1024)]
+                                                                                                                         encoding:NSUTF8StringEncoding]);
+                
             }
         }
     }
-
+    
     if (![self validateResponse:response fromRequest:currentRequest data:data error:error]) {
         return nil;
     }
