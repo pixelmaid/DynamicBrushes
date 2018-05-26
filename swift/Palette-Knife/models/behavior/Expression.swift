@@ -87,17 +87,17 @@ class Expression:Observable<Float>{
         ExpressionCatch.try({ () -> Void in
             let expr = NSExpression(format: valueString)
             
-            if let result = expr.expressionValue(with: nil, context: nil) as? Float {
+            if let result = expr.expressionValue(with: nil, context: nil) as? NSNumber {
                 #if DEBUG
                     
                     // print("expression success",result)
                 #endif
-                targetValue = result;
+                targetValue = result.floatValue;
                 
             } else {
                 #if DEBUG
                     
-                    print("==========ERROR EXPRESSION FAILED================",self.id);
+                    print("==========ERROR EXPRESSION FAILED================",self.id, valueString);
                 #endif
                 
                 
