@@ -11,6 +11,7 @@
 		0A56E3BD2071C09C006243A6 /* BrushSignalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56E3BC2071C09B006243A6 /* BrushSignalManager.swift */; };
 		0A56E3BF2072B916006243A6 /* SignalAccessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56E3BE2072B916006243A6 /* SignalAccessors.swift */; };
 		0A56E3C5207308FA006243A6 /* ExpressionCatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A56E3C4207308FA006243A6 /* ExpressionCatch.m */; };
+		0A67848420B8E327004BB7B9 /* MapFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A67848320B8E327004BB7B9 /* MapFunctions.swift */; };
 		0AAEAB6A20698BFB0082F6E4 /* StylusCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAEAB6920698BFB0082F6E4 /* StylusCollection.swift */; };
 		0AAEAB6C20698C030082F6E4 /* LiveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAEAB6B20698C030082F6E4 /* LiveManager.swift */; };
 		0AAEAB6E20698C880082F6E4 /* UICollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAEAB6D20698C880082F6E4 /* UICollection.swift */; };
@@ -43,7 +44,6 @@
 		5F5CED2B1ED10AED00A253A0 /* ColorWheel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5CED261ED10AED00A253A0 /* ColorWheel.swift */; };
 		5F5CED2C1ED10AED00A253A0 /* SelectedColorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5CED271ED10AED00A253A0 /* SelectedColorView.swift */; };
 		5F5CED2D1ED10AED00A253A0 /* SwiftHSVColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F5CED281ED10AED00A253A0 /* SwiftHSVColorPicker.swift */; };
-		5F6903361FBBB75F00EB3437 /* MapFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F6903351FBBB75900EB3437 /* MapFunctions.swift */; };
 		5F90F5411E9D59D4006BB9FE /* Emitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5381E9D59D4006BB9FE /* Emitter.swift */; };
 		5F90F5421E9D59D4006BB9FE /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5391E9D59D4006BB9FE /* Event.swift */; };
 		5F90F5441E9D59D4006BB9FE /* Matrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F53B1E9D59D4006BB9FE /* Matrix.swift */; };
@@ -144,9 +144,6 @@
 		7200B9822070140B008EA510 /* Operations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7200B9812070140B008EA510 /* Operations.swift */; };
 		7219D0E020699EEF0096CB4B /* mic_off2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7219D0DE20699EEE0096CB4B /* mic_off2x.png */; };
 		7219D0E120699EEF0096CB4B /* mic_on2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7219D0DF20699EEF0096CB4B /* mic_on2x.png */; };
-		72478CDD2029043800D24C92 /* Palette-Knife in Resources */ = {isa = PBXBuildFile; fileRef = 72478CDA2029043700D24C92 /* Palette-Knife */; };
-		72478CDE2029043800D24C92 /* Palette-KnifeUITests in Resources */ = {isa = PBXBuildFile; fileRef = 72478CDB2029043800D24C92 /* Palette-KnifeUITests */; };
-		72478CDF2029043800D24C92 /* Palette-KnifeTests in Resources */ = {isa = PBXBuildFile; fileRef = 72478CDC2029043800D24C92 /* Palette-KnifeTests */; };
 		726443622045E00D005A2E9D /* VisualizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 726443612045E00D005A2E9D /* VisualizationView.swift */; };
 		7267DCC120290D9F0093245A /* RecordingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7267DCC020290D9E0093245A /* RecordingViewController.swift */; };
 		7267DCC5202A8ECF0093245A /* RecordingFrameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7267DCC4202A8ECF0093245A /* RecordingFrameCell.swift */; };
@@ -183,6 +180,7 @@
 		0A56E3BE2072B916006243A6 /* SignalAccessors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SignalAccessors.swift; path = data/SignalAccessors.swift; sourceTree = "<group>"; };
 		0A56E3C3207308FA006243A6 /* ExpressionCatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExpressionCatch.h; sourceTree = "<group>"; };
 		0A56E3C4207308FA006243A6 /* ExpressionCatch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExpressionCatch.m; sourceTree = "<group>"; };
+		0A67848320B8E327004BB7B9 /* MapFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MapFunctions.swift; path = data/MapFunctions.swift; sourceTree = "<group>"; };
 		0AAEAB6920698BFB0082F6E4 /* StylusCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StylusCollection.swift; path = data/StylusCollection.swift; sourceTree = "<group>"; };
 		0AAEAB6B20698C030082F6E4 /* LiveManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveManager.swift; sourceTree = "<group>"; };
 		0AAEAB6D20698C880082F6E4 /* UICollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UICollection.swift; path = data/UICollection.swift; sourceTree = "<group>"; };
@@ -218,7 +216,6 @@
 		5F5CED261ED10AED00A253A0 /* ColorWheel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorWheel.swift; sourceTree = "<group>"; };
 		5F5CED271ED10AED00A253A0 /* SelectedColorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectedColorView.swift; sourceTree = "<group>"; };
 		5F5CED281ED10AED00A253A0 /* SwiftHSVColorPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftHSVColorPicker.swift; sourceTree = "<group>"; };
-		5F6903351FBBB75900EB3437 /* MapFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MapFunctions.swift; path = "Palette-Knife/models/MapFunctions.swift"; sourceTree = SOURCE_ROOT; };
 		5F90F5381E9D59D4006BB9FE /* Emitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Emitter.swift; sourceTree = "<group>"; };
 		5F90F5391E9D59D4006BB9FE /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		5F90F53B1E9D59D4006BB9FE /* Matrix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Matrix.swift; sourceTree = "<group>"; };
@@ -310,16 +307,16 @@
 		5FE32F9E1ECF70BE00ADC01E /* layerVisible_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = layerVisible_button.png; sourceTree = "<group>"; };
 		5FE32F9F1ECF70BE00ADC01E /* layerVisible_button2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = layerVisible_button2x.png; sourceTree = "<group>"; };
 		5FE34C7A1F1FA61300E26C06 /* PathFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PathFunctions.swift; sourceTree = "<group>"; };
-		5FE7AB5F2060860F00FBCD9E /* CollectionPresets.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = CollectionPresets.json; path = "Palette-Knife/Resources/CollectionPresets.json"; sourceTree = "<group>"; };
+		5FE7AB5F2060860F00FBCD9E /* CollectionPresets.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = CollectionPresets.json; path = DynamicBrushes/Resources/CollectionPresets.json; sourceTree = "<group>"; };
 		5FEE2AC71DE127D800080095 /* dual_pen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dual_pen.png; sourceTree = "<group>"; };
 		5FEE2AC81DE127D800080095 /* lg_pen_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lg_pen_blue.png; sourceTree = "<group>"; };
 		5FFAC4D61E9D84040009DC5E /* SaveManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SaveManager.swift; sourceTree = "<group>"; };
-		5FFC45591EE1B133007B7597 /* point.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = point.vsh; sourceTree = SOURCE_ROOT; };
+		5FFC45591EE1B133007B7597 /* point.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = point.vsh; path = DynamicBrushes/Resources/point.vsh; sourceTree = SOURCE_ROOT; };
 		5FFC456D1EE4C648007B7597 /* airbrush_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = airbrush_button.png; sourceTree = "<group>"; };
 		5FFC456E1EE4C648007B7597 /* airbrush_button2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = airbrush_button2x.png; sourceTree = "<group>"; };
 		5FFC45711EE4C855007B7597 /* airbrush_button_active.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = airbrush_button_active.png; sourceTree = "<group>"; };
 		5FFC45721EE4C855007B7597 /* airbrush_button_active2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = airbrush_button_active2x.png; sourceTree = "<group>"; };
-		5FFC45771EE5C473007B7597 /* BehaviorPanelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BehaviorPanelViewController.swift; path = "Palette-Knife/views/BehaviorPanelViewController.swift"; sourceTree = SOURCE_ROOT; };
+		5FFC45771EE5C473007B7597 /* BehaviorPanelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BehaviorPanelViewController.swift; path = DynamicBrushes/views/BehaviorPanelViewController.swift; sourceTree = SOURCE_ROOT; };
 		5FFC45791EE5C6D6007B7597 /* BehaviorCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BehaviorCell.swift; sourceTree = "<group>"; };
 		5FFDAB081D21B5C400632A26 /* SocketManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketManager.swift; sourceTree = "<group>"; };
 		5FFFD796204F5E5D0038A0BA /* SignalCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SignalCollection.swift; path = data/SignalCollection.swift; sourceTree = "<group>"; };
@@ -327,9 +324,6 @@
 		7200B9812070140B008EA510 /* Operations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Operations.swift; path = data/Operations.swift; sourceTree = "<group>"; };
 		7219D0DE20699EEE0096CB4B /* mic_off2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mic_off2x.png; sourceTree = "<group>"; };
 		7219D0DF20699EEF0096CB4B /* mic_on2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mic_on2x.png; sourceTree = "<group>"; };
-		72478CDA2029043700D24C92 /* Palette-Knife */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Palette-Knife"; sourceTree = "<group>"; };
-		72478CDB2029043800D24C92 /* Palette-KnifeUITests */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Palette-KnifeUITests"; sourceTree = "<group>"; };
-		72478CDC2029043800D24C92 /* Palette-KnifeTests */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Palette-KnifeTests"; sourceTree = "<group>"; };
 		726443612045E00D005A2E9D /* VisualizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualizationView.swift; sourceTree = "<group>"; };
 		7267DCC020290D9E0093245A /* RecordingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordingViewController.swift; sourceTree = "<group>"; };
 		7267DCC4202A8ECF0093245A /* RecordingFrameCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingFrameCell.swift; sourceTree = "<group>"; };
@@ -399,12 +393,12 @@
 		5F15BB5E1F8D94A5005E5B08 /* data */ = {
 			isa = PBXGroup;
 			children = (
+				0A67848320B8E327004BB7B9 /* MapFunctions.swift */,
 				0AAEAB6D20698C880082F6E4 /* UICollection.swift */,
 				0AAEAB6920698BFB0082F6E4 /* StylusCollection.swift */,
 				5FDE68EA205C93F0005A49C3 /* Generator.swift */,
 				5F90F5631E9D5BCC006BB9FE /* Signal.swift */,
 				5FFFD796204F5E5D0038A0BA /* SignalCollection.swift */,
-				5F6903351FBBB75900EB3437 /* MapFunctions.swift */,
 				72D72C082069DF8400C1C9C8 /* MicCollection.swift */,
 				7200B9812070140B008EA510 /* Operations.swift */,
 				0A56E3BE2072B916006243A6 /* SignalAccessors.swift */,
@@ -437,6 +431,7 @@
 		5F5037281EA95E27004ABAC1 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				5FFC45591EE1B133007B7597 /* point.vsh */,
 				5F5037291EA95E37004ABAC1 /* Recording.data */,
 				5FE7AB5F2060860F00FBCD9E /* CollectionPresets.json */,
 			);
@@ -531,13 +526,10 @@
 		5FA4C7171CDA7B5B004A728C = {
 			isa = PBXGroup;
 			children = (
-				72478CDA2029043700D24C92 /* Palette-Knife */,
-				72478CDC2029043800D24C92 /* Palette-KnifeTests */,
-				72478CDB2029043800D24C92 /* Palette-KnifeUITests */,
 				5F90F5721E9D5CE8006BB9FE /* objc_headers */,
-				5FA4C7221CDA7B5B004A728C /* PaletteKnife */,
-				5FA4C7371CDA7B5B004A728C /* PaletteKnifeTests */,
-				5FA4C7421CDA7B5B004A728C /* PaletteKnifeUITests */,
+				5FA4C7221CDA7B5B004A728C /* DynamicBrushes */,
+				5FA4C7371CDA7B5B004A728C /* DynamicBrushesTests */,
+				5FA4C7421CDA7B5B004A728C /* DynamicBrushesUITests */,
 				5FA4C7211CDA7B5B004A728C /* Products */,
 				A8FB9B6AFF975A979A8CC39F /* Frameworks */,
 				65448B6CB924F9F7835F40CC /* Pods */,
@@ -556,10 +548,9 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		5FA4C7221CDA7B5B004A728C /* PaletteKnife */ = {
+		5FA4C7221CDA7B5B004A728C /* DynamicBrushes */ = {
 			isa = PBXGroup;
 			children = (
-				5FFC45591EE1B133007B7597 /* point.vsh */,
 				5F5037281EA95E27004ABAC1 /* Resources */,
 				5F5037231EA95DD0004ABAC1 /* Shaders */,
 				5FFAC4D51E9D83C20009DC5E /* util */,
@@ -574,28 +565,25 @@
 				5FA4C72C1CDA7B5B004A728C /* LaunchScreen.storyboard */,
 				5FA4C72F1CDA7B5B004A728C /* Info.plist */,
 			);
-			name = PaletteKnife;
-			path = "Palette-Knife";
+			path = DynamicBrushes;
 			sourceTree = "<group>";
 		};
-		5FA4C7371CDA7B5B004A728C /* PaletteKnifeTests */ = {
+		5FA4C7371CDA7B5B004A728C /* DynamicBrushesTests */ = {
 			isa = PBXGroup;
 			children = (
 				5FA4C7381CDA7B5B004A728C /* Palette_KnifeTests.swift */,
 				5FA4C73A1CDA7B5B004A728C /* Info.plist */,
 			);
-			name = PaletteKnifeTests;
-			path = "Palette-KnifeTests";
+			path = DynamicBrushesTests;
 			sourceTree = "<group>";
 		};
-		5FA4C7421CDA7B5B004A728C /* PaletteKnifeUITests */ = {
+		5FA4C7421CDA7B5B004A728C /* DynamicBrushesUITests */ = {
 			isa = PBXGroup;
 			children = (
 				5FA4C7431CDA7B5B004A728C /* Palette_KnifeUITests.swift */,
 				5FA4C7451CDA7B5B004A728C /* Info.plist */,
 			);
-			name = PaletteKnifeUITests;
-			path = "Palette-KnifeUITests";
+			path = DynamicBrushesUITests;
 			sourceTree = "<group>";
 		};
 		5FA4C7551CDB9E9A004A728C /* models */ = {
@@ -983,7 +971,6 @@
 				5FE32F9B1ECF6DC900ADC01E /* trash_button2x.png in Resources */,
 				5F4D8CEC1DEE072A008042FE /* shopbot_position_active.png in Resources */,
 				5FE32F941ECF6DC900ADC01E /* layeradd_button.png in Resources */,
-				72478CDD2029043800D24C92 /* Palette-Knife in Resources */,
 				5FE32F981ECF6DC900ADC01E /* save_button.png in Resources */,
 				5F9F25A21DEFE38B005CB5D8 /* radial2x.png in Resources */,
 				5FA4C7291CDA7B5B004A728C /* Main.storyboard in Resources */,
@@ -991,7 +978,6 @@
 				5FE32F841ECF6D5300ADC01E /* brush_button.png in Resources */,
 				5FE32F951ECF6DC900ADC01E /* layeradd_button2x.png in Resources */,
 				5F2CF3DA1ED333AD0066AC8E /* fileList_button.png in Resources */,
-				72478CDE2029043800D24C92 /* Palette-KnifeUITests in Resources */,
 				72FD3370203256ED00CD4FAF /* recording_export_button.png in Resources */,
 				5F4D8CED1DEE072A008042FE /* shopbot_position_inactive.png in Resources */,
 				5FE32F691ECF61A500ADC01E /* layer_button.png in Resources */,
@@ -1005,7 +991,6 @@
 				5FE32F7E1ECF6D5300ADC01E /* behavior_activate_button.png in Resources */,
 				5FD6CD121DE0EE0E007D94AA /* sm_pen_blue.png in Resources */,
 				5FE32F881ECF6D5300ADC01E /* erase_button.png in Resources */,
-				72478CDF2029043800D24C92 /* Palette-KnifeTests in Resources */,
 				5FBDF0E71ED8D95300022B07 /* quad.vsh in Resources */,
 				5FE7AB602060860F00FBCD9E /* CollectionPresets.json in Resources */,
 				5FE32F991ECF6DC900ADC01E /* save_button2x.png in Resources */,
@@ -1222,6 +1207,7 @@
 				5F90F5481E9D59D4006BB9FE /* TimeSeries.swift in Sources */,
 				5F90F5411E9D59D4006BB9FE /* Emitter.swift in Sources */,
 				5F90F5561E9D5A41006BB9FE /* Drawing.swift in Sources */,
+				0A67848420B8E327004BB7B9 /* MapFunctions.swift in Sources */,
 				0A56E3BF2072B916006243A6 /* SignalAccessors.swift in Sources */,
 				5F13B69C1FC3AEBF00E37A37 /* Router.swift in Sources */,
 				5F50372E1EAD48BB004ABAC1 /* MathUtil.swift in Sources */,
@@ -1276,7 +1262,6 @@
 				5F2CF3D71ED32EC00066AC8E /* FileCell.swift in Sources */,
 				5FA4C7241CDA7B5B004A728C /* AppDelegate.swift in Sources */,
 				5F13B69A1FC3A40C00E37A37 /* ProgrammingViewController.swift in Sources */,
-				5F6903361FBBB75F00EB3437 /* MapFunctions.swift in Sources */,
 				7267DCC120290D9F0093245A /* RecordingViewController.swift in Sources */,
 				5F90F5461E9D59D4006BB9FE /* Observable.swift in Sources */,
 				5F90F5421E9D59D4006BB9FE /* Event.swift in Sources */,
@@ -1519,7 +1504,7 @@
 					/Users/jennifermaryjacobs/Documents/work/code/DynamicBrushes/swift/,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INFOPLIST_FILE = "Palette-Knife/Info.plist";
+				INFOPLIST_FILE = DynamicBrushes/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -1570,7 +1555,7 @@
 					/Users/jennifermaryjacobs/Documents/work/code/DynamicBrushes/swift/,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				INFOPLIST_FILE = "Palette-Knife/Info.plist";
+				INFOPLIST_FILE = DynamicBrushes/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -1608,9 +1593,9 @@
 			baseConfigurationReference = 9184402CE380BFB1FF834709 /* Pods-DynamicBrushesTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				INFOPLIST_FILE = "Palette-KnifeTests/Info.plist";
+				INFOPLIST_FILE = DynamicBrushesTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "jenniferj.net-gmail.com.Palette-KnifeTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "jenniferj.net-gmail.com.DynamicBrushesTests";
 				PRODUCT_NAME = DynamicBrushes;
 				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DynamicBrushes.app/DynamicBrushes";
@@ -1622,9 +1607,9 @@
 			baseConfigurationReference = 7AC2D788C09FE49D5492B688 /* Pods-DynamicBrushesTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				INFOPLIST_FILE = "Palette-KnifeTests/Info.plist";
+				INFOPLIST_FILE = DynamicBrushesTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "jenniferj.net-gmail.com.Palette-KnifeTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "jenniferj.net-gmail.com.DynamicBrushesTests";
 				PRODUCT_NAME = DynamicBrushes;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 3.0;
@@ -1636,12 +1621,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7F4D3E981B1929C8EAF74E7E /* Pods-DynamicBrushesUITests.debug.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = "Palette-KnifeUITests/Info.plist";
+				INFOPLIST_FILE = DynamicBrushesUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "jenniferj.net-gmail.com.Palette-KnifeUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = "jenniferj.net-gmail.com.DynamicBrushesUITests";
 				PRODUCT_NAME = DynamicBrushes;
 				SWIFT_VERSION = 3.0;
-				TEST_TARGET_NAME = "Palette-Knife";
+				TEST_TARGET_NAME = DynamicBrushes;
 			};
 			name = Debug;
 		};
@@ -1649,13 +1634,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7377047E7D52A84B6D234EE7 /* Pods-DynamicBrushesUITests.release.xcconfig */;
 			buildSettings = {
-				INFOPLIST_FILE = "Palette-KnifeUITests/Info.plist";
+				INFOPLIST_FILE = DynamicBrushesUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "jenniferj.net-gmail.com.Palette-KnifeUITests";
+				PRODUCT_BUNDLE_IDENTIFIER = "jenniferj.net-gmail.com.DynamicBrushesUITests";
 				PRODUCT_NAME = DynamicBrushes;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 3.0;
-				TEST_TARGET_NAME = "Palette-Knife";
+				TEST_TARGET_NAME = DynamicBrushes;
 			};
 			name = Release;
 		};
