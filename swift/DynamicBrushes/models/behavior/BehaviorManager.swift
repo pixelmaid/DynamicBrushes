@@ -32,6 +32,8 @@ class BehaviorManager{
     //static var accessors = [String:AccessorCollection]();
 
     static var signalCollections = [[String:SignalCollection](), [String:SignalCollection](),[String:SignalCollection](),[String:SignalCollection](),[String:SignalCollection](),[String:SignalCollection]()];
+    
+    
 
     var canvas:Canvas
     init(canvas:Canvas){
@@ -68,15 +70,17 @@ class BehaviorManager{
             BehaviorManager.behaviors.removeAll();
             
         }
-        for(key,value) in json{
-            if let val = BehaviorManager.behaviors[key] {
+        let behaviorArray = json.arrayValue
+        for value in behaviorArray{
+            let id = value["id"].stringValue
+            if let val = BehaviorManager.behaviors[id] {
                 val.clearBehavior();
                 
             }
-            let behavior = BehaviorDefinition(id:key,name:value["name"].stringValue);
+            let behavior = BehaviorDefinition(id:id,name:value["name"].stringValue);
             behavior.parseJSON(json: value)
             behavior.createBehavior(canvas:canvas);
-            BehaviorManager.behaviors[key] = behavior;
+            BehaviorManager.behaviors[id] = behavior;
             
         }
     }
@@ -161,25 +165,29 @@ class BehaviorManager{
             return resultJSON;
             
         case "behavior_added":
-            let name = data["name"].stringValue;
+            print("data to load",data);
+            BehaviorManager.loadCollectionsFromJSON(data: data["data"]["collections"]);
+            self.loadBehaviorsFromJSON(json: data["data"]["behaviors"], rewriteAll: false)
+            
+          /*  let name = data["name"].stringValue;
             let id = data["id"].stringValue;
             let data = data["data"]
             //let behavior = BehaviorDefinition(id:data["id"].stringValue, name: data["name"].stringValue);
-            let behavior = BehaviorDefinition(id:id,name:name);
-            behavior.parseJSON(json: data)
-
-            
             if(BehaviorManager.behaviors[id] != nil){
                 throw BehaviorError.duplicateName;
             }
             else{
                 BehaviorManager.behaviors[id] = behavior;
 
-               behavior.createBehavior(canvas:canvas)
-
+               behavior.createBehavior(canvas:canvas)*/
+                resultJSON["data"] = data["data"]["behaviors"].arrayValue[0];
+            
                 resultJSON["result"] = "success";
+            #if DEBUG
+            print("behavior added result",resultJSON);
+            #endif
                 return resultJSON;
-            }
+           // }
             
             //request to check dependency
         case "delete_behavior_request":
@@ -535,63 +543,85 @@ class BehaviorManager{
         for collection in collectionData{
             let key = collection["classType"].stringValue;
             print("key",key);
+            let collectionId =  collection["id"].stringValue;
             switch (key) {
             case "live":
-                    let signalCollection:LiveCollection;
-                    if collection["name"] == "stylus"{
-                        signalCollection = StylusCollection(data:collection);
-                        stylusManager.registerCollection(id: signalCollection.id, collection:signalCollection as! StylusCollection);
+                    let collectionData:(id:String,collection:SignalCollection?);
+                    print("collection Name",collection["name"].stringValue);
+
+                    if collection["name"].stringValue == "stylus"{
+                       collectionData = stylusManager.registerCollection(collectionData: collection);
                     }
-                    else if collection["name"] == "ui"{
-                        signalCollection = UICollection(data:collection);
-                        uiManager.registerCollection(id: signalCollection.id, collection:signalCollection as! UICollection);
+                    else if collection["name"].stringValue == "ui"{
+                        collectionData = uiManager.registerCollection(collectionData:collection);
 
                     }
-                    else if collection["name"] == "mic" {
-                        signalCollection = MicCollection(data:collection);
-                        micManager.registerCollection(id: signalCollection.id, collection:signalCollection as! MicCollection);
+                    else if collection["name"].stringValue == "mic" {
+                       collectionData =  micManager.registerCollection(collectionData:collection);
                     }
                     else{
-                        signalCollection = LiveCollection(data:collection);
+                        collectionData = (id:"",collection:nil);
                     }
-                   BehaviorManager.signalCollections[3][signalCollection.id] = signalCollection;
+                    if(collectionData.collection != nil){
+                        BehaviorManager.signalCollections[3][collectionData.id] = collectionData.collection;
+                    }
 
                 
                 break;
             case "imported":
-                
+                if( BehaviorManager.signalCollections[0][collectionId] == nil){
                     let signalCollection = ImportedCollection(data:collection);
-                   BehaviorManager.signalCollections[0][signalCollection.id] = signalCollection;
+                   BehaviorManager.signalCollections[0][collectionId] = signalCollection;
+                }
+                else{
+                   
+                    BehaviorManager.signalCollections[0][collectionId]?.initializeSignalInstancesFromJSON(data: collection )
+                }
                 
                 break;
             case "generator":
+                if( BehaviorManager.signalCollections[2][collectionId] == nil){
                     let signalCollection = GeneratorCollection(data:collection);
-                    BehaviorManager.signalCollections[2][signalCollection.id] = signalCollection;
+                    BehaviorManager.signalCollections[2][collectionId] = signalCollection;
+                }
+                else{
+                    
+                    BehaviorManager.signalCollections[2][collectionId]?.initializeSignalInstancesFromJSON(data: collection )
+                }
+                
                 
                 break;
             case "recording":
-               
-                    if(collection["id"].stringValue == "recording_preset"){
-                        stylusManager.setRecordingPresetData(data: collection);
+                if(collection["id"].stringValue == "recording_preset"){
+                    stylusManager.setRecordingPresetData(data: collection);
+                }
+                else{
+                    if( BehaviorManager.signalCollections[1][collectionId] == nil){
+                        let signalCollection = ImportedRecordingCollection(data:collection);
+                        BehaviorManager.signalCollections[1][collectionId] = signalCollection;
                     }
                     else{
-                        let signalCollection = ImportedRecordingCollection(data:collection);
-                       BehaviorManager.signalCollections[1][signalCollection.id] = signalCollection;
+                        BehaviorManager.signalCollections[1][collectionId]?.initializeSignalInstancesFromJSON(data: collection )
                     }
+                }
                 
                 break;
             
             case "brush":
               
-                    let signalCollection = BrushCollection(data:collection);
-                    BehaviorManager.signalCollections[4][signalCollection.id] = signalCollection;
-                    brushManager.registerCollection(id:signalCollection.id,collection:signalCollection);
+               let collectionData = uiManager.registerCollection(collectionData:collection);
+               if(collectionData.collection != nil){
+                BehaviorManager.signalCollections[4][collectionData.id] = collectionData.collection;
+               }
+
                     
                 break;
             case "accessor":
                 
-                let signalCollection = AccessorCollection(data:collection);
-                BehaviorManager.signalCollections[5][signalCollection.id] = signalCollection;
+                if( BehaviorManager.signalCollections[5][collectionId] == nil){
+                    let signalCollection = AccessorCollection(data:collection);
+                    BehaviorManager.signalCollections[5][collectionId] = signalCollection;
+                }
    
                 break;
             //TODO: implement drawing signals

@@ -1,0 +1,37 @@
+{
+  "default" : {
+    "name" : "behavior_1",
+    "methods" : [
+
+    ],
+    "generators" : [
+
+    ],
+    "id" : "_4p3cptdsx",
+    "states" : [
+      {
+        "name" : "setup",
+        "x" : 20,
+        "id" : "_y5p6lqn2a",
+        "y" : 229
+      },
+      {
+        "name" : "die",
+        "x" : 1018,
+        "id" : "_jupcoyws8",
+        "y" : 221
+      }
+    ],
+    "auto_spawn_num" : 1,
+    "active_status" : true,
+    "transitions" : [
+
+    ],
+    "mappings" : [
+
+    ],
+    "conditions" : [
+
+    ]
+  }
+}

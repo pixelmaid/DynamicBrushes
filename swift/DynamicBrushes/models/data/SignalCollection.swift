@@ -60,7 +60,6 @@ class SignalCollection: Object{
         let allSignalData = data["signals"].arrayValue;
        
         let rawData = data["data"].arrayValue;
-        let initializedSignalData = data["initializedSignals"].dictionaryValue;
     
         for i in 0..<allSignalData.count{
             let fieldName = allSignalData[i]["fieldName"].stringValue;
@@ -86,16 +85,34 @@ class SignalCollection: Object{
                     break;
                 }
             }
+          
+        
+        }
+        
+        self.initializeSignalInstancesFromJSON(data: data);
+        
+        
+    }
+    
+    public func initializeSignalInstancesFromJSON(data:JSON){
+        let allSignalData = data["signals"].arrayValue;
+        
+        let initializedSignalData = data["initializedSignals"].dictionaryValue;
+        
+        for i in 0..<allSignalData.count{
+            let fieldName = allSignalData[i]["fieldName"].stringValue;
+            let displayName = allSignalData[i]["displayName"].stringValue;
+            let classType =  allSignalData[i]["classType"].stringValue;
+            let style =  allSignalData[i]["style"].stringValue;
+            let settings = allSignalData[i]["settings"]
+            let order =  allSignalData[i]["order"].intValue;
             
             let initList = initializedSignalData[fieldName]!.arrayValue;
             for signalId in initList{
                 self.initializeSignalWithId(signalId: signalId.stringValue, fieldName: fieldName, displayName: displayName, settings: settings, classType: classType, style: style, isProto: false, order: order);
             }
-        
+            
         }
-        
-        
-        
     }
     
     public func protoToJSON()->JSON{

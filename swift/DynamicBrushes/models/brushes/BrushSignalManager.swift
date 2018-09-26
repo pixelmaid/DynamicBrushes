@@ -11,6 +11,22 @@ import SwiftyJSON
 
 
 class BrushSignalManager:SignalCollectionManager{
+    var collections: [String : SignalCollection] = [String : BrushCollection]();
+    
+    func registerCollection(collectionData: JSON) -> (id: String, collection: SignalCollection?) {
+        let id = collectionData["id"].stringValue;
+        if(collections[id]==nil){
+            let signalCollection = BrushCollection(data:collectionData);
+            collections[id] = signalCollection;
+            return(id:id,collection:signalCollection);
+        }
+        else{
+            collections[id]?.initializeSignalInstancesFromJSON(data:collectionData);
+            return(id:id,collection:nil);
+            
+        }
+    }
+    
     
     func brushUpdateHandler(data:(String,String,DeltaStorage),key:String){
         let behaviorId = data.0;

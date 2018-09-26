@@ -10,19 +10,35 @@ import Foundation
 import SwiftyJSON
 
 
-
-class SignalCollectionManager{
-    internal var collections = [String:LiveCollection]();
+protocol SignalCollectionManager{
+    var collections:[String:SignalCollection] { get set }
     
-    public func registerCollection(id:String, collection:LiveCollection){
-        self.collections[id] = collection;
-    }
+    func registerCollection(collectionData:JSON)->(id:String,collection:SignalCollection?);
 }
-class LiveManager:SignalCollectionManager{
-  
+    
+class LiveManager{
+    
 }
 
-final class MicManager:LiveManager{
+final class MicManager:LiveManager, SignalCollectionManager{
+    var collections: [String : SignalCollection] =  [String : LiveCollection]();
+
+    func registerCollection(collectionData: JSON)->(id:String,collection:SignalCollection?){
+        let id = collectionData["id"].stringValue;
+        if(collections[id]==nil){
+            let signalCollection = MicCollection(data:collectionData);
+            collections[id] = signalCollection;
+            return(id:id,collection:signalCollection);
+        }
+        else{
+            collections[id]?.initializeSignalInstancesFromJSON(data:collectionData);
+            return(id:id,collection:nil);
+
+        }
+
+    }
+    
+
     public func setFrequency(val:Double) {
         for (_,micCollection) in self.collections{
             (micCollection as! MicCollection).setFrequency(val: Float(val));
@@ -38,6 +54,23 @@ final class MicManager:LiveManager{
 }
 
 final class UIManager:LiveManager{
+    var collections: [String : SignalCollection] =  [String : UICollection]();
+    
+    func registerCollection(collectionData: JSON)->(id:String,collection:SignalCollection?) {
+        let id = collectionData["id"].stringValue;
+        if(collections[id]==nil){
+            let signalCollection = UICollection(data:collectionData);
+            collections[id] = signalCollection;
+            return(id:id,collection:signalCollection);
+
+        }
+        else{
+            collections[id]?.initializeSignalInstancesFromJSON(data:collectionData);
+            return(id:id,collection:nil);
+
+        }
+        
+    }
     
     public func setDiameter(val:Float){
         for (_,uiCollection) in self.collections{
@@ -108,6 +141,25 @@ final class StylusManager:LiveManager{
     private var currIndex = 0
     private var moveCounter = 0;
     private var moveThreshold = 4;
+    
+    
+    var collections: [String : SignalCollection] =  [String : StylusCollection]();
+    
+    public func registerCollection(collectionData: JSON)->(id:String,collection:SignalCollection?) {
+        let id = collectionData["id"].stringValue;
+        if(collections[id]==nil){
+            let signalCollection = StylusCollection(data:collectionData);
+            collections[id] = signalCollection;
+            return(id:id,collection:signalCollection);
+
+        }
+        else{
+            collections[id]?.initializeSignalInstancesFromJSON(data:collectionData);
+            return(id:id,collection:nil);
+
+        }
+        
+    }
     
     private func beginRecording(start:Date)->RecordingCollection{
         //TODO: find a way to clone recordingpresetdata instead of reassigning ID
@@ -387,7 +439,7 @@ final class StylusManager:LiveManager{
                 
                 (stylusCollection as! StylusCollection).onStylusMove(x: x, y: y, force: force, angle: angle)
             }
-            let sample = self.collections["stylus"]!.exportData();
+            let sample = (self.collections["stylus"]! as! StylusCollection).exportData();
             currentRecordingPackage.addProtoSample(data:sample);
                 self.moveCounter = 0;
             }
@@ -406,7 +458,7 @@ final class StylusManager:LiveManager{
             for (_,stylusCollection) in self.collections{
                 (stylusCollection as! StylusCollection).onStylusUp(x: x, y:y);
             }
-            let sample = self.collections["stylus"]!.exportData();
+            let sample = (self.collections["stylus"]! as! StylusCollection).exportData();
             currentRecordingPackage.addProtoSample(data:sample);
             _ = self.endRecording();
             
@@ -428,7 +480,7 @@ final class StylusManager:LiveManager{
             }
           
                 
-            let sample = self.collections["stylus"]!.exportData();
+            let sample = (self.collections["stylus"]! as! StylusCollection).exportData();
             currentRecordingPackage.addProtoSample(data:sample);
             
         }
@@ -522,7 +574,7 @@ class StylusDataConsumer{
         let stylusManager = liveManager as! StylusManager;
         switch(sample["stylusEvent"].floatValue){
         case StylusManager.stylusUp:
-            for (_,stylusCollection) in liveManager.collections{
+            for (_,stylusCollection) in stylusManager.collections{
                 (stylusCollection as! StylusCollection).onStylusUp(x: sample["x"].floatValue, y: sample["y"].floatValue);
             }
             stylusManager.stylusDataEvent.raise(data:("STYLUS_UP", [sample["x"].floatValue, sample["y"].floatValue]))

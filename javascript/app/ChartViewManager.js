@@ -319,7 +319,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
              }
 
             addBehavior(data) {
-                console.log("add behavior", data, this);
+                console.log("add behavior to chart view", data);
                 if (this.currentView) {
                     this.currentView.resetView();
                 }
@@ -533,7 +533,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
 
                             break;
                         case "behavior_added":
-                            this.addBehavior(this.lastAuthoringRequest.data["data"]);
+                            this.addBehavior(data["data"]);
                             this.lastAuthoringRequest = null;
 
                             break;
@@ -572,14 +572,12 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
 
                     var id = ID();
 
-                    template["default"]["id"] = id;
-                    template["default"]["name"] = name;
+                    template["behaviors"][0]["id"] = id;
+                    template["behaviors"][0]["name"] = name;
 
                     var data = {
                         type: "behavior_added",
-                        id: id,
-                        name: name,
-                        data: template["default"]
+                        data: template
 
                     };
                     this.lastAuthoringRequest = {

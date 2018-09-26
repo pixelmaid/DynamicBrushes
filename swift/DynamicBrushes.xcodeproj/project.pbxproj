@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		02DE59B87E0EE7C00B73F5D0 /* Pods_DynamicBrushes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AA0BB14BEC283C5C6629407 /* Pods_DynamicBrushes.framework */; };
+		0A2BE8B9210FD5B90069D085 /* basic.json in Resources */ = {isa = PBXBuildFile; fileRef = 0A2BE8B8210FD5B90069D085 /* basic.json */; };
 		0A56E3BD2071C09C006243A6 /* BrushSignalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56E3BC2071C09B006243A6 /* BrushSignalManager.swift */; };
 		0A56E3BF2072B916006243A6 /* SignalAccessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56E3BE2072B916006243A6 /* SignalAccessors.swift */; };
 		0A56E3C5207308FA006243A6 /* ExpressionCatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A56E3C4207308FA006243A6 /* ExpressionCatch.m */; };
@@ -176,6 +177,7 @@
 
 /* Begin PBXFileReference section */
 		0442020FA4D778FD391A14CD /* Pods-DynamicBrushes.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicBrushes.release.xcconfig"; path = "Pods/Target Support Files/Pods-DynamicBrushes/Pods-DynamicBrushes.release.xcconfig"; sourceTree = "<group>"; };
+		0A2BE8B8210FD5B90069D085 /* basic.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = basic.json; path = DynamicBrushes/Resources/behaviorTemplates/basic.json; sourceTree = SOURCE_ROOT; };
 		0A56E3BC2071C09B006243A6 /* BrushSignalManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrushSignalManager.swift; sourceTree = "<group>"; };
 		0A56E3BE2072B916006243A6 /* SignalAccessors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SignalAccessors.swift; path = data/SignalAccessors.swift; sourceTree = "<group>"; };
 		0A56E3C3207308FA006243A6 /* ExpressionCatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExpressionCatch.h; sourceTree = "<group>"; };
@@ -390,6 +392,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0A2BE8B7210FD5850069D085 /* behaviorTemplates */ = {
+			isa = PBXGroup;
+			children = (
+				0A2BE8B8210FD5B90069D085 /* basic.json */,
+			);
+			path = behaviorTemplates;
+			sourceTree = "<group>";
+		};
 		5F15BB5E1F8D94A5005E5B08 /* data */ = {
 			isa = PBXGroup;
 			children = (
@@ -431,6 +441,7 @@
 		5F5037281EA95E27004ABAC1 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				0A2BE8B7210FD5850069D085 /* behaviorTemplates */,
 				5FFC45591EE1B133007B7597 /* point.vsh */,
 				5F5037291EA95E37004ABAC1 /* Recording.data */,
 				5FE7AB5F2060860F00FBCD9E /* CollectionPresets.json */,
@@ -964,6 +975,7 @@
 				5FFC45741EE4C855007B7597 /* airbrush_button_active2x.png in Resources */,
 				72F3CED4204DFD050010A3D0 /* record_off2x.png in Resources */,
 				5F9F25B21DEFE490005CB5D8 /* radial.png in Resources */,
+				0A2BE8B9210FD5B90069D085 /* basic.json in Resources */,
 				5F9F25AB1DEFE3A0005CB5D8 /* draw_icon2x.png in Resources */,
 				5FE32FA21ECF70BE00ADC01E /* layerVisible_button.png in Resources */,
 				5FE32F861ECF6D5300ADC01E /* erase_button_active.png in Resources */,

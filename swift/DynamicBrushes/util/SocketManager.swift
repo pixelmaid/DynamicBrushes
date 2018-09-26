@@ -75,7 +75,7 @@ class SocketManager: WebSocketDelegate{
             #endif
             
         }
-        //TODO: might not be threadsafe?
+            //TODO: might not be threadsafe?
         requestEvent.raise(data: ("disconnected",nil));
         dataEvent.raise(data: ("disconnected",nil));
         
