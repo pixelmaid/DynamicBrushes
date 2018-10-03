@@ -1,32 +1,26 @@
 PODS:
-  - AWSCognito (2.5.3):
-    - AWSCore (= 2.5.3)
-  - AWSCore (2.5.3)
-  - AWSS3 (2.5.3):
-    - AWSCore (= 2.5.3)
-  - Reflection (0.14.3)
-  - Starscream (2.0.4)
-  - SwiftKVC (3.0.0):
-    - Reflection (~> 0.14.3)
-  - SwiftyJSON (3.1.4)
+  - AWSCognito (2.6.31):
+    - AWSCore (= 2.6.31)
+  - AWSCore (2.6.31)
+  - AWSS3 (2.6.31):
+    - AWSCore (= 2.6.31)
+  - Starscream (3.0.5)
+  - SwiftyJSON (4.2.0)
 
 DEPENDENCIES:
   - AWSCognito
   - AWSCore
   - AWSS3
   - Starscream
-  - SwiftKVC (~> 3.0.0)
   - SwiftyJSON
 
 SPEC CHECKSUMS:
-  AWSCognito: 74be06e52a2a063ab932a9d457a89e003d68631d
-  AWSCore: 344e21892790650cf902246d436402257a545bde
-  AWSS3: 88095d68f9d588eaa042d7f502f350234f98f606
-  Reflection: 93327e50981227ac33c18274fcbaed33b1127811
-  Starscream: df5974ee928b157c8eda8af8de7c620276b7dfcc
-  SwiftKVC: 95a7c435ad4e93c06ac68434fac795d72a792a7a
-  SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
+  AWSCognito: c6bc1f7814ca3484b8ed76ba7f319ffea7c19e68
+  AWSCore: c7abfb87ef802d1c4b5dd56db64ac8b4a7823ef0
+  AWSS3: 5647e89f9ac8e7033f3e5507dbb3eccc37f82b75
+  Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
+  SwiftyJSON: c4bcba26dd9ec7a027fc8eade48e2c911f229e96
 
-PODFILE CHECKSUM: c3808ae1bcb2e3fb26e30b1668304f63e8ea9171
+PODFILE CHECKSUM: 287b68e57b1f59811042e723026dbc4b5765b283
 
-COCOAPODS: 1.0.1
+COCOAPODS: 1.4.0

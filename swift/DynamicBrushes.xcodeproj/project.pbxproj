@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		22CC3DA3CE560CFF48F85F35 /* Pods_DynamicBrushes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9557F7F997061D1D732D4EA7 /* Pods_DynamicBrushes.framework */; };
 		5F0EB6621EB5775100225A6E /* ModifiedCanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F0EB6611EB5775100225A6E /* ModifiedCanvasView.swift */; };
 		5F2CF3D51ED32D0B0066AC8E /* SavedFilesPanelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2CF3D41ED32D0B0066AC8E /* SavedFilesPanelViewController.swift */; };
 		5F2CF3D71ED32EC00066AC8E /* FileCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2CF3D61ED32EC00066AC8E /* FileCell.swift */; };
@@ -123,7 +124,6 @@
 		5FEE2AC91DE127D800080095 /* dual_pen.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FEE2AC71DE127D800080095 /* dual_pen.png */; };
 		5FEE2ACA1DE127D800080095 /* lg_pen_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FEE2AC81DE127D800080095 /* lg_pen_blue.png */; };
 		5FFAC4D71E9D84040009DC5E /* SaveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFAC4D61E9D84040009DC5E /* SaveManager.swift */; };
-		5FFC455A1EE1B133007B7597 /* Particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FFC45581EE1B133007B7597 /* Particle.png */; };
 		5FFC455B1EE1B133007B7597 /* point.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 5FFC45591EE1B133007B7597 /* point.vsh */; };
 		5FFC456F1EE4C648007B7597 /* airbrush_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FFC456D1EE4C648007B7597 /* airbrush_button.png */; };
 		5FFC45701EE4C648007B7597 /* airbrush_button2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5FFC456E1EE4C648007B7597 /* airbrush_button2x.png */; };
@@ -132,9 +132,6 @@
 		5FFC45781EE5C473007B7597 /* BehaviorPanelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFC45771EE5C473007B7597 /* BehaviorPanelViewController.swift */; };
 		5FFC457A1EE5C6D6007B7597 /* BehaviorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFC45791EE5C6D6007B7597 /* BehaviorCell.swift */; };
 		5FFDAB091D21B5C400632A26 /* SocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFDAB081D21B5C400632A26 /* SocketManager.swift */; };
-		86D9E5D4C68732BC03AD249A /* Pods_PaletteKnife.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76DB207CD163015E13C1998B /* Pods_PaletteKnife.framework */; };
-		AD28AABCDC9E1C7118844AC4 /* Pods_PaletteKnifeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC68E1A2193A02A54E663498 /* Pods_PaletteKnifeTests.framework */; };
-		ADF25B9F9CD566668F3ECB27 /* Pods_PaletteKnifeUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 498164694B9DBA035C9503A9 /* Pods_PaletteKnifeUITests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -155,12 +152,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		06CDF8AB8A7906D2A8AC0D58 /* Pods_DynamicBrushesUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DynamicBrushesUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		498164694B9DBA035C9503A9 /* Pods_PaletteKnifeUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PaletteKnifeUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5EBFC69578F7678EA1BBD757 /* Pods-PaletteKnifeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeTests/Pods-PaletteKnifeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5F0EB6611EB5775100225A6E /* ModifiedCanvasView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModifiedCanvasView.swift; sourceTree = "<group>"; };
 		5F1109381ECE248E000FBF24 /* DynamicBrushes_devTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DynamicBrushes_devTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F1109431ECE248E000FBF24 /* DynamicBrushes_devUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DynamicBrushes_devUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		5F1E15891F199E478AB56B38 /* Pods-PaletteKnife.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnife.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnife/Pods-PaletteKnife.debug.xcconfig"; sourceTree = "<group>"; };
 		5F2CF3D41ED32D0B0066AC8E /* SavedFilesPanelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SavedFilesPanelViewController.swift; sourceTree = "<group>"; };
 		5F2CF3D61ED32EC00066AC8E /* FileCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileCell.swift; sourceTree = "<group>"; };
 		5F2CF3D81ED333AD0066AC8E /* fileList_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fileList_button.png; sourceTree = "<group>"; };
@@ -284,7 +280,6 @@
 		5FEE2AC71DE127D800080095 /* dual_pen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dual_pen.png; sourceTree = "<group>"; };
 		5FEE2AC81DE127D800080095 /* lg_pen_blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lg_pen_blue.png; sourceTree = "<group>"; };
 		5FFAC4D61E9D84040009DC5E /* SaveManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SaveManager.swift; sourceTree = "<group>"; };
-		5FFC45581EE1B133007B7597 /* Particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Particle.png; sourceTree = SOURCE_ROOT; };
 		5FFC45591EE1B133007B7597 /* point.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = point.vsh; sourceTree = SOURCE_ROOT; };
 		5FFC456D1EE4C648007B7597 /* airbrush_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = airbrush_button.png; sourceTree = "<group>"; };
 		5FFC456E1EE4C648007B7597 /* airbrush_button2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = airbrush_button2x.png; sourceTree = "<group>"; };
@@ -294,11 +289,11 @@
 		5FFC45791EE5C6D6007B7597 /* BehaviorCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BehaviorCell.swift; sourceTree = "<group>"; };
 		5FFDAB081D21B5C400632A26 /* SocketManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SocketManager.swift; sourceTree = "<group>"; };
 		76DB207CD163015E13C1998B /* Pods_PaletteKnife.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PaletteKnife.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		7CCD589D0593142C66540CEB /* Pods-PaletteKnifeUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeUITests/Pods-PaletteKnifeUITests.debug.xcconfig"; sourceTree = "<group>"; };
-		B6B77515AB3FB205C8F75A30 /* Pods-PaletteKnifeUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeUITests/Pods-PaletteKnifeUITests.release.xcconfig"; sourceTree = "<group>"; };
+		788C9EA5D26A7C8FB2551F5E /* Pods-DynamicBrushes.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicBrushes.release.xcconfig"; path = "Pods/Target Support Files/Pods-DynamicBrushes/Pods-DynamicBrushes.release.xcconfig"; sourceTree = "<group>"; };
+		9557F7F997061D1D732D4EA7 /* Pods_DynamicBrushes.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DynamicBrushes.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B869831421E405A9695EF8CF /* Pods-DynamicBrushes.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicBrushes.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DynamicBrushes/Pods-DynamicBrushes.debug.xcconfig"; sourceTree = "<group>"; };
 		BC68E1A2193A02A54E663498 /* Pods_PaletteKnifeTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PaletteKnifeTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CB3CB08366805D209E552991 /* Pods-PaletteKnife.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnife.release.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnife/Pods-PaletteKnife.release.xcconfig"; sourceTree = "<group>"; };
-		FA8AAC1ACBF37C5AD0902C35 /* Pods-PaletteKnifeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PaletteKnifeTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PaletteKnifeTests/Pods-PaletteKnifeTests.release.xcconfig"; sourceTree = "<group>"; };
+		CEA18E072E48A53E0EAA6D4F /* Pods_DynamicBrushesTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DynamicBrushesTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -327,7 +322,7 @@
 				5F50370D1EA94C47004ABAC1 /* UIKit.framework in Frameworks */,
 				5F50370A1EA94C26004ABAC1 /* GLKit.framework in Frameworks */,
 				5F50370B1EA94C26004ABAC1 /* OpenGLES.framework in Frameworks */,
-				86D9E5D4C68732BC03AD249A /* Pods_PaletteKnife.framework in Frameworks */,
+				22CC3DA3CE560CFF48F85F35 /* Pods_DynamicBrushes.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -335,7 +330,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AD28AABCDC9E1C7118844AC4 /* Pods_PaletteKnifeTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -343,7 +337,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ADF25B9F9CD566668F3ECB27 /* Pods_PaletteKnifeUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -504,7 +497,6 @@
 		5FA4C7221CDA7B5B004A728C /* PaletteKnife */ = {
 			isa = PBXGroup;
 			children = (
-				5FFC45581EE1B133007B7597 /* Particle.png */,
 				5FFC45591EE1B133007B7597 /* point.vsh */,
 				5F5037281EA95E27004ABAC1 /* Resources */,
 				5F5037231EA95DD0004ABAC1 /* Shaders */,
@@ -662,12 +654,8 @@
 		8F20EDB8F92782AB3C0A53F1 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				5F1E15891F199E478AB56B38 /* Pods-PaletteKnife.debug.xcconfig */,
-				CB3CB08366805D209E552991 /* Pods-PaletteKnife.release.xcconfig */,
-				5EBFC69578F7678EA1BBD757 /* Pods-PaletteKnifeTests.debug.xcconfig */,
-				FA8AAC1ACBF37C5AD0902C35 /* Pods-PaletteKnifeTests.release.xcconfig */,
-				7CCD589D0593142C66540CEB /* Pods-PaletteKnifeUITests.debug.xcconfig */,
-				B6B77515AB3FB205C8F75A30 /* Pods-PaletteKnifeUITests.release.xcconfig */,
+				B869831421E405A9695EF8CF /* Pods-DynamicBrushes.debug.xcconfig */,
+				788C9EA5D26A7C8FB2551F5E /* Pods-DynamicBrushes.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -685,6 +673,9 @@
 				76DB207CD163015E13C1998B /* Pods_PaletteKnife.framework */,
 				BC68E1A2193A02A54E663498 /* Pods_PaletteKnifeTests.framework */,
 				498164694B9DBA035C9503A9 /* Pods_PaletteKnifeUITests.framework */,
+				9557F7F997061D1D732D4EA7 /* Pods_DynamicBrushes.framework */,
+				CEA18E072E48A53E0EAA6D4F /* Pods_DynamicBrushesTests.framework */,
+				06CDF8AB8A7906D2A8AC0D58 /* Pods_DynamicBrushesUITests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -750,12 +741,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5FA4C74B1CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "DynamicBrushesTests" */;
 			buildPhases = (
-				F46814F8459F54F4AE1FF832 /* [CP] Check Pods Manifest.lock */,
 				5FA4C7301CDA7B5B004A728C /* Sources */,
 				5FA4C7311CDA7B5B004A728C /* Frameworks */,
 				5FA4C7321CDA7B5B004A728C /* Resources */,
-				9624F59BCEA3EEBF79073EA0 /* [CP] Embed Pods Frameworks */,
-				9E2DF2C277529EAAAFD2B409 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -771,11 +759,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5FA4C74E1CDA7B5B004A728C /* Build configuration list for PBXNativeTarget "DynamicBrushesUITests" */;
 			buildPhases = (
-				9D8ED9DE43EC74A3B78F63E8 /* [CP] Check Pods Manifest.lock */,
 				5FA4C73B1CDA7B5B004A728C /* Sources */,
 				5FA4C73C1CDA7B5B004A728C /* Frameworks */,
 				5FA4C73D1CDA7B5B004A728C /* Resources */,
-				9B2CD0D193F9EC56C7E92D1B /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -928,7 +914,6 @@
 				5FE32F7E1ECF6D5300ADC01E /* behavior_activate_button.png in Resources */,
 				5FD6CD121DE0EE0E007D94AA /* sm_pen_blue.png in Resources */,
 				5FE32F881ECF6D5300ADC01E /* erase_button.png in Resources */,
-				5FFC455A1EE1B133007B7597 /* Particle.png in Resources */,
 				5FBDF0E71ED8D95300022B07 /* quad.vsh in Resources */,
 				5FE32F991ECF6DC900ADC01E /* save_button2x.png in Resources */,
 				5FEE2ACA1DE127D800080095 /* lg_pen_blue.png in Resources */,
@@ -964,13 +949,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-DynamicBrushes-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		45DDB1884A4E0B0DB0F7428D /* [CP] Copy Pods Resources */ = {
@@ -985,7 +973,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PaletteKnife/Pods-PaletteKnife-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DynamicBrushes/Pods-DynamicBrushes-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		522D5DD3DE192664F5D097FF /* [CP] Embed Pods Frameworks */ = {
@@ -994,88 +982,24 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-DynamicBrushes/Pods-DynamicBrushes-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AWSCognito/AWSCognito.framework",
+				"${BUILT_PRODUCTS_DIR}/AWSCore/AWSCore.framework",
+				"${BUILT_PRODUCTS_DIR}/AWSS3/AWSS3.framework",
+				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCognito.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSS3.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PaletteKnife/Pods-PaletteKnife-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		9624F59BCEA3EEBF79073EA0 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PaletteKnifeTests/Pods-PaletteKnifeTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		9B2CD0D193F9EC56C7E92D1B /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PaletteKnifeUITests/Pods-PaletteKnifeUITests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		9D8ED9DE43EC74A3B78F63E8 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		9E2DF2C277529EAAAFD2B409 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PaletteKnifeTests/Pods-PaletteKnifeTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		F46814F8459F54F4AE1FF832 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DynamicBrushes/Pods-DynamicBrushes-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1282,6 +1206,7 @@
 		5FA4C7461CDA7B5B004A728C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -1331,6 +1256,7 @@
 		5FA4C7471CDA7B5B004A728C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -1372,7 +1298,7 @@
 		};
 		5FA4C7491CDA7B5B004A728C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5F1E15891F199E478AB56B38 /* Pods-PaletteKnife.debug.xcconfig */;
+			baseConfigurationReference = B869831421E405A9695EF8CF /* Pods-DynamicBrushes.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1398,11 +1324,7 @@
 					"-framework",
 					"\"AWSS3\"",
 					"-framework",
-					"\"Reflection\"",
-					"-framework",
 					"\"Starscream\"",
-					"-framework",
-					"\"SwiftKVC\"",
 					"-framework",
 					"\"SwiftyJSON\"",
 					"-framework",
@@ -1422,7 +1344,7 @@
 		};
 		5FA4C74A1CDA7B5B004A728C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CB3CB08366805D209E552991 /* Pods-PaletteKnife.release.xcconfig */;
+			baseConfigurationReference = 788C9EA5D26A7C8FB2551F5E /* Pods-DynamicBrushes.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1448,11 +1370,7 @@
 					"-framework",
 					"\"AWSS3\"",
 					"-framework",
-					"\"Reflection\"",
-					"-framework",
 					"\"Starscream\"",
-					"-framework",
-					"\"SwiftKVC\"",
 					"-framework",
 					"\"SwiftyJSON\"",
 					"-framework",
@@ -1471,7 +1389,6 @@
 		};
 		5FA4C74C1CDA7B5B004A728C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5EBFC69578F7678EA1BBD757 /* Pods-PaletteKnifeTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = "Palette-KnifeTests/Info.plist";
@@ -1485,7 +1402,6 @@
 		};
 		5FA4C74D1CDA7B5B004A728C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FA8AAC1ACBF37C5AD0902C35 /* Pods-PaletteKnifeTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				INFOPLIST_FILE = "Palette-KnifeTests/Info.plist";
@@ -1500,7 +1416,6 @@
 		};
 		5FA4C74F1CDA7B5B004A728C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7CCD589D0593142C66540CEB /* Pods-PaletteKnifeUITests.debug.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "Palette-KnifeUITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -1513,7 +1428,6 @@
 		};
 		5FA4C7501CDA7B5B004A728C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B6B77515AB3FB205C8F75A30 /* Pods-PaletteKnifeUITests.release.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "Palette-KnifeUITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";

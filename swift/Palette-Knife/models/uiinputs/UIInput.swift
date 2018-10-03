@@ -35,6 +35,13 @@ class UIInput: TimeSeries, WebTransmitter {
         self.name = "uiinput"
         self.events = []
         self.createKeyStorage();
+        
+        self.kvcDictionary["hue"] = self.hue;
+        self.kvcDictionary["lightness"] = self.lightness;
+        self.kvcDictionary["saturation"] = self.saturation;
+        self.kvcDictionary["alpha"] = self.alpha;
+        self.kvcDictionary["diameter"] = self.diameter;
+
 
     }
     

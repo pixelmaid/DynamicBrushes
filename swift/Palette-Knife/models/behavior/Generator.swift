@@ -53,24 +53,14 @@ class MovingAverage:Generator{
 
 class Interval:Generator{
     var val = [Float]();
-    var index = 0;
-    var infinite = false;
+    var index = 1;
     let inc:Float
     
     
     init(inc:Float,times:Int?){
         self.inc = inc;
         super.init();
-        if(times != nil){
-            for i in 1..<times!{
-                val.append(Float(i)*self.inc)
-            }
-        }
-        else{
-            infinite = true;
-            self.incrementIndex();
-            
-        }
+
     }
     
     func incrementIndex(){
@@ -84,16 +74,8 @@ class Interval:Generator{
     }
     
     override func get(id:String?) -> Float {
-        if(infinite){
-            let inf = Float(self.index)*self.inc
-            return inf;
-        }
-        if(index < val.count){
-            let v = val[index]
-            
-            return v;
-        }
-        return -1;
+        let v = Float(self.index)*self.inc
+        return v;
     }
     
     

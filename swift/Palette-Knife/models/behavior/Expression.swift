@@ -95,17 +95,17 @@ class TextExpression:Observable<Float>{
             }
             
         }
-        var result:Float = 0;
+        var result:NSNumber = 0;
         let exception = tryBlock {
         let exp: NSExpression = NSExpression(format: valueString)
-           result  = exp.expressionValue(with: nil, context: nil) as! Float// 25.0
+           result  = exp.expressionValue(with: nil, context: nil) as! NSNumber// 25.0
         
         }
         #if DEBUG
             //print("exception: \(exception,result)")
         #endif
 
-        return result;
+        return result.floatValue;
 
     }
   

@@ -12,11 +12,10 @@
 // express or implied. See the License for the specific language governing
 // permissions and limitations under the License.
 //
-
 #import "AWSInfo.h"
 #import "AWSCategory.h"
 #import "AWSCredentialsProvider.h"
-#import "AWSLogging.h"
+#import "AWSCocoaLumberjack.h"
 #import "AWSService.h"
 
 NSString *const AWSInfoDefault = @"Default";
@@ -24,8 +23,10 @@ NSString *const AWSInfoDefault = @"Default";
 static NSString *const AWSInfoRoot = @"AWS";
 static NSString *const AWSInfoCredentialsProvider = @"CredentialsProvider";
 static NSString *const AWSInfoRegion = @"Region";
+static NSString *const AWSInfoUserAgent = @"UserAgent";
 static NSString *const AWSInfoCognitoIdentity = @"CognitoIdentity";
 static NSString *const AWSInfoCognitoIdentityPoolId = @"PoolId";
+static NSString *const AWSInfoCognitoUserPool = @"CognitoUserPool";
 
 static NSString *const AWSInfoIdentityManager = @"IdentityManager";
 
@@ -42,7 +43,7 @@ static NSString *const AWSInfoIdentityManager = @"IdentityManager";
 @property (nonatomic, strong) NSDictionary <NSString *, id> *infoDictionary;
 
 - (instancetype)initWithInfoDictionary:(NSDictionary <NSString *, id> *)infoDictionary
-                           checkRegion:(BOOL)checkRegion;
+                           serviceName:(NSString *) serviceName;
 
 @end
 
@@ -50,10 +51,42 @@ static NSString *const AWSInfoIdentityManager = @"IdentityManager";
 
 - (instancetype)init {
     if (self = [super init]) {
-        _rootInfoDictionary = [[[NSBundle mainBundle] infoDictionary] objectForKey:AWSInfoRoot];
-
+        
+        NSString *pathToAWSConfigJson = [[NSBundle mainBundle] pathForResource:@"awsconfiguration"
+                                                                        ofType:@"json"];
+        if (pathToAWSConfigJson) {
+            NSData *data = [NSData dataWithContentsOfFile:pathToAWSConfigJson];
+            if (!data) {
+                AWSDDLogError(@"Couldn't read the awsconfiguration.json file. Skipping load of awsconfiguration.json.");
+            } else {
+                NSError *error = nil;
+                NSDictionary <NSString *, id> *jsonDictionary = [NSJSONSerialization JSONObjectWithData:data
+                                                                                                options:kNilOptions
+                                                                                                  error:&error];
+                if (!jsonDictionary || [jsonDictionary count] <= 0 || error) {
+                    AWSDDLogError(@"Couldn't deserialize data from the JSON file or the contents are empty. Please check the awsconfiguration.json file.");
+                } else {
+                    _rootInfoDictionary = jsonDictionary;
+                }
+            }
+            
+        } else {
+            AWSDDLogDebug(@"Couldn't locate the awsconfiguration.json file. Skipping load of awsconfiguration.json.");
+        }
+        
+        if (!_rootInfoDictionary) {
+            _rootInfoDictionary = [[[NSBundle mainBundle] infoDictionary] objectForKey:AWSInfoRoot];
+        }
+        
+        if (_rootInfoDictionary) {
+            NSString *userAgent = [self.rootInfoDictionary objectForKey:AWSInfoUserAgent];
+            if (userAgent) {
+                [AWSServiceConfiguration addGlobalUserAgentProductToken:userAgent];
+            }
+        }
+        
         NSDictionary <NSString *, id> *defaultInfoDictionary = [_rootInfoDictionary objectForKey:AWSInfoDefault];
-
+        
         NSDictionary <NSString *, id> *defaultCredentialsProviderDictionary = [[[_rootInfoDictionary objectForKey:AWSInfoCredentialsProvider] objectForKey:AWSInfoCognitoIdentity] objectForKey:AWSInfoDefault];
         NSString *cognitoIdentityPoolID = [defaultCredentialsProviderDictionary objectForKey:AWSInfoCognitoIdentityPoolId];
         AWSRegionType cognitoIdentityRegion =  [[defaultCredentialsProviderDictionary objectForKey:AWSInfoRegion] aws_regionTypeValue];
@@ -61,7 +94,7 @@ static NSString *const AWSInfoIdentityManager = @"IdentityManager";
             _defaultCognitoCredentialsProvider = [[AWSCognitoCredentialsProvider alloc] initWithRegionType:cognitoIdentityRegion
                                                                                             identityPoolId:cognitoIdentityPoolID];
         }
-
+        
         _defaultRegion = [[defaultInfoDictionary objectForKey:AWSInfoRegion] aws_regionTypeValue];
     }
     
@@ -82,7 +115,7 @@ static NSString *const AWSInfoIdentityManager = @"IdentityManager";
                          forKey:(NSString *)key {
     NSDictionary <NSString *, id> *infoDictionary = [[self.rootInfoDictionary objectForKey:serviceName] objectForKey:key];
     return [[AWSServiceInfo alloc] initWithInfoDictionary:infoDictionary
-                                              checkRegion:![serviceName isEqualToString:AWSInfoIdentityManager]];
+                                              serviceName:serviceName];
 }
 
 - (AWSServiceInfo *)defaultServiceInfo:(NSString *)serviceName {
@@ -95,36 +128,39 @@ static NSString *const AWSInfoIdentityManager = @"IdentityManager";
 @implementation AWSServiceInfo
 
 - (instancetype)initWithInfoDictionary:(NSDictionary <NSString *, id> *)infoDictionary
-                           checkRegion:(BOOL)checkRegion {
+                           serviceName:(NSString *) serviceName {
     if (self = [super init]) {
+        BOOL checkRegion = ![serviceName isEqualToString:AWSInfoIdentityManager];
         _infoDictionary = infoDictionary;
         if (!_infoDictionary) {
             _infoDictionary = @{};
         }
-
+        
         _cognitoCredentialsProvider = [AWSInfo defaultAWSInfo].defaultCognitoCredentialsProvider;
-
+        
         _region = [[_infoDictionary objectForKey:AWSInfoRegion] aws_regionTypeValue];
         if (_region == AWSRegionUnknown) {
             _region = [AWSInfo defaultAWSInfo].defaultRegion;
         }
-
-        if (!_cognitoCredentialsProvider) {
+        
+        //If there is no credentials provider configured and this isn't Cognito User Pools (which
+        //doesn't need one)
+        if (!_cognitoCredentialsProvider && ![serviceName isEqualToString:AWSInfoCognitoUserPool]) {
             if (![AWSServiceManager defaultServiceManager].defaultServiceConfiguration) {
-                AWSLogDebug(@"Couldn't read credentials provider configurations from `Info.plist`. Please check your `Info.plist` if you are providing the SDK configuration values through `Info.plist`.");
+                AWSDDLogDebug(@"Couldn't read credentials provider configuration from `awsconfiguration.json` / `Info.plist`. Please check your configuration file if you are loading the configuration through it.");
             }
             return nil;
         }
-
+        
         if (checkRegion
             && _region == AWSRegionUnknown) {
             if (![AWSServiceManager defaultServiceManager].defaultServiceConfiguration) {
-                AWSLogDebug(@"Couldn't read the region configuration from Info.plist for the client. Please check your `Info.plist` if you are providing the SDK configuration values through `Info.plist`.");
+                AWSDDLogDebug(@"Couldn't read the region configuration from `awsconfiguration.json` / `Info.plist`. Please check your configuration file if you are loading the configuration through it.");
             }
             return nil;
         }
     }
-
+    
     return self;
 }
 

@@ -9,10 +9,9 @@
 
 
 import Foundation
-//import SwiftKVC
 
 class Emitter: Observable<Float>, Equatable  {
-    
+    var kvcDictionary = [String:Observable<Float>]();
     var events =  [String]()
     var keyStorage=[String:[(String,Condition!,Brush)]]()
 

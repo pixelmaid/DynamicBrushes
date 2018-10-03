@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import SwiftKVC
 import SwiftyJSON
 
 class BehaviorDefinition {
@@ -1074,15 +1073,15 @@ class BehaviorDefinition {
                 
             }
             else{
-                operand = (emitter as! Object)[propList![0]]! as! Observable<Float>
+                operand = (emitter as! Emitter).kvcDictionary[propList![0]]!
             }
             
-            if(propList!.count > 1){
+            /*if(propList!.count > 1){
                 
                 for i in 1..<propList!.count{
                     operand = operand[propList![i]] as! Observable<Float>
                 }
-            }
+            }*/
         }
         else{
             operand = emitter as! Observable<Float>
@@ -1092,8 +1091,8 @@ class BehaviorDefinition {
     
     func generateOperands(targetBrush:Brush,data:(Any?,[String]?,Any?,[String]?,String))->(Observable<Float>,Observable<Float>){
         let id = targetBrush.id
-        var emitter1:Any
-        var emitter2:Any
+        var emitter1:Emitter
+        var emitter2:Emitter
         
         var operand1:Observable<Float>
         var operand2: Observable<Float>
@@ -1102,14 +1101,14 @@ class BehaviorDefinition {
             emitter1 = targetBrush;
         }
         else{
-            emitter1 = data.0!
+            emitter1 = data.0 as! Emitter
         }
         
         if(data.2 == nil){
             emitter2 = targetBrush
         }
         else{
-            emitter2 = data.2!
+            emitter2 = data.2 as! Emitter
         }
         
         if(data.1 != nil){
@@ -1126,18 +1125,18 @@ class BehaviorDefinition {
                 
             }
             else{
-                operand1 = (emitter1 as! Object)[refPropList[0]]! as! Observable<Float>
+                operand1 = emitter1.kvcDictionary[refPropList[0]]!
             }
             
-            if(refPropList.count > 1){
+            /*if(refPropList.count > 1){
                 
                 for i in 1..<refPropList.count{
                     operand1 = operand1[refPropList[i]] as! Observable<Float>
                 }
-            }
+            }*/
         }
         else{
-            operand1 = emitter1 as! Observable<Float>
+            operand1 = emitter1;
         }
         
         if(data.3  != nil){
@@ -1154,19 +1153,19 @@ class BehaviorDefinition {
                 
             }
             else{
-                operand2 = (emitter2 as! Object)[refPropList[0]] as! Observable<Float>
+                operand2 = emitter2.kvcDictionary[refPropList[0]]!
             }
             
-            if(refPropList.count > 1){
+          /* if(refPropList.count > 1){
                 
                 for i in 1..<refPropList.count{
                     operand2 = operand2[refPropList[i]] as! Observable<Float>
                     
                 }
-            }
+            }*/
         }
         else{
-            operand2 = emitter2 as! Observable<Float>
+            operand2 = emitter2;
         }
         
         return(operand1,operand2)

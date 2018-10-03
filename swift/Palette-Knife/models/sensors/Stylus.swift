@@ -65,7 +65,20 @@ class Stylus: TimeSeries, WebTransmitter {
         self.events =  ["STYLUS_UP","STYLUS_DOWN","STYLUS_MOVE_BY","STYLUS_X_MOVE_BY","STYLUS_Y_MOVE_BY"]
         self.createKeyStorage();
         
+        self.kvcDictionary["x"] = self.x;
+        self.kvcDictionary["y"] = self.y;
+        self.kvcDictionary["dx"] = self.dx;
+        self.kvcDictionary["dy"] = self.dy;
+        self.kvcDictionary["force"] = self.force;
+        self.kvcDictionary["angle"] = self.angle;
+        self.kvcDictionary["speed"] = self.speed;
+        self.kvcDictionary["distance"] = self.distance;
+        self.kvcDictionary["xDistance"] = self.xDistance;
+        self.kvcDictionary["yDistance"] = self.yDistance;
+        
+        
         self.startInterval();
+        
         
     }
     

@@ -7,9 +7,8 @@
 //
 
 import Foundation
-import SwiftKVC
 
-class Observable<T>:Object, DisposableObservable {
+class Observable<T>: DisposableObservable {
     
     var name = "observable"
     var printname = "observable"

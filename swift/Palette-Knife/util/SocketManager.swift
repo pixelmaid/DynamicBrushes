@@ -12,6 +12,12 @@ import Starscream
 
 //central manager for all requests to web socket
 class SocketManager: WebSocketDelegate{
+  
+    
+   
+   
+  
+    
     var socket: WebSocket?
     var dataEvent = Event<(String,JSON?)>();
     var requestEvent = Event<(String,JSON?)>();
@@ -46,13 +52,13 @@ class SocketManager: WebSocketDelegate{
     
     // MARK: Websocket Delegate Methods.
     
-    func websocketDidConnect(socket ws: WebSocket) {
+    func websocketDidConnect(socket: WebSocketClient){
         #if DEBUG
         print("websocket is connected")
         #endif
         //send name of client
         pingInterval = Timer.scheduledTimer(timeInterval: 15, target: self, selector: #selector(SocketManager.pingIntervalCallback), userInfo: nil, repeats: true)
-          socket?.write(string:"{\"name\":\"drawing\"}")
+        socket.write(string:"{\"name\":\"drawing\"}")
         if(firstConnection){
             requestEvent.raise(data: ("first_connection",nil));
         }
@@ -61,7 +67,7 @@ class SocketManager: WebSocketDelegate{
         }
     }
     
-    func websocketDidDisconnect(socket ws: WebSocket, error: NSError?) {
+    func websocketDidDisconnect(socket: WebSocketClient, error: Error?) {
         if let e = error {
             #if DEBUG
             print("websocket is disconnected: \(e.localizedDescription)")
@@ -78,7 +84,7 @@ class SocketManager: WebSocketDelegate{
         
     }
     
-    func websocketDidReceiveMessage(socket ws: WebSocket, text: String) {
+    func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
         if(text == "message received"){
             requestEvent.raise(data: ("text",nil));
 
@@ -86,7 +92,7 @@ class SocketManager: WebSocketDelegate{
 
             if(dataQueue.count>0){
                 
-                 socket?.write(string:dataQueue.remove(at: 0).rawString()!);
+                socket.write(string:dataQueue.remove(at: 0).rawString()!);
             }
             else{
                 
@@ -106,14 +112,20 @@ class SocketManager: WebSocketDelegate{
             
         else{
             if let dataFromString = text.data(using: String.Encoding.utf8, allowLossyConversion: false) {
-                let json = JSON(data: dataFromString)
-                let type = json["type"].stringValue;
-                dataEvent.raise(data: (type,json))
+                do{
+                    let json = try JSON(data: dataFromString)
+                    let type = json["type"].stringValue;
+                    dataEvent.raise(data: (type,json))
+                }
+                catch{
+                    print(error)
+                }
+               
             }
         }
     }
     
-    func websocketDidReceiveData(socket ws: WebSocket, data: Data) {
+    func websocketDidReceiveData(socket: WebSocketClient, data: Data) {
     
     }
     

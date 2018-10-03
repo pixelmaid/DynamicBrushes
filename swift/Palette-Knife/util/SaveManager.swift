@@ -329,7 +329,7 @@ class SaveManager{
             let fileText = try String(contentsOf: url, encoding: String.Encoding.utf8)
             
             let dataFromString = fileText.data(using: .utf8, allowLossyConversion: false)
-            let json = JSON(data: dataFromString!)
+            let json = try JSON(data: dataFromString!)
             return json;
         }
         catch{

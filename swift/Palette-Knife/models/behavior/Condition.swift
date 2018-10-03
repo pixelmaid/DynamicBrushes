@@ -50,6 +50,7 @@ class Condition:Observable<Float> {
         case "within":
             let interval = self.referenceB as! Interval
             let value = interval.get(id: nil);
+           
             if(value > 0){
                 if(referenceA.get(id: nil)>value){
                     interval.incrementIndex();
