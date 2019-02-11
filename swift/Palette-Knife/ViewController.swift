@@ -942,7 +942,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     //from Requester protocol. Handles result of request
     internal func processRequest(data: (String, JSON?)) {
-               #if DEBUG
+        #if DEBUG
             print("process request",data.0)
         #endif
         switch(data.0){
