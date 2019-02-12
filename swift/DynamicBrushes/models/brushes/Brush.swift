@@ -193,6 +193,35 @@ class Brush: TimeSeries, Hashable{
         
         //TODO: this code is annoying because KVC assigment issues. Find a fix?
         self.time = _time
+        
+        self.kvcDictionary["x"] = self.x;
+        self.kvcDictionary["y"] = self.y;
+        self.kvcDictionary["theta"] = self.theta;
+        self.kvcDictionary["radius"] = self.radius;
+        self.kvcDictionary["dx"] = self.dx;
+        self.kvcDictionary["dy"] = self.dy;
+        self.kvcDictionary["ox"] = self.ox;
+        self.kvcDictionary["oy"] = self.oy;
+        self.kvcDictionary["sx"] = self.sx;
+        self.kvcDictionary["sy"] = self.sy;
+        self.kvcDictionary["reflectX"] = self.reflectX;
+        self.kvcDictionary["reflectY"] = self.reflectY;
+        self.kvcDictionary["rotation"] = self.rotation;
+        self.kvcDictionary["distance"] = self.distance;
+        self.kvcDictionary["xDistance"] = self.xDistance;
+        self.kvcDictionary["yDistance"] = self.yDistance;
+        self.kvcDictionary["time"] = self.time;
+        self.kvcDictionary["intersections"] = self.intersections;
+        self.kvcDictionary["index"] = self.index;
+        self.kvcDictionary["level"] = self.level;
+        self.kvcDictionary["siblingcount"] = self.siblingcount;
+        self.kvcDictionary["diameter"] = self.diameter;
+        self.kvcDictionary["alpha"] = self.alpha;
+        self.kvcDictionary["hue"] = self.hue;
+        self.kvcDictionary["lightness"] = self.lightness;
+        self.kvcDictionary["saturation"] = self.saturation;
+        
+        
         //==BEGIN APPEND OBSERVABLES==//
         observables.append(bPosition)
         observables.append(delta)

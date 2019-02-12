@@ -65,7 +65,8 @@ class StylusCollection:LiveCollection {
     var prevTime:Float = 0;
     var stylusEvent:Float = 0;
     
- 
+    
+    
     required init(data: JSON) {
         super.init(data: data);
         var protodata:JSON = [:]
@@ -86,6 +87,7 @@ class StylusCollection:LiveCollection {
         protodata["stylusEvent"] = JSON(0);
         protodata["time"] = JSON(0);
 
+        
         super.addProtoSample(data: protodata);
     }
     

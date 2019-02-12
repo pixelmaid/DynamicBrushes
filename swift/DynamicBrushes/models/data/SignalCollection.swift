@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import SwiftKVC
 import SwiftyJSON
 enum SignalError: Error {
     case signalTypeAlreadyRegistered;
@@ -17,22 +16,23 @@ enum SignalError: Error {
 }
 
 //stores a collection of related signals e.g. a stylus recording, a data table
-class SignalCollection: Object{
+class SignalCollection {
     //list of hashes for all samples
     //stored instances of available signals
     internal var initializedSignals  = [String:[String:Signal]]();
     internal var protoSignals = [String:Signal]();
     //signal types that can be initialized
     internal var registeredSignals = [String:String]();
-    public let id:String
-    public let name:String
     public let classType:String;
+    public var id:String;
+    public var name:String;
     
     
     required init(data:JSON){
+        self.classType = data["classType"].stringValue;
+       // super.init();
         self.id = data["id"].stringValue;
         self.name = data["name"].stringValue;
-        self.classType = data["classType"].stringValue;
         do{
             try self.loadDataFromJSON(data: data);
         }

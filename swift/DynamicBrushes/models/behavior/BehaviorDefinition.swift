@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import SwiftKVC
 import SwiftyJSON
 
 class BehaviorDefinition {
@@ -19,7 +18,7 @@ class BehaviorDefinition {
     // var generators = [String:(String,[Any?])]()
     var methods = [String:(transitionId:String,methodId:String,fieldName:String,displayName:String,arguments:[ArgumentData])]()
     var transitions = [String:(transitionId:String,transitionDisplayName: String, conditionId:String, fromStateId:String, toStateId:String)]()
-    var mappings = [String:(Any?,[String]?,String,String,String,String)]()
+    var mappings = [String:(Emitter?,[String]?,String,String,String,String)]()
     
     var storedExpressions = [String:[String:Expression]]()
     var storedConditions =  [String:[String:Condition]]()
@@ -488,7 +487,7 @@ class BehaviorDefinition {
     }
     
     
-    func addMapping(id:String, referenceProperty:Any?, referenceNames:[String]?, relativePropertyName:String,stateId:String, type:String,relativePropertyFieldName:String){
+    func addMapping(id:String, referenceProperty:Emitter!, referenceNames:[String]?, relativePropertyName:String,stateId:String, type:String,relativePropertyFieldName:String){
         mappings[id] = ((referenceProperty,referenceNames,relativePropertyName,stateId,type,relativePropertyFieldName))
         
     }
@@ -580,9 +579,9 @@ class BehaviorDefinition {
         return signal;
     }
     
-    func generateOperand(targetBrush:Brush,targetEmitter:Any?, propId:String?)->Observable<Float>{
+    func generateOperand(targetBrush:Brush,targetEmitter:Emitter?, propId:String?)->Observable<Float>{
         let id = targetBrush.id
-        var emitter:Any
+        var emitter:Emitter
         
         var operand:Observable<Float>
         
@@ -603,7 +602,7 @@ class BehaviorDefinition {
                 
             }
             else{
-                operand = (emitter as! Object)[propId!]! as! Observable<Float>
+                operand = (emitter as! Emitter).kvcDictionary[propId!]!
             }
             
         }
@@ -643,7 +642,7 @@ class BehaviorDefinition {
         self.storedExpressions[id]![name] = expression;
     }
     
-    func generateMapping(targetBrush:Brush, id:String, referenceEmitter:Any?, referenceProperties:[String]?, relativePropertyName:String, stateId:String){
+    func generateMapping(targetBrush:Brush, id:String, referenceEmitter:Emitter?, referenceProperties:[String]?, relativePropertyName:String, stateId:String){
         var referenceProp:String? = nil;
         if(referenceProperties != nil){
             referenceProp = referenceProperties?[0];
