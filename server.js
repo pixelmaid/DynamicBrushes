@@ -68,7 +68,7 @@ wss.on('connection', (ws) => {
 			ws.send("message received");
 		}
 
-		if (json_data.type == "data_request" || json_data.type == "synchronize_request" || json_data.type == "authoring_request" || json_data.type == "storage_request" ) {
+		if (json_data.type == "debug_request" || json_data.type == "data_request" || json_data.type == "synchronize_request" || json_data.type == "authoring_request" || json_data.type == "storage_request" ) {
 			if(json_data.requester == "authoring" && authoring_clients[userkey] && drawing_clients[userkey]){
 				console.log("requesting authoring response from drawing client");
 				drawing_clients[userkey].send(JSON.stringify(json_data));

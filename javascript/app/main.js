@@ -210,6 +210,18 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
             socketController.sendMessage(file_request_data);
         };
 
+        var stepForward = function(){
+              var step_data = {
+                type: "debug_request",
+                requester: "authoring",
+                data: {
+                    type: "stepForward",
+                }
+
+            };
+            socketController.sendMessage(step_data);
+        }
+
         var promptConnect = function() {
 
             codename = prompt("please enter your login key");
@@ -265,6 +277,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
         socketController.addListener("ON_KEY_RECOGNIZED", onKeyRecognized);
 
         chartViewManager.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
+        chartViewManager.addListener("STEP_FORWARD", stepForward);
+
         chartViewManager.addListener("ON_DATA_REQUEST_EVENT", onDataRequestEvent);
 
         signalView.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);

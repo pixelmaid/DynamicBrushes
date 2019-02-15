@@ -293,7 +293,7 @@ final class StylusManager:LiveManager{
         }
         
         
-        delayTimerReinit();
+       //delayTimerReinit();
         
     }
     

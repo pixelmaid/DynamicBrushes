@@ -148,6 +148,10 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                     if (e.keyCode == 91) {
                         cmmd_down = false;
                     }
+                    if(e.keyCode == 39){
+                        self.trigger("STEP_FORWARD");
+
+                    }
                 };
 
                 document.onkeydown = function(e) {
@@ -305,6 +309,7 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                     this.addBehavior(behaviorData[i]);
 
                 }
+
 
                 this.currentView.resetView();
                 var selectedBehaviorData = behaviorData[behaviorData.length - 1];
