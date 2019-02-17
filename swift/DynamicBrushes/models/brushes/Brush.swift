@@ -34,6 +34,19 @@ struct DeltaStorage{
     var i = Float(0);
     var sC = Float(0);
     var lV = Float(0);
+    
+    func toJSON()->JSON{
+        
+        var json:JSON = [:];
+        let mirror = Mirror(reflecting: self);
+        
+        for child in mirror.children{
+            json[child.label as! String] = JSON(child.value);
+        }
+
+        return json;
+        
+    }
 }
 
 class Brush: TimeSeries, Hashable{
@@ -46,7 +59,9 @@ class Brush: TimeSeries, Hashable{
     var states = [String:State]();
     var transitions = [String:StateTransition]();
     var currentState:String
-    
+    var prevState:String;
+    var prevTransition:String;
+    var brushState:DeltaStorage;
     //geometric/stylistic properties
     let bPosition:Point //actual position
     
@@ -188,6 +203,9 @@ class Brush: TimeSeries, Hashable{
         
         
         self.currentState = "start";
+        self.prevState = "null";
+        self.prevTransition = "null";
+        self.brushState = DeltaStorage();
         
         super.init()
         
@@ -459,6 +477,10 @@ class Brush: TimeSeries, Hashable{
         
         let color = Color(h: ds.h, s: ds.s, l: ds.l, a: 1)
         
+        let sendDs = DeltaStorage(dX:ds.dX,dY:ds.dY,r:ds.r,sX:ds.sX,sY:ds.sY,rX:ds.rX,rY:ds.rY,d:ds.d,h:ds.h,s:ds.s,l:ds.l,a:ds.a,dist:self.distance.getSilent(),xDist:self.xDistance.getSilent(),yDist:self.yDistance.getSilent(),pX:transformedCoords.0,pY:transformedCoords.1,time:ds.time,i:ds.i,sC:ds.sC,lV:ds.lV)
+            self.brushState = sendDs;
+        Debugger.generateDebugData(brush: self, type: "DRAW_SEGMENT");
+            
         self.currentCanvas!.addSegmentToStroke(parentID: self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight:cweight , color: color,alpha:ds.a)
         
         self.bPosition.x.setSilent(newValue: _dx)
@@ -466,7 +488,8 @@ class Brush: TimeSeries, Hashable{
     
        // self.distanceIntervalCheck();
         //self.intersectionCheck();
-       let sendDs = DeltaStorage(dX:ds.dX,dY:ds.dY,r:ds.r,sX:ds.sX,sY:ds.sY,rX:ds.rX,rY:ds.rY,d:ds.d,h:ds.h,s:ds.s,l:ds.l,a:ds.a,dist:self.distance.getSilent(),xDist:self.xDistance.getSilent(),yDist:self.yDistance.getSilent(),pX:transformedCoords.0,pY:transformedCoords.1,time:ds.time,i:ds.i,sC:ds.sC,lV:ds.lV);
+     
+ 
        self.signalEvent.raise(data: (self.behavior_id!,self.id,sendDs));
 
         }
@@ -561,23 +584,13 @@ class Brush: TimeSeries, Hashable{
         
         if(states[transition.toStateId]?.name == "die"){
             self.die();
-            return;
+           
         }
-        print("transition to state ID", transition.toStateId);
-        var transmitData:JSON = [:]
-        let fromState = currentState;
-        transmitData["type"] = JSON("state_transition");
-        transmitData["behaviorId"] = JSON(self.behaviorDef!.id);
-        transmitData["toState"] = JSON(transition.toStateId);
-        transmitData["fromState"] = JSON(fromState);
-        transmitData["transitionId"] = JSON(transition.id);
-        
-        let socketRequest = Request(target: "socket", action: "send_inspector_data", data: transmitData, requester: RequestHandler.sharedInstance)
-        //RequestHandler.addRequest(requestData: socketRequest)
-         #if DEBUG
+      
+         //#if DEBUG
         //print("transitioning from state:\(currentState) to state: \(transition.toStateId)");
-        #endif
-       
+       // #endif
+        else{
         if(states[currentState] != nil){
             let constraint_mappings =  states[currentState]!.constraint_mappings
             for (_, value) in constraint_mappings{
@@ -587,10 +600,15 @@ class Brush: TimeSeries, Hashable{
                 
             }
         }
+        self.prevState = self.currentState;
         self.currentState = transition.toStateId;
         if(states[currentState] != nil){
+            
+        //TODO: add methods to debug data
         self.executeTransitionMethods(methods: transition.methods)
-        
+        }
+            self.prevTransition = transition.id;
+
       
         //execute methods
         //check constraints
@@ -606,6 +624,9 @@ class Brush: TimeSeries, Hashable{
             
         }
         
+        Debugger.generateDebugData(brush:self, type:"STATE_TRANSITION");
+
+        
     }
     
 
@@ -616,17 +637,18 @@ class Brush: TimeSeries, Hashable{
             self.setConstraint(constraint: value);
 
         }
-        for (key,tTransition) in self.transitions{
+        //TODO: This creates an endless loop on debug step. Need to address this.
+
+       /* for (key,tTransition) in self.transitions{
             
             let validate = self.validateTransitionMapping(key:key)
             let evaluate =  tTransition.condition.evaluate()
             if validate != nil && evaluate == true {
-                
                 self.transitionToState(transition: tTransition)
                 return;
                 
             }
-        }
+        }*/
     }
     
     
@@ -906,6 +928,8 @@ class Brush: TimeSeries, Hashable{
             
         }
     }
+    
+  
     
     //=============END METHODS AVAILABLE TO USER==================//
     

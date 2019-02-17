@@ -292,6 +292,7 @@ final class StylusManager:LiveManager{
             return;
         }
         
+        prepStepData();
         
        //delayTimerReinit();
         
@@ -318,21 +319,40 @@ final class StylusManager:LiveManager{
             playbackTimer.invalidate()
             playbackTimer = nil
         }
-        if(delayRestart){
+        /*if(delayRestart){
             playbackTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(delayTimerReinit), userInfo: nil, repeats: false)
         }
         else{
             self.visualizationEvent.raise(data:"ERASE_REQUEST")
-        }
+        }*/
     }
     
-    @objc private func delayTimerReinit(){
-        if(playbackTimer != nil){
-            playbackTimer.invalidate()
-            playbackTimer = nil
-        }
-        startTime = Date();
-        prevTriggerTime = startTime;
+   
+    
+    @objc private func timerAdvanceRecording(){
+        
+        
+//            print("total num samples",samples.count)
+            let currentTime = Date();
+            let elapsedTime = currentTime.timeIntervalSince(prevTriggerTime);
+            
+            //var timeDifferenceCounter = Float(0);
+            let timeDifferenceMS:Float;
+            
+            if(playbackRate >= 10.0){
+                timeDifferenceMS = Float(samples.count);
+                killLoopTimer(delayRestart: false);
+                
+            }
+                
+            else{
+                timeDifferenceMS = Float(elapsedTime)*1000*playbackRate;
+                
+            }
+    }
+    
+    func prepStepData(){
+      
         var strokesToErase = [String:[String]]();
         currentLoopingPackage = recordingPackages.first(){$0.id == self.idStart}
         while (true){
@@ -348,6 +368,8 @@ final class StylusManager:LiveManager{
                 break;
             }
             else{
+                
+                
                 currIndex += 1
                 currentLoopingPackage = recordingPackages[currIndex];
                 
@@ -356,39 +378,14 @@ final class StylusManager:LiveManager{
         
         eraseEvent.raise(data:("ERASE_REQUEST",strokesToErase));
         self.visualizationEvent.raise(data:"ERASE_REQUEST")
-        
-        playbackTimer = Timer.scheduledTimer(timeInterval: 0.001, target: self, selector: #selector(advanceRecording), userInfo: nil, repeats: true)
+        Debugger.activate();
         
     }
-    
-    @objc private func advanceRecording(){
-        
-        
-        queue.sync {
-//            print("total num samples",samples.count)
-            let currentTime = Date();
-            let elapsedTime = currentTime.timeIntervalSince(prevTriggerTime);
             
-            var timeDifferenceCounter = Float(0);
-            let timeDifferenceMS:Float;
-            
-            if(playbackRate >= 10.0){
-                timeDifferenceMS = Float(samples.count);
-                killLoopTimer(delayRestart: false);
-                
-            }
-                
-            else{
-                timeDifferenceMS = Float(elapsedTime)*1000*playbackRate;
-                
-            }
-            
-            while timeDifferenceCounter<timeDifferenceMS{
-                
+    func stepSample(){
                 if(samples.count>0){
                     
-                    if(samples[0]["sequenceHash"].floatValue == timeDifferenceCounter+prevHash){
-                        
+                    
                         let currentSample = samples.remove(at: 0);
                         if(currentSample["hash"].floatValue == Float(0)){
                             currentLoopingPackage = recordingPackages.first(){$0.id == currentSample["recordingId"].stringValue};
@@ -403,25 +400,14 @@ final class StylusManager:LiveManager{
                             usedSamples.removeAll();
                             prevHash = 0;
                             
-                            if(revertToLiveOnLoopEnd == true){
-                                killLiveMode();
-                            }
-                            else if(playbackRate<10.0){
-                                killLoopTimer(delayRestart:true);
-                                
-                            }
-                            
-                            break;
-                            
                         }
                     }
-                    timeDifferenceCounter += 1;
-                    
-                }
-            }
-            
-        }
+        
+        
     }
+    
+            
+    
     
     
     //TOOD: NEED TO MAKE THESE SYMMETRICAL TO STYLUSCOLLECTION EVENTS TO CALCULATE ACCURATE DATA

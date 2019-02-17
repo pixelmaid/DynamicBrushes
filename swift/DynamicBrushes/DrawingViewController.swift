@@ -1290,6 +1290,14 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
             backupNeeded = true
             
             break;
+        case "debug_request":
+            let debug_data = data.1! as JSON
+            #if DEBUG
+           // print("debug_request",(debug_data["data"] as JSON)["type"].stringValue);
+            #endif
+            stylusManager.stepSample();
+            break;
+    
         case "storage_request":
             let storage_data = data.1!["data"];
             let type = storage_data["type"].stringValue;

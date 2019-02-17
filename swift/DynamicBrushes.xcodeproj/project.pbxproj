@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		02DE59B87E0EE7C00B73F5D0 /* Pods_DynamicBrushes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AA0BB14BEC283C5C6629407 /* Pods_DynamicBrushes.framework */; };
 		0A2BE8B9210FD5B90069D085 /* basic.json in Resources */ = {isa = PBXBuildFile; fileRef = 0A2BE8B8210FD5B90069D085 /* basic.json */; };
+		0A458794221743E8003695B5 /* Debugger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A458793221743E8003695B5 /* Debugger.swift */; };
 		0A56E3BD2071C09C006243A6 /* BrushSignalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56E3BC2071C09B006243A6 /* BrushSignalManager.swift */; };
 		0A56E3BF2072B916006243A6 /* SignalAccessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56E3BE2072B916006243A6 /* SignalAccessors.swift */; };
 		0A56E3C5207308FA006243A6 /* ExpressionCatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A56E3C4207308FA006243A6 /* ExpressionCatch.m */; };
@@ -178,6 +179,7 @@
 /* Begin PBXFileReference section */
 		0442020FA4D778FD391A14CD /* Pods-DynamicBrushes.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicBrushes.release.xcconfig"; path = "Pods/Target Support Files/Pods-DynamicBrushes/Pods-DynamicBrushes.release.xcconfig"; sourceTree = "<group>"; };
 		0A2BE8B8210FD5B90069D085 /* basic.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = basic.json; path = DynamicBrushes/Resources/behaviorTemplates/basic.json; sourceTree = SOURCE_ROOT; };
+		0A458793221743E8003695B5 /* Debugger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debugger.swift; sourceTree = "<group>"; };
 		0A56E3BC2071C09B006243A6 /* BrushSignalManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrushSignalManager.swift; sourceTree = "<group>"; };
 		0A56E3BE2072B916006243A6 /* SignalAccessors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SignalAccessors.swift; path = data/SignalAccessors.swift; sourceTree = "<group>"; };
 		0A56E3C3207308FA006243A6 /* ExpressionCatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExpressionCatch.h; sourceTree = "<group>"; };
@@ -723,6 +725,7 @@
 				5FE34C7A1F1FA61300E26C06 /* PathFunctions.swift */,
 				0A56E3C3207308FA006243A6 /* ExpressionCatch.h */,
 				0A56E3C4207308FA006243A6 /* ExpressionCatch.m */,
+				0A458793221743E8003695B5 /* Debugger.swift */,
 			);
 			path = util;
 			sourceTree = "<group>";
@@ -1231,6 +1234,7 @@
 				5F90F5491E9D59D4006BB9FE /* WebTransmitter.swift in Sources */,
 				7267DCC5202A8ECF0093245A /* RecordingFrameCell.swift in Sources */,
 				72FD33732032AE3D00CD4FAF /* RecordingToolbarVC.swift in Sources */,
+				0A458794221743E8003695B5 /* Debugger.swift in Sources */,
 				5F50371B1EA9533A004ABAC1 /* shaderUtil.swift in Sources */,
 				5F90F56B1E9D5BCC006BB9FE /* State.swift in Sources */,
 				5F50371A1EA9533A004ABAC1 /* fileUtil.swift in Sources */,
