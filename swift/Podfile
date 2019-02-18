@@ -7,7 +7,6 @@ target 'DynamicBrushes' do
 
   # Pods for DynamicBrushes
 
-    pod 'SwiftKVC'
     pod 'SwiftyJSON'
     pod 'AudioKit', '~> 4.2'
     
