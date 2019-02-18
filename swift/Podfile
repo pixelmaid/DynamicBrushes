@@ -9,9 +9,7 @@ target 'DynamicBrushes' do
 
     pod 'SwiftyJSON'
     pod 'AudioKit', '~> 4.2'
-    
     pod 'Starscream'
-    
     pod 'AWSCognito'
     pod 'AWSS3'
     pod 'AWSCore'
