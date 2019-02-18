@@ -19,6 +19,7 @@ final class Debugger {
     
     static public func deactivate(){
         debuggingActive = false;
+        print("changed");
     }
     
     static public func  generateDebugData(brush:Brush, type:String){
