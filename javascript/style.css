@@ -151,6 +151,12 @@ h1{
   background: #000;
 }
 
+.debug .expression {
+    border-color: aqua;
+    border-width: 3px;
+    border-style: solid;
+}
+
 .expression{
   border-radius: 6px;
 

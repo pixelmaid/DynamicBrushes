@@ -40,8 +40,8 @@ class BrushSignalManager:SignalCollectionManager{
             let brushCollection = collection as! BrushCollection
             var protodata:JSON = [:]
             protodata["time"] = JSON(deltaStorage.time);
-            protodata["x"] = JSON(deltaStorage.pX);
-            protodata["y"] = JSON(deltaStorage.pY);
+            protodata["x"] = JSON(deltaStorage.x);
+            protodata["y"] = JSON(deltaStorage.y);
             protodata["dx"] = JSON(deltaStorage.dX);
             protodata["dy"] = JSON(deltaStorage.dY);
             protodata["diameter"] = JSON(deltaStorage.d);

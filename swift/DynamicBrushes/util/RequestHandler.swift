@@ -324,7 +324,7 @@ final class RequestHandler: Requester{
         #endif
         if(!transmitData["signalData"].isEmpty){
             let socketRequest = Request(target: "socket", action: "send_inspector_data", data: transmitData, requester: RequestHandler.sharedInstance)
-            RequestHandler.addRequest(requestData: socketRequest)
+          //  RequestHandler.addRequest(requestData: socketRequest)
         }
     }
     

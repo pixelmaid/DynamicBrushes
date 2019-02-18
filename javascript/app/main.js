@@ -1,8 +1,8 @@
 'use strict';
 
-define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveView", "app/SignalView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart", "app/DatasetView", "app/SignalModel"],
+define(["jquery", "paper", "handlebars", "app/id", "app/Debugger","app/SaveManager", "app/SaveView", "app/SignalView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart", "app/DatasetView", "app/SignalModel"],
 
-    function($, paper, Handlebars, ID, SaveManager, SaveView, SignalView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart, DatasetView, SignalModel) {
+    function($, paper, Handlebars, ID, Debugger, SaveManager, SaveView, SignalView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart, DatasetView, SignalModel) {
 
         var socketController = new SocketController();
         var socketView = new SocketView(socketController, "#socket");
@@ -13,7 +13,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
         var saveView = new SaveView(saveManager, "#save-menu");
         var codename;
         var dataView = new DatasetView(signalModel.datasetLoader, "#dataset_select");
-
+        var codeDebugger = new Debugger();
         //sets up interface by initializing palette, removing overlay etc.
         var setupInterface = function() {
 
@@ -62,7 +62,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
 
             } else if (data.type == "inspector_data") {
 
-                chartViewManager.processInspectorData(data.data);
+                codeDebugger.processInspectorData(data.data);
 
             } else if (data.type == "synchronize") {
                 hideOverlay();
@@ -220,7 +220,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
 
             };
             socketController.sendMessage(step_data);
-        }
+        };
 
         var promptConnect = function() {
 
@@ -277,7 +277,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/SaveManager", "app/SaveV
         socketController.addListener("ON_KEY_RECOGNIZED", onKeyRecognized);
 
         chartViewManager.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
-        chartViewManager.addListener("STEP_FORWARD", stepForward);
+        codeDebugger.addListener("STEP_FORWARD", stepForward);
 
         chartViewManager.addListener("ON_DATA_REQUEST_EVENT", onDataRequestEvent);
 

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SwiftyJSON;
 
 class State {
     var transitions = [String:StateTransition]()
@@ -68,6 +69,15 @@ class State {
 
             return nil
         }
+    }
+    
+    func getConstrainedPropertyNames()->JSON{
+        var names:JSON = [:];
+        
+        for (key,mapping) in constraint_mappings{
+            names[key] = JSON(mapping.relativeProperty.name);
+        }
+        return names;
     }
     
     func getTransitionMapping(key:String)->StateTransition?{

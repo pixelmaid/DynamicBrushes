@@ -28,8 +28,8 @@ struct DeltaStorage{
     var dist = Float(0);
     var xDist = Float(0);
     var yDist = Float(0);
-    var pX = Float(0);
-    var pY = Float(0);
+    var x = Float(0);
+    var y = Float(0);
     var time = Float(0);
     var i = Float(0);
     var sC = Float(0);
@@ -175,6 +175,8 @@ class Brush: TimeSeries, Hashable{
         self.reflectY = Observable<Float>(0)
         self.reflectX = Observable<Float>(0)
         self.rotation = Observable<Float>(0)
+        self.rotation.name = "r";
+        
         
         self.distance = Observable<Float>(0)
         self.xDistance = Observable<Float>(0)
@@ -188,6 +190,8 @@ class Brush: TimeSeries, Hashable{
         
         self.diameter = Observable<Float>(1)
         self.diameter.printname = "brush_diameter"
+        self.diameter.name = "d";
+
         self.alpha = Observable<Float>(100)
         self.hue = Observable<Float>(100)
         self.lightness = Observable<Float>(100)
@@ -306,7 +310,7 @@ class Brush: TimeSeries, Hashable{
     
     
     func storeInitialValues(){
-        let sendDs = DeltaStorage(dX:0,dY:0,r:0,sX:self.sx.getSilent(),sY:self.sy.getSilent(),rX:0,rY:0,d:1,h:100,s:100,l:100,a:100,dist:0,xDist:self.xDistance.getSilent(),yDist:self.yDistance.getSilent(),pX:0,pY:0,time:0,i:self.index.getSilent(),sC:self.siblingcount.getSilent(),lV:self.level.getSilent());
+        let sendDs = DeltaStorage(dX:0,dY:0,r:0,sX:self.sx.getSilent(),sY:self.sy.getSilent(),rX:0,rY:0,d:1,h:100,s:100,l:100,a:100,dist:0,xDist:self.xDistance.getSilent(),yDist:self.yDistance.getSilent(),x:0,y:0,time:0,i:self.index.getSilent(),sC:self.siblingcount.getSilent(),lV:self.level.getSilent());
         
         self.signalEvent.raise(data: (self.behavior_id!,self.id,sendDs));
     }
@@ -420,7 +424,7 @@ class Brush: TimeSeries, Hashable{
         let xDist = self.xDistance.get(id:nil);
         let yDist = self.yDistance.get(id:nil);
         
-        let ds = DeltaStorage(dX:dX,dY:dY,r:r,sX:sX,sY:sY,rX:rX,rY:rY,d:d,h:h,s:s,l:l,a:a,dist:dist,xDist:xDist,yDist:yDist,pX:0,pY:0,time:self.time.getSilent(),i:self.index.getSilent(),sC:self.siblingcount.getSilent(),lV:self.level.getSilent());
+        let ds = DeltaStorage(dX:dX,dY:dY,r:r,sX:sX,sY:sY,rX:rX,rY:rY,d:d,h:h,s:s,l:l,a:a,dist:dist,xDist:xDist,yDist:yDist,x:0,y:0,time:self.time.getSilent(),i:self.index.getSilent(),sC:self.siblingcount.getSilent(),lV:self.level.getSilent());
         self.deltaChangeBuffer.append(ds);
         self.processDeltaBuffer();
     }
@@ -477,7 +481,7 @@ class Brush: TimeSeries, Hashable{
         
         let color = Color(h: ds.h, s: ds.s, l: ds.l, a: 1)
         
-        let sendDs = DeltaStorage(dX:ds.dX,dY:ds.dY,r:ds.r,sX:ds.sX,sY:ds.sY,rX:ds.rX,rY:ds.rY,d:ds.d,h:ds.h,s:ds.s,l:ds.l,a:ds.a,dist:self.distance.getSilent(),xDist:self.xDistance.getSilent(),yDist:self.yDistance.getSilent(),pX:transformedCoords.0,pY:transformedCoords.1,time:ds.time,i:ds.i,sC:ds.sC,lV:ds.lV)
+        let sendDs = DeltaStorage(dX:ds.dX,dY:ds.dY,r:ds.r,sX:ds.sX,sY:ds.sY,rX:ds.rX,rY:ds.rY,d:ds.d,h:ds.h,s:ds.s,l:ds.l,a:ds.a,dist:self.distance.getSilent(),xDist:self.xDistance.getSilent(),yDist:self.yDistance.getSilent(),x:transformedCoords.0,y:transformedCoords.1,time:ds.time,i:ds.i,sC:ds.sC,lV:ds.lV)
             self.brushState = sendDs;
         Debugger.generateDebugData(brush: self, type: "DRAW_SEGMENT");
             
@@ -745,7 +749,7 @@ class Brush: TimeSeries, Hashable{
         #endif
         
         //todo: create persistent storage of values
-        let sendDs = DeltaStorage(dX:self.dx.getSilent(),dY:self.dy.getSilent(),r:self.rotation.getSilent(),sX:self.sx.getSilent(),sY:self.sy.getSilent(),rX:self.reflectX.getSilent(),rY:self.reflectY.getSilent(),d:self.diameter.getSilent(),h:self.hue.getSilent(),s:self.saturation.getSilent(),l:self.lightness.getSilent(),a:self.alpha.getSilent(),dist:self.distance.getSilent(),xDist:self.xDistance.getSilent(),yDist:self.yDistance.getSilent(),pX:self.position.x.getSilent(),pY:self.position.y.getSilent(),time:self.time.getSilent(),i:self.index.getSilent(),sC:self.siblingcount.getSilent(),lV:self.level.getSilent());
+        let sendDs = DeltaStorage(dX:self.dx.getSilent(),dY:self.dy.getSilent(),r:self.rotation.getSilent(),sX:self.sx.getSilent(),sY:self.sy.getSilent(),rX:self.reflectX.getSilent(),rY:self.reflectY.getSilent(),d:self.diameter.getSilent(),h:self.hue.getSilent(),s:self.saturation.getSilent(),l:self.lightness.getSilent(),a:self.alpha.getSilent(),dist:self.distance.getSilent(),xDist:self.xDistance.getSilent(),yDist:self.yDistance.getSilent(),x:self.position.x.getSilent(),y:self.position.y.getSilent(),time:self.time.getSilent(),i:self.index.getSilent(),sC:self.siblingcount.getSilent(),lV:self.level.getSilent());
         self.signalEvent.raise(data: (self.behavior_id!,self.id,sendDs));
     }
     

@@ -1057,6 +1057,11 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 }
             }
 
+            
+
+
+
+
         };
 
 
