@@ -151,11 +151,15 @@ h1{
   background: #000;
 }
 
-.debug .expression {
-    border-color: aqua;
-    border-width: 3px;
-    border-style: solid;
+.debug-inspect {
+    color: black;
+    background-color: aqua;
 }
+
+.debug .expression {
+  outline: 3px solid aqua;
+}
+
 
 .expression{
   border-radius: 6px;
@@ -1211,4 +1215,14 @@ position: absolute;
   margin: 0px 6px 0px 8px;
 }
 .methodsContainer {
+}
+
+/* debug inspector */
+#brush-inspector {
+  bottom: 20px;
+  left: 20px;
+  min-width: 150px;
+  min-height: 200px;
+  border: 1px solid gray;
+  background-color:#202020;
 }
