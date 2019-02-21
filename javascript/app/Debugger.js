@@ -41,10 +41,11 @@ define(["app/Emitter"],
         '<li id="param-sX">scale x: <span id="inspector-x-scale">x</span></li>' +
         '<li id="param-sY">scale y: <span id="inspector-y-scale">x</span></li>' +
         '<li id="param-r">rotation: <span id="inspector-rot">x</span></li>' +
+         '<li id="param-d">diameter: <span id="inspector-diameter">x</span></li>' +
         '<li id="param-a">alpha: <span id="inspector-alpha">x</span></li>' +
         '<li id="param-h">hue: <span id="inspector-hue">x</span></li>' +
         '<li id="param-s">saturation: <span id="inspector-sat">x</span></li>' +
-        '<li id="param-lV">value: <span id="inspector-val">x</span></li>' +
+        '<li id="param-lV">level: <span id="inspector-val">x</span></li>' +
         '<li id="param-l">lightness: <span id="inspector-lightness">x</span></li>' +
         '</ul>' +
         '</div>'
@@ -77,11 +78,13 @@ define(["app/Emitter"],
         $("#inspector-x-scale").text(data.brushState.sX);
         $("#inspector-y-scale").text(data.brushState.sY);
         $("#inspector-rot").text(data.brushState.r);
+        $("#inspector-diameter").text(data.brushState.d);
         $("#inspector-alpha").text(parseFloat(data.brushState.a).toFixed(2));
         $("#inspector-hue").text(data.brushState.h);
         $("#inspector-sat").text(data.brushState.s);
         $("#inspector-val").text(data.brushState.lV);
-        $("#inspector-lightness").text(data.brushState.l);
+          $("#inspector-lightness").text(data.brushState.l);
+
 
       }
 
