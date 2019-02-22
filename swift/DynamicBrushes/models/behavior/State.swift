@@ -72,12 +72,16 @@ class State {
     }
     
     func getConstrainedPropertyNames()->JSON{
-        var names:JSON = [:];
+        var names = [JSON]();
         
         for (key,mapping) in constraint_mappings{
-            names[key] = JSON(mapping.relativeProperty.name);
+            var jsonMapping: JSON = [:]
+            jsonMapping["relativePropertyName"] = JSON(mapping.relativeProperty.name);
+            jsonMapping["constraintId"] = JSON(key);
+            names.append(jsonMapping);
         }
-        return names;
+        
+        return JSON(Debugger.orderProps(propList: names));
     }
     
     func getTransitionMapping(key:String)->StateTransition?{

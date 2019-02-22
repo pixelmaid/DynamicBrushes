@@ -12,7 +12,8 @@ import SwiftyJSON
 final class Debugger {
     
     static private var debuggingActive = false;
-    
+    static var propSort = ["ox","oy","sx","sy","rotation","dx","dy","x","y","radius","theta","diameter","hue","lightness","saturation","alpha"]
+
     static public func activate(){
         Debugger.debuggingActive = true;
     }
@@ -20,6 +21,26 @@ final class Debugger {
     static public func deactivate(){
         debuggingActive = false;
         print("changed");
+    }
+    
+    static public func orderProps(propList:[JSON])->[JSON]{
+        var _propList = propList;
+        var sortedMappings = [JSON]();
+
+        propSort.forEach { key in
+        var found = false;
+        _propList = _propList.filter { (mapping) -> Bool in
+            
+            if( !found && mapping["relativePropertyName"].stringValue == key){
+                sortedMappings.append(mapping);
+                found = true;
+                return false;
+            } else{
+                return true;
+            }
+        }
+        }
+        return sortedMappings;
     }
     
     static public func  generateDebugData(brush:Brush, type:String){

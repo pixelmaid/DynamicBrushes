@@ -10,7 +10,7 @@ import Foundation
 import SwiftyJSON
 
 class BehaviorDefinition {
-    
+
     var brushInstances = [Brush]();
     var states = [String:(String,Float,Float)]()
     var expressions = [String:(expressionPropertyList:[String],expressionText:String)]();
@@ -282,9 +282,12 @@ class BehaviorDefinition {
             
         }
         
+        let orderdMappings = Debugger.orderProps(propList: mappingsArray);
+   
+        
         json_obj["states"] = JSON(statesArray);
         json_obj["transitions"] = JSON(transitionsArray);
-        json_obj["mappings"] = JSON(mappingsArray);
+        json_obj["mappings"] = JSON(orderdMappings);
         json_obj["methods"] = JSON(methodArray);
         json_obj["conditions"] = JSON(conditionArray);
         json_obj["expressions"] = JSON(expressionArray);
