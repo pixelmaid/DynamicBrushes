@@ -42,6 +42,7 @@ define(["app/Emitter"],
         '<li id="param-sX">scale x: <span id="inspector-x-scale">'+data.brushState.sX+'</span></li>' +
         '<li id="param-sY">scale y: <span id="inspector-y-scale">'+data.brushState.sY+'</span></li>' +
         '<li id="param-r">rotation: <span id="inspector-rot">'+data.brushState.r+'</span></li>' +
+         '<li id="param-d">diameter: <span id="inspector-d">'+data.brushState.r+'</span></li>' +
         '<li id="param-a">alpha: <span id="inspector-alpha">'+parseFloat(data.brushState.a).toFixed(2)+'</span></li>' +
         '<li id="param-h">hue: <span id="inspector-hue">'+data.brushState.h+'</span></li>' +
         '<li id="param-s">saturation: <span id="inspector-sat">'+data.brushState.s+'</span></li>' +
@@ -139,6 +140,9 @@ define(["app/Emitter"],
               break;
           case "l":
               $("#inspector-lightness").text(data.brushState.l);
+              break;
+          case "d":
+              $("#inspector-diameter").text(data.brushState.d);
               break;
           case "i":
               $("#inspector-child").text(data.brushState.i);
