@@ -970,16 +970,16 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                             console.log("transition overlay", id, $('#' + id).parent());
                             $('#' + id).parent().css('z-index', 50);
 
-                            connection.getOverlay("toggle_" + id).hide();
+                            //connection.getOverlay("toggle_" + id).hide();
 
                         }
                     }
                 }]);
 
                
+                connection.getOverlay("toggle_" + id).hide();
 
-
-                connection.getOverlay("transition_" + id).hide();
+                //connection.getOverlay("transition_" + id).hide();
                 var selector = $("#" + id).parent().closest('div').attr('id');
                 console.log("selector:", selector);
                 $.contextMenu({
