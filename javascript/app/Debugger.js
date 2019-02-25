@@ -64,7 +64,11 @@ define(["app/Emitter"],
 						this.visualizeDrawSegment(data);
 						break;
 
-					case "STATE_TRANSITION":
+          case "STATE_SETUP":
+            console.log("received set up");
+          case "STATE_DIE":
+            console.log("received die");
+          case "STATE_TRANSITION":
 						this.displayTransition(data);
 						break;
 
@@ -72,11 +76,14 @@ define(["app/Emitter"],
 			}
 
 			displayTransition(data) {
-				console.log("transition via", data.transitionId);
-				console.log("prev state id", data.prevState, "curr state id", data.currentState);
-				$("#" + data.transitionId).parent().show();
-				$("#" + data.transitionId).parent().next().hide(); //the toggle button
-				console.log("sibling is ", $("#" + data.transitionId).parent().next());
+        console.log("! displaying transition of ", data)
+        // UNCOMMENT THESE LINES TO HIDE/SHOW
+				// $("#" + data.transitionId).parent().show();
+				// $("#" + data.transitionId).parent().next().hide(); //the toggle button
+
+        $("#" + data.transitionId).parent().addClass("state active");
+        $("#" + data.transitionId).parent().next().removeClass("state active");
+
 				//should pause? automatically goes to draw segment step 
 				this.lastTransitionId = data.transitionId;
 			}

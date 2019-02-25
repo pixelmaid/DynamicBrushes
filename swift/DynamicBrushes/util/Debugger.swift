@@ -53,6 +53,8 @@ final class Debugger {
             debugData["transitionId"] = JSON(brush.prevTransition);
             debugData["brushState"] = brush.brushState.toJSON();
             debugData["constraints"] = brush.states[brush.currentState]!.getConstrainedPropertyNames();
+            debugData["methods"] = brush.states[brush.currentState]!.getMethods();
+
             let socketRequest = Request(target: "socket", action: "send_inspector_data", data: debugData, requester: RequestHandler.sharedInstance)
             RequestHandler.addRequest(requestData: socketRequest)
         }

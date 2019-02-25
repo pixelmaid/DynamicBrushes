@@ -320,6 +320,9 @@ class Brush: TimeSeries, Hashable{
         if(setupTransition != nil && (setupTransition?.condition.evaluate())!){
             
             self.transitionToState(transition: setupTransition!)
+            Debugger.generateDebugData(brush:self, type:"STATE_SETUP");
+            print("$$ setup data generated");
+
         }
         else{
             #if DEBUG
@@ -586,6 +589,7 @@ class Brush: TimeSeries, Hashable{
     func transitionToState(transition:StateTransition){
         
         if(states[transition.toStateId]?.name == "die"){
+            Debugger.generateDebugData(brush:self, type:"STATE_DIE");
             self.die();
            
         }

@@ -935,6 +935,9 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     id: "transition_" + id
                 }]);
 
+                //moves it up
+                $('#' + id).parent().css('transform', 'translate(-50%, -90%)');
+
 
 
                 connection.addOverlay(["Custom", {
