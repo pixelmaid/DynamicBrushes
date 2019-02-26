@@ -156,10 +156,17 @@ h1{
     background-color: aqua;
 }
 
+.start-highlight {
+  background-color: aqua !important;
+}
+
 .debug .expression {
   outline: 3px solid aqua;
 }
 
+.method-inspect {
+    outline: 3px solid aqua;
+}
 
 .expression{
   border-radius: 6px;
