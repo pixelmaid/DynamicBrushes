@@ -84,19 +84,6 @@ class State {
         return JSON(Debugger.orderProps(propList: names));
     }
     
-    func getMethods()->JSON{
-        var methods = [JSON]();
-        
-        for (key,mapping) in transitions{
-            print("$$$ k, m", key, mapping);
-            var jsonMapping: JSON = [:]
-//            jsonMapping["methodPropertyName"] = JSON(mapping[key]);
-            jsonMapping["methodId"] = JSON(key);
-            methods.append(jsonMapping);
-        }
-        
-        return JSON(Debugger.orderProps(propList: methods));
-    }
     
     func getTransitionMapping(key:String)->StateTransition?{
         if let _ = transitions[key] {
@@ -205,7 +192,18 @@ class StateTransition{
         }
     }
     
-
+    func getMethodNames()->JSON{
+        var names = [JSON]();
+        
+        for method in methods {
+            var jsonMapping: JSON = [:]
+            jsonMapping["methodFieldName"] = JSON(method.fieldName);
+            jsonMapping["methodId"] = JSON(method.id);
+            names.append(jsonMapping);
+        }
+        
+        return JSON(Debugger.orderProps(propList: names));
+    }
     
 
 }

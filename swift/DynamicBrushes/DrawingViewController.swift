@@ -65,6 +65,8 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     let backupKey = NSUUID().uuidString
     let saveEventKey = NSUUID().uuidString
     let loopEventKey = NSUUID().uuidString
+    let debuggerKey = NSUUID().uuidString
+
     
     var toolbarController: ToolbarViewController?
     var layerPanelController: LayerPanelViewController?
@@ -371,6 +373,16 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         switch(data){
         case "LOOP":
             recordingViewController?.loopInitialized()
+            break;
+        default:
+            break;
+        }
+    }
+    
+    func debuggerEventHandler(data: (String), key: String) {
+        switch (data) {
+        case "INIT":
+            behaviorManager?.refreshAllBehaviors();
             break;
         default:
             break;
@@ -1413,6 +1425,9 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         _ = stylusManager.eraseEvent.addHandler(target: self, handler: DrawingViewController.stylusManagerEventHandler, key: stylusManagerKey)
         
         _ = stylusManager.layerEvent.addHandler(target: self, handler: DrawingViewController.stylusManagerEventHandler, key: stylusManagerKey)
+        
+        _ = Debugger.debuggerEvent.addHandler(target:self, handler: DrawingViewController.debuggerEventHandler, key: debuggerKey)
+
         
     }
     

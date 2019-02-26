@@ -320,7 +320,6 @@ class Brush: TimeSeries, Hashable{
         if(setupTransition != nil && (setupTransition?.condition.evaluate())!){
             
             self.transitionToState(transition: setupTransition!)
-            Debugger.generateDebugData(brush:self, type:"STATE_SETUP");
             print("$$ setup data generated");
 
         }
