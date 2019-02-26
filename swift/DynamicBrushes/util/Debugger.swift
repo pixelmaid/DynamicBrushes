@@ -46,6 +46,7 @@ final class Debugger {
         return sortedMappings;
     }
     
+
     static public func  generateDebugData(brush:Brush, type:String){
         if(debuggingActive){
             var debugData:JSON = [:]

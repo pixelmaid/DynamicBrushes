@@ -14,12 +14,11 @@ define(["jquery", 'emitter', 'app/id', 'app/Emitter'],
 			}
 
 			loadCollection(data) {
-				console.log("!!! LOAD COLLECTION", data);
 				var self = this;
 				var collections =  data;
 
 				for (var i=0; i<collections.length; i++) {
-					console.log("!!! inside collections ", collections[i]);
+					// console.log("!!! inside collections ", collections[i]);
 					var classType = collections[i]["classType"];
 					var collectionId = collections[i]["id"];
 					var collectionName = collections[i]["name"];

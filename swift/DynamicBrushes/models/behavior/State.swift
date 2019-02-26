@@ -200,9 +200,10 @@ class StateTransition{
             jsonMapping["methodFieldName"] = JSON(method.fieldName);
             jsonMapping["methodId"] = JSON(method.id);
             names.append(jsonMapping);
+            print("$ method name id is ", method.fieldName, method.id);
         }
-        
-        return JSON(Debugger.orderProps(propList: names));
+        print(names);
+        return JSON(names);
     }
     
 

@@ -191,7 +191,7 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
 
 
             addMark(referenceId, referenceType, referenceDisplayName, style) { //pass in style argument
-                console.log("!style is ", style);
+                // console.log("!style is ", style);
                 var el = document.createElement("span");
                 el.innerHTML = referenceDisplayName;
                 //HERE

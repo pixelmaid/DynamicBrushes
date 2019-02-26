@@ -13,7 +13,6 @@ define(["app/Emitter"],
 			constructor() {
 				super();
 				this.pastConstraint = null;
-				this.lastTransitionId = null;
 				this.inspectorInit = false;
 				this.data = null;
 				this.vizQueue = [];
@@ -64,10 +63,6 @@ define(["app/Emitter"],
 						this.visualizeDrawSegment(data);
 						break;
 
-          case "STATE_SETUP":
-            console.log("received set up");
-          case "STATE_DIE":
-            console.log("received die");
           case "STATE_TRANSITION":
 						this.displayTransition(data);
 						break;
@@ -76,19 +71,17 @@ define(["app/Emitter"],
 			}
 
 			displayTransition(data) {
-        console.log("! displaying transition of ", data)
+        console.log("! displaying transition of ", data, " queue is ", this.vizQueue)
         // UNCOMMENT THESE LINES TO HIDE/SHOW
 				// $("#" + data.transitionId).parent().show();
 				// $("#" + data.transitionId).parent().next().hide(); //the toggle button
-
+        // $("#" + data.transitionId).parent().next().removeClass("state active");
         $("#" + data.transitionId).parent().addClass("state active");
-        $("#" + data.transitionId).parent().next().removeClass("state active");
 
-				//should pause? automatically goes to draw segment step 
-				this.lastTransitionId = data.transitionId;
 			}
 
 			visualizeDrawSegment(data) {
+        console.log("! visualizing draw segment ", data, " queue is ", this.vizQueue);
 				let brushState = data["brushState"];
 				$("#" + data.prevState).children(".state").removeClass("active");
 				$("#" + data.currentState).children(".state").addClass("active");
@@ -102,14 +95,10 @@ define(["app/Emitter"],
 			}
 
 			visualizeConstraint(constraint, pastConstraint, data) {
+        console.log("! visualizing constraints ", data);
 				if (!this.inspectorInit) {
 					this.initInspector(data);
 					this.inspectorInit = true;
-				}
-				if (this.lastTransitionId) {
-					$("#" + this.lastTransitionId).parent().hide();
-					$("#" + this.lastTransitionId).parent().next().show(); //the toggle button
-					this.lastTransitionId = null;
 				}
 				if (pastConstraint) {
 					$("#" + pastConstraint.constraintId).removeClass("debug");
