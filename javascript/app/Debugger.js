@@ -79,9 +79,7 @@ define(["app/Emitter"],
           data.methods[i].type = "method"
           this.vizQueue.push(data.methods[i]);
         }
-        var arrowObject = $("#" + data.transitionId).parent().prev();
-        this.vizQueue.push({obj: arrowObject, type: "arrow"});
-        console.log("!!!! hi????");
+
         // UNCOMMENT THESE LINES TO HIDE/SHOW
 				// $("#" + data.transitionId).parent().show();
 				// $("#" + data.transitionId).parent().next().hide(); //the toggle button
@@ -124,17 +122,19 @@ define(["app/Emitter"],
               break;
             case "transition":
               if (pastConstraint.transitionId == "start") {
-                $(".setup").children().next().removeClass("start-highlight");
+                $(".setup").children().eq(1).removeClass("start-highlight");
               }
               else if ($("#" + pastConstraint.transitionId).hasClass("transition_statement")) {
-                $("#" + pastConstraint.transitionId).removeClass("active");
+                $("#" + pastConstraint.transitionId).children().first().removeClass("method-inspect");;
               } else { //it's a state
-                $("#" + pastConstraint.transitionId).children().eq(1).removeClass("active");
-              }              
+                $("#" + pastConstraint.transitionId).children().find("h2").removeClass("state-title-inspect");
+              }
+              //remove arrow highlight                     
+              var arrowObject = $("#" + pastConstraint.transitionId).parent().prev();
+              arrowObject.children().eq(1).attr("stroke", "#efac1f");
+              arrowObject.children().eq(2).attr("stroke", "#efac1f");
+              arrowObject.children().eq(2).attr("fill", "#efac1f");
             break;            
-            case "arrow":
-              pastConstraint.obj.attr("class", "jsplumb-connector");
-              break;
           }
         }
 
@@ -192,19 +192,21 @@ define(["app/Emitter"],
           case "transition":
             console.log("! VIZ TRANSITION ", constraint, pastConstraint);
             if (constraint.transitionId == "start") {
-              $(".setup").children().next().addClass("start-highlight");
+              $(".setup").children().eq(1).addClass("start-highlight");
             }
             if ($("#" + constraint.transitionId).hasClass("transition_statement")) {
-              $("#" + constraint.transitionId).addClass("active");
+              //outline header
+              $("#" + constraint.transitionId).children().first().addClass("method-inspect");
             } else { //it's a state
-              $("#" + constraint.transitionId).children().eq(1).addClass("active");
+              //highlight title
+              $("#" + constraint.transitionId).children().find("h2").addClass("state-title-inspect");
             }
-            break;            
-          case "arrow":
-            console.log("! VIZ TRANSITION (arrow)");
-            constraint.obj.attr("class", "jsplumb-connector jsplumb-hover debug-inspect");
-            console.log("! OBJ IS", constraint.obj);
-            break;
+              //add arrow highlight                     
+              var arrowObject = $("#" + constraint.transitionId).parent().prev();
+              arrowObject.children().eq(1).attr("stroke", "aqua");
+              arrowObject.children().eq(2).attr("stroke", "aqua");
+              arrowObject.children().eq(2).attr("fill", "aqua");
+            break;         
         }
 				
 			}

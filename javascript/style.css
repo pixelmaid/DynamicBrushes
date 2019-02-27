@@ -168,6 +168,15 @@ h1{
     outline: 3px solid aqua;
 }
 
+.state-title-inspect {
+  background-color: aqua;
+  color: black;
+}
+
+.arrrow-inspect {
+  fill: aqua;
+}
+
 .expression{
   border-radius: 6px;
 
