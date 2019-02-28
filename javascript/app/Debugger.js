@@ -93,8 +93,8 @@ define(["app/Emitter"],
 			visualizeDrawSegment(data) {
         console.log("! visualizing draw segment ", data, " queue is ", this.vizQueue);
 				let brushState = data["brushState"];
-				$("#" + data.prevState).children(".state").removeClass("active");
-				$("#" + data.currentState).children(".state").addClass("active");
+				// $("#" + data.prevState).children(".state").removeClass("active");
+				// $("#" + data.currentState).children(".state").addClass("active");
 				for (var i = 0; i < data.constraints.length; i++) {
           data.constraints[i].type = "binding"
 					data.constraints[i].value = brushState[data.constraints[i].constraintId];
@@ -127,7 +127,7 @@ define(["app/Emitter"],
               else if ($("#" + pastConstraint.transitionId).hasClass("transition_statement")) {
                 $("#" + pastConstraint.transitionId).children().first().removeClass("method-inspect");;
               } else { //it's a state
-                $("#" + pastConstraint.transitionId).children().find("h2").removeClass("state-title-inspect");
+                $("#" + pastConstraint.transitionId).children().eq(1).removeClass("active");
               }
               //remove arrow highlight                     
               var arrowObject = $("#" + pastConstraint.transitionId).parent().prev();
@@ -147,6 +147,7 @@ define(["app/Emitter"],
             $("#" + constraint.constraintId).addClass("debug");
             $("#param-" + constraint.relativePropertyName).addClass("debug-inspect");
             console.log("VIZ curr ", constraint.relativePropertyName);
+            $("#" + data.currentState).children(".state").addClass("active");
 
             switch (constraint.relativePropertyName) {
               case "x":
@@ -198,8 +199,7 @@ define(["app/Emitter"],
               //outline header
               $("#" + constraint.transitionId).children().first().addClass("method-inspect");
             } else { //it's a state
-              //highlight title
-              $("#" + constraint.transitionId).children().find("h2").addClass("state-title-inspect");
+              $("#" + constraint.transitionId).children().eq(1).addClass("active");
             }
               //add arrow highlight                     
               var arrowObject = $("#" + constraint.transitionId).parent().prev();
