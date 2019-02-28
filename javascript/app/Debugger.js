@@ -93,8 +93,8 @@ define(["app/Emitter"],
 			visualizeDrawSegment(data) {
         console.log("! visualizing draw segment ", data, " queue is ", this.vizQueue);
 				let brushState = data["brushState"];
-				$("#" + data.prevState).children(".state").removeClass("active");
-				$("#" + data.currentState).children(".state").addClass("active");
+				//$("#" + data.prevState).children(".state").removeClass("active");
+				//$("#" + data.currentState).children(".state").addClass("active");
 				for (var i = 0; i < data.constraints.length; i++) {
           data.constraints[i].type = "binding"
 					data.constraints[i].value = brushState[data.constraints[i].constraintId];

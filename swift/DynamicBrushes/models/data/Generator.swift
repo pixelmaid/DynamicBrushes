@@ -142,7 +142,7 @@ class Sawtooth:Generator{
          min = settings["min"].intValue
          max = settings["max"].intValue
 
-        let increment = (stop-start)/Float(max-min)
+        let increment = Float(2.0);//(stop-start)/Float(max-min)
         for i in min...max-1{
             val.append(start+increment*Float(i))
         }
