@@ -1,8 +1,8 @@
 'use strict';
 
-define(["jquery", "paper", "handlebars", "app/id", "app/Debugger","app/SaveManager", "app/SaveView", "app/SignalView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart", "app/DatasetView", "app/SignalModel"],
-
-    function($, paper, Handlebars, ID, Debugger, SaveManager, SaveView, SignalView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart, DatasetView, SignalModel) {
+define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModel", "app/DebuggerView", "app/SaveManager", "app/SaveView", "app/SignalView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart", "app/DatasetView", "app/SignalModel", "app/KeypressHandler"],
+ 
+    function($, paper, Handlebars, ID, DebuggerModel, DebuggerView, SaveManager, SaveView, SignalView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart, DatasetView, SignalModel, KeypressHandler) {
 
         var socketController = new SocketController();
         var socketView = new SocketView(socketController, "#socket");
@@ -13,7 +13,13 @@ define(["jquery", "paper", "handlebars", "app/id", "app/Debugger","app/SaveManag
         var saveView = new SaveView(saveManager, "#save-menu");
         var codename;
         var dataView = new DatasetView(signalModel.datasetLoader, "#dataset_select");
-        var codeDebugger = new Debugger();
+        var codeDebugger = new DebuggerModel();
+        var keypressHandler = new KeypressHandler(codeDebugger);
+        var debuggerBrushView = new DebuggerView(codeDebugger, "#inspector-brush", "brush", keypressHandler);
+        var debuggerInputView = new DebuggerView(codeDebugger, "#inspector-input", "inputGlobal", keypressHandler);
+        // note -- make one for inputLocal? 
+        var debuggerOutputView = new DebuggerView(codeDebugger, "#inspector-output", "output", keypressHandler);
+
         //sets up interface by initializing palette, removing overlay etc.
         var setupInterface = function() {
 
@@ -277,7 +283,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/Debugger","app/SaveManag
         socketController.addListener("ON_KEY_RECOGNIZED", onKeyRecognized);
 
         chartViewManager.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
-        codeDebugger.addListener("STEP_FORWARD", stepForward);
+        keypressHandler.addListener("STEP_FORWARD", stepForward);
 
         chartViewManager.addListener("ON_DATA_REQUEST_EVENT", onDataRequestEvent);
 
