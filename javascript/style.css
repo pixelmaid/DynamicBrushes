@@ -1234,11 +1234,31 @@ position: absolute;
 }
 
 /* debug inspector */
-#brush-inspector {
+.debug-wrapper {
+  position: absolute;
   bottom: 20px;
-  left: 20px;
-  min-width: 150px;
-  min-height: 200px;
+  left: 20px; 
+  max-height: 282px;
+  width: 503px;
+}
+.inspector-container {
+  float: left;
+  width: 150px;
+  max-height: 280px;
   border: 1px solid gray;
   background-color:#202020;
+  overflow-y: scroll;
+  margin-right: 5px;
+}
+.sub-group-inspector {
+  padding: 5px 10px 0 10px; 
+  margin: 0;
+}
+.group-title-inspector {
+  margin: 0;
+  padding: 5px;
+  background-color: black;
+}
+.hr-inspector {
+  margin-bottom: 0px;
 }
