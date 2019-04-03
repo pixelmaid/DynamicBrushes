@@ -61,8 +61,13 @@ define(["jquery", "paper", "handlebars", "app/id", "app/Debugger","app/SaveManag
                 }
 
             } else if (data.type == "inspector_data") {
+                if(data.data.type == "signal_data"){
+                    chartViewManager.processInspectorData(data.data);
 
-                codeDebugger.processInspectorData(data.data);
+                }
+                else{
+                    codeDebugger.processInspectorData(data.data);
+                }
 
             } else if (data.type == "synchronize") {
                 hideOverlay();

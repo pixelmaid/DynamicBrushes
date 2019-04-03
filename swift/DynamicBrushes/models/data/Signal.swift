@@ -208,9 +208,15 @@ class BrushSignal:LiveSignal{
             #endif
             return 0;
         }
-    
-        let val = signalMatrix[behaviorId]![id!]!.last!;
-        return val;
+        let signal = signalMatrix[behaviorId]!;
+        let signalVector = signal[id!]!;
+        if(signalVector.count>0){
+            let val = signalVector.last!;
+            return val;
+        }
+        else{
+            return 0;
+        }
     }
     
     

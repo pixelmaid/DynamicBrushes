@@ -1,8 +1,8 @@
 //DatasetView.js
 'use strict';
-define(["jquery", "jquery-ui", "handlebars", 'app/id'],
+define(["jquery", "jquery-ui", "handlebars"],
 
-	function($, jqueryui, Handlebars, paletteTemplate, ID) {
+	function($, jqueryui, Handlebars) {
 
 
 
@@ -19,7 +19,7 @@ define(["jquery", "jquery-ui", "handlebars", 'app/id'],
 				this.el.change(function() {
 					console.log("loading called on ", self.el.val());
 					if(self.el.val()!==""){
-						self.model.loadCollectionFromFilename(self.el.val())
+						self.model.loadCollectionFromFilename(self.el.val());
 					}
 				});
 

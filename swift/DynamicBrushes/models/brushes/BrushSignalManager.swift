@@ -33,7 +33,7 @@ class BrushSignalManager:SignalCollectionManager{
         let brushId = data.1;
         let deltaStorage = data.2;
         #if DEBUG
-       // print("brush update handler called:",behaviorId,brushId,deltaStorage);
+        //print("brush update handler called:",behaviorId,brushId,deltaStorage.time);
         #endif
         
         for (_,collection) in self.collections{
@@ -55,9 +55,9 @@ class BrushSignalManager:SignalCollectionManager{
             protodata["index"] = JSON(deltaStorage.i);
             protodata["siblingcount"] = JSON(deltaStorage.sC);
             protodata["level"] = JSON(deltaStorage.lV);
-            protodata["distance"] = JSON(deltaStorage.dist);
-            protodata["xDistance"] = JSON(deltaStorage.xDist);
-            protodata["yDistance"] = JSON(deltaStorage.yDist);
+           //protodata["distance"] = JSON(deltaStorage.dist);
+            //protodata["xDistance"] = JSON(deltaStorage.xDist);
+            //protodata["yDistance"] = JSON(deltaStorage.yDist);
 
             brushCollection.addProtoSampleForId(behaviorId:behaviorId, brushId: brushId, data: protodata);
         }
