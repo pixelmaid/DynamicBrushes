@@ -609,7 +609,7 @@ class BehaviorManager{
             
             case "brush":
               
-               let collectionData = uiManager.registerCollection(collectionData:collection);
+               let collectionData = brushManager.registerCollection(collectionData:collection);
                if(collectionData.collection != nil){
                 BehaviorManager.signalCollections[4][collectionData.id] = collectionData.collection;
                }

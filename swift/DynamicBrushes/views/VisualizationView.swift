@@ -25,8 +25,8 @@ class VisualizationView: ModifiedCanvasView {
         _ = stylusManager.stylusDataEvent.addHandler(target: self, handler: VisualizationView.drawingEventHandler, key: drawingEventKey)
         _ = stylusManager.visualizationEvent.addHandler(target: self, handler: VisualizationView.eraseEventHandler, key: eraseEventKey)
    
-        let circlePath1 = UIBezierPath(arcCenter: CGPoint(x: -0.25,y: -0.25), radius: CGFloat(10), startAngle: CGFloat(0), endAngle:CGFloat(Double.pi * 2), clockwise: true)
-        let circlePath2 = UIBezierPath(arcCenter: CGPoint(x: -0.25,y: -0.25), radius: CGFloat(10), startAngle: CGFloat(0), endAngle:CGFloat(Double.pi * 2), clockwise: true)
+        let circlePath1 = UIBezierPath(arcCenter: CGPoint(x: -0.25,y: -0.25), radius: CGFloat(5), startAngle: CGFloat(0), endAngle:CGFloat(Double.pi * 2), clockwise: true)
+        let circlePath2 = UIBezierPath(arcCenter: CGPoint(x: -0.25,y: -0.25), radius: CGFloat(5), startAngle: CGFloat(0), endAngle:CGFloat(Double.pi * 2), clockwise: true)
         startShapeLayer.path = circlePath1.cgPath
         startShapeLayer.fillColor = UIColor.green.cgColor
         startShapeLayer.strokeColor = UIColor.cyan.cgColor;

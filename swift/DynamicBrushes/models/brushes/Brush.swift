@@ -527,7 +527,6 @@ class Brush: TimeSeries, Hashable{
             }
          }
         }
-            
     }
     
     func distanceIntervalCheck()
