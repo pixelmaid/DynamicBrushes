@@ -2,7 +2,7 @@
 <h4 class="group-title-inspector">{{groupName}}</h4>
 	{{#each blocks}}
 	    <ul class="sub-group-inspector"> 
-	    	<b>{{this.blockName}}</b>
+	    	<h4 class="sub-sub-group-inspector">{{this.blockName}}</h4>
 	    	{{#each this.params}}
 	        	<li id="param-{{id}}">{{name}}: <span id="inspector-{{id}}">{{val}}</span></li> 
 	        {{/each}}

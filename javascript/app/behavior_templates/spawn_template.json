@@ -37,7 +37,7 @@
           "isDropdown": false,
           "fieldName": "y"
         }],
-        "displayName": "new stroke",
+        "displayName": "pen down",
         "transitionId": "_jsplumb_c_1522525756575",
         "fieldName": "newStroke",
         "methodId": "_pbx7kw7a6"

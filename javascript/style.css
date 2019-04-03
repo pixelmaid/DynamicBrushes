@@ -1254,10 +1254,15 @@ position: absolute;
   padding: 5px 10px 0 10px; 
   margin: 0;
 }
+.sub-sub-group-inspector {
+  padding: 3px 3px 3px 10px; 
+  margin: -5px -10px 5px -10px;
+  background-color: #555;
+}
 .group-title-inspector {
   margin: 0;
   padding: 5px;
-  background-color: black;
+  background-color: #777;
 }
 .hr-inspector {
   margin-bottom: 0px;

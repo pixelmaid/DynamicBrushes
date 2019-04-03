@@ -31,7 +31,7 @@
 		"default": "100"
 	}]
 }, {
-	"displayName": "new stroke",
+	"displayName": "pen down",
 	"fieldName": "newStroke",
 	"argumentList": [{
 		"displayName": "x",
