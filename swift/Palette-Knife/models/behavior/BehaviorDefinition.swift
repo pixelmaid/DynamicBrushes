@@ -849,8 +849,10 @@ class BehaviorDefinition {
             methods [tt] = [];
         }
         
-        methods[tt]? = (methods[tt]?.filter({ $0.0 != methodId }))!
-        methods[tt]!.append((methodId,targetMethod,arguments))
+        var foundMethod = (methods[tt]?.filter({ $0.0 != methodId }))!
+        
+        foundMethod.append((methodId,targetMethod,arguments))
+       methods[tt]? = foundMethod;
     }
     
     func checkDependency(behaviorId:String)->Bool{

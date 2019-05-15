@@ -415,7 +415,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         templateJSON["filename"] = "templates/basic.json"
         templateJSON["type"] = JSON("load")
         let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: self)
-        RequestHandler.addRequest(requestData:behaviorDownloadRequest);
+       // RequestHandler.addRequest(requestData:behaviorDownloadRequest);
         
         requestProjectList()
         
