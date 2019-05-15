@@ -301,9 +301,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
                 
                 DispatchQueue.main.async {
                     let alert = UIAlertController(title: "Loading", message: "Loading Project", preferredStyle: .alert)
+                    self.present(alert, animated: true);
                     
-                    self.present(alert, animated: true, completion: { _ in }
-                    )
                 }
             }
             self.loadProject(projectName: data.2!, artistName: artistName!);
@@ -387,12 +386,12 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     }
     
     
-    func appMovedToForeground() {
+    @objc func appMovedToForeground() {
         print("App moved to ForeGround!")
     }
     
     
-    func appMovedToBackground() {
+    @objc func appMovedToBackground() {
         print("App moved to Background!")
     }
     
@@ -552,8 +551,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
                 }
                 alert.addAction(cancelAction)
 
-                self.present(alert, animated: true, completion: { _ in }
-                )
+                self.present(alert, animated: true);
+
             }
         }
        // }
@@ -689,7 +688,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         self.uploadProject(type: "backup", filename: filename)
     }
     
-    func saveProject(){
+    @objc func saveProject(){
         endBackupTimer();
         let alertController = UIAlertController(title: "Save", message: "Enter a name for your project", preferredStyle: .alert)
         let confirmAction = UIAlertAction(title: "Save", style: .default) { (_) in
@@ -751,7 +750,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     }
     
     
-    func exportImage(){
+    @objc func exportImage(){
         self.endBackupTimer()
        _ = self.layerContainerView.exportEvent.addHandler(target: self, handler: ViewController.handleExportRequest, key: exportKey)
         self.behaviorManager?.refreshAllBehaviors();
@@ -766,8 +765,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
                 }
                 alert.addAction(cancelAction)
 
-                self.present(alert, animated: true, completion: { _ in }
-                )
+                self.present(alert, animated: true);
+
             }
         }
         
@@ -906,8 +905,8 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
             DispatchQueue.main.async {
                 let alert = UIAlertController(title: "Layers", message: "Adding Layer", preferredStyle: .alert)
                 
-                self.present(alert, animated: true, completion: { _ in }
-                )
+                self.present(alert, animated: true);
+
             }
         
 
@@ -1183,7 +1182,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     }
     
     func synchronizeWithAuthoringClient(){
-        var behavior:JSON = behaviorManager!.getAllBehaviorJSON();
+        let behavior:JSON = behaviorManager!.getAllBehaviorJSON();
         let request = Request(target: "socket", action: "synchronize", data: behavior, requester: self)
         RequestHandler.addRequest(requestData: request)
     }
@@ -1325,7 +1324,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
     
     
     
-    func handlePinch(recognizer : UIPinchGestureRecognizer) {
+    @objc func handlePinch(recognizer : UIPinchGestureRecognizer) {
         if let view = recognizer.view {
             self.layerContainerView.removeAllStrokes()
             view.transform = view.transform.scaledBy(x: recognizer.scale, y: recognizer.scale)
@@ -1333,7 +1332,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         }
     }
     
-    func handleRotate(recognizer : UIRotationGestureRecognizer) {
+    @objc func handleRotate(recognizer : UIRotationGestureRecognizer) {
         if let view = recognizer.view {
             self.layerContainerView.removeAllStrokes()
 
@@ -1342,7 +1341,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate,Requester{
         }
     }
     
-    func handlePan(recognizer:UIPanGestureRecognizer) {
+    @objc func handlePan(recognizer:UIPanGestureRecognizer) {
         let translation = recognizer.translation(in: self.view)
         if let view = recognizer.view {
             self.layerContainerView.removeAllStrokes()

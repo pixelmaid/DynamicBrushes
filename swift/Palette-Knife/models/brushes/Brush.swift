@@ -546,7 +546,7 @@ class Brush: TimeSeries, WebTransmitter, Hashable{
         
     }
     
-    dynamic func stateTransitionHandler(notification: NSNotification){
+    @objc dynamic func stateTransitionHandler(notification: NSNotification){
         
         
         let key = notification.userInfo?["key"] as! String

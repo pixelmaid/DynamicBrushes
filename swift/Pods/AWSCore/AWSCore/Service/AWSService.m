@@ -21,7 +21,7 @@
 #import "AWSCocoaLumberjack.h"
 #import "AWSCategory.h"
 
-NSString *const AWSiOSSDKVersion = @"2.6.31";
+NSString *const AWSiOSSDKVersion = @"2.9.8";
 NSString *const AWSServiceErrorDomain = @"com.amazonaws.AWSServiceErrorDomain";
 
 static NSString *const AWSServiceConfigurationUnknown = @"Unknown";
@@ -225,6 +225,8 @@ static NSString *const AWSRegionNameEUWest1 = @"eu-west-1";
 static NSString *const AWSRegionNameEUWest2 = @"eu-west-2";
 static NSString *const AWSRegionNameEUWest3 = @"eu-west-3";
 static NSString *const AWSRegionNameEUCentral1 = @"eu-central-1";
+static NSString *const AWSRegionNameEUNorth1 = @"eu-north-1";
+static NSString *const AWSRegionNameAPEast1 = @"ap-east-1";
 static NSString *const AWSRegionNameAPSoutheast1 = @"ap-southeast-1";
 static NSString *const AWSRegionNameAPNortheast1 = @"ap-northeast-1";
 static NSString *const AWSRegionNameAPNortheast2 = @"ap-northeast-2";
@@ -235,6 +237,7 @@ static NSString *const AWSRegionNameCNNorth1 = @"cn-north-1";
 static NSString *const AWSRegionNameCNNorthWest1 = @"cn-northwest-1";
 static NSString *const AWSRegionNameCACentral1 = @"ca-central-1";
 static NSString *const AWSRegionNameUSGovWest1 = @"us-gov-west-1";
+static NSString *const AWSRegionNameUSGovEast1 = @"us-gov-east-1";
 
 static NSString *const AWSServiceNameAPIGateway = @"execute-api";
 static NSString *const AWSServiceNameAutoScaling = @"autoscaling";
@@ -291,7 +294,7 @@ static NSString *const AWSServiceNameKinesisVideoArchivedMedia = @"kinesisvideo"
         _regionType = regionType;
         _serviceType = serviceType;
         _useUnsafeURL = useUnsafeURL;
-        _regionName = [self regionNameFromType:regionType];
+        _regionName = [AWSEndpoint regionNameFromType:regionType];
         if (!_regionName) {
             @throw [NSException exceptionWithName:NSInternalInconsistencyException
                                            reason:@"Invalid region type."
@@ -321,7 +324,7 @@ static NSString *const AWSServiceNameKinesisVideoArchivedMedia = @"kinesisvideo"
         _regionType = regionType;
         _serviceType = AWSServiceUnknown;
         _useUnsafeURL = [[URL scheme] isEqualToString:@"http"];
-        _regionName = [self regionNameFromType:regionType];
+        _regionName = [AWSEndpoint regionNameFromType:regionType];
         _serviceName = serviceName;
         _URL = URL;
         _hostName = [_URL host];
@@ -337,7 +340,7 @@ static NSString *const AWSServiceNameKinesisVideoArchivedMedia = @"kinesisvideo"
         _regionType = regionType;
         _serviceType = serviceType;
         _useUnsafeURL = [[URL scheme] isEqualToString:@"http"];
-        _regionName = [self regionNameFromType:regionType];
+        _regionName = [AWSEndpoint regionNameFromType:regionType];
         _serviceName = [self serviceNameFromType:serviceType];
         _URL = URL;
         _hostName = [_URL host];
@@ -366,11 +369,11 @@ static NSString *const AWSServiceNameKinesisVideoArchivedMedia = @"kinesisvideo"
 - (void) setRegion:(AWSRegionType)regionType service:(AWSServiceType)serviceType{
     _regionType = regionType;
     _serviceType = serviceType;
-    _regionName = [self regionNameFromType:regionType];
+    _regionName = [AWSEndpoint regionNameFromType:regionType];
     _serviceName = [self serviceNameFromType:serviceType];
 }
 
-- (NSString *)regionNameFromType:(AWSRegionType)regionType {
++ (NSString *)regionNameFromType:(AWSRegionType)regionType {
     switch (regionType) {
         case AWSRegionUSEast1:
             return AWSRegionNameUSEast1;
@@ -408,6 +411,12 @@ static NSString *const AWSServiceNameKinesisVideoArchivedMedia = @"kinesisvideo"
             return AWSRegionNameCNNorthWest1;
         case AWSRegionEUWest3:
             return AWSRegionNameEUWest3;
+        case AWSRegionUSGovEast1:
+            return AWSRegionNameUSGovEast1;
+        case AWSRegionEUNorth1:
+            return AWSRegionNameEUNorth1;
+        case AWSRegionAPEast1:
+            return AWSRegionNameAPEast1;
         default:
             return nil;
     }
@@ -499,6 +508,7 @@ static NSString *const AWSServiceNameKinesisVideoArchivedMedia = @"kinesisvideo"
             || regionType == AWSRegionUSWest1
             || regionType == AWSRegionUSWest2
             || regionType == AWSRegionEUWest1
+            || regionType == AWSRegionAPEast1
             || regionType == AWSRegionAPSoutheast1
             || regionType == AWSRegionAPNortheast1
             || regionType == AWSRegionAPNortheast2

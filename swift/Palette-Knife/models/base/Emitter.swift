@@ -27,7 +27,7 @@ class Emitter: Observable<Float>, Equatable  {
         
     }
     
-    dynamic func propertyInvalidated(notification: NSNotification){
+    @objc dynamic func propertyInvalidated(notification: NSNotification){
         self.invalidated = true;
         
         for key in keyStorage["INVALIDATED"]!  {

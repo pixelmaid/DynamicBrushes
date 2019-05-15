@@ -1,11 +1,11 @@
 PODS:
-  - AWSCognito (2.6.31):
-    - AWSCore (= 2.6.31)
-  - AWSCore (2.6.31)
-  - AWSS3 (2.6.31):
-    - AWSCore (= 2.6.31)
-  - Starscream (3.0.5)
-  - SwiftyJSON (4.2.0)
+  - AWSCognito (2.9.8):
+    - AWSCore (= 2.9.8)
+  - AWSCore (2.9.8)
+  - AWSS3 (2.9.8):
+    - AWSCore (= 2.9.8)
+  - Starscream (3.1.0)
+  - SwiftyJSON (5.0.0)
 
 DEPENDENCIES:
   - AWSCognito
@@ -14,13 +14,21 @@ DEPENDENCIES:
   - Starscream
   - SwiftyJSON
 
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - AWSCognito
+    - AWSCore
+    - AWSS3
+    - Starscream
+    - SwiftyJSON
+
 SPEC CHECKSUMS:
-  AWSCognito: c6bc1f7814ca3484b8ed76ba7f319ffea7c19e68
-  AWSCore: c7abfb87ef802d1c4b5dd56db64ac8b4a7823ef0
-  AWSS3: 5647e89f9ac8e7033f3e5507dbb3eccc37f82b75
-  Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
-  SwiftyJSON: c4bcba26dd9ec7a027fc8eade48e2c911f229e96
+  AWSCognito: b9890c55e85fba46fd9695192ab64420abbc4328
+  AWSCore: 5da86c5afde44a87b06a2df50601bca81a8cee13
+  AWSS3: a5e12eb2495bbe49cda8b0595fa77280aacd7d3d
+  Starscream: 08172b481e145289c4930cb567230fb55897cfa4
+  SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
 
 PODFILE CHECKSUM: 287b68e57b1f59811042e723026dbc4b5765b283
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.6.2

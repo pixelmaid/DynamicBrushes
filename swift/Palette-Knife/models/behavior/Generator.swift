@@ -280,7 +280,7 @@ class Triangle:Generator{
     override func get(id:String?) -> Float {
         let ti = 2.0 * Float.pi * (880 / 44100);
         let theta = ti * self.index.get(id: nil)
-        let _v = 1.0 - Float.abs(Float(theta.truncatingRemainder(dividingBy: 4)-2));
+        let _v = 1.0 - abs(Float(theta.truncatingRemainder(dividingBy: 4)-2));
         let v = MathUtil.map(value: _v, low1: -1, high1: 1, low2: min, high2: max)
         self.incrementIndex();
         #if DEBUG

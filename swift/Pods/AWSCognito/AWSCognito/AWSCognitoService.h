@@ -2,17 +2,7 @@
 // Copyright 2014-2016 Amazon.com,
 // Inc. or its affiliates. All Rights Reserved.
 //
-// Licensed under the Amazon Software License (the "License").
-// You may not use this file except in compliance with the
-// License. A copy of the License is located at
-//
-//     http://aws.amazon.com/asl/
-//
-// or in the "license" file accompanying this file. This file is
-// distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-// CONDITIONS OF ANY KIND, express or implied. See the License
-// for the specific language governing permissions and
-// limitations under the License.
+// SPDX-License-Identifier: Apache-2.0
 //
 
 #import <Foundation/Foundation.h>
@@ -22,11 +12,20 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+FOUNDATION_EXPORT NSString *const AWSCognitoSDKVersion;
+
 @class AWSCognitoDataset;
 @class AWSCognitoDatasetMetadata;
 @class AWSCognitoCredentialsProvider;
 @class AWSTask;
 
+/**
+ AWSCognito
+ 
+ @warning The AWSCognito (Amazon Cognito Sync) SDK is deprecated. Please use AWSAppSync for data sync.
+ @deprecated Please use AWSAppSync for data sync.
+ */
+DEPRECATED_MSG_ATTRIBUTE("Use `AWSAppSync` for data synchronization.")
 @interface AWSCognito : AWSService
 
 /**
