@@ -1,9 +1,10 @@
 PODS:
-  - AudioKit (4.4.0):
-    - AudioKit/Core (= 4.4.0)
-    - AudioKit/UI (= 4.4.0)
-  - AudioKit/Core (4.4.0)
-  - AudioKit/UI (4.4.0)
+  - AudioKit (4.7.1):
+    - AudioKit/Core (= 4.7.1)
+    - AudioKit/UI (= 4.7.1)
+  - AudioKit/Core (4.7.1)
+  - AudioKit/UI (4.7.1):
+    - AudioKit/Core
   - AWSCognito (2.6.18):
     - AWSCore (= 2.6.18)
   - AWSCore (2.6.18)
@@ -20,8 +21,17 @@ DEPENDENCIES:
   - Starscream
   - SwiftyJSON
 
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - AudioKit
+    - AWSCognito
+    - AWSCore
+    - AWSS3
+    - Starscream
+    - SwiftyJSON
+
 SPEC CHECKSUMS:
-  AudioKit: 79c2b23cd00beb656938aa0b81b614391f17eaa3
+  AudioKit: fb42378fbe950033462b47efe3643c108698ba03
   AWSCognito: aab248bf535c2f33240d3e952d0af88332d36af7
   AWSCore: 5594f02730a821907d155ac28e96593d1caa6f64
   AWSS3: 659953f91bf85f62b6290625e86c45e3b9dd8dee
@@ -30,4 +40,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 8b7ba56b3b485be7b0a2fbb7944dd0f155925e5c
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.6.2
