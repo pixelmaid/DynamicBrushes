@@ -50,8 +50,8 @@ struct Segment:Geometry, Equatable {
     var handleOut: Point;
     var parent:Stroke?;
     var index:Int?
-    var diameter = Float(1);
-    var color = Color(r:0,g:0,b:0,a:1);
+    var weight = Float(1);
+    var color = Color(h: 0, s: 0, l: 0, a: 1);
     var alpha = Float(0.5);
     let id = NSUUID().uuidString;
     //let printer = DeallocPrinter()
@@ -128,15 +128,17 @@ struct Segment:Geometry, Equatable {
                 a_color.hue = 360;
             }
             
-            var d = self.diameter
-            if(d < 1){
-                d = 1
+            let w = self.weight
+            var mapped_weight = pow(1.03,w)*0.54
+
+            if(mapped_weight < 1){
+                mapped_weight = 1
             }
-            if(d >= 360){
-                d = 359
+            if(mapped_weight >= 360){
+                mapped_weight = 359
             }
         
-            context.renderStrokeById(currentStrokeId: id, toPoint: self.point.toCGPoint(), toWidth: CGFloat(d), toColor: a_color.toUIColor())
+            context.renderStrokeById(currentStrokeId: id, toPoint: self.point.toCGPoint(), toWidth: CGFloat(mapped_weight), toColor: a_color.toUIColor())
         }
     }
     
@@ -251,7 +253,7 @@ class Stroke:TimeSeries, Geometry {
         self.dirty = true;
 
         var segment = Segment(point:point)
-        segment.diameter = d
+        segment.weight = d
         segment.color = color;
         segment.alpha = alpha;
         segment.parent = self

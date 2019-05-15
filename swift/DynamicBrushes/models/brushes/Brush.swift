@@ -11,6 +11,8 @@ import SwiftyJSON
 struct DeltaStorage{
     var dx = Float(0)
     var dy = Float(0)
+    var pr = Float(0)
+    var pt = Float(0)
        //var pX = Float(0)
     //var pY = Float(0)
     var ox = Float(0)
@@ -18,9 +20,7 @@ struct DeltaStorage{
     var rotation = Float(0)
     var sx = Float(0)
     var sy = Float(0)
-    var rx = Float(0)
-    var ry = Float(0)
-    var diameter = Float(0)
+    var weight = Float(0)
     var hue = Float(0)
     var saturation = Float(0)
     var lightness = Float(0)
@@ -32,20 +32,37 @@ struct DeltaStorage{
     var y = Float(0);
     var time = Float(0);
     var i = Float(0);
-    var sC = Float(0);
-    var lV = Float(0);
+    var sc = Float(0);
+    var lv = Float(0);
+    var parent: String?
     
     func toJSON()->JSON{
         
-        var propList:JSON = [:];
-        let mirror = Mirror(reflecting: self);
+        var data:JSON = [:]
         
-        for child in mirror.children{
-            propList[child.label as! String] = JSON(child.value);
-          
-        }
-        return propList;
-    
+        data["ox"] = JSON(self.ox);
+        data["oy"] = JSON(self.oy);
+        data["sx"] = JSON(self.sx);
+        data["sy"] = JSON(self.sy);
+        data["rotation"] = JSON(self.rotation);
+        data["x"] = JSON(self.x);
+        data["y"] = JSON(self.y);
+        data["dx"] = JSON(self.dx);
+        data["dy"] = JSON(self.dy);
+        data["pr"] = JSON(self.pr);
+        data["pt"] = JSON(self.pt);
+        data["weight"] = JSON(self.weight);
+        data["hue"] = JSON(self.hue);
+        data["saturation"] = JSON(self.saturation);
+        data["lightness"] = JSON(self.lightness);
+        data["alpha"] = JSON(self.alpha);
+        data["index"] = JSON(self.i);
+        data["level"] = JSON(self.lv);
+        data["parent"] = JSON(self.parent ?? "none");
+        data["time"] = JSON(self.time);
+        
+      
+        return data;
     }
 }
 
@@ -60,7 +77,7 @@ class Brush: TimeSeries, Hashable{
     var currentState:String
     var prevState:String;
     var prevTransition:String;
-    var brushState:DeltaStorage;
+    var params:DeltaStorage;
     //geometric/stylistic properties
     let bPosition:Point //actual position
     
@@ -100,7 +117,7 @@ class Brush: TimeSeries, Hashable{
 
     let siblingcount:Observable<Float>
     
-    let diameter:Observable<Float>
+    let weight:Observable<Float>
     let alpha:Observable<Float>
     let hue:Observable<Float>
     let lightness:Observable<Float>
@@ -187,9 +204,9 @@ class Brush: TimeSeries, Hashable{
         self.intersections = Observable<Float>(0)
         self.time = Observable<Float>(0)
         
-        self.diameter = Observable<Float>(1)
-        self.diameter.printname = "brush_diameter"
-        self.diameter.name = "diameter";
+        self.weight = Observable<Float>(1)
+        self.weight.printname = "brush_diameter"
+        self.weight.name = "diameter";
 
         self.alpha = Observable<Float>(100)
         self.hue = Observable<Float>(100)
@@ -208,7 +225,7 @@ class Brush: TimeSeries, Hashable{
         self.currentState = "start";
         self.prevState = "null";
         self.prevTransition = "null";
-        self.brushState = DeltaStorage();
+        self.params = DeltaStorage();
         
         super.init()
         
@@ -236,7 +253,7 @@ class Brush: TimeSeries, Hashable{
         self.kvcDictionary["index"] = self.index;
         self.kvcDictionary["level"] = self.level;
         self.kvcDictionary["siblingcount"] = self.siblingcount;
-        self.kvcDictionary["diameter"] = self.diameter;
+        self.kvcDictionary["diameter"] = self.weight;
         self.kvcDictionary["alpha"] = self.alpha;
         self.kvcDictionary["hue"] = self.hue;
         self.kvcDictionary["lightness"] = self.lightness;
@@ -265,7 +282,7 @@ class Brush: TimeSeries, Hashable{
         observables.append(level)
 
         
-        observables.append(diameter)
+        observables.append(weight)
         observables.append(alpha)
         observables.append(hue)
         observables.append(lightness)
@@ -309,7 +326,7 @@ class Brush: TimeSeries, Hashable{
     
     
     func storeInitialValues(){
-        let sendDs = DeltaStorage(dx:0, dy:0,ox:0,oy:0,rotation:0,sx:self.sx.getSilent(),sy:self.sy.getSilent(),rx:0,ry:0,diameter:1,hue:100,saturation:100,lightness:100,alpha:100,dist:0,xDist:self.xDistance.getSilent(),yDist:self.yDistance.getSilent(),x:0,y:0,time:0,i:self.index.getSilent(),sC:self.siblingcount.getSilent(),lV:self.level.getSilent());
+        let sendDs = DeltaStorage(dx: 0, dy: 0, pr: 0, pt: 0, ox: 0, oy: 0, rotation: 0, sx: 0, sy: 0, weight: 1, hue: 100, saturation: 100, lightness: 100, alpha: 100, dist: 0, xDist: 0, yDist: 0, x: 0, y: 0, time: 0, i: self.index.getSilent(), sc: self.siblingcount.getSilent(), lv: self.level.getSilent(), parent: "foobar");
         
         self.signalEvent.raise(data: (self.behavior_id!,self.id,sendDs));
     }
@@ -357,10 +374,13 @@ class Brush: TimeSeries, Hashable{
            // print("position change called",self.index.get(id:nil),self.position.get(id: nil));
         #endif
         if(!self.undergoing_transition){
-            let _delta = self.position.sub(point: self.bPosition)
-            //let polarPos = MathUtil.cartToPolar(p1: self.bPosition, p2: self.position);
-           // self.polarPosition.setSilent(newValue: (polarPos));
-            self.calculateProperties(_delta:_delta)
+            let polarCoordinates = MathUtil.cartToPolar(x1: self.origin.x.getSilent(), y1: self.origin.x.getSilent(), x2: self.position.x.getSilent(), y2: self.position.y.getSilent());
+            self.polarPosition.x.setSilent(newValue: polarCoordinates.0);
+            self.polarPosition.y.setSilent(newValue: polarCoordinates.1);
+            let calculatedDelta = self.position.sub(point: Point(x:data.1.0,y:data.1.1));
+            self.delta.x.setSilent(newValue: calculatedDelta.x.get(id: nil));
+            self.delta.y.setSilent(newValue: calculatedDelta.y.get(id: nil));
+            self.calculateProperties();
         
         }
     }
@@ -373,12 +393,13 @@ class Brush: TimeSeries, Hashable{
         if(!self.undergoing_transition){
             let t =  MathUtil.map(value: self.polarPosition.y.get(id: nil),low1: 0,high1: 100,low2: 0,high2: 360);
             let cartPos = MathUtil.polarToCart(r: self.polarPosition.x.get(id: nil),theta:t);
-            let p = Point(x:cartPos.0+self.origin.x.get(id: nil),y:cartPos.1+self.origin.y.get(id: nil));
-            let _delta = p.sub(point: self.bPosition)
-            
-            //print("polar change theta:",t,"rad:",self.polarPosition.x.get(id: nil),"cart point:",p.x.get(id:nil),p.y.get(id:nil),"delta",_delta.x.get(id:nil),_delta.y.get(id:nil))
-
-            self.calculateProperties(_delta:_delta)
+            let calculatedPosition = Point(x:cartPos.0+self.origin.x.get(id: nil),y:cartPos.1+self.origin.y.get(id: nil));
+            self.position.x.setSilent(newValue: calculatedPosition.x.getSilent());
+            self.position.y.setSilent(newValue: calculatedPosition.y.getSilent());
+            let calculatedDelta = calculatedPosition.sub(point: self.bPosition)
+            self.delta.x.setSilent(newValue: calculatedDelta.x.get(id: nil));
+            self.delta.y.setSilent(newValue: calculatedDelta.y.get(id: nil));
+            self.calculateProperties();
             
         }
         
@@ -388,116 +409,107 @@ class Brush: TimeSeries, Hashable{
     
     
     func deltaChange(data:(String,(Float,Float),(Float,Float)),key:String){
-        
-        
-            self.calculateProperties(_delta: self.delta)
+        let calculatedPosition = self.position.clone().add(point: self.delta);
+        self.position.x.setSilent(newValue: calculatedPosition.x.getSilent());
+        self.position.y.setSilent(newValue: calculatedPosition.y.getSilent());
+        let polarCoordinates = MathUtil.cartToPolar(x1: self.origin.x.getSilent(), y1: self.origin.x.getSilent(), x2: calculatedPosition.x.getSilent(), y2: calculatedPosition.y.getSilent());
+        self.polarPosition.x.setSilent(newValue: polarCoordinates.0);
+        self.polarPosition.y.setSilent(newValue: polarCoordinates.1);
+        self.calculateProperties();
         
         
     }
     
-    func calculateProperties(_delta:Point){
+    func calculateProperties(){
         
-        let dX = _delta.x.get(id:nil);
-        let dY = _delta.y.get(id:nil);
+        let dx = delta.x.get(id:nil);
+        let dy = delta.y.get(id:nil);
         
+        let ox = self.ox.getSilent();
+        let oy = self.oy.getSilent();
+        
+        let x = self.x.get(id:nil);
+        let y = self.y.get(id:nil);
         
         let r =  MathUtil.map(value: self.rotation.get(id:nil), low1: 0.0, high1: 100.0, low2: 0.0, high2: 360.0)
         
-        let sX = self.scaling.x.get(id:nil)
-        let sY = self.scaling.y.get(id:nil)
+        let sx = self.scaling.x.get(id:nil)
+        let sy = self.scaling.y.get(id:nil)
         
-        let rX = self.reflectX.get(id:nil)
-        let rY = self.reflectY.get(id:nil)
-        
-        let mapped_diameter = pow(1.03,self.diameter.get(id:nil))*0.54
-        let d = mapped_diameter
+      
+        let weight = self.weight.get(id:nil);
         
         
-        let h =   MathUtil.map(value: self.hue.get(id:nil), low1: 0.0, high1: 100.0, low2: 0.0, high2: 1.0)
+       /* let h =   MathUtil.map(value: self.hue.get(id:nil), low1: 0.0, high1: 100.0, low2: 0.0, high2: 1.0)
         
         let s = MathUtil.map(value: self.saturation.get(id:nil), low1: 0.0, high1: 100.0, low2: 0.0, high2: 1.0)
         
         let l = MathUtil.map(value: self.lightness.get(id:nil), low1: 0.0, high1: 100.0, low2: 0.0, high2: 1.0)
         let mapped_alpha = pow(1.054,self.alpha.get(id:nil))*0.54
-        let a = MathUtil.map(value: mapped_alpha, low1: 0.0, high1: 100.0, low2: 0.0, high2: 1.0)
+        let a = MathUtil.map(value: mapped_alpha, low1: 0.0, high1: 100.0, low2: 0.0, high2: 1.0)*/
+        
+        let h =  self.hue.get(id:nil);
+        let s = self.saturation.get(id:nil);
+        let l = self.lightness.get(id:nil);
+        let a = self.alpha.get(id:nil);
+        
+        let color = Color(h: h, s: s, l:l, a: 1)
         
         let dist = self.distance.get(id:nil);
         let xDist = self.xDistance.get(id:nil);
         let yDist = self.yDistance.get(id:nil);
         
-        let ds = DeltaStorage(dx:dX,dy:dY,ox:self.ox.getSilent(),oy:self.oy.getSilent(),rotation:r,sx:sX,sy:sY,rx:rX,ry:rY,diameter:d,hue:h,saturation:s,lightness:l,alpha:a,dist:dist,xDist:xDist,yDist:yDist,x:0,y:0,time:self.time.getSilent(),i:self.index.getSilent(),sC:self.siblingcount.getSilent(),lV:self.level.getSilent());
-        self.deltaChangeBuffer.append(ds);
-        self.processDeltaBuffer();
+       
+        let pr = self.polarPosition.x.get(id: nil);
+        let pt = self.polarPosition.y.get(id: nil);
+        
+        
+        self.distance.set(newValue: dist + sqrt(pow(dx,2)+pow(dy,2)));
+        self.xDistance.set(newValue: xDist + abs(dx));
+        self.yDistance.set(newValue: yDist + abs(dy));
+        
+        let transformedCoords = self.calculateMatrixTransform(ox: ox,oy: oy,dx: dx,dy: dy,sx: sx,sy: sy,rotation: r);
+
+        let ds = DeltaStorage(dx:dx,dy:dy,pr:pr,pt:pt,ox:ox,oy:oy,rotation:r,sx:sx,sy:sy,weight:weight,hue:h,saturation:s,lightness:l,alpha:a,dist:dist,xDist:xDist,yDist:yDist,x:x,y:y,time:self.time.getSilent(),i:self.index.getSilent(),sc:self.siblingcount.getSilent(),lv:self.level.getSilent(),parent:"foobar");
+       // self.deltaChangeBuffer.append(ds);
+        
+        self.params = ds
+        
+        self.currentCanvas!.addSegmentToStroke(parentID: self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight:weight , color: color,alpha:ds.alpha)
+        
+        self.bPosition.x.setSilent(newValue: transformedCoords.1)
+        self.bPosition.y.setSilent(newValue:transformedCoords.0)
+        
+        // self.distanceIntervalCheck();
+        //self.intersectionCheck();
+        
+        self.signalEvent.raise(data: (self.behavior_id!,self.id,ds));
+        Debugger.generateBrushDebugData(brush: self, type: "DRAW_SEGMENT");
+
     }
 
     
-    func processDeltaBuffer(){
-        var ds:DeltaStorage! = nil
-        
-        if deltaChangeBuffer.count>0 {
-            ds = deltaChangeBuffer.remove(at: 0)
-        }
-        if(ds != nil){
-        let centerX = self.origin.x.get(id:nil)
-        let centerY =  self.origin.y.get(id:nil)
+    func calculateMatrixTransform(ox:Float,oy:Float,dx:Float,dy:Float,sx:Float,sy:Float,rotation:Float)->(Float,Float){
+      
+        let ox = self.origin.x.get(id:nil);
+        let oy =  self.origin.y.get(id:nil);
         
         self.matrix.reset();
         if(self.parent != nil){
             self.matrix.prepend(mx: self.parent!.matrix)
         }
-        var xScale = ds.sx
         
-        if(ds.rx == 1){
-            
-            xScale *= -1.0;
-        }
-        var yScale = ds.sy
-        if(ds.ry == 1){
-            yScale *= -1.0;
-        }
-        let r = ds.rotation
-        self.matrix.scale(x: xScale/100, y: yScale/100, centerX: centerX, centerY: centerY);
-        self.matrix.rotate(_angle: r, centerX: centerX, centerY: centerY)
+    
+        self.matrix.scale(x: sx/100, y: sy/100, centerX: ox, centerY: oy);
+        self.matrix.rotate(_angle: rotation, centerX: ox, centerY: oy)
         
-        let xDelt = ds.dx
-        let yDelt = ds.dy
         
-        let _dx = self.bPosition.x.get(id:nil) + xDelt;
-        let _dy = self.bPosition.y.get(id:nil) + yDelt;
+        let _dx = self.position.x.get(id:nil) + dx;
+        let _dy = self.position.y.get(id:nil) + dy;
         let transformedCoords = self.matrix.transformPoint(x: _dx, y: _dy)
         
-        self.distance.set(newValue: ds.dist + sqrt(pow(xDelt,2)+pow(yDelt,2)));
-        self.xDistance.set(newValue: ds.xDist + abs(xDelt));
-        self.yDistance.set(newValue: ds.yDist + abs(yDelt));
+        return transformedCoords;
         
-        // xBuffer.push(v: xDelt);
-        // yBuffer.push(v: yDelt);
-        
-        //bufferLimitX.set(newValue: 0)
-       // bufferLimitY.set(newValue: 0)
-        
-        let cweight = ds.diameter;
-          
-        //weightBuffer.push(v: cweight);
-        
-        let color = Color(h: ds.hue, s: ds.saturation, l: ds.lightness, a: 1)
-        
-            let sendDs = DeltaStorage(dx:ds.dx,dy:ds.dy,ox:centerX,oy:centerY,rotation:ds.rotation,sx:ds.sx,sy:ds.sy,rx:ds.rx,ry:ds.ry,diameter:ds.diameter,hue:ds.hue,saturation:ds.saturation,lightness:ds.lightness,alpha:ds.alpha,dist:self.distance.getSilent(),xDist:self.xDistance.getSilent(),yDist:self.yDistance.getSilent(),x:transformedCoords.0,y:transformedCoords.1,time:ds.time,i:ds.i,sC:ds.sC,lV:ds.lV)
-            self.brushState = sendDs;
-        Debugger.generateDebugData(brush: self, type: "DRAW_SEGMENT");
-            
-        self.currentCanvas!.addSegmentToStroke(parentID: self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight:cweight , color: color,alpha:ds.alpha)
-        
-        self.bPosition.x.setSilent(newValue: _dx)
-        self.bPosition.y.setSilent(newValue:_dy)
-    
-       // self.distanceIntervalCheck();
-        //self.intersectionCheck();
-     
- 
-       self.signalEvent.raise(data: (self.behavior_id!,self.id,sendDs));
-
-        }
     }
     
     func intersectionCheck(){
@@ -587,7 +599,7 @@ class Brush: TimeSeries, Hashable{
     func transitionToState(transition:StateTransition){
         
         if(states[transition.toStateId]?.name == "die"){
-            Debugger.generateDebugData(brush:self, type:"STATE_DIE");
+            Debugger.generateBrushDebugData(brush:self, type:"STATE_DIE");
             self.die();
            
         }
@@ -629,7 +641,7 @@ class Brush: TimeSeries, Hashable{
             
         }
         
-        Debugger.generateDebugData(brush:self, type:"STATE_TRANSITION");
+        Debugger.generateBrushDebugData(brush:self, type:"STATE_TRANSITION");
 
         
     }
@@ -750,7 +762,8 @@ class Brush: TimeSeries, Hashable{
         #endif
         
         //todo: create persistent storage of values
-        let sendDs = DeltaStorage(dx:self.dx.getSilent(),dy:self.dy.getSilent(),ox:self.ox.getSilent(),oy:self.oy.getSilent(),rotation:self.rotation.getSilent(),sx:self.sx.getSilent(),sy:self.sy.getSilent(),rx:self.reflectX.getSilent(),ry:self.reflectY.getSilent(),diameter:self.diameter.getSilent(),hue:self.hue.getSilent(),saturation:self.saturation.getSilent(),lightness:self.lightness.getSilent(),alpha:self.alpha.getSilent(),dist:self.distance.getSilent(),xDist:self.xDistance.getSilent(),yDist:self.yDistance.getSilent(),x:self.position.x.getSilent(),y:self.position.y.getSilent(),time:self.time.getSilent(),i:self.index.getSilent(),sC:self.siblingcount.getSilent(),lV:self.level.getSilent());
+        var sendDs = params;
+        sendDs.time = self.time.get(id: nil);
         self.signalEvent.raise(data: (self.behavior_id!,self.id,sendDs));
     }
     

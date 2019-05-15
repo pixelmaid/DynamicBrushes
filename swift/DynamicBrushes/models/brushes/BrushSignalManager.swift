@@ -38,27 +38,7 @@ class BrushSignalManager:SignalCollectionManager{
         
         for (_,collection) in self.collections{
             let brushCollection = collection as! BrushCollection
-            var protodata:JSON = [:]
-            protodata["time"] = JSON(deltaStorage.time);
-            protodata["x"] = JSON(deltaStorage.x);
-            protodata["y"] = JSON(deltaStorage.y);
-            protodata["dx"] = JSON(deltaStorage.dx);
-            protodata["dy"] = JSON(deltaStorage.dy);
-            protodata["diameter"] = JSON(deltaStorage.diameter);
-            protodata["rotation"] = JSON(deltaStorage.rotation);
-            protodata["sx"] = JSON(deltaStorage.sx);
-            protodata["sy"] = JSON(deltaStorage.sy);
-            protodata["hue"] = JSON(deltaStorage.hue);
-            protodata["saturation"] = JSON(deltaStorage.saturation);
-            protodata["lightness"] = JSON(deltaStorage.lightness);
-            protodata["alpha"] = JSON(deltaStorage.alpha);
-            protodata["index"] = JSON(deltaStorage.i);
-            protodata["siblingcount"] = JSON(deltaStorage.sC);
-            protodata["level"] = JSON(deltaStorage.lV);
-           //protodata["distance"] = JSON(deltaStorage.dist);
-            //protodata["xDistance"] = JSON(deltaStorage.xDist);
-            //protodata["yDistance"] = JSON(deltaStorage.yDist);
-
+            let protodata = deltaStorage.toJSON();
             brushCollection.addProtoSampleForId(behaviorId:behaviorId, brushId: brushId, data: protodata);
         }
     }

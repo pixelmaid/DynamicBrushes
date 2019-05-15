@@ -13,8 +13,6 @@ class Point:Observable<(Float,Float)>,Geometry{
   
     let x:Observable<Float>
     let y:Observable<Float>
-    var prevX = Float(0);
-    var prevY = Float(0);
     var angle = Float(0);
     let xKey = NSUUID().uuidString;
     let yKey = NSUUID().uuidString;

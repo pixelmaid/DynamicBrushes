@@ -25,7 +25,17 @@ struct Color {
         saturation = s;
         lightness = l;
         alpha = a;
-       uiColor = UIColor(hue: CGFloat(hue), saturation: CGFloat(saturation), brightness: CGFloat(lightness), alpha: CGFloat(alpha))
+        
+        let mappedH =   MathUtil.map(value: h, low1: 0.0, high1: 100.0, low2: 0.0, high2: 1.0)
+         
+         let mappedS = MathUtil.map(value: s, low1: 0.0, high1: 100.0, low2: 0.0, high2: 1.0)
+         
+         let mappedL = MathUtil.map(value: l, low1: 0.0, high1: 100.0, low2: 0.0, high2: 1.0)
+         let mappedA = MathUtil.map(value: pow(1.054,a)*0.54, low1: 0.0, high1: 100.0, low2: 0.0, high2: 1.0)
+      
+        
+        
+       uiColor = UIColor(hue: CGFloat(mappedH), saturation: CGFloat(mappedS), brightness: CGFloat(mappedL), alpha: CGFloat(mappedA))
         let cgColor = uiColor.cgColor;
         
        let components = cgColor.components
@@ -37,7 +47,7 @@ struct Color {
         
     }
     
-    init(r:Float,g:Float,b:Float,a:Float){
+    /*init(r:Float,g:Float,b:Float,a:Float){
        
         red = r;
         blue = b;
@@ -54,9 +64,11 @@ struct Color {
             self.hue = Float(_hue)
             self.saturation = Float(_saturation)
             self.lightness = Float(_brightness)
-    }
+    }*/
     
     func toCGColor()->CGColor{
+        
+        
         return self.uiColor.cgColor;
     }
     

@@ -19,8 +19,9 @@ define(["jquery", "handlebars", "hbs!app/templates/inspector", "app/Emitter"],
         this.keyHandler = keyHandler;
         this.groupName = groupName; //brush, input, or output
 				var self = this;
-        this.dataGroup = this.getDataGroup(this.model.data["groups"], this.groupName);
-        this.initInspector(this.dataGroup);
+      
+
+
         switch (this.groupName) {
           case "brush":
             this.keyHandler.addListener("VIZ_BRUSH_STEP_THROUGH", function() {
@@ -37,11 +38,22 @@ define(["jquery", "handlebars", "hbs!app/templates/inspector", "app/Emitter"],
           case "output":
             break;
         }
-			}
+
+                this.model.addListener("DATA_UPDATED", function() {
+                    this.dataUpdatedHandler();
+                }.bind(this));
+            }
+
+           
+
+        dataUpdatedHandler() {
+            this.initInspector(this.model.data);
+        }
+
 
       getDataGroup(inputArray, val) {
         var group = inputArray.find( function(e) {
-          return e["groupName"] == val
+          return e["groupName"] == val;
         });
         return group;
       }
@@ -49,7 +61,7 @@ define(["jquery", "handlebars", "hbs!app/templates/inspector", "app/Emitter"],
       getBlockGroup(inputArray, val) {
         //eg getBlockGroup(this.DataGroup["blocks"], "geometry")
         var group = inputArray.find( function(e) {
-          return e["blockName"] == val
+          return e["blockName"] == val;
         });
         return group;
       }
@@ -58,7 +70,7 @@ define(["jquery", "handlebars", "hbs!app/templates/inspector", "app/Emitter"],
         for (var i = 0; i < group["blocks"].length; i++) {
           var v;
           //iterate through blocks 
-          var params = group["blocks"][i]["params"]
+          var params = group["blocks"][i]["params"];
           params.find(function (e) {
             if (e["id"] == key) {
               console.log("~~ param found", e["val"]);
@@ -67,7 +79,6 @@ define(["jquery", "handlebars", "hbs!app/templates/inspector", "app/Emitter"],
             }
           });
         }
-        return v;
       }
 
 			initInspector(data) {
@@ -76,10 +87,11 @@ define(["jquery", "handlebars", "hbs!app/templates/inspector", "app/Emitter"],
         this.el.html(html);
 			}
 
+     
 
 			visualizeStepThrough(constraint, pastConstraint, data) {
         console.log("! visualizing constraints ", data, " past constraint ", pastConstraint);
-
+        var arrowObject;
 				if (pastConstraint) {
           switch (pastConstraint.type) {
             case "method":
@@ -94,12 +106,12 @@ define(["jquery", "handlebars", "hbs!app/templates/inspector", "app/Emitter"],
                 $(".setup").children().eq(1).removeClass("start-highlight");
               }
               else if ($("#" + pastConstraint.transitionId).hasClass("transition_statement")) {
-                $("#" + pastConstraint.transitionId).children().first().removeClass("method-inspect");;
+                $("#" + pastConstraint.transitionId).children().first().removeClass("method-inspect");
               } else { //it's a state
                 $("#" + pastConstraint.transitionId).children().eq(1).removeClass("active");
               }
               //remove arrow highlight                     
-              var arrowObject = $("#" + pastConstraint.transitionId).parent().prev();
+              arrowObject = $("#" + pastConstraint.transitionId).parent().prev();
               arrowObject.children().eq(1).attr("stroke", "#efac1f");
               arrowObject.children().eq(2).attr("stroke", "#efac1f");
               arrowObject.children().eq(2).attr("fill", "#efac1f");
@@ -119,10 +131,7 @@ define(["jquery", "handlebars", "hbs!app/templates/inspector", "app/Emitter"],
             $("#" + data.currentState).children(".state").addClass("active");
 
             let id = constraint.relativePropertyName;
-            let val = this.getParam(this.dataGroup, id);
-            console.log("!!VIZ binding id, val ", id, val);
-            if (val != null) //TODO get rid of, curr fix for diameter
-              $("#inspector-" + id).text(val.toFixed(2));
+           
 
             break;
           case "transition":
@@ -137,7 +146,7 @@ define(["jquery", "handlebars", "hbs!app/templates/inspector", "app/Emitter"],
               $("#" + constraint.transitionId).children().eq(1).addClass("active");
             }
               //add arrow highlight                     
-              var arrowObject = $("#" + constraint.transitionId).parent().prev();
+              arrowObject = $("#" + constraint.transitionId).parent().prev();
               arrowObject.children().eq(1).attr("stroke", "aqua");
               arrowObject.children().eq(2).attr("stroke", "aqua");
               arrowObject.children().eq(2).attr("fill", "aqua");

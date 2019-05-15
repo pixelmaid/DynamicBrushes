@@ -46,22 +46,23 @@ final class Debugger {
         return sortedMappings;
     }
     
-
-    static public func  generateDebugData(brush:Brush, type:String){
-        if(debuggingActive){
+  
+    
+    static public func  generateBrushDebugData(brush:Brush, type:String){
             var debugData:JSON = [:]
-            debugData["type"] = JSON(type);
+            debugData["type"] = JSON();
             debugData["behaviorId"] = JSON(brush.behaviorDef!.id);
             debugData["prevState"] = JSON(brush.prevState);
             debugData["currentState"] = JSON(brush.currentState);
             debugData["transitionId"] = JSON(brush.prevTransition);
-            debugData["brushState"] = brush.brushState.toJSON();
+            debugData["params"] = brush.params.toJSON();
             debugData["constraints"] = brush.states[brush.currentState]!.getConstrainedPropertyNames();
             debugData["methods"] = brush.transitions[brush.prevTransition]!.getMethodNames();
-
+            
+            
             let socketRequest = Request(target: "socket", action: "send_inspector_data", data: debugData, requester: RequestHandler.sharedInstance)
             RequestHandler.addRequest(requestData: socketRequest)
-        }
+       
     }
     
 }

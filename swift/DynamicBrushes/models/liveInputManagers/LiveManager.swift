@@ -18,6 +18,7 @@ protocol SignalCollectionManager{
     
 class LiveManager{
     
+    
 }
 
 final class MicManager:LiveManager, SignalCollectionManager{

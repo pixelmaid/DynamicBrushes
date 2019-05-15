@@ -1,8 +1,8 @@
 'use strict';
 
-define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModel", "app/DebuggerView", "app/SaveManager", "app/SaveView", "app/SignalView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart", "app/DatasetView", "app/SignalModel", "app/KeypressHandler"],
+define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection", "app/DebuggerView", "app/SaveManager", "app/SaveView", "app/SignalView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart", "app/DatasetView", "app/SignalModel", "app/KeypressHandler"],
  
-    function($, paper, Handlebars, ID, DebuggerModel, DebuggerView, SaveManager, SaveView, SignalView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart, DatasetView, SignalModel, KeypressHandler) {
+    function($, paper, Handlebars, ID, DebuggerModelCollection, DebuggerView, SaveManager, SaveView, SignalView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart, DatasetView, SignalModel, KeypressHandler) {
 
         var socketController = new SocketController();
         var socketView = new SocketView(socketController, "#socket");
@@ -13,12 +13,12 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModel", "app/Deb
         var saveView = new SaveView(saveManager, "#save-menu");
         var codename;
         var dataView = new DatasetView(signalModel.datasetLoader, "#dataset_select");
-        var codeDebugger = new DebuggerModel();
-        var keypressHandler = new KeypressHandler(codeDebugger);
-        var debuggerBrushView = new DebuggerView(codeDebugger, "#inspector-brush", "brush", keypressHandler);
-        var debuggerInputView = new DebuggerView(codeDebugger, "#inspector-input", "inputGlobal", keypressHandler);
+        var keypressHandler = new KeypressHandler(debuggerModelCollection);
+        var debuggerModelCollection = new DebuggerModelCollection();
+        var debuggerBrushView = new DebuggerView(debuggerModelCollection.brushModel, "#inspector-brush", "brush", keypressHandler);
+        var debuggerInputView = new DebuggerView(debuggerModelCollection.inputModel, "#inspector-input", "inputGlobal", keypressHandler);
         // note -- make one for inputLocal? 
-        var debuggerOutputView = new DebuggerView(codeDebugger, "#inspector-output", "output", keypressHandler);
+        var debuggerOutputView = new DebuggerView(debuggerModelCollection.outputModel, "#inspector-output", "output", keypressHandler);
 
         //sets up interface by initializing palette, removing overlay etc.
         var setupInterface = function() {
@@ -72,7 +72,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModel", "app/Deb
 
                 }
                 else{
-                    codeDebugger.processInspectorData(data.data);
+                    debuggerModelCollection.processInspectorData(data.data.params);
                 }
 
             } else if (data.type == "synchronize") {
