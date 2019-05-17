@@ -58,10 +58,9 @@ struct DeltaStorage{
         data["alpha"] = JSON(self.alpha);
         data["index"] = JSON(self.i);
         data["level"] = JSON(self.lv);
-        data["parent"] = JSON(self.parent ?? "none");
+        data["parent"] = JSON(self.parent);
         data["time"] = JSON(self.time);
         
-      
         return data;
     }
 }
@@ -140,8 +139,6 @@ class Brush: TimeSeries, Hashable{
     var signalEvent = Event<(String,String,DeltaStorage)>()
     //Events
     
-    
-   
     var behavior_id:String?
     var behaviorDef:BehaviorDefinition?
     var matrix = Matrix();
@@ -154,6 +151,7 @@ class Brush: TimeSeries, Hashable{
     var undergoing_transition = false;
     var transitionEvents = [Disposable]();
     var transitionDelayTimer: Timer!;
+    
     init(name:String, behaviorDef:BehaviorDefinition?, parent:Brush?, canvas:Canvas){
         
         //==BEGIN OBSERVABLES==//
@@ -467,10 +465,11 @@ class Brush: TimeSeries, Hashable{
         self.distance.set(newValue: dist + sqrt(pow(dx,2)+pow(dy,2)));
         self.xDistance.set(newValue: xDist + abs(dx));
         self.yDistance.set(newValue: yDist + abs(dy));
+        self.time.set(newValue:self.time.get(id: nil)+1);
         
         let transformedCoords = self.calculateMatrixTransform(ox: ox,oy: oy,dx: dx,dy: dy,sx: sx,sy: sy,rotation: r);
 
-        let ds = DeltaStorage(dx:dx,dy:dy,pr:pr,pt:pt,ox:ox,oy:oy,rotation:r,sx:sx,sy:sy,weight:weight,hue:h,saturation:s,lightness:l,alpha:a,dist:dist,xDist:xDist,yDist:yDist,x:x,y:y,time:self.time.getSilent(),i:self.index.getSilent(),sc:self.siblingcount.getSilent(),lv:self.level.getSilent(),parent:"foobar");
+        let ds = DeltaStorage(dx:dx,dy:dy,pr:pr,pt:pt,ox:ox,oy:oy,rotation:r,sx:sx,sy:sy,weight:weight,hue:h,saturation:s,lightness:l,alpha:a,dist:dist,xDist:xDist,yDist:yDist,x:x,y:y,time:self.time.getSilent(),i:self.index.getSilent(),sc:self.siblingcount.getSilent(),lv:self.level.getSilent(),parent: (self.parent != nil ? self.parent!.behaviorDef?.name : "none"));
        // self.deltaChangeBuffer.append(ds);
         
         self.params = ds
@@ -484,6 +483,7 @@ class Brush: TimeSeries, Hashable{
         //self.intersectionCheck();
         
         self.signalEvent.raise(data: (self.behavior_id!,self.id,ds));
+        
         Debugger.generateBrushDebugData(brush: self, type: "DRAW_SEGMENT");
 
     }

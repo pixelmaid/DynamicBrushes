@@ -48,7 +48,12 @@ define(["app/Emitter", "app/DebuggerModel"],
 					params.find(function(e) {
 						if (e["id"] == key) {
 							console.log("~~~~ updated ", key, " to ", val);
-							e["val"] = Math.round(val);
+							if(key == "parent"){
+								e["val"] = val;
+							}
+							else{
+								e["val"] = Math.round(val);
+							}
 							return;
 						}
 					});
@@ -60,7 +65,16 @@ q
 					groups: [
 						{
 							groupName: "brush",
-							blocks: [{
+							blocks: [ {
+								blockName: "time",
+								params: [{
+										name: "time",
+										id: "time",
+										val: 0
+									},
+
+								]
+							},{
 								blockName: "geometry",
 								params: [{
 									name: "origin x",
@@ -147,17 +161,8 @@ q
 								}, {
 									name: "parent",
 									id: "parent",
-									val: 0
+									val: "test"
 								}]
-							}, {
-								blockName: "time",
-								params: [{
-										name: "time",
-										id: "t",
-										val: 0
-									},
-
-								]
 							}]
 						},
 

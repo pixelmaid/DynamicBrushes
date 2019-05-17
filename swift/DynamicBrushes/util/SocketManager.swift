@@ -40,7 +40,7 @@ class SocketManager: WebSocketDelegate{
     
     func connect(){
         let userkey = UserDefaults.standard.string(forKey:"userkey");
-        socket = WebSocket(url: NSURL(string: "ws://dynamic-brushes.herokuapp.com/")! as URL, protocols: ["drawing_"+userkey!])
+        socket = WebSocket(url: NSURL(string: "ws://dbdebugserver.herokuapp.com/")! as URL, protocols: ["drawing_"+userkey!])
         socket?.delegate = self;
 
             socket?.connect()

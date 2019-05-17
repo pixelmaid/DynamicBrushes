@@ -9,7 +9,7 @@ define(['emitter', 'app/Emitter'],
       constructor() {
         super();
         window.WebSocket = window.WebSocket || window.MozWebSocket;
-        this.HOST = 'ws://dynamic-brushes.herokuapp.com/';
+        this.HOST = 'ws://dbdebugserver.herokuapp.com/';
         this.connection = null;
       }
 
