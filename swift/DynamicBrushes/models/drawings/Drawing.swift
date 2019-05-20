@@ -11,9 +11,9 @@ import UIKit
 //Drawing
 //stores geometry
 
-class Drawing: TimeSeries, Hashable{
+class Drawing: TimeSeries, Hashable, Renderable{
     //check for if segments need drawing;
-    var dirty = false
+    var unrendered = false
     
     private var activeStrokes = [String:[Stroke]]();
     var allStrokes = [Stroke]();
@@ -31,12 +31,12 @@ class Drawing: TimeSeries, Hashable{
     func drawSegment(context:ModifiedCanvasView){
         
         for i in 0..<allStrokes.count{
-            if(allStrokes[i].dirty){
+            if(allStrokes[i].unrendered){
                 allStrokes[i].drawSegment(context:context);
                 
             }
         }
-        self.dirty = false
+        self.unrendered = false
     }
     
     func getSVG()->String{
@@ -126,7 +126,7 @@ class Drawing: TimeSeries, Hashable{
                 toRemove.append(s.id);
                 //s.segments.removeAll();
                 
-                s.dirtySegments.removeAll()
+                s.unrenderedSegments.removeAll()
                 //s.destroy();
             }
             self.activeStrokes[parentID]!.removeAll();
@@ -160,7 +160,7 @@ class Drawing: TimeSeries, Hashable{
         if (self.activeStrokes[parentID] == nil){
             return
         }
-        self.dirty = true;
+        self.unrendered = true;
 
         for i in 0..<self.activeStrokes[parentID]!.count{
             let currentStroke = self.activeStrokes[parentID]![i]

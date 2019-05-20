@@ -370,10 +370,10 @@ class LayerContainerView: UIView {
         }
     }
     
-    func drawIntoCurrentLayer(currentCanvas:Canvas){
+    func drawIntoCurrentLayer(drawing:Drawing){
         if(self.activeLayer != nil ){
            let context = self.activeLayer?.pushContext();
-            currentCanvas.drawSegment(context:context!)
+            drawing.drawSegment(context:context!)
            
         }
         

@@ -44,9 +44,11 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     
     var layerContainerView:LayerContainerView!
     
+    //populate with custom view
+    var brushVisualizationView:UIView!
     
     var behaviorManager: BehaviorManager?
-    var currentCanvas: Canvas?
+    var currentDrawing: Drawing?
     
     let drawKey = NSUUID().uuidString
     let toolbarKey = NSUUID().uuidString
@@ -107,6 +109,10 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     @IBOutlet weak var behaviorPanelContainerView: UIView!
     required init?(coder: NSCoder) {
         layerContainerView = LayerContainerView(width:pX,height:pY);
+        
+        //replace with custom view
+        brushVisualizationView = UIView(coder: coder);
+        
         recordingViewController = RecordingViewController();
         super.init(coder: coder);
     }
@@ -447,7 +453,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     
     
     func initInterface(){
-        self.initCanvas()
+        self.initDrawing()
         
         
         _ = RequestHandler.dataEvent.addHandler(target: self, handler: DrawingViewController.processRequestHandler, key: dataEventKey)
@@ -927,7 +933,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
             let pngImageData: Data? = UIImagePNGRepresentation(contentToShare!)
             let pngSmallImage = UIImage(data: pngImageData!)
             UIImageWriteToSavedPhotosAlbum(pngSmallImage!, self, nil, nil)
-            let svg = (currentCanvas?.currentDrawing?.getSVG())! as NSString;
+            let svg = (currentDrawing?.getSVG())! as NSString;
             let svg_data = svg.data(using: String.Encoding.utf8.rawValue)!
             let activityViewController = UIActivityViewController(activityItems: [svg_data], applicationActivities: nil)
             activityViewController.popoverPresentationController?.sourceView = self.view // so that iPads won't crash
@@ -966,16 +972,17 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     
     @objc func drawIntervalCallback(){
         DispatchQueue.global(qos: .userInteractive).async {
-            #if DEBUG
-                //print("draw interval callback called",self.currentCanvas!.dirty)
-            #endif
-            if(self.currentCanvas!.dirty){
+            if(self.currentDrawing!.unrendered){
                 DispatchQueue.main.async {
-                    self.layerContainerView.drawIntoCurrentLayer(currentCanvas:self.currentCanvas!);
+                    self.layerContainerView.drawIntoCurrentLayer(drawing:self.currentDrawing!);
                 }
                 self.backupNeeded = true;
                 
             }
+            
+            //add check for brush unrendered
+            Debugger.drawUnrendererdBrushes(view: self.brushVisualizationView);
+            
         }
     }
     
@@ -1414,13 +1421,13 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     
     
     
-    func initCanvas(){
-        currentCanvas = Canvas();
-        behaviorManager = BehaviorManager(canvas: currentCanvas!);
-        currentCanvas!.initDrawing();
-        _ = currentCanvas!.currentDrawing?.strokeGeneratedEvent.addHandler(target: self, handler: DrawingViewController.strokeGeneratedHandler, key: strokeGeneratedKey)
+    func initDrawing(){
+        currentDrawing = Drawing();
+        behaviorManager = BehaviorManager(drawing: currentDrawing!);
         
-        _ = currentCanvas!.currentDrawing?.strokeRemovedEvent.addHandler(target: self, handler: DrawingViewController.strokeRemovedHandler, key: strokeRemovedKey)
+        _ = currentDrawing?.strokeGeneratedEvent.addHandler(target: self, handler: DrawingViewController.strokeGeneratedHandler, key: strokeGeneratedKey)
+        
+        _ = currentDrawing?.strokeRemovedEvent.addHandler(target: self, handler: DrawingViewController.strokeRemovedHandler, key: strokeRemovedKey)
         
         _ = stylusManager.eraseEvent.addHandler(target: self, handler: DrawingViewController.stylusManagerEventHandler, key: stylusManagerKey)
         

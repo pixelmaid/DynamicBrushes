@@ -31,13 +31,15 @@ class BehaviorManager{
     //static var brushProperties = [String:BrushCollection]();
     //static var accessors = [String:AccessorCollection]();
 
+    
+
     static var signalCollections = [[String:SignalCollection](), [String:SignalCollection](),[String:SignalCollection](),[String:SignalCollection](),[String:SignalCollection](),[String:SignalCollection]()];
     
     
 
-    var canvas:Canvas
-    init(canvas:Canvas){
-        self.canvas = canvas;
+    var drawing:Drawing
+    init(drawing:Drawing){
+        self.drawing = drawing;
        // BehaviorManager.signalCollections.removeAll();
         //BehaviorManager.signalCollections = [[String:SignalCollection](), [String:SignalCollection](),[String:SignalCollection](),[String:SignalCollection]()];
         //BehaviorManager.behaviors.removeAll();      
@@ -45,12 +47,19 @@ class BehaviorManager{
     
     
     
-    
+    static func getAllBrushInstances()->[Brush]{
+        var brushInstances = [Brush]();
+          for (_,behavior) in BehaviorManager.behaviors{
+            brushInstances.append(contentsOf: behavior.brushInstances);
+        }
+        return brushInstances;
+    }
   
+    
     
     func refreshAllBehaviors(){
         for (_,behavior) in BehaviorManager.behaviors{
-            behavior.createBehavior(canvas:canvas)
+            behavior.createBehavior(drawing:drawing)
         }
     }
     
@@ -79,7 +88,7 @@ class BehaviorManager{
             }
             let behavior = BehaviorDefinition(id:id,name:value["name"].stringValue);
             behavior.parseJSON(json: value)
-            behavior.createBehavior(canvas:canvas);
+            behavior.createBehavior(drawing:drawing);
             BehaviorManager.behaviors[id] = behavior;
             
         }
@@ -145,14 +154,14 @@ class BehaviorManager{
                 behavior.setAutoSpawnNum(num: 0)
   
             }
-            BehaviorManager.behaviors[behaviorId]!.createBehavior(canvas:canvas)
+            BehaviorManager.behaviors[behaviorId]!.createBehavior(drawing:drawing)
             resultJSON["result"] = "success";
             return resultJSON;
             
             
         case "refresh_behavior":
             let behaviorId = data["behaviorId"].stringValue;
-            BehaviorManager.behaviors[behaviorId]!.createBehavior(canvas:canvas)
+            BehaviorManager.behaviors[behaviorId]!.createBehavior(drawing:drawing)
             resultJSON["result"] = "success";
             return resultJSON;
             
@@ -179,7 +188,7 @@ class BehaviorManager{
             else{
                 BehaviorManager.behaviors[id] = behavior;
 
-               behavior.createBehavior(canvas:canvas)*/
+               behavior.createBehavior(drawing:drawing)*/
                 resultJSON["data"] = data["data"]["behaviors"].arrayValue[0];
             
                 resultJSON["result"] = "success";
@@ -216,7 +225,7 @@ class BehaviorManager{
         case "state_added":
            
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseStateJSON(data:data);
-            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)
+            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(drawing:drawing)
             
             
             resultJSON["result"] = "success";
@@ -235,7 +244,7 @@ class BehaviorManager{
             print("% called state removed behavior id ", data["behaviorId"].stringValue , " stateid ",  data["stateId"].stringValue)
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.removeState(stateId: data["stateId"].stringValue);
             
-            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)
+            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(drawing:drawing)
             
             resultJSON["result"] = "success";
             return resultJSON;
@@ -247,7 +256,7 @@ class BehaviorManager{
             targetBehavior.parseExpressionJSON(data: data["referenceB"]);
             targetBehavior.parseConditionJSON(data: data["condition"]);
             targetBehavior.parseTransitionJSON(data:data)
-            targetBehavior.createBehavior(canvas:canvas)
+            targetBehavior.createBehavior(drawing:drawing)
             
             resultJSON["result"] = "success";
             return resultJSON;
@@ -255,7 +264,7 @@ class BehaviorManager{
         case "transition_removed":
             do{
                 try BehaviorManager.behaviors[data["behaviorId"].stringValue]!.removeTransition(id: data["transitionId"].stringValue);
-                BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)
+                BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(drawing:drawing)
                 
                 resultJSON["result"] = "success";
                 return resultJSON;
@@ -272,7 +281,7 @@ class BehaviorManager{
             let targetBehavior = BehaviorManager.behaviors[behaviorID]!
              do {
                 try targetBehavior.changeConditionRelational(conditionId:data["conditionId"].stringValue,relational:data["relational"].stringValue);
-                BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)
+                BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(drawing:drawing)
                 resultJSON["result"] = "success";
                 return resultJSON;
             }
@@ -303,7 +312,7 @@ class BehaviorManager{
         case "method_added":
             let behaviorId = data["behaviorId"].stringValue
             let methodJSON = BehaviorManager.behaviors[behaviorId]!.parseMethodJSON(data: data)
-            BehaviorManager.behaviors[behaviorId]!.createBehavior(canvas:canvas);
+            BehaviorManager.behaviors[behaviorId]!.createBehavior(drawing:drawing);
             resultJSON["result"] = "success";
             resultJSON["data"] = methodJSON;
             return resultJSON;
@@ -315,7 +324,7 @@ class BehaviorManager{
         //return
         case "method_removed":
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.removeMethod(methodId: data["methodId"].stringValue)
-            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas);
+            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(drawing:drawing);
             resultJSON["result"] = "success";
             return resultJSON;
             
@@ -323,7 +332,7 @@ class BehaviorManager{
             let behaviorId = data["behaviorId"].stringValue;
             BehaviorManager.behaviors[behaviorId]!.parseExpressionJSON(data:data)
             BehaviorManager.behaviors[behaviorId]!.parseMappingJSON(data:data)
-            BehaviorManager.behaviors[behaviorId]!.createBehavior(canvas:canvas)
+            BehaviorManager.behaviors[behaviorId]!.createBehavior(drawing:drawing)
             
             resultJSON["result"] = "success";
             return resultJSON;
@@ -365,7 +374,7 @@ class BehaviorManager{
             
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseExpressionJSON(data:data)
             
-            BehaviorManager.behaviors[behaviorId]!.createBehavior(canvas:canvas)
+            BehaviorManager.behaviors[behaviorId]!.createBehavior(drawing:drawing)
             
             resultJSON["result"] = "success";
             return resultJSON;
@@ -375,7 +384,7 @@ class BehaviorManager{
             
             do{
                 try BehaviorManager.behaviors[data["behaviorId"].stringValue]!.removeMapping(id: data["mappingId"].stringValue);
-                BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(canvas:canvas)
+                BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(drawing:drawing)
                 resultJSON["result"] = "success";
                 return resultJSON;
             }

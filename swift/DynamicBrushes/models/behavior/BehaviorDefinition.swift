@@ -749,12 +749,12 @@ class BehaviorDefinition {
         
     }
     
-    func createBehavior(canvas:Canvas){
+    func createBehavior(drawing:Drawing){
         clearBehavior();
         
         if(self.active_status){
             for i in 0..<self.auto_spawn_num{
-                let targetBrush = Brush(name: "brush_" + String(i) + "_" + self.id, behaviorDef: self, parent: nil, canvas: canvas)
+                let targetBrush = Brush(name: "brush_" + String(i) + "_" + self.id, behaviorDef: self, parent: nil, drawing:drawing)
                 self.initBrushBehavior(targetBrush:targetBrush);
             }
         }
