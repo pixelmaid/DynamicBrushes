@@ -169,10 +169,10 @@ func ==(lhs: Segment, rhs: Segment) -> Bool {
 // Stroke: Model for storing a stroke object in multiple representations
 // as a series of segments
 // as a series of vectors over time
-class Stroke:TimeSeries, Geometry {
+class Stroke:TimeSeries, Geometry, Renderable {
     //check for if segments need drawing;
-    var dirty = false
-    var dirtySegments = [Segment]()
+    internal var unrendered = false
+    var unrenderedSegments = [Segment]()
     var toDrawSegments = [Segment]()
     var segments = [Segment]();
    /* var xBuffer = CircularBuffer();
@@ -237,20 +237,20 @@ class Stroke:TimeSeries, Geometry {
     
     func drawSegment(context:ModifiedCanvasView){
         
-        self.toDrawSegments.append(contentsOf: self.dirtySegments)
-        self.dirtySegments.removeAll();
+        self.toDrawSegments.append(contentsOf: self.unrenderedSegments)
+        self.unrenderedSegments.removeAll();
         for i in 0..<toDrawSegments.count{
            toDrawSegments[i].drawIntoContext(id:self.id, context: context);
         }
         
         self.toDrawSegments.removeAll();
         //self.segments.removeAll();
-        self.dirty = false;
+        self.unrendered = false;
     }
     
     
     func addSegment(brushId:String, point:Point, d:Float, color:Color, alpha:Float)->Segment?{
-        self.dirty = true;
+        self.unrendered = true;
 
         var segment = Segment(point:point)
         segment.weight = d
@@ -258,25 +258,8 @@ class Stroke:TimeSeries, Geometry {
         segment.alpha = alpha;
         segment.parent = self
         segment.index = self.segments.count;
-        //segment.time = Float(0-timer.timeIntervalSinceNow);
-        
-        if(segments.count>0){
-           // let prevSeg = segments[segments.count-1];
-            // let dist = segment.point.dist(point: prevSeg.point)
-            
-            //if(dist < 10){
-            //  return nil;
-            //}
-           // xBuffer.push(v: segment.point.x.get(id: nil)-prevSeg.point.x.get(id: nil))
-            //yBuffer.push(v: segment.point.y.get(id: nil)-prevSeg.point.y.get(id: nil))
-            
-        }
-        else{
-            //xBuffer.push(v: 0);
-            //yBuffer.push(v: 0)
-        }
         segments.append(segment)
-        dirtySegments.append(segment);
+        unrenderedSegments.append(segment);
 
         return segment
     }
@@ -308,21 +291,6 @@ class Stroke:TimeSeries, Geometry {
         return string
         
     }
-    
-    /*init(fromPoint:Point,angle:Float,length:Float){
-     self.fromPoint = fromPoint;
-     self.toPoint = fromPoint.pointAtDistance(length,a:angle)
-     }
-     
-     init(center:Point,radius:Float,startAngle:Float,endAngle:Float,clockwise:Bool){
-     self.center = center
-     self.radius = radius
-     self.startAngle = startAngle
-     self.endAngle = endAngle
-     self.clockwise = clockwise
-     }*/
-        
-    
     
     
     

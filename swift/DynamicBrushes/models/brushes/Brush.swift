@@ -65,7 +65,9 @@ struct DeltaStorage{
     }
 }
 
-class Brush: TimeSeries, Hashable{
+class Brush: TimeSeries, Hashable, Renderable{
+    public var unrendered: Bool = false;
+    
     //hierarcical data
     var children = [Brush]();
     var parent: Brush!
@@ -130,11 +132,9 @@ class Brush: TimeSeries, Hashable{
     
     //list of obeservables (for later disposal)
     
-    var currentCanvas:Canvas?
-    var currentStroke:Stroke?
+    var currentDrawing:Drawing?
     
     //Events
-    var geometryModified = Event<(Geometry,String,String)>()
     var dieEvent = Event<(String)>()
     var signalEvent = Event<(String,String,DeltaStorage)>()
     //Events
@@ -152,7 +152,7 @@ class Brush: TimeSeries, Hashable{
     var transitionEvents = [Disposable]();
     var transitionDelayTimer: Timer!;
     
-    init(name:String, behaviorDef:BehaviorDefinition?, parent:Brush?, canvas:Canvas){
+    init(name:String, behaviorDef:BehaviorDefinition?, parent:Brush?, drawing:Drawing){
         
         //==BEGIN OBSERVABLES==//
         self.bPosition = Point(x:0,y:0)
@@ -312,7 +312,7 @@ class Brush: TimeSeries, Hashable{
        // _ = self.xBuffer.bufferEvent.addHandler(target: self, handler: Brush.deltaBufferLimitReached, key: bufferKey)
         
         
-        self.setCanvasTarget(canvas: canvas)
+        self.setDrawingTarget(drawing: drawing)
         self.parent = parent
         
         //setup behavior
@@ -350,12 +350,6 @@ class Brush: TimeSeries, Hashable{
         get {
             return "\(self.id)".hashValue
         }
-    }
-    
-    //Event handlers
-    //chains communication between brushes and view controller
-    func brushDrawHandler(data:(Geometry,String,String),key:String){
-        self.geometryModified.raise(data: data)
     }
     
     func createState(id:String,name:String){
@@ -474,7 +468,8 @@ class Brush: TimeSeries, Hashable{
         
         self.params = ds
         
-        self.currentCanvas!.addSegmentToStroke(parentID: self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight:weight , color: color,alpha:ds.alpha)
+        self.currentDrawing!.addSegmentToStroke(parentID: self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight:weight , color: color,alpha:ds.alpha)
+        self.unrendered = true;
         
         self.bPosition.x.setSilent(newValue: transformedCoords.1)
         self.bPosition.y.setSilent(newValue:transformedCoords.0)
@@ -519,7 +514,7 @@ class Brush: TimeSeries, Hashable{
         
         if((keyStorage["INTERSECTION"]!.count)>0){
             if(self.parent != nil){
-                let hit = self.currentCanvas!.parentHitTest(point: self.bPosition, threshold: 5, id:self.id, parentId:self.parent!.id);
+                let hit = self.currentDrawing!.parentHitTest(point: self.bPosition, threshold: 5, id:self.id, parentId:self.parent!.id);
             if(hit != nil){
                 self.intersections.set(newValue: self.intersections.getSilent()+1);
                 for key in keyStorage["INTERSECTION"]!
@@ -768,8 +763,8 @@ class Brush: TimeSeries, Hashable{
     }
     
     //sets canvas target to output geometry into
-    func setCanvasTarget(canvas:Canvas){
-        self.currentCanvas = canvas;
+    func setDrawingTarget(drawing:Drawing){
+        self.currentDrawing = drawing;
     }
     
     
@@ -916,8 +911,8 @@ class Brush: TimeSeries, Hashable{
     
     
     func newStroke(){
-        self.currentCanvas!.currentDrawing!.retireCurrentStrokes(parentID: self.id)
-        self.currentStroke = self.currentCanvas!.currentDrawing!.newStroke(parentID: self.id);
+        self.currentDrawing!.retireCurrentStrokes(parentID: self.id)
+        self.currentDrawing!.newStroke(parentID: self.id);
         self.resetDistance();
     }
     
@@ -926,7 +921,7 @@ class Brush: TimeSeries, Hashable{
 
         if(num > 0){
             for _ in 0...num-1{
-                let child = Brush(name:name, behaviorDef: behavior, parent:self, canvas:self.currentCanvas!)
+                let child = Brush(name:name, behaviorDef: behavior, parent:self, drawing:self.currentDrawing!)
                 self.children.append(child);
               
                 child.index.set(newValue: Float(self.children.count-1));
@@ -993,7 +988,6 @@ class Brush: TimeSeries, Hashable{
     
     
     func clearAllEventHandlers(){
-        self.geometryModified.removeAllHandlers()
         self.signalEvent.removeAllHandlers();
         self.dieEvent.removeAllHandlers()
         for t in transitionEvents{
@@ -1009,7 +1003,7 @@ class Brush: TimeSeries, Hashable{
         #if DEBUG
             print("destroying brush: \(self.id)");
         #endif
-        currentCanvas!.currentDrawing!.retireCurrentStrokes(parentID: self.id)
+        currentDrawing!.retireCurrentStrokes(parentID: self.id)
         self.clearBehavior();
         self.clearAllEventHandlers();
         super.destroy();
@@ -1023,6 +1017,5 @@ class Brush: TimeSeries, Hashable{
 func ==(lhs:Brush, rhs:Brush) -> Bool {
     return ObjectIdentifier(lhs) == ObjectIdentifier(rhs)
 }
-
 
 

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		02DE59B87E0EE7C00B73F5D0 /* Pods_DynamicBrushes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AA0BB14BEC283C5C6629407 /* Pods_DynamicBrushes.framework */; };
 		0A2BE8B9210FD5B90069D085 /* basic.json in Resources */ = {isa = PBXBuildFile; fileRef = 0A2BE8B8210FD5B90069D085 /* basic.json */; };
+		0A3733CA22936594009E92DC /* BrushGraphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3733C922936594009E92DC /* BrushGraphics.swift */; };
 		0A458794221743E8003695B5 /* Debugger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A458793221743E8003695B5 /* Debugger.swift */; };
 		0A56E3BD2071C09C006243A6 /* BrushSignalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56E3BC2071C09B006243A6 /* BrushSignalManager.swift */; };
 		0A56E3BF2072B916006243A6 /* SignalAccessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56E3BE2072B916006243A6 /* SignalAccessors.swift */; };
@@ -56,7 +57,6 @@
 		5F90F5491E9D59D4006BB9FE /* WebTransmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5401E9D59D4006BB9FE /* WebTransmitter.swift */; };
 		5F90F54D1E9D5A16006BB9FE /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F54B1E9D5A16006BB9FE /* Color.swift */; };
 		5F90F54E1E9D5A16006BB9FE /* Point.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F54C1E9D5A16006BB9FE /* Point.swift */; };
-		5F90F5551E9D5A41006BB9FE /* Canvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5501E9D5A41006BB9FE /* Canvas.swift */; };
 		5F90F5561E9D5A41006BB9FE /* Drawing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5511E9D5A41006BB9FE /* Drawing.swift */; };
 		5F90F5581E9D5A41006BB9FE /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5531E9D5A41006BB9FE /* Line.swift */; };
 		5F90F5591E9D5A41006BB9FE /* Stroke.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F90F5541E9D5A41006BB9FE /* Stroke.swift */; };
@@ -179,6 +179,7 @@
 /* Begin PBXFileReference section */
 		0442020FA4D778FD391A14CD /* Pods-DynamicBrushes.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicBrushes.release.xcconfig"; path = "Pods/Target Support Files/Pods-DynamicBrushes/Pods-DynamicBrushes.release.xcconfig"; sourceTree = "<group>"; };
 		0A2BE8B8210FD5B90069D085 /* basic.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = basic.json; path = DynamicBrushes/Resources/behaviorTemplates/basic.json; sourceTree = SOURCE_ROOT; };
+		0A3733C922936594009E92DC /* BrushGraphics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BrushGraphics.swift; path = DynamicBrushes/models/brushes/BrushGraphics.swift; sourceTree = SOURCE_ROOT; };
 		0A458793221743E8003695B5 /* Debugger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debugger.swift; sourceTree = "<group>"; };
 		0A56E3BC2071C09B006243A6 /* BrushSignalManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrushSignalManager.swift; sourceTree = "<group>"; };
 		0A56E3BE2072B916006243A6 /* SignalAccessors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SignalAccessors.swift; path = data/SignalAccessors.swift; sourceTree = "<group>"; };
@@ -230,7 +231,6 @@
 		5F90F5401E9D59D4006BB9FE /* WebTransmitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebTransmitter.swift; sourceTree = "<group>"; };
 		5F90F54B1E9D5A16006BB9FE /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		5F90F54C1E9D5A16006BB9FE /* Point.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Point.swift; sourceTree = "<group>"; };
-		5F90F5501E9D5A41006BB9FE /* Canvas.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Canvas.swift; sourceTree = "<group>"; };
 		5F90F5511E9D5A41006BB9FE /* Drawing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Drawing.swift; sourceTree = "<group>"; };
 		5F90F5531E9D5A41006BB9FE /* Line.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
 		5F90F5541E9D5A41006BB9FE /* Stroke.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stroke.swift; sourceTree = "<group>"; };
@@ -491,7 +491,6 @@
 		5F90F54F1E9D5A41006BB9FE /* drawings */ = {
 			isa = PBXGroup;
 			children = (
-				5F90F5501E9D5A41006BB9FE /* Canvas.swift */,
 				5F90F5511E9D5A41006BB9FE /* Drawing.swift */,
 				5F90F5531E9D5A41006BB9FE /* Line.swift */,
 				5F90F5541E9D5A41006BB9FE /* Stroke.swift */,
@@ -502,6 +501,7 @@
 		5F90F55A1E9D5A5C006BB9FE /* brushes */ = {
 			isa = PBXGroup;
 			children = (
+				0A3733C922936594009E92DC /* BrushGraphics.swift */,
 				0A56E3BC2071C09B006243A6 /* BrushSignalManager.swift */,
 				5F90F55B1E9D5A5C006BB9FE /* Brush.swift */,
 			);
@@ -903,6 +903,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -1142,7 +1143,6 @@
 				0A56E3BF2072B916006243A6 /* SignalAccessors.swift in Sources */,
 				5F13B69C1FC3AEBF00E37A37 /* Router.swift in Sources */,
 				5F50372E1EAD48BB004ABAC1 /* MathUtil.swift in Sources */,
-				5F90F5551E9D5A41006BB9FE /* Canvas.swift in Sources */,
 				5F90F5691E9D5BCC006BB9FE /* Expression.swift in Sources */,
 				5FDE68EB205C93F0005A49C3 /* Generator.swift in Sources */,
 				5F90F5491E9D59D4006BB9FE /* WebTransmitter.swift in Sources */,
@@ -1161,6 +1161,7 @@
 				5FFC45781EE5C473007B7597 /* BehaviorPanelViewController.swift in Sources */,
 				5F5CED2B1ED10AED00A253A0 /* ColorWheel.swift in Sources */,
 				5F50371D1EA957F5004ABAC1 /* debug.swift in Sources */,
+				0A3733CA22936594009E92DC /* BrushGraphics.swift in Sources */,
 				5FA4C7261CDA7B5B004A728C /* DrawingViewController.swift in Sources */,
 				5F90F5681E9D5BCC006BB9FE /* Condition.swift in Sources */,
 				5F90F5661E9D5BCC006BB9FE /* BehaviorManager.swift in Sources */,

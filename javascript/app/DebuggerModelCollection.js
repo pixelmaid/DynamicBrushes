@@ -26,7 +26,7 @@ define(["app/Emitter", "app/DebuggerModel"],
 
 				this.brushModel.update(this.data.groups[0]);
 				this.inputModel.update(this.data.groups[1]);
-				this.outputModel.update(this.data.groups[2]);
+				this.outputModel.update(this.data.groups[3]);
 
 
 			}
