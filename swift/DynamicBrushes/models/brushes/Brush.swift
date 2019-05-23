@@ -47,6 +47,8 @@ struct DeltaStorage{
         data["rotation"] = JSON(self.rotation);
         data["x"] = JSON(self.x);
         data["y"] = JSON(self.y);
+        data["cx"] = JSON(self.cx);
+        data["cy"] = JSON(self.cy);
         data["dx"] = JSON(self.dx);
         data["dy"] = JSON(self.dy);
         data["pr"] = JSON(self.pr);
