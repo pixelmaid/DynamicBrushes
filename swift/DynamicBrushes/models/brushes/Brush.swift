@@ -13,8 +13,6 @@ struct DeltaStorage{
     var dy = Float(0)
     var pr = Float(0)
     var pt = Float(0)
-       //var pX = Float(0)
-    //var pY = Float(0)
     var ox = Float(0)
     var oy = Float(0)
     var rotation = Float(0)
@@ -30,6 +28,8 @@ struct DeltaStorage{
     var yDist = Float(0);
     var x = Float(0);
     var y = Float(0);
+    var cx = Float(0);
+    var cy = Float(0);
     var time = Float(0);
     var i = Float(0);
     var sc = Float(0);
@@ -60,6 +60,7 @@ struct DeltaStorage{
         data["level"] = JSON(self.lv);
         data["parent"] = JSON(self.parent);
         data["time"] = JSON(self.time);
+        
         
         return data;
     }
@@ -324,7 +325,7 @@ class Brush: TimeSeries, Hashable, Renderable{
     
     
     func storeInitialValues(){
-        let sendDs = DeltaStorage(dx: 0, dy: 0, pr: 0, pt: 0, ox: 0, oy: 0, rotation: 0, sx: 0, sy: 0, weight: 1, hue: 100, saturation: 100, lightness: 100, alpha: 100, dist: 0, xDist: 0, yDist: 0, x: 0, y: 0, time: 0, i: self.index.getSilent(), sc: self.siblingcount.getSilent(), lv: self.level.getSilent(), parent: "foobar");
+        let sendDs = DeltaStorage(dx: 0, dy: 0, pr: 0, pt: 0, ox: 0, oy: 0, rotation: 0, sx: 0, sy: 0, weight: 1, hue: 100, saturation: 100, lightness: 100, alpha: 100, dist: 0, xDist: 0, yDist: 0, x: 0, y: 0, cx:0, cy:0, time: 0, i: self.index.getSilent(), sc: self.siblingcount.getSilent(), lv: self.level.getSilent(), parent: "foobar");
         
         self.signalEvent.raise(data: (self.behavior_id!,self.id,sendDs));
     }
@@ -423,7 +424,7 @@ class Brush: TimeSeries, Hashable, Renderable{
         let x = self.x.get(id:nil);
         let y = self.y.get(id:nil);
         
-        let r =  MathUtil.map(value: self.rotation.get(id:nil), low1: 0.0, high1: 100.0, low2: 0.0, high2: 360.0)
+        let r =  self.rotation.get(id:nil); //MathUtil.map(value: self.rotation.get(id:nil), low1: 0.0, high1: 100.0, low2: 0.0, high2: 360.0)
         
         let sx = self.scaling.x.get(id:nil)
         let sy = self.scaling.y.get(id:nil)
@@ -463,7 +464,10 @@ class Brush: TimeSeries, Hashable, Renderable{
         
         let transformedCoords = self.calculateMatrixTransform(ox: ox,oy: oy,dx: dx,dy: dy,sx: sx,sy: sy,rotation: r);
 
-        let ds = DeltaStorage(dx:dx,dy:dy,pr:pr,pt:pt,ox:ox,oy:oy,rotation:r,sx:sx,sy:sy,weight:weight,hue:h,saturation:s,lightness:l,alpha:a,dist:dist,xDist:xDist,yDist:yDist,x:x,y:y,time:self.time.getSilent(),i:self.index.getSilent(),sc:self.siblingcount.getSilent(),lv:self.level.getSilent(),parent: (self.parent != nil ? self.parent!.behaviorDef?.name : "none"));
+        let cx = transformedCoords.0
+        let cy = transformedCoords.1
+        
+        let ds = DeltaStorage(dx:dx,dy:dy,pr:pr,pt:pt,ox:ox,oy:oy,rotation:r,sx:sx,sy:sy,weight:weight,hue:h,saturation:s,lightness:l,alpha:a,dist:dist,xDist:xDist,yDist:yDist,x:x,y:y,cx:cx,cy:cy,time:self.time.getSilent(),i:self.index.getSilent(),sc:self.siblingcount.getSilent(),lv:self.level.getSilent(),parent: (self.parent != nil ? self.parent!.behaviorDef?.name : "none"));
        // self.deltaChangeBuffer.append(ds);
         
         self.params = ds
@@ -471,8 +475,8 @@ class Brush: TimeSeries, Hashable, Renderable{
         self.currentDrawing!.addSegmentToStroke(parentID: self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight:weight , color: color,alpha:ds.alpha)
         self.unrendered = true;
         
-        self.bPosition.x.setSilent(newValue: transformedCoords.1)
-        self.bPosition.y.setSilent(newValue:transformedCoords.0)
+        self.bPosition.x.setSilent(newValue: transformedCoords.0)
+        self.bPosition.y.setSilent(newValue:transformedCoords.1)
         
         // self.distanceIntervalCheck();
         //self.intersectionCheck();
