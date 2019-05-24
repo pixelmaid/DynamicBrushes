@@ -8,65 +8,7 @@
 import Foundation
 import SwiftyJSON
 
-struct DeltaStorage{
-    var dx = Float(0)
-    var dy = Float(0)
-    var pr = Float(0)
-    var pt = Float(0)
-    var ox = Float(0)
-    var oy = Float(0)
-    var rotation = Float(0)
-    var sx = Float(0)
-    var sy = Float(0)
-    var weight = Float(0)
-    var hue = Float(0)
-    var saturation = Float(0)
-    var lightness = Float(0)
-    var alpha = Float(0)
-    var dist = Float(0);
-    var xDist = Float(0);
-    var yDist = Float(0);
-    var x = Float(0);
-    var y = Float(0);
-    var cx = Float(0);
-    var cy = Float(0);
-    var time = Float(0);
-    var i = Float(0);
-    var sc = Float(0);
-    var lv = Float(0);
-    var parent: String?
-    
-    func toJSON()->JSON{
-        
-        var data:JSON = [:]
-        
-        data["ox"] = JSON(self.ox);
-        data["oy"] = JSON(self.oy);
-        data["sx"] = JSON(self.sx);
-        data["sy"] = JSON(self.sy);
-        data["rotation"] = JSON(self.rotation);
-        data["x"] = JSON(self.x);
-        data["y"] = JSON(self.y);
-        data["cx"] = JSON(self.cx);
-        data["cy"] = JSON(self.cy);
-        data["dx"] = JSON(self.dx);
-        data["dy"] = JSON(self.dy);
-        data["pr"] = JSON(self.pr);
-        data["pt"] = JSON(self.pt);
-        data["weight"] = JSON(self.weight);
-        data["hue"] = JSON(self.hue);
-        data["saturation"] = JSON(self.saturation);
-        data["lightness"] = JSON(self.lightness);
-        data["alpha"] = JSON(self.alpha);
-        data["index"] = JSON(self.i);
-        data["level"] = JSON(self.lv);
-        data["parent"] = JSON(self.parent);
-        data["time"] = JSON(self.time);
-        
-        
-        return data;
-    }
-}
+
 
 class Brush: TimeSeries, Hashable, Renderable{
     public var unrendered: Bool = false;
@@ -81,7 +23,7 @@ class Brush: TimeSeries, Hashable, Renderable{
     var currentState:String
     var prevState:String;
     var prevTransition:String;
-    var params:DeltaStorage;
+    let params:BrushStateStorage;
     //geometric/stylistic properties
     let bPosition:Point //actual position
     
@@ -139,7 +81,7 @@ class Brush: TimeSeries, Hashable, Renderable{
     
     //Events
     var dieEvent = Event<(String)>()
-    var signalEvent = Event<(String,String,DeltaStorage)>()
+    var signalEvent = Event<(String,String,StateStorage)>()
     //Events
     
     var behavior_id:String?
@@ -150,7 +92,6 @@ class Brush: TimeSeries, Hashable, Renderable{
     var drawKey = NSUUID().uuidString;
     var bufferKey = NSUUID().uuidString;
     let childDieHandlerKey = NSUUID().uuidString;
-    var deltaChangeBuffer = [DeltaStorage]();
     var undergoing_transition = false;
     var transitionEvents = [Disposable]();
     var transitionDelayTimer: Timer!;
@@ -226,7 +167,7 @@ class Brush: TimeSeries, Hashable, Renderable{
         self.currentState = "start";
         self.prevState = "null";
         self.prevTransition = "null";
-        self.params = DeltaStorage();
+        self.params = BrushStateStorage();
         
         super.init()
         
@@ -327,9 +268,10 @@ class Brush: TimeSeries, Hashable, Renderable{
     
     
     func storeInitialValues(){
-        let sendDs = DeltaStorage(dx: 0, dy: 0, pr: 0, pt: 0, ox: 0, oy: 0, rotation: 0, sx: 0, sy: 0, weight: 1, hue: 100, saturation: 100, lightness: 100, alpha: 100, dist: 0, xDist: 0, yDist: 0, x: 0, y: 0, cx:0, cy:0, time: 0, i: self.index.getSilent(), sc: self.siblingcount.getSilent(), lv: self.level.getSilent(), parent: "foobar");
         
-        self.signalEvent.raise(data: (self.behavior_id!,self.id,sendDs));
+        let paramData = ["dx": 0, "dy": 0, "pr": 0, "pt": 0, "ox": 0, "oy": 0, "rotation": 0, "sx": 0, "sy": 0, "weight": 1, "hue": 100, "saturation": 100, "lightness": 100, "alpha": 100, "dist": 0, "xDist": 0, "yDist": 0, "x": 0, "y": 0, "cx":0, "cy":0, "time": 0, "i": self.index.getSilent(), "sc": self.siblingcount.getSilent(), "lv": self.level.getSilent(), "parent": "none"] as [String : Any]
+        self.params.updateAll(data: paramData)
+        self.signalEvent.raise(data: (self.behavior_id!,self.id,self.params));
     }
  
     func setupTransition(){
@@ -469,21 +411,20 @@ class Brush: TimeSeries, Hashable, Renderable{
         let cx = transformedCoords.0
         let cy = transformedCoords.1
         
-        let ds = DeltaStorage(dx:dx,dy:dy,pr:pr,pt:pt,ox:ox,oy:oy,rotation:r,sx:sx,sy:sy,weight:weight,hue:h,saturation:s,lightness:l,alpha:a,dist:dist,xDist:xDist,yDist:yDist,x:x,y:y,cx:cx,cy:cy,time:self.time.getSilent(),i:self.index.getSilent(),sc:self.siblingcount.getSilent(),lv:self.level.getSilent(),parent: (self.parent != nil ? self.parent!.behaviorDef?.name : "none"));
-       // self.deltaChangeBuffer.append(ds);
+        let data = ["dx":dx,"dy":dy,"pr":pr,"pt":pt,"ox":ox,"oy":oy,"rotation":r,"sx":sx,"sy":sy,"weight":weight,"hue":h,"saturation":s,"lightness":l,"alpha":a,"dist":dist,"xDist":xDist,"yDist":yDist,"x":x,"y":y,"cx":cx,"cy":cy,"time":self.time.getSilent(),"i":self.index.getSilent(),"sc":self.siblingcount.getSilent(),"lv":self.level.getSilent(),"parent": (self.parent != nil ? (self.parent!.behaviorDef?.name)! : "none")] as [String : Any];
+        self.params.updateAll(data: data);
         
-        self.params = ds
         
-        self.currentDrawing!.addSegmentToStroke(parentID: self.id, point:Point(x:transformedCoords.0,y:transformedCoords.1),weight:weight , color: color,alpha:ds.alpha)
+        self.currentDrawing!.addSegmentToStroke(parentID: self.id, point:Point(x:cx,y:cy),weight:weight , color: color,alpha:a)
         self.unrendered = true;
         
-        self.bPosition.x.setSilent(newValue: transformedCoords.0)
-        self.bPosition.y.setSilent(newValue:transformedCoords.1)
+        self.bPosition.x.setSilent(newValue: cx)
+        self.bPosition.y.setSilent(newValue:cy)
         
         // self.distanceIntervalCheck();
         //self.intersectionCheck();
         
-        self.signalEvent.raise(data: (self.behavior_id!,self.id,ds));
+        self.signalEvent.raise(data: (self.behavior_id!,self.id,self.params));
         
         Debugger.generateBrushDebugData(brush: self, type: "DRAW_SEGMENT");
 

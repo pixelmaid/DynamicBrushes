@@ -10,6 +10,7 @@
 		02DE59B87E0EE7C00B73F5D0 /* Pods_DynamicBrushes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AA0BB14BEC283C5C6629407 /* Pods_DynamicBrushes.framework */; };
 		0A2BE8B9210FD5B90069D085 /* basic.json in Resources */ = {isa = PBXBuildFile; fileRef = 0A2BE8B8210FD5B90069D085 /* basic.json */; };
 		0A3733CA22936594009E92DC /* BrushGraphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3733C922936594009E92DC /* BrushGraphics.swift */; };
+		0A3974BF22974BAF00ACD0AF /* StateStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3974BE22974BAF00ACD0AF /* StateStorage.swift */; };
 		0A458794221743E8003695B5 /* Debugger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A458793221743E8003695B5 /* Debugger.swift */; };
 		0A56E3BD2071C09C006243A6 /* BrushSignalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56E3BC2071C09B006243A6 /* BrushSignalManager.swift */; };
 		0A56E3BF2072B916006243A6 /* SignalAccessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56E3BE2072B916006243A6 /* SignalAccessors.swift */; };
@@ -180,6 +181,7 @@
 		0442020FA4D778FD391A14CD /* Pods-DynamicBrushes.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DynamicBrushes.release.xcconfig"; path = "Pods/Target Support Files/Pods-DynamicBrushes/Pods-DynamicBrushes.release.xcconfig"; sourceTree = "<group>"; };
 		0A2BE8B8210FD5B90069D085 /* basic.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = basic.json; path = DynamicBrushes/Resources/behaviorTemplates/basic.json; sourceTree = SOURCE_ROOT; };
 		0A3733C922936594009E92DC /* BrushGraphics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BrushGraphics.swift; path = DynamicBrushes/models/brushes/BrushGraphics.swift; sourceTree = SOURCE_ROOT; };
+		0A3974BE22974BAF00ACD0AF /* StateStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateStorage.swift; sourceTree = "<group>"; };
 		0A458793221743E8003695B5 /* Debugger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debugger.swift; sourceTree = "<group>"; };
 		0A56E3BC2071C09B006243A6 /* BrushSignalManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrushSignalManager.swift; sourceTree = "<group>"; };
 		0A56E3BE2072B916006243A6 /* SignalAccessors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SignalAccessors.swift; path = data/SignalAccessors.swift; sourceTree = "<group>"; };
@@ -414,6 +416,7 @@
 				72D72C082069DF8400C1C9C8 /* MicCollection.swift */,
 				7200B9812070140B008EA510 /* Operations.swift */,
 				0A56E3BE2072B916006243A6 /* SignalAccessors.swift */,
+				0A3974BE22974BAF00ACD0AF /* StateStorage.swift */,
 			);
 			name = data;
 			sourceTree = "<group>";
@@ -1198,6 +1201,7 @@
 				7267DCC120290D9F0093245A /* RecordingViewController.swift in Sources */,
 				5F90F5461E9D59D4006BB9FE /* Observable.swift in Sources */,
 				5F90F5421E9D59D4006BB9FE /* Event.swift in Sources */,
+				0A3974BF22974BAF00ACD0AF /* StateStorage.swift in Sources */,
 				5F90F5591E9D5A41006BB9FE /* Stroke.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

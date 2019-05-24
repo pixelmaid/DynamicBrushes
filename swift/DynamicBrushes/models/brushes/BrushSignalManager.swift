@@ -28,7 +28,7 @@ class BrushSignalManager:SignalCollectionManager{
     }
     
     
-    func brushUpdateHandler(data:(String,String,DeltaStorage),key:String){
+    func brushUpdateHandler(data:(String,String,StateStorage),key:String){
         let behaviorId = data.0;
         let brushId = data.1;
         let deltaStorage = data.2;
