@@ -49,7 +49,15 @@ final class Debugger {
     
   
     
+    static public func generateInputDebugData(){
+        //var debugData:JSON = [:]
+        let generatorCollection = BehaviorManager.signalCollections[2]["default"]!;
+        let generatorData = generatorCollection.rawDataToJSON();
+       print("~~~~~",generatorData,"~~~~~");
+    }
+    
     static public func  generateBrushDebugData(brush:Brush, type:String){
+            Debugger.generateInputDebugData();
             var debugData:JSON = [:]
             debugData["type"] = JSON();
             debugData["behaviorId"] = JSON(brush.behaviorDef!.id);
@@ -57,6 +65,7 @@ final class Debugger {
             debugData["currentState"] = JSON(brush.currentState);
             debugData["transitionId"] = JSON(brush.prevTransition);
             debugData["params"] = brush.params.toJSON();
+            debugData["id"] = JSON(brush.id);
             debugData["constraints"] = brush.states[brush.currentState]!.getConstrainedPropertyNames();
             debugData["methods"] = brush.transitions[brush.prevTransition]!.getMethodNames();
             

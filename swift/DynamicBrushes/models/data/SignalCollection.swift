@@ -368,24 +368,9 @@ class GeneratorCollection:SignalCollection{
     required init(data:JSON){
         super.init(data:data);
     }
+
     
-    /*override  init(){
-     super.init();
-     do{
-     try self.registerSignalType(fieldName: "sine", displayName: "sine wave", classType: "Sine");
-     try self.registerSignalType(fieldName: "square", displayName: "square wave", classType: "Square");
-     try self.registerSignalType(fieldName: "triangle", displayName: "triangle wave",classType: "Triangle");
-     try self.registerSignalType(fieldName: "random", displayName: "random", classType: "Random");
-     try self.registerSignalType(fieldName: "sawtooth", classType: "Sawtooth");
-     try self.registerSignalType(fieldName: "alternate", classType: "Alternate");
-     }
-     catch SignalError.signalTypeAlreadyRegistered{
-     print("ERRROR ---------Signal Type already Registered-----------")
-     }
-     catch {
-     
-     }
-     }*/
+    
     
     public override func initializeSignalWithId(signalId:String,fieldName:String, displayName:String, settings:JSON, classType:String, style:String, isProto:Bool, order:Int?){
         if(classType == "TimeSignal"){

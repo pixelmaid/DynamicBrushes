@@ -137,12 +137,12 @@ class Sawtooth:Generator{
     var max:Int;
     
     required init(id:String, fieldName:String, displayName:String, collectionId:String, style:String, settings:JSON){
-         start = settings["start"].floatValue
-         stop = settings["stop"].floatValue
-         min = settings["min"].intValue
+        start = 0//settings["start"].floatValue
+        stop = 100//settings["stop"].floatValue
+        min = 0//settings["min"].intValue
         max = 100;//settings["max"].intValue
 
-        let increment = Float(4.0);//(stop-start)/Float(max-min)
+        let increment = Float(1);//(stop-start)/Float(max-min)
         for i in min...max-1{
             val.append(start+increment*Float(i))
         }
@@ -170,7 +170,7 @@ class Sawtooth:Generator{
         
         let v = val[Int(i!)]
         self.incrementAndChangeById(id: id!, v: v);
-       
+        print("~~~~~~~~~",val,"~~~~~~~~~");
         return v;
     }
     
