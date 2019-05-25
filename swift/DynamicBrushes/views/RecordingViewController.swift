@@ -147,7 +147,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         //print("$$ xstrokes, ystrokes in timeordered list ", xstrokes, ystrokes)
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 200, height: 150))
         imageView.backgroundColor = UIColor.white
-        imageView.contentMode = UIViewContentMode.scaleAspectFit
+        imageView.contentMode = UIView.ContentMode.scaleAspectFit
         cell.contentView.addSubview(imageView)
         drawThumbnail(xStrokes: xstrokes, yStrokes: ystrokes, image: imageView, onion: false)
         //draw onionskin
@@ -279,13 +279,13 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     
     func highlightKeyframe(i:Int, isYellow:Bool) {
         print("^^ higlighting " , i, " is yellow? ", isYellow)
-        var sp = UICollectionViewScrollPosition.right
-        if i == RecordingViewController.recording_start { sp = UICollectionViewScrollPosition.left }
+        var sp = UICollectionView.ScrollPosition.right
+        if i == RecordingViewController.recording_start { sp = UICollectionView.ScrollPosition.left }
 
         let indexPath = NSIndexPath(item:i, section:0)
         if i < RecordingViewController.gestures.count - 1 {
             let nextIndexPath = NSIndexPath(item:i+1, section:0)
-            collectionView?.scrollToItem(at: nextIndexPath as IndexPath, at: UICollectionViewScrollPosition.right, animated: false)
+            collectionView?.scrollToItem(at: nextIndexPath as IndexPath, at: UICollectionView.ScrollPosition.right, animated: false)
         } else {
             collectionView?.scrollToItem(at: indexPath as IndexPath, at: sp, animated: false)
         }
@@ -385,7 +385,7 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
         RecordingViewController.gestures.append(GestureRecording(id: stylusData.id, x:xRecording as! Recording, y:yRecording as! Recording))
         let IndexPath = NSIndexPath(item: RecordingViewController.gestures.count-1, section:0)
         collectionView?.insertItems(at: [IndexPath as IndexPath])
-        collectionView?.scrollToItem(at: IndexPath as IndexPath, at: UICollectionViewScrollPosition.right, animated: false)
+        collectionView?.scrollToItem(at: IndexPath as IndexPath, at: UICollectionView.ScrollPosition.right, animated: false)
     }
 
     func drawLine(from fromPoint: CGPoint, to toPoint: CGPoint, image imageView:UIImageView, r red:CGFloat, g green:CGFloat, b blue:CGFloat, a alpha:CGFloat, width brushWidth:CGFloat) {

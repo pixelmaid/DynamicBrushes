@@ -13,6 +13,7 @@ target 'DynamicBrushes' do
     pod 'AWSCognito'
     pod 'AWSS3'
     pod 'AWSCore'
+    pod 'Macaw'
     
   target 'DynamicBrushesTests' do
     inherit! :search_paths
@@ -26,7 +27,7 @@ target 'DynamicBrushes' do
   post_install do |installer|
       installer.pods_project.targets.each do |target|
           target.build_configurations.each do |config|
-              config.build_settings['SWIFT_VERSION'] = '4.1'
+              config.build_settings['SWIFT_VERSION'] = '4.2'
           end
       end
     end

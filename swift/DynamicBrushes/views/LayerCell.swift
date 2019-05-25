@@ -27,7 +27,7 @@ class LayerCell: UITableViewCell {
     let brushStandard = UIImage(named: "brush_button2x")
 
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         // strokeImage = CanvasView(frame: CGRectMake(0,0,90,90));
         super.init(style: style, reuseIdentifier: reuseIdentifier)
     }

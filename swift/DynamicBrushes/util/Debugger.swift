@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftyJSON
+import Macaw
 
 final class Debugger {
     
@@ -65,10 +66,15 @@ final class Debugger {
        
     }
     
-    static public func drawUnrendererdBrushes(view:UIView){
+    static public func drawUnrendererdBrushes(view:BrushGraphicsView){
         let brushes = BehaviorManager.getAllBrushInstances();
         //check to see which brushes are "unrendered"
        // pass them the UI view and draw into it
+        for brush in brushes {
+            if brush.unrendered {
+                view.drawBrush(id:brush.id, params: brush.params);
+            }
+        }
     }
     
 }

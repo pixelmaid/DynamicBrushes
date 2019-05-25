@@ -150,6 +150,7 @@
 		7267DCC120290D9F0093245A /* RecordingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7267DCC020290D9E0093245A /* RecordingViewController.swift */; };
 		7267DCC5202A8ECF0093245A /* RecordingFrameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7267DCC4202A8ECF0093245A /* RecordingFrameCell.swift */; };
 		72D72C092069DF8400C1C9C8 /* MicCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D72C082069DF8400C1C9C8 /* MicCollection.swift */; };
+		72E8C9752295BF0B00F3A7BC /* BrushGraphicsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E8C9742295BF0B00F3A7BC /* BrushGraphicsView.swift */; };
 		72F3CED4204DFD050010A3D0 /* record_off2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F3CED0204DFD040010A3D0 /* record_off2x.png */; };
 		72F3CED5204DFD050010A3D0 /* loop_button_on2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F3CED1204DFD040010A3D0 /* loop_button_on2x.png */; };
 		72F3CED6204DFD050010A3D0 /* loop_button_off2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F3CED2204DFD050010A3D0 /* loop_button_off2x.png */; };
@@ -332,6 +333,7 @@
 		7267DCC020290D9E0093245A /* RecordingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordingViewController.swift; sourceTree = "<group>"; };
 		7267DCC4202A8ECF0093245A /* RecordingFrameCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingFrameCell.swift; sourceTree = "<group>"; };
 		72D72C082069DF8400C1C9C8 /* MicCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicCollection.swift; sourceTree = "<group>"; };
+		72E8C9742295BF0B00F3A7BC /* BrushGraphicsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrushGraphicsView.swift; sourceTree = "<group>"; };
 		72F3CED0204DFD040010A3D0 /* record_off2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = record_off2x.png; sourceTree = "<group>"; };
 		72F3CED1204DFD040010A3D0 /* loop_button_on2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = loop_button_on2x.png; sourceTree = "<group>"; };
 		72F3CED2204DFD050010A3D0 /* loop_button_off2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = loop_button_off2x.png; sourceTree = "<group>"; };
@@ -631,6 +633,7 @@
 				5FFC45791EE5C6D6007B7597 /* BehaviorCell.swift */,
 				72FD33722032AE3D00CD4FAF /* RecordingToolbarVC.swift */,
 				726443612045E00D005A2E9D /* VisualizationView.swift */,
+				72E8C9742295BF0B00F3A7BC /* BrushGraphicsView.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -1080,6 +1083,8 @@
 				"${BUILT_PRODUCTS_DIR}/AWSCognito/AWSCognito.framework",
 				"${BUILT_PRODUCTS_DIR}/AWSCore/AWSCore.framework",
 				"${BUILT_PRODUCTS_DIR}/AWSS3/AWSS3.framework",
+				"${BUILT_PRODUCTS_DIR}/Macaw/Macaw.framework",
+				"${BUILT_PRODUCTS_DIR}/SWXMLHash/SWXMLHash.framework",
 				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 			);
@@ -1088,6 +1093,8 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCognito.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCore.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSS3.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Macaw.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SWXMLHash.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 			);
@@ -1139,6 +1146,7 @@
 				5F90F5481E9D59D4006BB9FE /* TimeSeries.swift in Sources */,
 				5F90F5411E9D59D4006BB9FE /* Emitter.swift in Sources */,
 				5F90F5561E9D5A41006BB9FE /* Drawing.swift in Sources */,
+				72E8C9752295BF0B00F3A7BC /* BrushGraphicsView.swift in Sources */,
 				0A67848420B8E327004BB7B9 /* MapFunctions.swift in Sources */,
 				0A56E3BF2072B916006243A6 /* SignalAccessors.swift in Sources */,
 				5F13B69C1FC3AEBF00E37A37 /* Router.swift in Sources */,
@@ -1462,7 +1470,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "objc_headers/Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
@@ -1508,7 +1516,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "objc_headers/Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Release;
