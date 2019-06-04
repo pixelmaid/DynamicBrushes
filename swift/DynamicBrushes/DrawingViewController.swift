@@ -111,7 +111,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         layerContainerView = LayerContainerView(width:pX,height:pY);
         
         //replace with custom view
-        brushGraphicsView = BrushGraphicsView(coder: coder);
+        brushGraphicsView = BrushGraphicsView(frame:CGRect(x:0, y:47, width:1366, height:1010))
         
         recordingViewController = RecordingViewController();
         super.init(coder: coder);
@@ -465,6 +465,11 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         layerContainerView.center = CGPoint(x:self.view.frame.size.width/2,y:self.view.frame.size.height/2);
         self.view.addSubview(layerContainerView);
         self.view.sendSubviewToBack(layerContainerView);
+        
+        //init brushgraphics
+        self.view.addSubview(brushGraphicsView);
+        self.view.bringSubviewToFront(brushGraphicsView);
+
         
         let pinchRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(DrawingViewController.handlePinch))
         pinchRecognizer.delegate = self
@@ -981,9 +986,11 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
             }
             
             //add check for brush unrendered
-            Debugger.drawUnrendererdBrushes(view: self.brushGraphicsView);
             
         }
+        
+        Debugger.drawUnrendererdBrushes(view: self.brushGraphicsView);
+
     }
     
     

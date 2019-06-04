@@ -81,7 +81,8 @@ final class Debugger {
        // pass them the UI view and draw into it
         for brush in brushes {
             if brush.unrendered {
-                view.drawBrush(id:brush.id, params: brush.params);
+                print("about to draw into context in debugger")
+                brush.drawIntoContext(context:view)
             }
         }
     }
