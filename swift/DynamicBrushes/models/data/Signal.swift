@@ -31,6 +31,7 @@ class Signal:Observable<Float>{
 
     var dataSubscribers = [String:Observable<Float>]();
     var id:String
+    
 
     required init(id:String,fieldName:String, displayName:String, collectionId:String, style:String, settings:JSON){
         self.id = id;

@@ -269,7 +269,7 @@ class Brush: TimeSeries, Hashable, Renderable{
     
     func storeInitialValues(){
         
-        let paramData = ["dx": 0, "dy": 0, "pr": 0, "pt": 0, "ox": 0, "oy": 0, "rotation": 0, "sx": 0, "sy": 0, "weight": 1, "hue": 100, "saturation": 100, "lightness": 100, "alpha": 100, "dist": 0, "xDist": 0, "yDist": 0, "x": 0, "y": 0, "cx":0, "cy":0, "time": 0, "i": self.index.getSilent(), "sc": self.siblingcount.getSilent(), "lv": self.level.getSilent(), "parent": "none"] as [String : Any]
+        let paramData = ["dx": 0, "dy": 0, "pr": 0, "pt": 0, "ox": 0, "oy": 0, "rotation": 0, "sx": 0, "sy": 0, "weight": 1, "hue": 100, "saturation": 100, "lightness": 100, "alpha": 100, "dist": 0, "xDist": 0, "yDist": 0, "x": 0, "y": 0, "cx":0, "cy":0, "time": 0, "i": self.index.getSilent(), "sc": self.siblingcount.getSilent(), "lv": self.level.getSilent(), "parent": "none", "active":true] as [String : Any]
         self.params.updateAll(data: paramData)
         self.signalEvent.raise(data: (self.behavior_id!,self.id,self.params));
     }
@@ -411,7 +411,7 @@ class Brush: TimeSeries, Hashable, Renderable{
         let cx = transformedCoords.0
         let cy = transformedCoords.1
         
-        let data = ["dx":dx,"dy":dy,"pr":pr,"pt":pt,"ox":ox,"oy":oy,"rotation":r,"sx":sx,"sy":sy,"weight":weight,"hue":h,"saturation":s,"lightness":l,"alpha":a,"dist":dist,"xDist":xDist,"yDist":yDist,"x":x,"y":y,"cx":cx,"cy":cy,"time":self.time.getSilent(),"i":self.index.getSilent(),"sc":self.siblingcount.getSilent(),"lv":self.level.getSilent(),"parent": (self.parent != nil ? (self.parent!.behaviorDef?.name)! : "none")] as [String : Any];
+        let data = ["dx":dx,"dy":dy,"pr":pr,"pt":pt,"ox":ox,"oy":oy,"rotation":r,"sx":sx,"sy":sy,"weight":weight,"hue":h,"saturation":s,"lightness":l,"alpha":a,"dist":dist,"xDist":xDist,"yDist":yDist,"x":x,"y":y,"cx":cx,"cy":cy,"time":self.time.getSilent(),"i":self.index.getSilent(),"sc":self.siblingcount.getSilent(),"lv":self.level.getSilent(),"parent": (self.parent != nil ? (self.parent!.behaviorDef?.name)! : "none"), "active":true] as [String : Any];
         self.params.updateAll(data: data);
         
         
@@ -704,9 +704,9 @@ class Brush: TimeSeries, Hashable, Renderable{
         #endif
         
         //todo: create persistent storage of values
-        var sendDs = params;
-        sendDs.time = self.time.get(id: nil);
-        self.signalEvent.raise(data: (self.behavior_id!,self.id,sendDs));
+        //var sendDs = params;
+        //sendDs.time = self.time.get(id: nil);
+        //self.signalEvent.raise(data: (self.behavior_id!,self.id,sendDs));
     }
     
     //sets canvas target to output geometry into
@@ -944,6 +944,7 @@ class Brush: TimeSeries, Hashable, Renderable{
     
     override func destroy() {
         self.stopInterval();
+        self.params.update(key:"active",value:false);
         if(transitionDelayTimer != nil){
             transitionDelayTimer.invalidate();
         }

@@ -390,33 +390,47 @@ class GeneratorCollection:SignalCollection{
         switch(fieldName){
         case "sine":
             signal = Sine(id:signalId , fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:pSettings);
+            self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
+
         break;
         case "sawtooth":
             signal = Sawtooth(id:signalId , fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style,settings:pSettings);
+            self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
+
         break;
-        case "interval":
-            signal = Interval(id:signalId , fieldName: fieldName, displayName: displayName, collectionId: self.id,style:style, settings:pSettings);
-            break;
+       
         case "square":
             signal = Square(id:signalId , fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:pSettings);
+            self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
+
             break;
         case "triangle":
             signal = Triangle(id:signalId , fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:pSettings);
+            self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
+
             break;
         case "random":
             signal = Random(id:signalId , fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:pSettings);
+            self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
+
             break;
-        case "alternate":
-            signal = Alternate(id:signalId , fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:pSettings);
-            break;
-        case "alternate":
-            signal = Alternate(id:signalId , fieldName: fieldName, displayName: displayName, collectionId: self.id, style:style, settings:pSettings);
-            break;
+    
         default:
-            signal = Generator(id:signalId , fieldName: fieldName, displayName: displayName, collectionId: self.id, style: style, settings:pSettings);
             break;
         }
-        self.storeSignal(fieldName: fieldName, signal: signal, isProto:isProto, order:order)
+    }
+    
+    //paramsToJSON
+    //returns list of all  current values of initialized generator signals
+    public func paramsToJSON()->JSON{
+        var data:JSON = [:]
+
+        for (fieldName,signalDict) in self.initializedSignals{
+            for (id,signal) in signalDict{
+                data[id] = (signal as! Generator).paramsToJSON();
+            }
+        }
+        return data;
     }
 }
 
@@ -480,6 +494,8 @@ class LiveCollection:SignalCollection{
         data["time"] = JSON(self.getTimeElapsed());
         return data;
     }
+    
+   
 }
 
 
