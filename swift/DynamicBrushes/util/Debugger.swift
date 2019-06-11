@@ -84,6 +84,7 @@ final class Debugger {
                 print("about to draw into context in debugger")
                 brush.drawIntoContext(context:view)
             }
+            //remove brush if not in this list 
         }
     }
     

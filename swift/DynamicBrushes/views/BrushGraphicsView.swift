@@ -34,8 +34,7 @@ public class BrushGraphicsScene {
         for brush in brushes {
             if brush.id == id {
                 print("## updating brush with id ", id)
-                brush.moveBrushIcon(ox: ox, oy: oy)
-//                brush.rotateBrushIcon(r: r)
+                brush.updateBrushIcon(r:r, ox: ox, oy: oy)
                 brush.moveComputedLocation(cx: cx+100, cy: cy+100)
                 brush.moveInputLocation(x: x+200, y: y+200)
             }
@@ -95,8 +94,7 @@ class BrushGraphic {
         //init brush icon
         node = Group()
         brushIcon = Shape (form: Polygon(points: [0,0,50,25,0,50,13,25]),
-                           fill: Macaw.Color.rgba(r: 0, g: 255, b: 255, a: 128),
-                           place: Transform.identity.scale(sx:0.3, sy:0.3)) //why doesn't this work?
+                           fill: Macaw.Color.rgba(r: 0, g: 255, b: 255, a: 128))
         brushIcon.place = Transform.move(dx:Double(self.ox),dy:Double(self.oy))
         node.contents.append(brushIcon)
         print("## init brush icon for brush ", id, " at " , self.ox, self.oy)
@@ -126,27 +124,30 @@ class BrushGraphic {
         //uhhh todo
     }
     
-    func rotateBrushIcon(r: Float) {
-        brushIcon.place = Transform.rotate(angle:Double(r * Float.pi / 180), x:Double(self.ox), y:Double(self.oy))
-        print("## rotated brush ", self.id, " by ", r)
+    func updateBrushIcon(r: Float, ox:Float, oy:Float) {
+        brushIcon.place = Transform.rotate(angle:Double(r * Float.pi / 180), x:Double(ox), y:Double(oy)).move(dx: Double(ox), dy: Double(oy))
+        self.ox = ox
+        self.oy = oy
+        self.r = r
+        print("## rotated brush ", self.id, " by ", r, " Moved to ox ,oy,", ox, oy )
     }
     
     func moveBrushIcon(ox:Float, oy:Float){
-        brushIcon.place = Transform.move(dx: Double(self.ox), dy: Double(self.oy))
+        brushIcon.place = Transform.move(dx: Double(ox), dy: Double(oy))
         self.ox = ox
         self.oy = oy
         print("## moved brush" , self.id, " to ox ,oy,", ox, oy )
     }
     
     func moveInputLocation(x: Float, y: Float) {
-        inputIcon.place = Transform.move(dx: Double(self.x - 200), dy: Double(self.y - 200)) //need this offset for some reason?
+        inputIcon.place = Transform.move(dx: Double(x), dy: Double(y)) //need this offset for some reason?
         self.x = x
         self.y = y
         print("## moved input" , self.id, " to x ,y,", x, y )
     }
     
     func moveComputedLocation(cx: Float, cy: Float) {
-        computedIcon.place = Transform.move(dx: Double(self.cx), dy: Double(self.cy))
+        computedIcon.place = Transform.move(dx: Double(cx), dy: Double(cy))
         self.cx = cx
         self.cy = cy
         print("## moved computed" , self.id, "to cx cy" , cx, cy)
