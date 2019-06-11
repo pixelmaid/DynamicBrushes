@@ -99,7 +99,7 @@ class Observable<T>: DisposableObservable {
     }
     
     //PLACEHOLDERS FOR GENERATOR
-     func registerBrush(id:String){
+     func registerBrush(brush:Brush){
         
     }
     

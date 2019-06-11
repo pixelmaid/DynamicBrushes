@@ -52,8 +52,8 @@ final class Debugger {
     static public func generateInputDebugData(){
         //var debugData:JSON = [:]
         let generatorCollection = BehaviorManager.signalCollections[2]["default"]!;
-        let generatorData = generatorCollection.rawDataToJSON();
-       print("~~~~~",generatorData,"~~~~~");
+        let generatorData = (generatorCollection as! GeneratorCollection).paramsToJSON();
+       print(generatorData);
     }
     
     static public func  generateBrushDebugData(brush:Brush, type:String){

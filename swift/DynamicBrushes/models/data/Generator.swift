@@ -9,16 +9,19 @@ import Foundation
 import SwiftyJSON
 
 class Generator:Signal{
-    var registeredBrushes = [String:Int]();
+    var registeredBrushes = [String:Brush]();
+    var paramList = [String:GeneratorStateStorage]();
+    
     static let incrementConst = 1;
     required init(id: String, fieldName: String, displayName: String, collectionId: String, style: String, settings: JSON) {
         super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
         self.index = 0;
 
     }
-    
-   override func registerBrush(id:String){
-        self.registeredBrushes[id] = 0;
+
+    override func registerBrush(brush:Brush){
+        self.registeredBrushes[brush.id] = brush;
+        self.paramList[brush.id] = GeneratorStateStorage();
     }
     
     override func removeRegisteredBrush(id:String){
@@ -27,44 +30,44 @@ class Generator:Signal{
             return;
         }
         self.registeredBrushes.removeValue(forKey: id);
+        self.paramList.removeValue(forKey: id);
+
     }
     
     override func reset(){
-        for (key,_) in self.registeredBrushes{
-            registeredBrushes[key] = 0;
-        }
+        registeredBrushes.removeAll();
+        self.paramList.removeAll();
     }
     
     override func clearAllRegisteredBrushes(){
         self.registeredBrushes.removeAll();
+        self.paramList.removeAll();
+
     }
 
-    func incrementAndChangeById(id:String,v: Float) {
-        self.incrementIndexById(id:id);
+    func update(v: Float, id: String, time: Int) {
         self.didChange.raise(data: (self.id, self.prevV, v));
         self.prevV = v;
+        let data:[String:Any] = ["v":v,"time":time];
+        self.paramList[id]!.updateAll(data: data);
     }
     
-    func getIndexById(id:String)->Int?{
-        let i =  self.registeredBrushes[id]
-        guard i != nil else{
-            print("=============ERROR ATTEMPTED TO ACCESS INDEX FOR GENERATOR BUT ID IS NIL===========");
-            return nil;
+    func paramsToJSON()->JSON{
+        var data:JSON = [:]
+        for (key,value) in self.paramList{
+            data[key] = value.toJSON();
         }
         
+        return data;
+    }
+    
+    func getIndexById(id:String)->Int{
+        guard self.registeredBrushes[id] != nil else{
+            print("=============WARNING ATTEMPTED TO REMOVE REGISTERED BRUSH FOR GENERATOR THAT IS NOT REGISTERED===========");
+            return -1;
+        }
+        let i =  registeredBrushes[id]!.params.time;
         return i;
-    }
-    
-    
-    func incrementIndexById(id:String) {
-        let i =  self.registeredBrushes[id]
-        guard i != nil else{
-            print("=============ERROR ATTEMPTED TO INCREMENT BY INDEX FOR GENERATOR BUT ID IS NIL===========");
-            return;
-        }
-      
-        self.registeredBrushes[id] = i!+Generator.incrementConst;
-        
     }
     
    override func incrementIndex(){
@@ -95,14 +98,8 @@ class Sine:Generator{
         }
     
         let i = self.getIndexById(id: id!);
-        guard i != nil else{
-            print("=============ERROR ATTEMPTED TO GET BY INDEX FOR GENERATOR BUT INDEX IS NIL===========");
-            return 0;
-        }
-    
-        
-        let v =  sin(Float(i!)*freq+phase)*amp/2+amp/2;
-        self.incrementAndChangeById(id: id!, v: v);
+        let v =  sin(Float(i)*freq+phase)*amp/2+amp/2;
+        self.update(v: v, id: id!,time: i);
         return v;
     }
     
@@ -114,16 +111,6 @@ class Sine:Generator{
         return json;
     }
     
-    override func incrementIndexById(id:String) {
-        let i =  self.registeredBrushes[id]
-        guard i != nil else{
-            print("=============ERROR ATTEMPTED TO INCREMENT BY INDEX FOR GENERATOR BUT ID IS NIL===========");
-            return;
-        }
-        
-        self.registeredBrushes[id] = i!+10;
-        
-    }
     
     
 }
@@ -157,20 +144,9 @@ class Sawtooth:Generator{
             return 0;
         }
         
-        var i = self.getIndexById(id: id!);
-        guard i != nil else{
-            print("=============ERROR ATTEMPTED TO GET BY INDEX FOR GENERATOR BUT INDEX IS NIL===========");
-            return 0;
-        }
-        
-        if(i!>=val.count){
-            self.registeredBrushes[id!] = 0;
-            i = 0;
-        }
-        
-        let v = val[Int(i!)]
-        self.incrementAndChangeById(id: id!, v: v);
-        print("~~~~~~~~~",val,"~~~~~~~~~");
+        let i = self.getIndexById(id: id!);
+        let v = Float(i % (100))/100;
+        self.update(v: v, id: id!,time: i);
         return v;
     }
     
@@ -195,6 +171,7 @@ class Triangle:Generator{
         self.freq = settings["freq"].floatValue;
         self.min = settings["min"].floatValue;
         self.max = settings["max"].floatValue;
+    //TODO: reimplement freq/ min max?
     super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style,  settings:settings);
 
     }
@@ -208,19 +185,12 @@ class Triangle:Generator{
         }
         
         let i = self.getIndexById(id: id!);
-        guard i != nil else{
-            print("=============ERROR ATTEMPTED TO GET BY INDEX FOR GENERATOR BUT INDEX IS NIL===========");
-            return 0;
-        }
         
         
-        
-        let ti = 2.0 * Float.pi * (880 / 44100);
-        let theta = ti * Float(i!);
-        let _v = 1.0 - abs(Float(theta.truncatingRemainder(dividingBy: 4)-2));
-        let v = MathUtil.map(value: _v, low1: -1, high1: 1, low2: min, high2: max)
-        self.incrementAndChangeById(id: id!, v: v);
-
+        let p = Float(10);
+        let r = Float(i)/p;
+        let v = 2.0*abs(r - floor(r+0.5));
+        self.update(v: v, id: id!,time: i);
         return v;
     }
     
@@ -254,19 +224,25 @@ class Square:Generator{
     }
     
     override func get(id:String?) -> Float {
-        //TODO: This won't work correctly with new hash system
-        if(self.index == 0){
-            if(currentVal == min){
-                currentVal = max;
-            }
-            else{
-                currentVal = min;
-            }
+      
+     
+        guard id != nil else{
+            
+            print("=============ERROR ATTEMPTED TO GET BY INDEX FOR GENERATOR BUT ID IS NIL===========");
+            return 0;
         }
-        incrementAndChange(v: currentVal);
-
         
-        return currentVal;
+    
+    
+        let t = self.getIndexById(id: id!);
+        let i = Float(t);
+    
+        let p = Float(0.1);
+        let a = floor(p*i);
+        let b = floor((2.0*p*i));
+        let v = 2.0*a-b+1.0;
+        self.update(v: v, id: id!,time: t);
+        return v;
         
     }
     
@@ -283,7 +259,49 @@ class Square:Generator{
     
 }
 
-class Alternate:Generator{
+class Random: Generator{
+    let start:Float
+    let end:Float
+    
+    required init(id:String, fieldName:String, displayName:String, collectionId:String, style:String, settings:JSON){
+        self.start = 0.0; //settings["start"].floatValue;
+        self.end = 1.0; //settings["end"].floatValue;
+
+        super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
+        
+    }
+    
+    override func get(id:String?) -> Float {
+        
+       guard id != nil else{
+            print("=============ERROR ATTEMPTED TO GET BY INDEX FOR GENERATOR BUT ID IS NIL===========");
+            return 0;
+        }
+    
+    
+    
+        let i = self.getIndexById(id: id!);
+
+        let v = Float(arc4random()) / Float(UINT32_MAX) * abs(self.start - self.end) + min(self.start, self.end)
+        
+        
+        self.update(v: v, id: id!,time: i);
+
+        return v
+    }
+    override func getSettingsJSON()->JSON{
+        var json = super.getSettingsJSON();
+        
+        json["start"] = JSON(self.start);
+        json["end"] = JSON(self.end);
+        return json;
+    }
+    
+    
+}
+
+
+/*class Alternate:Generator{
     var val = [Float]();
     
     required init(id:String, fieldName:String, displayName:String, collectionId:String, style:String, settings:JSON){
@@ -297,7 +315,7 @@ class Alternate:Generator{
     
     override func get(id:String?) -> Float {
         //TODO: This won't work correctly with new hash system
-
+        
         let v = val[Int(self.index)]
         incrementAndChange(v: v);
         if(index>=val.count){
@@ -313,45 +331,7 @@ class Alternate:Generator{
         json["val"] = JSON(self.val);
         return json;
     }
-    
-    
-    
 }
-
-
-class Random: Generator{
-    let start:Float
-    let end:Float
-    var val:Float;
-    
-    required init(id:String, fieldName:String, displayName:String, collectionId:String, style:String, settings:JSON){
-        self.start = settings["start"].floatValue;
-        self.end = settings["end"].floatValue;
-        val = Float(arc4random()) / Float(UINT32_MAX) * abs(self.start - self.end) + min(self.start, self.end)
-
-        super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
-        
-    }
-    
-    override func get(id:String?) -> Float {
-        //TODO: This won't work correctly with new hash system
-
-        val = Float(arc4random()) / Float(UINT32_MAX) * abs(self.start - self.end) + min(self.start, self.end)
-        incrementAndChange(v: val);
-
-        return val
-    }
-    override func getSettingsJSON()->JSON{
-        var json = super.getSettingsJSON();
-        
-        json["start"] = JSON(self.start);
-        json["end"] = JSON(self.end);
-        return json;
-    }
-    
-    
-}
-
 
 class Interval:Generator{
     var val = [Float]();
@@ -412,5 +392,5 @@ class Interval:Generator{
     
     
     
-}
+}*/
 
