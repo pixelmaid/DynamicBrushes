@@ -39,7 +39,6 @@ class SaveManager{
         let s3 = AWSS3.s3(forKey: "defaultKey")
         s3.listObjects(listRequest).continueWith { (task) -> AnyObject? in
             var listArray = [String:String]()
-            print("list objects output",task.result?.contents)
             let listObjectsOutput = task.result;
             for object in (listObjectsOutput?.contents)! {
                 let key = object.key

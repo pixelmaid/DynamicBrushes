@@ -24,17 +24,19 @@ class BrushCollection:LiveCollection{
         
     }
     
+
+    
     public func addProtoSampleForId(behaviorId:String, brushId:String, data: JSON) {
-        
+        print(data, self.protoSignals);
         for (key,value) in data {
             guard let targetProtoSignal = self.protoSignals[key] else {
                 print("ERROR ---------NO PROTO SIGNAL FOUND THAT CORRESPOND WITH FIELD NAME-----------",key,self.protoSignals)
-                return;
+                break;
             }
             targetProtoSignal.addValueFor(behaviorId:behaviorId, brushId:brushId, v: value.floatValue)
             guard let initializedList = self.initializedSignals[key] else{
                 print("ERROR ---------NO  SIGNAL LIST THAT CORRESPOND WITH FIELD NAME-----------",key)
-                return;
+                break;
             }
             for (_,signal) in initializedList{
                 signal.addValueFor(behaviorId:behaviorId, brushId:brushId, v: value.floatValue)
