@@ -13,6 +13,8 @@ import SwiftyJSON
 class LayerContainerView: UIView {
     var visualizationLayer:VisualizationView?
     var activeLayer:ModifiedCanvasView?
+    var brushGraphicsView:BrushGraphicsView?
+
     var layers = [ModifiedCanvasView]();
     var drawActive = true;
     var drawMode = "n/a"
@@ -38,12 +40,17 @@ class LayerContainerView: UIView {
         super.init(frame: frame);
         self.backgroundColor = UIColor.white;
         //init here instead
+        brushGraphicsView = BrushGraphicsView(frame:CGRect(x:0, y:0, width:1366, height:1010))
+        self.addSubview(brushGraphicsView!);
+        self.bringSubviewToFront(brushGraphicsView!);
+        print("init brush graphics  view")
+
     }
     
     required init?(coder aDecoder: NSCoder) {
         self.targetSize = CGSize(width: 100, height: 100)
         super.init(coder: aDecoder)
-        
+
     }
     
     func exportPNG(){

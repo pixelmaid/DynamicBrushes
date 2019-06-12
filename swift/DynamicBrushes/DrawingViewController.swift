@@ -45,7 +45,6 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     
     var layerContainerView:LayerContainerView!
     
-    var brushGraphicsView:BrushGraphicsView!
     
     var behaviorManager: BehaviorManager?
     var currentDrawing: Drawing?
@@ -111,7 +110,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         layerContainerView = LayerContainerView(width:pX,height:pY);
         
         //replace with custom view
-        brushGraphicsView = BrushGraphicsView(frame:CGRect(x:0, y:47, width:1366, height:1010))
+//        brushGraphicsView = BrushGraphicsView(frame:CGRect(x:0, y:47, width:1366, height:1010))
         
         recordingViewController = RecordingViewController();
         super.init(coder: coder);
@@ -467,8 +466,8 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         self.view.sendSubviewToBack(layerContainerView);
         
         //init brushgraphics
-        self.view.addSubview(brushGraphicsView);
-        self.view.bringSubviewToFront(brushGraphicsView);
+//        self.view.addSubview(brushGraphicsView);
+//        self.view.bringSubviewToFront(brushGraphicsView);
 
         
         let pinchRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(DrawingViewController.handlePinch))
@@ -989,7 +988,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
             
         }
         
-        Debugger.drawUnrendererdBrushes(view: self.brushGraphicsView);
+        Debugger.drawUnrendererdBrushes(view: self.layerContainerView.brushGraphicsView!);
 
     }
     
