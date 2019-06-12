@@ -128,7 +128,7 @@ class BehaviorPanelViewController: UITableViewController{
             behavior_data[0].active = false
             self.behaviorEvent.raise(data: ("DEACTIVATE_BEHAVIOR",target_id!,nil));
             
-            (sender as! UIButton).setImage(inactiveIcon, for: UIControlState.normal)
+            (sender as! UIButton).setImage(inactiveIcon, for: UIControl.State.normal)
         }
         else{
             print("set target active")
@@ -137,7 +137,7 @@ class BehaviorPanelViewController: UITableViewController{
 
             self.behaviorEvent.raise(data: ("ACTIVATE_BEHAVIOR",target_id!,nil));
             
-            (sender as! UIButton).setImage(activeIcon, for: UIControlState.normal)
+            (sender as! UIButton).setImage(activeIcon, for: UIControl.State.normal)
         }
         self.tableView.reloadData();
     }
@@ -185,10 +185,10 @@ class BehaviorPanelViewController: UITableViewController{
         cell.active = behavior.active
         cell.activateButton.addTarget(self,action:#selector(BehaviorPanelViewController.toggleActive), for: .touchUpInside)
         if(cell.active){
-            cell.activateButton.setImage(activeIcon, for: UIControlState.normal)
+            cell.activateButton.setImage(activeIcon, for: UIControl.State.normal)
         }
         else{
-              cell.activateButton.setImage(inactiveIcon, for: UIControlState.normal)
+            cell.activateButton.setImage(inactiveIcon, for: UIControl.State.normal)
         }
         
         cell.refreshButton.addTarget(self,action:#selector(BehaviorPanelViewController.refreshBehavior), for: .touchUpInside)

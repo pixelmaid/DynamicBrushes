@@ -160,14 +160,14 @@ class LayerPanelViewController: UITableViewController{
             layer_data[0].hidden = true
 
             self.layerEvent.raise(data: ("HIDE_LAYER",target_id!,nil));
-            (sender as! UIButton).setImage(hideIcon, for: UIControlState.normal)
+            (sender as! UIButton).setImage(hideIcon, for: UIControl.State.normal)
         }
         else{
             target.visible = true;
             layer_data[0].hidden = false
 
             self.layerEvent.raise(data: ("SHOW_LAYER",target_id!,nil));
-            (sender as! UIButton).setImage(showIcon, for: UIControlState.normal)
+            (sender as! UIButton).setImage(showIcon, for: UIControl.State.normal)
         }
         self.tableView.reloadData();
     }
@@ -218,10 +218,10 @@ class LayerPanelViewController: UITableViewController{
         cell.visible = !layer.hidden;
         cell.layerVisibleButton.addTarget(self,action:#selector(LayerPanelViewController.toggleLayerVisibility), for: .touchUpInside)
         if(cell.visible){
-           cell.layerVisibleButton.setImage(showIcon, for: UIControlState.normal)
+            cell.layerVisibleButton.setImage(showIcon, for: UIControl.State.normal)
         }
         else{
-             cell.layerVisibleButton.setImage(hideIcon, for: UIControlState.normal)
+            cell.layerVisibleButton.setImage(hideIcon, for: UIControl.State.normal)
         }
 
         cell.deleteLayerButton.addTarget(self,action:#selector(LayerPanelViewController.deleteLayer), for: .touchUpInside)

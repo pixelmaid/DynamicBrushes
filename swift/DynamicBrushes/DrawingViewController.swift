@@ -9,6 +9,7 @@
 import UIKit
 import SwiftyJSON
 import AudioKit
+import Macaw
 
 
 let stylusManager = StylusManager();
@@ -44,8 +45,6 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     
     var layerContainerView:LayerContainerView!
     
-    //populate with custom view
-    var brushVisualizationView:UIView!
     
     var behaviorManager: BehaviorManager?
     var currentDrawing: Drawing?
@@ -111,7 +110,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         layerContainerView = LayerContainerView(width:pX,height:pY);
         
         //replace with custom view
-        brushVisualizationView = UIView(coder: coder);
+//        brushGraphicsView = BrushGraphicsView(frame:CGRect(x:0, y:47, width:1366, height:1010))
         
         recordingViewController = RecordingViewController();
         super.init(coder: coder);
@@ -464,7 +463,12 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         
         layerContainerView.center = CGPoint(x:self.view.frame.size.width/2,y:self.view.frame.size.height/2);
         self.view.addSubview(layerContainerView);
-        self.view.sendSubview(toBack: layerContainerView);
+        self.view.sendSubviewToBack(layerContainerView);
+        
+        //init brushgraphics
+//        self.view.addSubview(brushGraphicsView);
+//        self.view.bringSubviewToFront(brushGraphicsView);
+
         
         let pinchRecognizer = UIPinchGestureRecognizer(target: self, action: #selector(DrawingViewController.handlePinch))
         pinchRecognizer.delegate = self
@@ -879,7 +883,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
             
             let prefix = "/image_backups/";
             let artistName = UserDefaults.standard.string(forKey:"userkey");
-            let png = UIImagePNGRepresentation(data.1!)
+            let png = data.1!.pngData()
             let path = self.layerContainerView.exportPNGAsFile(image: png!)
             
             var uploadData:JSON = [:]
@@ -930,7 +934,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         if(contentToShare != nil){
             
             
-            let pngImageData: Data? = UIImagePNGRepresentation(contentToShare!)
+            let pngImageData: Data? = contentToShare!.pngData()
             let pngSmallImage = UIImage(data: pngImageData!)
             UIImageWriteToSavedPhotosAlbum(pngSmallImage!, self, nil, nil)
             let svg = (currentDrawing?.getSVG())! as NSString;
@@ -981,9 +985,11 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
             }
             
             //add check for brush unrendered
-            Debugger.drawUnrendererdBrushes(view: self.brushVisualizationView);
             
         }
+        
+        Debugger.drawUnrendererdBrushes(view: self.layerContainerView.brushGraphicsView!);
+
     }
     
     
@@ -1310,7 +1316,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
             
             break;
         case "debug_request":
-            let debug_data = data.1! as JSON
+            _ = data.1! as JSON
             #if DEBUG
            // print("debug_request",(debug_data["data"] as JSON)["type"].stringValue);
             #endif

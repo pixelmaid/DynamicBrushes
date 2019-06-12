@@ -145,11 +145,11 @@ class ToolbarViewController: UIViewController {
     
     @objc func eraseToggled(){
         if(eraseActive){
-            eraseButton.setImage(eraseStandard, for: UIControlState.normal)
+            eraseButton.setImage(eraseStandard, for: UIControl.State.normal)
             eraseActive = false;
         }
         else{
-            eraseButton.setImage(eraseHighlight, for: UIControlState.normal)
+            eraseButton.setImage(eraseHighlight, for: UIControl.State.normal)
             eraseActive = true;
 
         }
@@ -162,8 +162,8 @@ class ToolbarViewController: UIViewController {
     
     @objc func penToggled(){
        
-            penButton.setImage(penHighlight, for: UIControlState.normal)
-           airbrushButton.setImage(airbrushStandard, for: UIControlState.normal)
+        penButton.setImage(penHighlight, for: UIControl.State.normal)
+        airbrushButton.setImage(airbrushStandard, for: UIControl.State.normal)
 
             activeMode = "pen"
             
@@ -177,8 +177,8 @@ class ToolbarViewController: UIViewController {
     }
     
     @objc func airbrushToggled(){
-            penButton.setImage(penStandard, for: UIControlState.normal)
-            airbrushButton.setImage(airbrushHighlight, for: UIControlState.normal)
+        penButton.setImage(penStandard, for: UIControl.State.normal)
+        airbrushButton.setImage(airbrushHighlight, for: UIControl.State.normal)
             
             activeMode = "airbrush"
             
@@ -190,12 +190,12 @@ class ToolbarViewController: UIViewController {
     
     @objc func micToggled(){
         if !micActive {
-            micButton.setImage(micOn, for: UIControlState.normal)
+            micButton.setImage(micOn, for: UIControl.State.normal)
             print("@ mic turned on")
             micActive = true;
             toolEvent.raise(data: ("MIC_ON"));
         } else {
-            micButton.setImage(micOff, for: UIControlState.normal)
+            micButton.setImage(micOff, for: UIControl.State.normal)
             print("@ mic turned off")
             micActive = false;
             toolEvent.raise(data: ("MIC_OFF"));

@@ -59,7 +59,7 @@ define(["app/Emitter", "app/DebuggerModel"],
 					});
 				}
 			}
-q
+
 			setupData() {
 				this.data = {
 					groups: [

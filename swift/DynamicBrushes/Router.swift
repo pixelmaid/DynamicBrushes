@@ -19,7 +19,7 @@ final class Router {
     
     class func createDrawingModule()->UIViewController{
          let navController = mainStoryboard.instantiateViewController(withIdentifier: "NavigationController")
-        if let view = navController.childViewControllers.first as? DrawingViewController{
+        if let view = navController.children.first as? DrawingViewController{
             view.router = Router();
             /* let presenter: PostListPresenterProtocol & PostListInteractorOutputProtocol = PostListPresenter()
  let interactor: PostListInteractorInputProtocol & PostListRemoteDataManagerOutputProtocol = PostListInteractor()
@@ -48,7 +48,7 @@ final class Router {
     
     class func createProgrammingModule()->UIViewController{
         let viewController = mainStoryboard.instantiateViewController(withIdentifier: "ProgrammingController")
-        if let view = viewController as? ProgrammingViewController {
+        if viewController is ProgrammingViewController {
             /*let presenter: PostDetailPresenterProtocol = PostDetailPresenter()
             let wireFrame: PostDetailWireFrameProtocol = PostDetailWireFrame()
             

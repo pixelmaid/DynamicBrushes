@@ -29,7 +29,7 @@ class ProgrammingViewController:UIViewController,  WKUIDelegate {
         webView.uiDelegate = self
         view = webView
         returnButton = UIButton(frame: CGRect(x:10,y:10,width:100,height:100));
-        returnButton.setTitle("return", for: UIControlState.normal)
+        returnButton.setTitle("return", for: UIControl.State.normal)
         view.addSubview(returnButton)
     }
     override func viewDidLoad() {

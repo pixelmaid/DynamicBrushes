@@ -18,8 +18,10 @@
 #import "AWSS3Serializer.h"
 #import "AWSS3Service.h"
 #import "AWSS3TransferManager.h"
-#import "AWSS3TransferUtility+Validation.h"
+#import "AWSS3TransferUtility+HeaderHelper.h"
 #import "AWSS3TransferUtility.h"
+#import "AWSS3TransferUtilityDatabaseHelper.h"
+#import "AWSS3TransferUtilityTasks.h"
 
 FOUNDATION_EXPORT double AWSS3VersionNumber;
 FOUNDATION_EXPORT const unsigned char AWSS3VersionString[];
