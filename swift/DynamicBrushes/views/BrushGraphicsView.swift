@@ -12,9 +12,8 @@ import Macaw
 public class BrushGraphicsScene {
     //a brush graphics scene contains brushgraphics (one for each active brush)
     let view: BrushGraphicsView
-    var brushes = [BrushGraphic]()
     var node: Group
-    var activeBrushIds = [String]()
+    var activeBrushIds = [String:BrushGraphic]() //dictionary
     
     init(view: BrushGraphicsView) {
         self.view = view
@@ -25,13 +24,12 @@ public class BrushGraphicsScene {
     public func addBrushGraphic(id:String, ox:Float, oy:Float, r: Float,
                          x: Float, y:Float, cx: Float, cy:Float ) {
         //add to id, create new class
-        self.activeBrushIds.append(id)
         let brushGraphic = BrushGraphic(view:self.view, scene:self, id:id, ox:ox, oy:oy, r:r, x:x, y:y, cx:cx, cy:cy)
-        brushes.append(brushGraphic)
+        self.activeBrushIds[id] = brushGraphic //add to dict
     }
     
     public func updateBrush(id:String, r: Float, x: Float, y: Float, cx: Float, cy: Float, ox: Float, oy: Float) {
-        for brush in brushes {
+        for (_, brush) in self.activeBrushIds {
             if brush.id == id {
                 print("## updating brush with id ", id)
                 brush.updateBrushIcon(r:r, ox: ox, oy: oy)
@@ -42,7 +40,7 @@ public class BrushGraphicsScene {
     }
     
     public func checkActiveId(id:String) -> Bool {
-        if self.activeBrushIds.contains(id) {
+        if (self.activeBrushIds[id] != nil) {
             return true;
         }
         return false;
@@ -50,7 +48,10 @@ public class BrushGraphicsScene {
     
     
     public func removeActiveId(id:String) {
-        activeBrushIds = activeBrushIds.filter {$0 != id}
+        if let removedBrush = self.activeBrushIds.removeValue(forKey: id) {
+            removedBrush.removeFromScene()
+            print("## removed id ", id)
+        }
     }
     
 }
@@ -145,7 +146,12 @@ class BrushGraphic {
     }
     
     func removeFromScene() {
-        //uhhh todo
+        var array = self.scene.node.contents
+        if let index = array.index(of:self.node) {
+            array.remove(at: index)
+            print("## in brush graphic, removed self ", index)
+        }
+        self.scene.node.contents = array
     }
     
     func updateBrushIcon(r: Float, ox:Float, oy:Float) {
