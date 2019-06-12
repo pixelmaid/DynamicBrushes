@@ -79,13 +79,24 @@ final class Debugger {
         let brushes = BehaviorManager.getAllBrushInstances();
         //check to see which brushes are "unrendered"
        // pass them the UI view and draw into it
+        var brushIds = Set<String>()
         for brush in brushes {
             if brush.unrendered {
                 print("about to draw into context in debugger")
                 brush.drawIntoContext(context:view)
             }
-            //remove brush if not in this list 
+            brushIds.insert(brush.id)
         }
+        //remove brush if not in this list
+        let brushesIdsOnCanvas = Set(view.scene!.activeBrushIds.keys)
+        
+        let keysToRemove = Array(brushesIdsOnCanvas.symmetricDifference(brushIds))
+//        print("##keys to remove is ", keysToRemove)
+        for id in keysToRemove {
+            view.scene!.removeActiveId(id:id)
+            view.updateNode()
+        }
+        
     }
     
 }
