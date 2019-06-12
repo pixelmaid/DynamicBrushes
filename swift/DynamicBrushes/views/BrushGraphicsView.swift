@@ -70,6 +70,8 @@ class BrushGraphic {
     let originText: Text
     let inputText: Text
     let computedText: Text
+    let xAxis: Group
+    let yAxis: Group
     
     let id: String
     var ox: Float
@@ -80,8 +82,10 @@ class BrushGraphic {
     var cx: Float
     var cy: Float
     
-    let ox_offset:Double = 15
-    let oy_offset:Double = 15
+    let oxOffset:Double = 0
+    let oyOffset:Double = 0
+    
+    let axisScale:Double = 15 //actually a third of the axis
     
     init(view:BrushGraphicsView, scene:BrushGraphicsScene, id:String, ox:Float, oy:Float, r: Float, x: Float, y:Float,
          cx: Float, cy:Float ) {
@@ -105,13 +109,26 @@ class BrushGraphic {
         //init brush icon
         node = Group()
         
-//        let rotationIndicator = Shape (form: Polygon(points: [0,0,50,25,0,50,13,25]), fill: brushColor)
-        let rotationIndicator = Shape (form: Polygon(points: [30,0,35,15,30,30]), fill: brushColor)
-        let originIndicator = Group(contents: [Macaw.Line(x1: 0, y1: 15, x2: 30, y2: 15).stroke(fill: brushColor, width: 2), Macaw.Line(x1: 15, y1: 0, x2: 15, y2: 30).stroke(fill: brushColor, width: 2)])
-        originText = BrushGraphic.newText("ox: 0, oy: 0, r: 0", Transform.move(dx:21,dy:45))
+//        let rotationIndicator = Shape (form: Polygon(points: [30,0,35,15,30,30]), fill: brushColor)
+//        let originIndicator = Group(contents: [Macaw.Line(x1: 0, y1: 15, x2: 30, y2: 15).stroke(fill: brushColor, width: 2), Macaw.Line(x1: 15, y1: 0, x2: 15, y2: 30).stroke(fill: brushColor, width: 2)])
+        let xLine = Macaw.Line(x1: -axisScale, y1: 0, x2: 3*axisScale, y2:0).stroke(fill:brushColor, width:2)
+        let yLine = Macaw.Line(x1: 0, y1: -axisScale, x2: 0, y2:3*axisScale).stroke(fill:brushColor, width:2)
+        let triScale = axisScale*0.25
+        let xTriangle = Polygon(points:[0, -triScale, -triScale*sqrt(3), 0, 0, triScale]).fill(with: brushColor)
+        xTriangle.place = Transform.move(dx:3*axisScale, dy:0).rotate(angle:Double(pi))
+        let yTriangle = Polygon(points:[0, -triScale, -triScale*sqrt(3), 0, 0, triScale]).fill(with: brushColor)
+        yTriangle.place = Transform.move(dx:0, dy:3*axisScale).rotate(angle:Double(-pi/2))
         
-        brushIcon = Group(contents: [rotationIndicator, originIndicator])
-        brushIcon.place = Transform.move(dx:Double(self.ox) - ox_offset,dy:Double(self.oy) - oy_offset)
+        xAxis = Group(contents:[xLine, xTriangle])
+        yAxis = Group(contents:[yLine, yTriangle])
+        let originCircle = Circle(r:(axisScale*0.75)).stroke(fill:brushColor, width:2)
+        originText = BrushGraphic.newText("ox:0, oy:0, r:0\nsx:100, sy:100", Transform.move(dx:500,dy:500))
+        
+        brushIcon = Group(contents: [xAxis, yAxis, originCircle])
+//        brushIcon.place = Transform.move(dx:Double(self.ox) - oxOffset,dy:Double(self.oy) - oyOffset)
+        //for testing
+        brushIcon.place = Transform.move(dx:Double(500),dy:Double(500))
+        
         node.contents.append(brushIcon)
         node.contents.append(originText)
         print("## init brush icon for brush ", id, " at " , self.ox, self.oy)
@@ -155,7 +172,7 @@ class BrushGraphic {
     }
     
     func updateBrushIcon(r: Float, ox:Float, oy:Float) {
-        brushIcon.place = Transform.rotate(angle:Double(r * Float.pi / 180), x:Double(ox), y:Double(oy)).move(dx: Double(ox) - ox_offset, dy: Double(oy) - oy_offset)
+        brushIcon.place = Transform.rotate(angle:Double(r * Float.pi / 180), x:Double(ox), y:Double(oy)).move(dx: Double(ox) - oxOffset, dy: Double(oy) - oyOffset)
         originText.place = Transform.move(dx: Double(ox), dy: Double(oy) - Double(20))
         self.ox = ox
         self.oy = oy
