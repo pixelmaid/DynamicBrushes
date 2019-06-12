@@ -35,8 +35,8 @@ public class BrushGraphicsScene {
             if brush.id == id {
                 print("## updating brush with id ", id)
                 brush.updateBrushIcon(r:r, ox: ox, oy: oy)
-                brush.moveComputedLocation(cx: cx+100, cy: cy+100)
-                brush.moveInputLocation(x: x+200, y: y+200)
+                brush.moveComputedLocation(cx: cx, cy: cy)
+                brush.moveInputLocation(x: x, y: y)
             }
         }
     }
@@ -63,7 +63,7 @@ class BrushGraphic {
     let scene: BrushGraphicsScene
     
     var node: Group
-    let brushIcon: Shape
+   let brushIcon: Shape
     let inputIcon: Shape
     let computedIcon: Shape
     
@@ -94,7 +94,7 @@ class BrushGraphic {
         //init brush icon
         node = Group()
         brushIcon = Shape (form: Polygon(points: [0,0,50,25,0,50,13,25]),
-                           fill: Macaw.Color.rgba(r: 0, g: 255, b: 255, a: 128))
+                          fill: Macaw.Color.rgba(r: 0, g: 255, b: 255, a: 128))
         brushIcon.place = Transform.move(dx:Double(self.ox),dy:Double(self.oy))
         node.contents.append(brushIcon)
         print("## init brush icon for brush ", id, " at " , self.ox, self.oy)

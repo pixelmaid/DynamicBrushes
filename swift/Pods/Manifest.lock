@@ -5,11 +5,11 @@ PODS:
   - AudioKit/Core (4.7.2)
   - AudioKit/UI (4.7.2):
     - AudioKit/Core
-  - AWSCognito (2.9.8):
-    - AWSCore (= 2.9.8)
-  - AWSCore (2.9.8)
-  - AWSS3 (2.9.8):
-    - AWSCore (= 2.9.8)
+  - AWSCognito (2.9.9):
+    - AWSCore (= 2.9.9)
+  - AWSCore (2.9.9)
+  - AWSS3 (2.9.9):
+    - AWSCore (= 2.9.9)
   - Macaw (0.9.5):
     - SWXMLHash
   - Starscream (3.1.0)
@@ -38,9 +38,9 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   AudioKit: ee4ab79e2fffe42e52b8fd8d214eaaea968c368e
-  AWSCognito: b9890c55e85fba46fd9695192ab64420abbc4328
-  AWSCore: 5da86c5afde44a87b06a2df50601bca81a8cee13
-  AWSS3: a5e12eb2495bbe49cda8b0595fa77280aacd7d3d
+  AWSCognito: 2e513a2b65c79ed831c31214b84d639d50405ac9
+  AWSCore: 705dbb60efeec05bc6bbee416e7f5e9837af0749
+  AWSS3: fd75bd3b80d832398308d0b82b6e1d973db5dd34
   Macaw: 10bf9e327cb75f24e3225d5229a80ed544df85f0
   Starscream: 08172b481e145289c4930cb567230fb55897cfa4
   SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
@@ -48,4 +48,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: c07b35e43bb78b7292c7cff276668eee3d258b59
 
-COCOAPODS: 1.6.0
+COCOAPODS: 1.6.2

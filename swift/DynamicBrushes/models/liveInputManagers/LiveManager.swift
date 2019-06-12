@@ -421,7 +421,6 @@ final class StylusManager:LiveManager{
     
     //TOOD: NEED TO MAKE THESE SYMMETRICAL TO STYLUSCOLLECTION EVENTS TO CALCULATE ACCURATE DATA
     public func onStylusMove(x:Float,y:Float,force:Float,angle:Float){
-        print("stylus x",x);
         guard self.collections["stylus"] != nil else{
             return
         }

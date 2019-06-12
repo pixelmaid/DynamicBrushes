@@ -410,9 +410,7 @@ class Brush: TimeSeries, Hashable, Renderable{
 
         let cx = transformedCoords.0
         let cy = transformedCoords.1
-        
-        print("=====~~x:",x,"cx:",cx)
-        
+                
         let data = ["dx":dx,"dy":dy,"pr":pr,"pt":pt,"ox":ox,"oy":oy,"rotation":r,"sx":sx,"sy":sy,"weight":weight,"hue":h,"saturation":s,"lightness":l,"alpha":a,"dist":dist,"xDist":xDist,"yDist":yDist,"x":x,"y":y,"cx":cx,"cy":cy,"time":self.time.getSilent(),"i":self.index.getSilent(),"sc":self.siblingcount.getSilent(),"lv":self.level.getSilent(),"parent": (self.parent != nil ? (self.parent!.behaviorDef?.name)! : "none"), "active":true] as [String : Any];
        
         self.params.updateAll(data: data);
