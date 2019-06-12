@@ -110,9 +110,6 @@ class Sine:Generator{
         json["amp"] = JSON(self.amp);
         return json;
     }
-    
-    
-    
 }
 
 

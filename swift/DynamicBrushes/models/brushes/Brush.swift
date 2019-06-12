@@ -406,12 +406,15 @@ class Brush: TimeSeries, Hashable, Renderable{
         self.yDistance.set(newValue: yDist + abs(dy));
         self.time.set(newValue:self.time.get(id: nil)+1);
         
-        let transformedCoords = self.calculateMatrixTransform(ox: ox,oy: oy,dx: dx,dy: dy,sx: sx,sy: sy,rotation: r);
+        let transformedCoords = self.calculateMatrixTransform(ox: ox,oy: oy,x:x,y:y,sx: sx,sy: sy,rotation: r);
 
         let cx = transformedCoords.0
         let cy = transformedCoords.1
         
+        print("=====~~x:",x,"cx:",cx)
+        
         let data = ["dx":dx,"dy":dy,"pr":pr,"pt":pt,"ox":ox,"oy":oy,"rotation":r,"sx":sx,"sy":sy,"weight":weight,"hue":h,"saturation":s,"lightness":l,"alpha":a,"dist":dist,"xDist":xDist,"yDist":yDist,"x":x,"y":y,"cx":cx,"cy":cy,"time":self.time.getSilent(),"i":self.index.getSilent(),"sc":self.siblingcount.getSilent(),"lv":self.level.getSilent(),"parent": (self.parent != nil ? (self.parent!.behaviorDef?.name)! : "none"), "active":true] as [String : Any];
+       
         self.params.updateAll(data: data);
         
         
@@ -431,12 +434,13 @@ class Brush: TimeSeries, Hashable, Renderable{
     }
 
     
-    func calculateMatrixTransform(ox:Float,oy:Float,dx:Float,dy:Float,sx:Float,sy:Float,rotation:Float)->(Float,Float){
+    func calculateMatrixTransform(ox:Float,oy:Float,x:Float,y:Float,sx:Float,sy:Float,rotation:Float)->(Float,Float){
       
         let ox = self.origin.x.get(id:nil);
         let oy =  self.origin.y.get(id:nil);
         
         self.matrix.reset();
+        
         if(self.parent != nil){
             self.matrix.prepend(mx: self.parent!.matrix)
         }
@@ -446,9 +450,8 @@ class Brush: TimeSeries, Hashable, Renderable{
         self.matrix.rotate(_angle: rotation, centerX: ox, centerY: oy)
         
         
-        let _dx = self.position.x.get(id:nil) + dx;
-        let _dy = self.position.y.get(id:nil) + dy;
-        let transformedCoords = self.matrix.transformPoint(x: _dx, y: _dy)
+      
+        let transformedCoords = self.matrix.transformPoint(x:x, y: y)
         
         return transformedCoords;
         
