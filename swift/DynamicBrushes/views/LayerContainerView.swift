@@ -253,6 +253,7 @@ class LayerContainerView: UIView {
             layer.id = id!;
         }
         self.enableLayer(layer: layer)
+        self.bringSubviewToFront(brushGraphicsView!) //make vis view always on top
         return layer.id
         
     }
