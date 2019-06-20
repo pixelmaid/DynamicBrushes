@@ -249,6 +249,8 @@ class LayerContainerView: UIView {
        layer.center = CGPoint(x:size.width/2,y:size.height / 2);
         self.layers.append(layer)
         self.addSubview(layer);
+        self.bringSubviewToFront(brushGraphicsView!);
+
         if(id != nil){
             layer.id = id!;
         }

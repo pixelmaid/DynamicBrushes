@@ -270,7 +270,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
     func layerTouchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
 
-       // if touch.type == .stylus {
+        if touch.type == .stylus {
         
                 if let touch = touches.first  {
                     let point = touch.location(in: self)
@@ -282,7 +282,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
 
                 }
         
-        //}
+        }
     }
     
     
@@ -365,7 +365,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
         #if DEBUG
             //print("number of coalesced touches \(touches.count)");
         #endif
-         //if touch.type == .stylus {
+         if touch.type == .stylus {
         
             for touch in touches {
                 let location = touch.location(in: self)
@@ -378,7 +378,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
 
             }
         
-    // }
+    }
         
         
         
