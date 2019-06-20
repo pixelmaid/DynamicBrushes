@@ -28,13 +28,14 @@ public class BrushGraphicsScene {
         self.activeBrushIds[id] = brushGraphic //add to dict
     }
     
-    public func updateBrush(id:String, r: Float, x: Float, y: Float, cx: Float, cy: Float, ox: Float, oy: Float) {
+    public func updateBrush(id:String, r: Float, x: Float, y: Float, cx: Float, cy: Float, ox: Float, oy: Float, sx:Float, sy:Float) {
         for (_, brush) in self.activeBrushIds {
             if brush.id == id {
                 print("## updating brush with id ", id)
-                brush.updateBrushIcon(r:r, ox: ox, oy: oy)
+                brush.updateBrushIcon(r:r, ox: ox, oy: oy, sx:sx, sy:sy)
                 brush.moveComputedLocation(cx: cx, cy: cy)
                 brush.moveInputLocation(x: x, y: y)
+
             }
         }
     }
@@ -82,10 +83,17 @@ class BrushGraphic {
     var cx: Float
     var cy: Float
     
+    
     let oxOffset:Double = 0
     let oyOffset:Double = 0
     
-    let axisScale:Double = 15 //actually a third of the axis
+    let axisScale:Double = 15
+    let axisLen:Double = 50
+    var scaleChanged = false
+    
+    
+    let brushColor = Macaw.Color.rgba(r: 255, g:53, b:95, a: 63)
+    let outputColor = Macaw.Color.rgba(r: 134, g: 73, b: 180, a: 63)
     
     init(view:BrushGraphicsView, scene:BrushGraphicsScene, id:String, ox:Float, oy:Float, r: Float, x: Float, y:Float,
          cx: Float, cy:Float ) {
@@ -101,9 +109,6 @@ class BrushGraphic {
         self.cy = cy
         
         //add to scene
-        
-        let brushColor = Macaw.Color.rgba(r: 2, g:196, b:239, a: 63)
-        let outputColor = Macaw.Color.rgba(r: 180, g: 5, b: 255, a: 63)
 
 
         //init brush icon
@@ -111,23 +116,26 @@ class BrushGraphic {
         
 //        let rotationIndicator = Shape (form: Polygon(points: [30,0,35,15,30,30]), fill: brushColor)
 //        let originIndicator = Group(contents: [Macaw.Line(x1: 0, y1: 15, x2: 30, y2: 15).stroke(fill: brushColor, width: 2), Macaw.Line(x1: 15, y1: 0, x2: 15, y2: 30).stroke(fill: brushColor, width: 2)])
-        let xLine = Macaw.Line(x1: -axisScale, y1: 0, x2: 3*axisScale, y2:0).stroke(fill:brushColor, width:2)
-        let yLine = Macaw.Line(x1: 0, y1: -axisScale, x2: 0, y2:3*axisScale).stroke(fill:brushColor, width:2)
+        let xLine = Shape(form: Macaw.Line(x1: axisScale, y1: 0, x2: axisScale+axisLen, y2:0), stroke: Macaw.Stroke(fill:brushColor, width:2))
+        let yLine = Macaw.Line(x1: 0, y1: axisScale, x2: 0, y2:axisScale+axisLen).stroke(fill:brushColor, width:2)
         let triScale = axisScale*0.25
         let xTriangle = Polygon(points:[0, -triScale, -triScale*sqrt(3), 0, 0, triScale]).fill(with: brushColor)
-        xTriangle.place = Transform.move(dx:3*axisScale, dy:0).rotate(angle:Double(pi))
+        xTriangle.place = Transform.move(dx:axisScale+axisLen, dy:0).rotate(angle:Double(pi))
         let yTriangle = Polygon(points:[0, -triScale, -triScale*sqrt(3), 0, 0, triScale]).fill(with: brushColor)
-        yTriangle.place = Transform.move(dx:0, dy:3*axisScale).rotate(angle:Double(-pi/2))
+        yTriangle.place = Transform.move(dx:0, dy:axisScale+axisLen).rotate(angle:Double(-pi/2))
         
         xAxis = Group(contents:[xLine, xTriangle])
         yAxis = Group(contents:[yLine, yTriangle])
-        let originCircle = Circle(r:(axisScale*0.75)).stroke(fill:brushColor, width:2)
-        originText = BrushGraphic.newText("ox:0, oy:0, r:0\nsx:100, sy:100", Transform.move(dx:500,dy:500))
         
-        brushIcon = Group(contents: [xAxis, yAxis, originCircle])
+        let originCircle = Circle(r:(axisScale*0.33)).stroke(fill:brushColor, width:2)
+        let biggerOriginCircle = Circle(r:(axisScale)).stroke(fill:brushColor, width:2)
+        originText = BrushGraphic.newText("ox:0, oy:0, r:0\nsx:100, sy:100", Transform.move(dx:0,dy:0))
+        let rotArc = Macaw.Arc(ellipse: Ellipse(cx:0,cy:0, rx:axisScale, ry:axisScale),shift: 0, extent: 0).stroke(fill: brushColor, width:10)
+        
+        brushIcon = Group(contents: [xAxis, yAxis, originCircle, biggerOriginCircle, rotArc])
 //        brushIcon.place = Transform.move(dx:Double(self.ox) - oxOffset,dy:Double(self.oy) - oyOffset)
         //for testing
-        brushIcon.place = Transform.move(dx:Double(500),dy:Double(500))
+        brushIcon.place = Transform.move(dx:Double(0),dy:Double(0))
         
         node.contents.append(brushIcon)
         node.contents.append(originText)
@@ -171,15 +179,50 @@ class BrushGraphic {
         self.scene.node.contents = array
     }
     
-    func updateBrushIcon(r: Float, ox:Float, oy:Float) {
-        brushIcon.place = Transform.rotate(angle:Double(r * Float.pi / 180), x:Double(ox), y:Double(oy)).move(dx: Double(ox) - oxOffset, dy: Double(oy) - oyOffset)
+    func updateBrushIcon(r: Float, ox:Float, oy:Float, sx:Float, sy:Float) {
+        brushIcon.place = Transform.move(dx: Double(ox) - oxOffset, dy: Double(oy) - oyOffset)
         originText.place = Transform.move(dx: Double(ox), dy: Double(oy) - Double(20))
         self.ox = ox
         self.oy = oy
         self.r = r
-        originText.text = "ox: "+String(Int(ox))+", oy: "+String(Int(oy))+", r: "+String(Int(r))
+        originText.text = "ox:"+String(Int(ox))+", oy:"+String(Int(oy))+", r:"+String(Int(r))
         print("## rotated brush ", self.id, " by ", r, " Moved to ox ,oy,", ox, oy )
+        
+        //rotate
+        let rotArc = Macaw.Arc(ellipse: Ellipse(cx:0,cy:0, rx:axisScale*0.75, ry:axisScale*0.75),shift: 0, extent: Double(r * pi/180)).stroke(fill: brushColor, width:10)
+        brushIcon.contents[4] = rotArc
+        
+        if (sx != 100 || sy != 100 || scaleChanged) {
+            originText.text = originText.text + "\nsx:"+String(Int(sx))+"%, sy:"+String(Int(sy))+"%"
+            scaleChanged = true
+            if (sx != 100) {
+                let newLine = Macaw.Line(x1: axisScale, y1: 0, x2: axisScale + (axisLen * Double(sx)/100.0), y2: 0)
+                let xLine = xAxis.contents[0] as! Shape
+                let animation = xLine.formVar.animation(to: newLine, during: 0.1, delay: 0)
+                animation.play()
+                let xTri = xAxis.contents[1] as! Shape
+                xTri.placeVar.animate(to: Transform.move(dx:(axisScale + axisLen * Double(sx)/100.0), dy: 0).rotate(angle:Double(pi)), during: 0.1, delay: Double(0))
+                    //Transform.scale(sx: Double(sx/100.0), sy:1)
+                print("## changed x scale")
+            }
+            if (sy != 100) {
+                let newLine = Macaw.Line(x1: 0, y1: axisScale, x2: 0, y2: axisScale + (axisLen * Double(sy)/100.0))
+                let yLine = yAxis.contents[0] as! Shape
+                let animation = yLine.formVar.animation(to: newLine, during: 0.1, delay: 0)
+                animation.play()
+                let yTri = yAxis.contents[1] as! Shape
+                yTri.placeVar.animate(to: Transform.move(dx:0, dy: (axisScale + axisLen * Double(sy)/100.0)).rotate(angle:Double(-pi/2)), during: 0.1, delay: Double(0))
+//                yAxis.contents[0].form = Macaw.Line(x1: 0, y1: (-axisScale * sy/100.0), x2: 0, y2:(3*axisScale * sy/100.0))
+                    //Transform.scale(sx: 1, sy: Double(sy/100.0))
+                print("## changed y scale")
+            }
+            if (sx == 100 && sy == 100) {
+                scaleChanged = false
+            }
+        }
     }
+    
+    
     
     func moveInputLocation(x: Float, y: Float) {
         inputIcon.place = Transform.move(dx: Double(x), dy: Double(y)) //need this offset for some reason?

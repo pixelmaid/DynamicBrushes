@@ -22,7 +22,8 @@ extension Brush {
             //update locations
             print("## updating brush")
             context.scene!.updateBrush(id:self.id, r: self.params.rotation, x: self.params.x, y:self.params.y,
-                                       cx: self.params.cx, cy:self.params.cy, ox: self.params.ox, oy: self.params.oy)
+                                       cx: self.params.cx, cy:self.params.cy, ox: self.params.ox, oy: self.params.oy,
+                                       sx: self.params.sx, sy: self.params.sy)
         } else {
             //create new, add to active ids
             print("## adding new brush")
