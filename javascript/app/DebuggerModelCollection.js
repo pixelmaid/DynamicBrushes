@@ -20,7 +20,6 @@ define(["app/Emitter", "app/DebuggerModel"],
 			}
 
 			processInspectorData(newData) {
-				console.log("! data type is ", newData.type);
 				console.log("! data is ", newData);
 				this.formatData(newData);
 
@@ -33,10 +32,18 @@ define(["app/Emitter", "app/DebuggerModel"],
 
 			formatData(newData) {
 				var group = this.data["groups"][0];
-				for (var key in newData) {
-					if (newData.hasOwnProperty(key)) {
-						var val = newData[key];
+				var input = newData.input;
+				var brushData = newData.brush;
+				var output = newData.output;
+				var brushes = Object.values(brushData);
+				for(var i=0;i<brushes.length;i++){
+					var brush = brushes[i];
+					var params =  brush.params;
+				for (var key in  params) {
+					if (params.hasOwnProperty(key)) {
+						var val = params[key];
 						this.formatParam(group, key, val);
+						}
 					}
 				}
 			}
@@ -147,7 +154,7 @@ define(["app/Emitter", "app/DebuggerModel"],
 							}, {
 								blockName: "instance",
 								params: [{
-									name: "child index",
+									name: "spawn index",
 									id: "i",
 									val: 0
 								}, {

@@ -11,7 +11,8 @@ import SwiftyJSON
 import Macaw
 
 final class Debugger {
-    
+    static public let debugInterval:Int = 1
+    static public var debugTimer:Timer! = nil
     static public let debuggerEvent = Event<(String)>();
 
     
@@ -47,32 +48,88 @@ final class Debugger {
         return sortedMappings;
     }
     
-  
-    
-    static public func generateInputDebugData(){
-        //var debugData:JSON = [:]
-        let generatorCollection = BehaviorManager.signalCollections[2]["default"]!;
-        let generatorData = (generatorCollection as! GeneratorCollection).paramsToJSON();
-       print(generatorData);
+    static public func startDebugTimer(interval:Int){
+        self.endDebugTimer();
+        Debugger.debugTimer = Timer(timeInterval: TimeInterval(interval), target: self, selector: #selector(Debugger.fireDebugUpdate), userInfo: nil, repeats: true)
+        RunLoop.current.add(debugTimer, forMode: RunLoop.Mode.common)
     }
     
-    static public func  generateBrushDebugData(brush:Brush, type:String){
-            Debugger.generateInputDebugData();
-            var debugData:JSON = [:]
-            debugData["type"] = JSON();
-            debugData["behaviorId"] = JSON(brush.behaviorDef!.id);
-            debugData["prevState"] = JSON(brush.prevState);
-            debugData["currentState"] = JSON(brush.currentState);
-            debugData["transitionId"] = JSON(brush.prevTransition);
-            debugData["params"] = brush.params.toJSON();
-            debugData["id"] = JSON(brush.id);
-            debugData["constraints"] = brush.states[brush.currentState]!.getConstrainedPropertyNames();
-            debugData["methods"] = brush.transitions[brush.prevTransition]!.getMethodNames();
-            
-            
-            let socketRequest = Request(target: "socket", action: "send_inspector_data", data: debugData, requester: RequestHandler.sharedInstance)
-            RequestHandler.addRequest(requestData: socketRequest)
+    
+   static public func endDebugTimer(){
+        if(Debugger.debugTimer != nil){
+            Debugger.debugTimer.invalidate();
+        }
+        Debugger.debugTimer = nil;
+    }
+    
+  static func generateInputDebugData()->JSON{
        
+        var debugData:JSON = [:]
+
+        let generatorCollections = BehaviorManager.signalCollections[2];
+        var generatorCollectionsJSON:JSON = [:]
+
+        for(key,value) in generatorCollections{
+            let generatorData = value.paramsToJSON();
+            generatorCollectionsJSON[key] = generatorData;
+        }
+        
+        
+        print("generatorCollectionsJSON",generatorCollectionsJSON);
+        
+        let liveCollections = BehaviorManager.signalCollections[3];
+        var liveCollectionsJSON:JSON = [:]
+        for(key,value) in liveCollections{
+            let liveData = value.paramsToJSON();
+            liveCollectionsJSON[key] = liveData;
+        }
+        debugData["type"] = JSON("input");
+        debugData["inputLocal"] = generatorCollectionsJSON;
+        debugData["inputGlobal"] = liveCollectionsJSON;
+
+        return debugData;
+    }
+    
+    static func generateSingleBrushDebugData(brush:Brush)->JSON{
+        var debugData:JSON = [:]
+        debugData["type"] = JSON("brush");
+        debugData["behaviorId"] = JSON(brush.behaviorDef!.id);
+        debugData["prevState"] = JSON(brush.prevState);
+        debugData["currentState"] = JSON(brush.currentState);
+        debugData["transitionId"] = JSON(brush.prevTransition);
+        debugData["params"] = brush.params.toJSON();
+        debugData["id"] = JSON(brush.id);
+        debugData["constraints"] = brush.states[brush.currentState]!.getConstrainedPropertyNames();
+        debugData["methods"] = brush.transitions[brush.prevTransition]!.getMethodNames();
+        return debugData;
+    }
+    
+    static func generateBrushDebugData()->JSON{
+        var debugData:JSON = [:]
+
+        let brushes = BehaviorManager.getAllBrushInstances();
+        for brush in brushes {
+           let brushJSON = generateSingleBrushDebugData(brush: brush);
+            debugData[brush.id] = brushJSON;
+        }
+        return debugData;
+    }
+    
+    
+    static public func  generateDebugData()->JSON{
+        let inputData = Debugger.generateInputDebugData();
+        let brushData = Debugger.generateBrushDebugData();
+        var debugData:JSON = [:];
+        debugData["brush"] = brushData;
+        debugData["input"] = inputData;
+            
+        return debugData;
+    }
+    
+    @objc static func fireDebugUpdate(){
+        let debugData = Debugger.generateDebugData();
+        let socketRequest = Request(target: "socket", action: "send_inspector_data", data: debugData, requester: RequestHandler.sharedInstance)
+        RequestHandler.addRequest(requestData: socketRequest)
     }
     
     static public func drawUnrendererdBrushes(view:BrushGraphicsView){

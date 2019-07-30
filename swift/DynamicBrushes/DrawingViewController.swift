@@ -91,10 +91,13 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     //variables for setting backups
     var backupTimer:Timer!
     //var cancelBackupTimer:Timer!
-    var backupInterval = 60*3; //set to backup every 5 min
+    var backupInterval = 60*10; //set to backup every 5 min
     var cancelBackupInterval = 60*2; //set to cancel after 2 min
     
     var backupNeeded:Bool = false;
+    
+    
+   
     
     var currentBehaviorName = ""
     var currentBehaviorFile = ""
@@ -570,7 +573,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         drawInterval  = Timer.scheduledTimer(timeInterval:0.016 , target: self, selector: #selector(DrawingViewController.drawIntervalCallback), userInfo: nil, repeats: true)
         
         self.startBackupTimer(interval:self.backupInterval);
-        
+        Debugger.startDebugTimer(interval:Debugger.debugInterval);
         
     }
     
@@ -809,6 +812,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         
     }
     
+    
     func startBackupTimer(interval:Int){
         self.endBackupTimer();
         self.toolbarController?.enableSaveLoad();
@@ -818,21 +822,12 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         
     }
     
-    
-    /*func startCancelBackupTimer(){
-     cancelBackupTimer  = Timer.scheduledTimer(timeInterval:TimeInterval(cancelBackupInterval), target: self, selector: #selector(ViewController.cancelBackupCallback), userInfo: nil, repeats: true)
-     }*/
     func endBackupTimer(){
         if(backupTimer != nil){
             backupTimer.invalidate();
         }
     }
     
-    /*func endCancelTimer(){
-     if(cancelBackupTimer != nil){
-     cancelBackupTimer.invalidate();
-     }
-     }*/
     
     func backupProject(filename:String){
         self.uploadProject(type: "backup", filename: filename)

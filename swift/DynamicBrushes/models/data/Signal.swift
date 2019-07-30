@@ -31,7 +31,7 @@ class Signal:Observable<Float>{
 
     var dataSubscribers = [String:Observable<Float>]();
     var id:String
-    
+
 
     required init(id:String,fieldName:String, displayName:String, collectionId:String, style:String, settings:JSON){
         self.id = id;
@@ -46,6 +46,9 @@ class Signal:Observable<Float>{
         self.setIndex(i: 0)
     }
     
+    public func paramsToJSON()->JSON{
+        return JSON(signalBuffer[self.index]);
+    }
     
     func setBehaviorId(id:String){
         self.behaviorId = id;

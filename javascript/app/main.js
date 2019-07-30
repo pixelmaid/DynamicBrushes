@@ -72,7 +72,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
 
                 }
                 else{
-                    debuggerModelCollection.processInspectorData(data.data.params);
+                    debuggerModelCollection.processInspectorData(data.data);
                 }
 
             } else if (data.type == "synchronize") {

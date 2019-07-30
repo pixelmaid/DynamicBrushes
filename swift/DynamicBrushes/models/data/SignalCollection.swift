@@ -42,6 +42,17 @@ class SignalCollection {
     }
     
     
+    //paramsToJSON
+    //returns list of all  current values of initialized generator signals
+     public func paramsToJSON()->JSON{
+        var data:JSON = [:]
+        
+        for (id,signal) in self.protoSignals {
+                data[id] = signal.paramsToJSON();
+        }
+        return data;
+    }
+    
     public func addDataFrom(signalCollection:SignalCollection){
         
         for (key,recSignal) in signalCollection.protoSignals{
@@ -56,7 +67,7 @@ class SignalCollection {
         }
     }
     
-    public  func loadDataFromJSON(data:JSON) throws{
+    public func loadDataFromJSON(data:JSON) throws{
         let allSignalData = data["signals"].arrayValue;
        
         let rawData = data["data"].arrayValue;
@@ -422,12 +433,12 @@ class GeneratorCollection:SignalCollection{
     
     //paramsToJSON
     //returns list of all  current values of initialized generator signals
-    public func paramsToJSON()->JSON{
+   override public func paramsToJSON()->JSON{
         var data:JSON = [:]
 
         for (fieldName,signalDict) in self.initializedSignals{
             for (id,signal) in signalDict{
-                data[id] = (signal as! Generator).paramsToJSON();
+                data[id] = signal.paramsToJSON();
             }
         }
         return data;

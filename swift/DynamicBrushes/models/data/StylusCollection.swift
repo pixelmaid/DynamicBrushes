@@ -88,8 +88,6 @@ class StylusCollection:LiveCollection {
         protodata["yDistance"] = JSON(0);
         protodata["stylusEvent"] = JSON(0);
         protodata["time"] = JSON(0);
-
-        
         super.addProtoSample(data: protodata);
     }
     

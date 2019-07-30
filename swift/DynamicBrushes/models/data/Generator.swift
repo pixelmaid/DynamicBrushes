@@ -10,8 +10,7 @@ import SwiftyJSON
 
 class Generator:Signal{
     var registeredBrushes = [String:Brush]();
-    var paramList = [String:GeneratorStateStorage]();
-    
+    var paramList = [String : GeneratorStateStorage]()
     static let incrementConst = 1;
     required init(id: String, fieldName: String, displayName: String, collectionId: String, style: String, settings: JSON) {
         super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
@@ -52,8 +51,9 @@ class Generator:Signal{
         self.paramList[id]!.updateAll(data: data);
     }
     
-    func paramsToJSON()->JSON{
-        var data:JSON = [:]
+   
+    override public func paramsToJSON()->JSON{
+        var data:JSON = [:];
         for (key,value) in self.paramList{
             data[key] = value.toJSON();
         }

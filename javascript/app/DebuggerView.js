@@ -4,22 +4,22 @@
 
 define(["jquery", "handlebars", "hbs!app/templates/inspector", "app/Emitter"],
 
-	function($, Handlebars, inspectorTemplate, Emitter) {
+  function($, Handlebars, inspectorTemplate, Emitter) {
 
 
-		var DebuggerView = class extends Emitter {
+    var DebuggerView = class extends Emitter {
 
 
-			constructor(model, element, groupName, keyHandler) {
-				super();
+      constructor(model, element, groupName, keyHandler) {
+        super();
         this.el = $(element);
         this.model = model;
-				this.pastConstraint = null;
-				this.inspectorInit = false;
+        this.pastConstraint = null;
+        this.inspectorInit = false;
         this.keyHandler = keyHandler;
         this.groupName = groupName; //brush, input, or output
-				var self = this;
-      
+        var self = this;
+
 
 
         switch (this.groupName) {
@@ -39,20 +39,20 @@ define(["jquery", "handlebars", "hbs!app/templates/inspector", "app/Emitter"],
             break;
         }
 
-                this.model.addListener("DATA_UPDATED", function() {
-                    this.dataUpdatedHandler();
-                }.bind(this));
-            }
+        this.model.addListener("DATA_UPDATED", function() {
+          this.dataUpdatedHandler();
+        }.bind(this));
+      }
 
-           
 
-        dataUpdatedHandler() {
-            this.initInspector(this.model.data);
-        }
+
+      dataUpdatedHandler() {
+        this.initInspector(this.model.data);
+      }
 
 
       getDataGroup(inputArray, val) {
-        var group = inputArray.find( function(e) {
+        var group = inputArray.find(function(e) {
           return e["groupName"] == val;
         });
         return group;
@@ -60,7 +60,7 @@ define(["jquery", "handlebars", "hbs!app/templates/inspector", "app/Emitter"],
 
       getBlockGroup(inputArray, val) {
         //eg getBlockGroup(this.DataGroup["blocks"], "geometry")
-        var group = inputArray.find( function(e) {
+        var group = inputArray.find(function(e) {
           return e["blockName"] == val;
         });
         return group;
@@ -71,7 +71,7 @@ define(["jquery", "handlebars", "hbs!app/templates/inspector", "app/Emitter"],
           var v;
           //iterate through blocks 
           var params = group["blocks"][i]["params"];
-          params.find(function (e) {
+          params.find(function(e) {
             if (e["id"] == key) {
               console.log("~~ param found", e["val"]);
               v = e["val"];
@@ -81,31 +81,30 @@ define(["jquery", "handlebars", "hbs!app/templates/inspector", "app/Emitter"],
         }
       }
 
-			initInspector(data) {
-				console.log("adding inspector with data", data);
+      initInspector(data) {
+        console.log("adding inspector with data", data);
         var html = inspectorTemplate(data);
         this.el.html(html);
-			}
+      }
 
-     
 
-			visualizeStepThrough(constraint, pastConstraint, data) {
+
+      visualizeStepThrough(constraint, pastConstraint, data) {
         console.log("! visualizing constraints ", data, " past constraint ", pastConstraint);
         var arrowObject;
-				if (pastConstraint) {
+        if (pastConstraint) {
           switch (pastConstraint.type) {
             case "method":
               $("#" + pastConstraint.methodId).removeClass("method-inspect");
               break;
             case "binding":
               $("#" + pastConstraint.constraintId).removeClass("debug");
-              $("#param-" + pastConstraint.relativePropertyName).removeClass("debug-inspect");          
+              $("#param-" + pastConstraint.relativePropertyName).removeClass("debug-inspect");
               break;
             case "transition":
               if (pastConstraint.transitionId == "start") {
                 $(".setup").children().eq(1).removeClass("start-highlight");
-              }
-              else if ($("#" + pastConstraint.transitionId).hasClass("transition_statement")) {
+              } else if ($("#" + pastConstraint.transitionId).hasClass("transition_statement")) {
                 $("#" + pastConstraint.transitionId).children().first().removeClass("method-inspect");
               } else { //it's a state
                 $("#" + pastConstraint.transitionId).children().eq(1).removeClass("active");
@@ -115,7 +114,7 @@ define(["jquery", "handlebars", "hbs!app/templates/inspector", "app/Emitter"],
               arrowObject.children().eq(1).attr("stroke", "#efac1f");
               arrowObject.children().eq(2).attr("stroke", "#efac1f");
               arrowObject.children().eq(2).attr("fill", "#efac1f");
-            break;            
+              break;
           }
         }
 
@@ -131,7 +130,7 @@ define(["jquery", "handlebars", "hbs!app/templates/inspector", "app/Emitter"],
             $("#" + data.currentState).children(".state").addClass("active");
 
             let id = constraint.relativePropertyName;
-           
+
 
             break;
           case "transition":
@@ -145,19 +144,19 @@ define(["jquery", "handlebars", "hbs!app/templates/inspector", "app/Emitter"],
             } else { //it's a state
               $("#" + constraint.transitionId).children().eq(1).addClass("active");
             }
-              //add arrow highlight                     
-              arrowObject = $("#" + constraint.transitionId).parent().prev();
-              arrowObject.children().eq(1).attr("stroke", "aqua");
-              arrowObject.children().eq(2).attr("stroke", "aqua");
-              arrowObject.children().eq(2).attr("fill", "aqua");
-            break;         
+            //add arrow highlight                     
+            arrowObject = $("#" + constraint.transitionId).parent().prev();
+            arrowObject.children().eq(1).attr("stroke", "aqua");
+            arrowObject.children().eq(2).attr("stroke", "aqua");
+            arrowObject.children().eq(2).attr("fill", "aqua");
+            break;
         }
-				
-			}
 
-		};
+      }
 
-		return DebuggerView;
+    };
+
+    return DebuggerView;
 
 
-	});
+  });

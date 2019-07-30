@@ -427,7 +427,7 @@ class Brush: TimeSeries, Hashable, Renderable{
         
         self.signalEvent.raise(data: (self.behavior_id!,self.id,self.params));
         
-        Debugger.generateBrushDebugData(brush: self, type: "DRAW_SEGMENT");
+      //  Debugger.generateBrushDebugData(brush: self, type: "DRAW_SEGMENT");
 
     }
 
@@ -542,7 +542,7 @@ class Brush: TimeSeries, Hashable, Renderable{
     func transitionToState(transition:StateTransition){
         
         if(states[transition.toStateId]?.name == "die"){
-            Debugger.generateBrushDebugData(brush:self, type:"STATE_DIE");
+            //Debugger.generateBrushDebugData(brush:self, type:"STATE_DIE");
             self.die();
            
         }
@@ -584,7 +584,7 @@ class Brush: TimeSeries, Hashable, Renderable{
             
         }
         
-        Debugger.generateBrushDebugData(brush:self, type:"STATE_TRANSITION");
+        //Debugger.generateBrushDebugData(brush:self, type:"STATE_TRANSITION");
 
         
     }
