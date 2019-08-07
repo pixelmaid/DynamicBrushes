@@ -2,29 +2,25 @@
 <style> 
 {{#each behaviors}}
 {{#each this.brushes}}
-{{#if @last}}#tab_{{this.id}}:checked ~ #content_{{this.id}}
+{{#if @last}}#{{groupName}}tab_{{this.id}}:checked ~ #{{groupName}}content_{{this.id}}
 {{else}}
-#tab_{{this.id}}:checked ~ #content_{{this.id}},
+#{{groupName}}tab_{{this.id}}:checked ~ #{{groupName}}content_{{this.id}},
 {{/if}}
 {{/each}}
 {{/each}}
 {display: block;}
 </style>
 
-<div id="inputInspector">
-	<div id = "globalInput">
-</div>
-
 {{#each behaviors}}
-	<div id = "generator">
+	<div id = "{{groupName}}">
 		<h4 class="group-title-inspector input">{{this.name}} Generators</h4>
 		{{#each this.brushes}} 
-			<input id=tab_{{this.id}} type="radio" name="tabs" {{#if this.selectedIndex}}checked{{/if}}>
-			<label class = "brushlabels" for="tab_{{this.id}}"> {{this.index}}</label>
+			<input id={{groupName}}tab_{{this.id}} type="radio" name="{{groupName}}tabs" {{#if this.selectedIndex}}checked{{/if}}>
+			<label class = "brushlabels" for="{{groupName}}tab_{{this.id}}"> {{this.index}}</label>
 		{{/each}}
 
 	{{#each this.brushes}} 
-		<section class = "inspectorSection" id="content_{{this.id}}">
+		<section class = "inspectorSection" id="{{groupName}}content_{{this.id}}">
 		{{!-- <h4 class="sub-group-inspector">{{this.name}}</h4>--}}
 		{{!-- <h4 class="sub-sub-group-inspector">{{this.id}}</h4>--}}
 		<ul class="sub-group-inspector"> 

@@ -32,19 +32,25 @@ define(["app/Emitter", "app/DebuggerModel"],
 			}
 
 			formatBrushData(data) {
-				var formattedData = {};
+				var self = this;
+				var formattedData = {behaviors:[]};
+
+				for(var i =0;i<data.behaviors.length;i++){
+				let behavior = data.behaviors[i];
+				let formattedBehavior = {};
+
 				//group should be a list
 				var group = this.dataTemplate.groups.find(function(group) {
 					return group.groupName === data.groupName;
 				});
 
-				var brushes = data.brushes;
+				var brushes = behavior.brushes;
 				formattedData.groupName = data.groupName;
-				var formattedItems = [];
+				var formattedBrushes = [];
 
-				for (var i = 0; i < brushes.length; i++) {
+				for (var j = 0; j< brushes.length; j++) {
 					var formattedParams = JSON.parse(JSON.stringify(group));
-					var brush = brushes[i];
+					var brush = brushes[j];
 					var params = brushes.params;
 
 					for (var key in params) {
@@ -54,13 +60,26 @@ define(["app/Emitter", "app/DebuggerModel"],
 						}
 					}
 					formattedParams.name = brush.name;
+					formattedParams.index = brush.params.i;
+					if(formattedParams.index == self.selectedIndex){
+						formattedParams.selectedIndex = true;
+					}
+					else{
+						formattedParams.selectedIndex = false; 
+					}
+
 					formattedParams.id = brush.id;
-					formattedItems.push(formattedParams);
+					formattedBrushes.push(formattedParams);
 
 
 				}
 
-				formattedData.brushes = formattedItems;
+				formattedBehavior.id = behavior.id;
+				formattedBehavior.name = behavior.name;
+				formattedBehavior.brushes = formattedBrushes;
+				formattedData.behaviors.push(formattedBehavior);
+
+				}
 
 				return formattedData;
 			}
@@ -161,7 +180,7 @@ define(["app/Emitter", "app/DebuggerModel"],
 					}
 
 				}
-
+				formattedData.groupName = "generator"
 
 				return formattedData;
 

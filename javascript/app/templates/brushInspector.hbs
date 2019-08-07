@@ -1,18 +1,38 @@
-<div id="{{groupName}}-inspector"> 
-<h4 class="group-title-inspector brush">{{groupName}}</h4>
-{{#each brushes}}
-	<div id="{{id}}"> 
-<h4 class="item-title">{{name}}</h4>
-	{{#each blocks}}
-	    <ul class="sub-group-inspector"> 
-	    	<h4 class="sub-sub-group-inspector">{{this.blockName}}</h4>
-	    	{{#each this.params}}
-	        	<li id="param-{{id}}">{{name}}: <span id="inspector-{{id}}">{{val}}</span></li> 
-	        {{/each}}
-	    </ul> 
-	    <hr class="hr-inspector"/>
-    {{/each}}
-    
-  {{/each}}
-</div>
-</div>
+
+<style> 
+{{#each behaviors}}
+{{#each this.brushes}}
+{{#if @last}}#{{groupName}}tab_{{this.id}}:checked ~ #{{groupName}}content_{{this.id}}
+{{else}}
+#{{groupName}}tab_{{this.id}}:checked ~ #{{groupName}}content_{{this.id}},
+{{/if}}
+{{/each}}
+{{/each}}
+{display: block;}
+</style>
+
+{{#each behaviors}}
+
+	<div id="groupName"> 
+		<h4 class="group-title-inspector brush">{{this.name}} Brush Properties</h4>
+		{{#each this.brushes}} 
+			<input id={{groupName}}tab_{{this.id}} type="radio" name="{{groupName}}tabs" {{#if this.selectedIndex}}checked{{/if}}>
+			<label class = "brushlabels" for="{{groupName}}tab_{{this.id}}"> {{this.index}}</label>
+		{{/each}}
+
+
+		{{#each brushes}}
+			<section class = "inspectorSection" id="{{groupName}}content_{{this.id}}">
+				{{#each blocks}}
+	    			<ul class="sub-group-inspector"> 
+	    			<h4 class="sub-sub-group-inspector">{{this.blockName}}</h4>
+	    			{{#each this.params}}
+	        			<li id="param-{{id}}">{{name}}: <span id="inspector-{{id}}">{{val}}</span></li> 
+	        		{{/each}}
+	    			</ul> 
+	    			<hr class="hr-inspector"/>
+    			{{/each}}
+    		</section>
+		{{/each}}
+	</div>
+{{/each}}
