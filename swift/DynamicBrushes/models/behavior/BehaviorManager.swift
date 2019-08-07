@@ -47,12 +47,14 @@ class BehaviorManager{
     
     
     
-    static func getAllBrushInstances()->[Brush]{
-        var brushInstances = [Brush]();
+    static func getAllBrushInstances()->[String:(String,[Brush])]{
+        var behaviors = [(String):(String,[Brush])]();
           for (_,behavior) in BehaviorManager.behaviors{
+           var brushInstances = [Brush]();
             brushInstances.append(contentsOf: behavior.brushInstances);
+            behaviors[behavior.id] = (behavior.name,brushInstances);
         }
-        return brushInstances;
+        return behaviors;
     }
   
     

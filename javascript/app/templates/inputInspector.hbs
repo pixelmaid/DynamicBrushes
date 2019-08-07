@@ -1,0 +1,46 @@
+
+<style> 
+{{#each behaviors}}
+{{#each this.brushes}}
+{{#if @last}}#tab_{{this.id}}:checked ~ #content_{{this.id}}
+{{else}}
+#tab_{{this.id}}:checked ~ #content_{{this.id}},
+{{/if}}
+{{/each}}
+{{/each}}
+{display: block;}
+</style>
+
+<div id="inputInspector">
+	<div id = "globalInput">
+</div>
+
+{{#each behaviors}}
+	<div id = "generator">
+		<h4 class="group-title-inspector input">{{this.name}} Generators</h4>
+		{{#each this.brushes}} 
+			<input id=tab_{{this.id}} type="radio" name="tabs" {{#if this.selectedIndex}}checked{{/if}}>
+			<label class = "brushlabels" for="tab_{{this.id}}"> {{this.index}}</label>
+		{{/each}}
+
+	{{#each this.brushes}} 
+		<section class = "inspectorSection" id="content_{{this.id}}">
+		{{!-- <h4 class="sub-group-inspector">{{this.name}}</h4>--}}
+		{{!-- <h4 class="sub-sub-group-inspector">{{this.id}}</h4>--}}
+		<ul class="sub-group-inspector"> 
+		{{#each this.generators}}
+			{{#if this.instances.length}}
+				<h4 class="sub-sub-group-inspector">{{this.type}}</h4>
+				{{#each this.instances}}
+					<li id="time}">time:<span id="inspector-{{id}}">{{time}}</span></li>
+					<li id="val}">value:<span id="inspector-{{id}}">{{val}}</span></li>
+				{{/each}}
+			{{/if}}
+
+		{{/each}}
+		</ul> 
+		</section>
+	{{/each}}
+	</div>
+{{/each}}
+

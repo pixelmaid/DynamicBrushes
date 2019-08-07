@@ -68,23 +68,35 @@ final class Debugger {
 
         let generatorCollections = BehaviorManager.signalCollections[2];
         var generatorCollectionsJSON:JSON = [:]
-
+        generatorCollectionsJSON["groupName"] = JSON("generator");
+    
         for(key,value) in generatorCollections{
-            let generatorData = value.paramsToJSON();
+            var generatorData:JSON = [:]
+            generatorData["params"] = value.paramsToJSON();
+            generatorData["name"] = JSON(key);
+            generatorData["id"] = JSON(key);
             generatorCollectionsJSON[key] = generatorData;
         }
         
-        
+    
         print("generatorCollectionsJSON",generatorCollectionsJSON);
         
         let liveCollections = BehaviorManager.signalCollections[3];
         var liveCollectionsJSON:JSON = [:]
+        liveCollectionsJSON["groupName"] = JSON("inputGlobal");
+        var globalItems = [JSON]();
+    
         for(key,value) in liveCollections{
-            let liveData = value.paramsToJSON();
-            liveCollectionsJSON[key] = liveData;
+            var liveData:JSON = [:]
+            liveData["params"] = value.paramsToJSON();
+            liveData["name"] = JSON(key);
+            liveData["id"] = JSON(key);
+            globalItems.append(liveData);
         }
-        debugData["type"] = JSON("input");
-        debugData["inputLocal"] = generatorCollectionsJSON;
+    
+        liveCollectionsJSON["items"] = JSON(globalItems);
+        debugData["generator"] = generatorCollectionsJSON;
+    
         debugData["inputGlobal"] = liveCollectionsJSON;
 
         return debugData;
@@ -92,7 +104,6 @@ final class Debugger {
     
     static func generateSingleBrushDebugData(brush:Brush)->JSON{
         var debugData:JSON = [:]
-        debugData["type"] = JSON("brush");
         debugData["behaviorId"] = JSON(brush.behaviorDef!.id);
         debugData["prevState"] = JSON(brush.prevState);
         debugData["currentState"] = JSON(brush.currentState);
@@ -106,12 +117,27 @@ final class Debugger {
     
     static func generateBrushDebugData()->JSON{
         var debugData:JSON = [:]
-
-        let brushes = BehaviorManager.getAllBrushInstances();
-        for brush in brushes {
-           let brushJSON = generateSingleBrushDebugData(brush: brush);
-            debugData[brush.id] = brushJSON;
+        debugData["groupName"] = JSON("brush");
+        var behaviorListJSON = [JSON]();
+        var brushesListJSON = [JSON]();
+        let behaviors = BehaviorManager.getAllBrushInstances();
+        for (behaviorId,brushTuple) in behaviors {
+            let behaviorName = brushTuple.0;
+            let brushes = brushTuple.1;
+            for brush in brushes {
+                var brushJSON = generateSingleBrushDebugData(brush: brush);
+                brushJSON["name"] = JSON(brush.name);
+                brushesListJSON.append(brushJSON);
         }
+            var behaviorJSON:JSON = [:];
+            behaviorJSON["id"] = JSON(behaviorId);
+            behaviorJSON["name"] = JSON(behaviorName);
+            behaviorJSON["brushes"] = JSON(brushesListJSON);
+            behaviorListJSON.append(behaviorJSON);
+            
+        debugData["behaviors"] = JSON(behaviorListJSON);
+        }
+
         return debugData;
     }
     
@@ -133,16 +159,19 @@ final class Debugger {
     }
     
     static public func drawUnrendererdBrushes(view:BrushGraphicsView){
-        let brushes = BehaviorManager.getAllBrushInstances();
+        let behaviors = BehaviorManager.getAllBrushInstances();
         //check to see which brushes are "unrendered"
        // pass them the UI view and draw into it
         var brushIds = Set<String>()
-        for brush in brushes {
-            if brush.unrendered {
-                print("about to draw into context in debugger")
-                brush.drawIntoContext(context:view)
+        for (behaviorId,brushTuple) in behaviors {
+            let brushes = brushTuple.1;
+            for brush in brushes {
+                if brush.unrendered {
+                    print("about to draw into context in debugger")
+                    brush.drawIntoContext(context:view)
+                }
+                brushIds.insert(brush.id)
             }
-            brushIds.insert(brush.id)
         }
         //remove brush if not in this list
         let brushesIdsOnCanvas = Set(view.scene!.activeBrushIds.keys)

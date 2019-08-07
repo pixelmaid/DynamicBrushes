@@ -753,8 +753,9 @@ class BehaviorDefinition {
         clearBehavior();
         
         if(self.active_status){
-            for i in 0..<self.auto_spawn_num{
+            for i in 0..<10{//self.auto_spawn_num{
                 let targetBrush = Brush(name: "brush_" + String(i) + "_" + self.id, behaviorDef: self, parent: nil, drawing:drawing)
+                targetBrush.index.set(newValue: Float(i));
                 self.initBrushBehavior(targetBrush:targetBrush);
             }
         }

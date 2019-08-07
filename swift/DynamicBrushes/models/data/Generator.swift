@@ -11,6 +11,7 @@ import SwiftyJSON
 class Generator:Signal{
     var registeredBrushes = [String:Brush]();
     var paramList = [String : GeneratorStateStorage]()
+    
     static let incrementConst = 1;
     required init(id: String, fieldName: String, displayName: String, collectionId: String, style: String, settings: JSON) {
         super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
@@ -21,6 +22,8 @@ class Generator:Signal{
     override func registerBrush(brush:Brush){
         self.registeredBrushes[brush.id] = brush;
         self.paramList[brush.id] = GeneratorStateStorage();
+        
+        
     }
     
     override func removeRegisteredBrush(id:String){
@@ -52,13 +55,19 @@ class Generator:Signal{
     }
     
    
-    override public func paramsToJSON()->JSON{
-        var data:JSON = [:];
+   override public func paramsToJSON() -> JSON {
+        var data = [JSON]();
         for (key,value) in self.paramList{
-            data[key] = value.toJSON();
+            var generatorData = value.toJSON();
+            generatorData["generatorType"] = JSON(self.fieldName);
+            generatorData["brushId"] = JSON(key);
+            generatorData["brushIndex"] = JSON(self.registeredBrushes[key]!.index.getSilent());
+            generatorData["behaviorId"] = JSON(self.registeredBrushes[key]!.behavior_id );
+            generatorData["behaviorName"] = JSON(self.registeredBrushes[key]!.behaviorDef!.name);
+            data.append(generatorData);
         }
-        
-        return data;
+       // let sortedData = data.sorted(by: { $0["behaviorId"].stringValue < $1["behaviorId"].stringValue});
+        return JSON(data);
     }
     
     func getIndexById(id:String)->Int{
@@ -170,6 +179,7 @@ class Triangle:Generator{
         self.max = settings["max"].floatValue;
     //TODO: reimplement freq/ min max?
     super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style,  settings:settings);
+
 
     }
     

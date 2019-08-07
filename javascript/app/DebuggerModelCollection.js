@@ -9,56 +9,75 @@ define(["app/Emitter", "app/DebuggerModel"],
 
 			constructor() {
 				super();
-				this.data = {};
 				this.setupData();
 
 				this.brushModel = new DebuggerModel();
 				this.inputModel = new DebuggerModel();
 				this.outputModel = new DebuggerModel();
+				this.selectedIndex = 0;
 
 
 			}
 
 			processInspectorData(newData) {
 				console.log("! data is ", newData);
-				this.formatData(newData);
+				var formattedBrushData = this.formatBrushData(newData.brush);
+				var formattedGeneratorData = this.formatGeneratorData(newData.input.generator.default.params);
 
-				this.brushModel.update(this.data.groups[0]);
-				this.inputModel.update(this.data.groups[1]);
-				this.outputModel.update(this.data.groups[3]);
+				this.brushModel.update(formattedBrushData);
+				this.inputModel.update(formattedGeneratorData);
+				//this.outputModel.update(newData.output);
 
 
 			}
 
-			formatData(newData) {
-				var group = this.data["groups"][0];
-				var input = newData.input;
-				var brushData = newData.brush;
-				var output = newData.output;
-				var brushes = Object.values(brushData);
-				for(var i=0;i<brushes.length;i++){
+			formatBrushData(data) {
+				var formattedData = {};
+				//group should be a list
+				var group = this.dataTemplate.groups.find(function(group) {
+					return group.groupName === data.groupName;
+				});
+
+				var brushes = data.brushes;
+				formattedData.groupName = data.groupName;
+				var formattedItems = [];
+
+				for (var i = 0; i < brushes.length; i++) {
+					var formattedParams = JSON.parse(JSON.stringify(group));
 					var brush = brushes[i];
-					var params =  brush.params;
-				for (var key in  params) {
-					if (params.hasOwnProperty(key)) {
-						var val = params[key];
-						this.formatParam(group, key, val);
+					var params = brushes.params;
+
+					for (var key in params) {
+						if (params.hasOwnProperty(key)) {
+							var val = params[key];
+							this.formatBrushParams(formattedParams, key, val);
 						}
 					}
+					formattedParams.name = brush.name;
+					formattedParams.id = brush.id;
+					formattedItems.push(formattedParams);
+
+
 				}
+
+				formattedData.brushes = formattedItems;
+
+				return formattedData;
 			}
 
-			formatParam(group, key, val) {
+
+
+			formatBrushParams(group, key, val) {
 				for (var i = 0; i < group["blocks"].length; i++) {
 					//iterate through blocks 
 					var params = group["blocks"][i]["params"];
+
 					params.find(function(e) {
 						if (e["id"] == key) {
 							console.log("~~~~ updated ", key, " to ", val);
-							if(key == "parent"){
+							if (key == "parent") {
 								e["val"] = val;
-							}
-							else{
+							} else {
 								e["val"] = Math.round(val);
 							}
 							return;
@@ -67,12 +86,128 @@ define(["app/Emitter", "app/DebuggerModel"],
 				}
 			}
 
+
+			formatGeneratorData(data) {
+				var formattedData = {
+					behaviors: []
+				};
+				var self = this;
+				for (var generatorId in data) {
+					if (data.hasOwnProperty(generatorId)) {
+
+						let generatorList = data[generatorId];
+						for (var i = 0; i < generatorList.length; i++) {
+							let generatorInstance = generatorList[i];
+							let behaviorId = generatorInstance["behaviorId"];
+							let behaviorName = generatorInstance["behaviorName"];
+							let brushId = generatorInstance["brushId"];
+
+							let brushIndex = generatorInstance["brushIndex"];
+							let val = generatorInstance["v"];
+							let generatorType = generatorInstance["generatorType"];
+							let time = generatorInstance["time"];
+
+							var behavior = formattedData.behaviors.find(function(b) {
+								return b.id === behaviorId;
+							});
+
+							if (behavior == null) {
+								behavior = {
+									id: behaviorId,
+									name: behaviorName,
+									brushes: []
+								};
+								formattedData.behaviors.push(behavior);
+
+							}
+
+
+							var brush = behavior.brushes.find(function(b) {
+								return b.id === brushId;
+							});
+
+
+							if (brush == null) {
+								brush = {
+									id: brushId,
+									index: brushIndex,
+									generators: JSON.parse(JSON.stringify(self.generatorTemplate))
+								};
+								if(brushIndex == self.selectedIndex){
+									brush.selectedIndex = true;
+								}
+								else{
+									brush.selectedIndex = false; 
+								}
+								behavior.brushes.push(brush);
+							}
+
+							var targetGenerator = brush.generators.find(function(g) {
+								return g.type === generatorType;
+							});
+
+							targetGenerator.instances.push({
+								id: generatorId,
+								time: time,
+								val: val.toFixed(2)
+							});
+						
+
+						behavior.brushes.sort(function(a, b) {
+							return a.index - b.index;
+						});
+						}
+
+					}
+
+				}
+
+
+				return formattedData;
+
+			}
+
+
+
 			setupData() {
-				this.data = {
-					groups: [
-						{
+
+				this.generatorTemplate = [
+
+					{
+						type: "sawtooth",
+						instances: []
+					},
+
+					{
+						type: "sine",
+						instances: []
+					},
+
+
+					{
+						type: "random",
+						instances: []
+					},
+
+
+					{
+						type: "triangle",
+						instances: []
+					},
+
+
+					{
+						type: "square",
+						instances: []
+					}
+
+
+				];
+
+				this.dataTemplate = {
+					groups: [{
 							groupName: "brush",
-							blocks: [ {
+							blocks: [{
 								blockName: "time",
 								params: [{
 										name: "time",
@@ -81,7 +216,7 @@ define(["app/Emitter", "app/DebuggerModel"],
 									},
 
 								]
-							},{
+							}, {
 								blockName: "geometry",
 								params: [{
 									name: "origin x",
@@ -180,11 +315,19 @@ define(["app/Emitter", "app/DebuggerModel"],
 								blockName: "stylus",
 								params: [{
 									name: "stylus x",
-									id: "stylus-x",
+									id: "x",
 									val: 0
 								}, {
 									name: "stylus y",
-									id: "stylus-y",
+									id: "y",
+									val: 0
+								}, {
+									name: "stylus force",
+									id: "force",
+									val: 0
+								}, {
+									name: "stylus angle",
+									id: "angle",
 									val: 0
 								}]
 							}, {
@@ -200,12 +343,6 @@ define(["app/Emitter", "app/DebuggerModel"],
 								}]
 							}],
 						},
-
-
-						{
-							groupName: "inputLocal",
-							blocks: []
-						}, //need to hook up somehow? 
 
 						{
 							groupName: "output",

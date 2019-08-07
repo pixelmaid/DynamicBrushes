@@ -363,7 +363,7 @@ li.collapsibleListClosed{
 }
 
 
-.property {
+.property, .brush{
   background-color: #eb4a63;
 }
 
@@ -733,7 +733,7 @@ input[type="button"]{
 }
 
 
-section {
+.properties-wrapper section {
   position: relative;
 }
 .section-background {
@@ -902,7 +902,7 @@ span.refresh{
   background-color: #eb4a63;
 }
 
-.generator{
+.generator, .sensor, .sensor_prop, .input, .mic, .ui, .ui_prop{
   background-color: #4a89eb;
 }
 .recording {
@@ -911,20 +911,23 @@ span.refresh{
 .imported {
     background-color: rgb(235, 104, 75);
 }
-.sensor, .sensor_prop{
+/*.sensor, .sensor_prop{
   background-color: #7D4FAE;
 }
 .mic {
   background-color: #265f55;
 }
 
+.ui, .ui_prop{
+  background-color: #7fc605;
+}
+*/
+
 .accessor {
     background-color: #40b6c3;
 }
 
-.ui, .ui_prop{
-  background-color: #7fc605;
-}
+
 .drag-n-drop{
   position: absolute;
   z-index: 101;
@@ -1243,7 +1246,7 @@ position: absolute;
 }
 .inspector-container {
   float: left;
-  width: 200px;
+  min-width: 200px;
   max-height: 400px;
   border: 1px solid gray;
   background-color:#202020;
@@ -1262,8 +1265,11 @@ position: absolute;
 .group-title-inspector {
   margin: 0;
   padding: 5px;
-  background-color: #777;
 }
 .hr-inspector {
   margin-bottom: 0px;
 }
+
+
+ 
+

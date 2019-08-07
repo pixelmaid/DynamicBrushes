@@ -50,6 +50,7 @@ class SignalCollection {
         for (id,signal) in self.protoSignals {
                 data[id] = signal.paramsToJSON();
         }
+        
         return data;
     }
     

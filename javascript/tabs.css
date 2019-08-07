@@ -1,0 +1,54 @@
+
+
+.inspectorSection {
+    display: none;
+    padding: 0;
+    border-top: 1px solid #a4a4a4;
+    position: inherit
+}
+
+input {
+  display: none;
+}
+
+label.brushlabels {
+ display: inline-block;
+    margin: 0 0 -1px;
+    padding: 5px 5px;
+    font-weight: 600;
+    text-align: center;
+    color: #afafafab;
+    border: 1px solid transparent;
+}
+
+label:hover {
+  color: #789;
+  cursor: pointer;
+}
+
+input:checked + label {
+     color: #fff;
+    border: 1px solid #a4a4a4;
+    /* border-top: 2px solid #0af; */
+    border-bottom: 1px solid #000;
+    font-weight: bold
+  }
+
+
+
+
+@media screen and (max-width: 800px) {
+  label {
+    font-size: 0;
+  }
+  label:before {
+    margin: 0;
+    font-size: 18px;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  label {
+    padding: 15px;
+  }
+}

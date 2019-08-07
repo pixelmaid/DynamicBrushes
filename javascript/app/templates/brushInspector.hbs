@@ -1,5 +1,8 @@
 <div id="{{groupName}}-inspector"> 
-<h4 class="group-title-inspector">{{groupName}}</h4>
+<h4 class="group-title-inspector brush">{{groupName}}</h4>
+{{#each brushes}}
+	<div id="{{id}}"> 
+<h4 class="item-title">{{name}}</h4>
 	{{#each blocks}}
 	    <ul class="sub-group-inspector"> 
 	    	<h4 class="sub-sub-group-inspector">{{this.blockName}}</h4>
@@ -9,4 +12,7 @@
 	    </ul> 
 	    <hr class="hr-inspector"/>
     {{/each}}
+    
+  {{/each}}
+</div>
 </div>

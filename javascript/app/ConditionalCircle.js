@@ -17,7 +17,6 @@ define(["svg", "jquery", "app/SignalProcessUtils", "app/ConditionalLines"],
 
 		ConditionalCircle.prototype.render = function() {
 			var self = this;
-			
 			if (!this.circle) {
 				console.log("rendering cond circle")
 				var r = this.width / 2;

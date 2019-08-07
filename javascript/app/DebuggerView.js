@@ -2,15 +2,15 @@
 
 "use strict";
 
-define(["jquery", "handlebars", "hbs!app/templates/inspector", "app/Emitter"],
+define(["jquery", "handlebars", "app/Emitter"],
 
-  function($, Handlebars, inspectorTemplate, Emitter) {
+  function($, Handlebars, Emitter) {
 
 
     var DebuggerView = class extends Emitter {
 
 
-      constructor(model, element, groupName, keyHandler) {
+      constructor(model, element, template, groupName, keyHandler) {
         super();
         this.el = $(element);
         this.model = model;
@@ -18,8 +18,9 @@ define(["jquery", "handlebars", "hbs!app/templates/inspector", "app/Emitter"],
         this.inspectorInit = false;
         this.keyHandler = keyHandler;
         this.groupName = groupName; //brush, input, or output
+        this.template = template;
         var self = this;
-
+       
 
 
         switch (this.groupName) {
@@ -51,39 +52,39 @@ define(["jquery", "handlebars", "hbs!app/templates/inspector", "app/Emitter"],
       }
 
 
-      getDataGroup(inputArray, val) {
-        var group = inputArray.find(function(e) {
-          return e["groupName"] == val;
-        });
-        return group;
-      }
+      /* getDataGroup(inputArray, val) {
+         var group = inputArray.find(function(e) {
+           return e["groupName"] == val;
+         });
+         return group;
+       }
 
-      getBlockGroup(inputArray, val) {
-        //eg getBlockGroup(this.DataGroup["blocks"], "geometry")
-        var group = inputArray.find(function(e) {
-          return e["blockName"] == val;
-        });
-        return group;
-      }
+       getBlockGroup(inputArray, val) {
+         //eg getBlockGroup(this.DataGroup["blocks"], "geometry")
+         var group = inputArray.find(function(e) {
+           return e["blockName"] == val;
+         });
+         return group;
+       }
 
-      getParam(group, key) {
-        for (var i = 0; i < group["blocks"].length; i++) {
-          var v;
-          //iterate through blocks 
-          var params = group["blocks"][i]["params"];
-          params.find(function(e) {
-            if (e["id"] == key) {
-              console.log("~~ param found", e["val"]);
-              v = e["val"];
-              return v;
-            }
-          });
-        }
-      }
+       getParam(group, key) {
+         for (var i = 0; i < group["blocks"].length; i++) {
+           var v;
+           //iterate through blocks 
+           var params = group["blocks"][i]["params"];
+           params.find(function(e) {
+             if (e["id"] == key) {
+               console.log("~~ param found", e["val"]);
+               v = e["val"];
+               return v;
+             }
+           });
+         }
+       }*/
 
       initInspector(data) {
         console.log("adding inspector with data", data);
-        var html = inspectorTemplate(data);
+        var html = this.template(data);
         this.el.html(html);
       }
 

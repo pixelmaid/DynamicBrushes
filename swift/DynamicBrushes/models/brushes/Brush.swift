@@ -84,7 +84,7 @@ class Brush: TimeSeries, Hashable, Renderable{
     var signalEvent = Event<(String,String,StateStorage)>()
     //Events
     
-    var behavior_id:String?
+    var behavior_id:String = "default";
     var behaviorDef:BehaviorDefinition?
     var matrix = Matrix();
     var deltaKey = NSUUID().uuidString;
@@ -271,7 +271,7 @@ class Brush: TimeSeries, Hashable, Renderable{
         
         let paramData = ["dx": 0, "dy": 0, "pr": 0, "pt": 0, "ox": 0, "oy": 0, "rotation": 0, "sx": 0, "sy": 0, "weight": 1, "hue": 100, "saturation": 100, "lightness": 100, "alpha": 100, "dist": 0, "xDist": 0, "yDist": 0, "x": 0, "y": 0, "cx":0, "cy":0, "time": 0, "i": self.index.getSilent(), "sc": self.siblingcount.getSilent(), "lv": self.level.getSilent(), "parent": "none", "active":true] as [String : Any]
         self.params.updateAll(data: paramData)
-        self.signalEvent.raise(data: (self.behavior_id!,self.id,self.params));
+        self.signalEvent.raise(data: (self.behavior_id,self.id,self.params));
     }
  
     func setupTransition(){
@@ -425,7 +425,7 @@ class Brush: TimeSeries, Hashable, Renderable{
         // self.distanceIntervalCheck();
         //self.intersectionCheck();
         
-        self.signalEvent.raise(data: (self.behavior_id!,self.id,self.params));
+        self.signalEvent.raise(data: (self.behavior_id,self.id,self.params));
         
       //  Debugger.generateBrushDebugData(brush: self, type: "DRAW_SEGMENT");
 
