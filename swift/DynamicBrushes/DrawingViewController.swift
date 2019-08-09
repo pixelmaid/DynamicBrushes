@@ -73,7 +73,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     var layerPanelController: LayerPanelViewController?
     var behaviorPanelController: BehaviorPanelViewController?
     var recordingToolbarVC: RecordingToolbarVC?
-    var recordingViewController:RecordingViewController?
+//    var recordingViewController:RecordingViewController?
     
     var fileListController: SavedFilesPanelViewController?
     let targetSize = CGSize(width:CGFloat(pX),height:CGFloat(pY))
@@ -115,7 +115,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         //replace with custom view
 //        brushGraphicsView = BrushGraphicsView(frame:CGRect(x:0, y:47, width:1366, height:1010))
         
-        recordingViewController = RecordingViewController();
+//        recordingViewController = RecordingViewController();
         super.init(coder: coder);
     }
     
@@ -151,9 +151,9 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
             recordingToolbarVC = segue.destination as? RecordingToolbarVC;
             _ =  recordingToolbarVC?.loopEvent.addHandler(target: self, handler: DrawingViewController.recordingEventHandler, key: loopEventKey)
         }
-        else if(segue.identifier == "recordingViewControllerSegue"){
-            recordingViewController = segue.destination as? RecordingViewController;
-        }
+//        else if(segue.identifier == "recordingViewControllerSegue"){
+//            recordingViewController = segue.destination as? RecordingViewController;
+//        }
         
     }
     
@@ -175,7 +175,8 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         case "VIS_STROKE_DOWN":
             break;
         case "DELETE_FIRST":
-            recordingViewController?.deleteFirstCell()
+//            recordingViewController?.deleteFirstCell()
+            break;
         default:
             break;
         }
@@ -380,7 +381,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     func recordingEventHandler(data: (String), key: String){
         switch(data){
         case "LOOP":
-            recordingViewController?.loopInitialized()
+//            recordingViewController?.loopInitialized()
             break;
         default:
             break;

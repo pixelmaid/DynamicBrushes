@@ -28,7 +28,7 @@ class RecordingToolbarVC: UIViewController, Requester {
     
     override func viewDidLoad() {
         loopRecording.addTarget(self, action: #selector(RecordingToolbarVC.loop), for: .touchUpInside)
-        exportButton.addTarget(self, action: #selector(RecordingToolbarVC.showExportDialog), for: .touchUpInside)
+//        exportButton.addTarget(self, action: #selector(RecordingToolbarVC.showExportDialog), for: .touchUpInside)
 
         _ = stylusManager.visualizationEvent.addHandler(target: self, handler: RecordingToolbarVC.recordImgOn, key: recordImgEventKey)
 
@@ -56,7 +56,7 @@ class RecordingToolbarVC: UIViewController, Requester {
     @objc func loop() {
         if (!isLooping) {
             loopRecording.setImage(UIImage(named: "loop_button_on2x"), for: .normal)
-            recordImg.image = UIImage(named: "record_off2x")
+//            recordImg.image = UIImage(named: "record_off2x")
             isLooping = true
         } else {
             loopRecording.setImage(UIImage(named: "loop_button_off2x"), for: .normal)
@@ -66,7 +66,7 @@ class RecordingToolbarVC: UIViewController, Requester {
        loopEvent.raise(data: ("LOOP"));
     }
     
-    @objc func showExportDialog() {
+    @objc func showExportDialog() { //8/8 not used
         //Creating UIAlertController and
         //Setting title and message for the alert dialog
         let alertController = UIAlertController(title: "Export Recording", message: "Name your recording", preferredStyle: .alert)
