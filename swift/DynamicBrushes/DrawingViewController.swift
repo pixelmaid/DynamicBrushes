@@ -985,6 +985,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         }
         
         Debugger.drawUnrendererdBrushes(view: self.layerContainerView.brushGraphicsView!);
+//        Debugger.renderGenerators(view: self.layerContainerView.brushGraphicsView!);
 
     }
     

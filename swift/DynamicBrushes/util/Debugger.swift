@@ -164,6 +164,25 @@ final class Debugger {
         RequestHandler.addRequest(requestData: socketRequest)
     }
     
+    static public func getGeneratorValue(brushId:String) -> (Double, String){
+        var val = -1.0
+        var type = "none"
+        let generatorJSON = Debugger.generateGeneratorDebugData()
+        if generatorJSON["default"].exists()  {
+            let params:JSON = generatorJSON["default"]["params"]
+            for (_, subJsonArr):(String, JSON) in params {
+                for (_, subJson):(String, JSON) in subJsonArr {
+                    if (subJson["brushId"].string == brushId) {
+                        val = subJson["v"].double ?? -1.0
+                        type = subJson["generatorType"].string ?? "none"
+//                        print("!!!! val, type are ", val, type)
+                    }
+                }
+            }
+        }
+        return (val, type)
+    }
+    
     static public func drawUnrendererdBrushes(view:BrushGraphicsView){
         let behaviors = BehaviorManager.getAllBrushInstances();
         //check to see which brushes are "unrendered"
@@ -175,6 +194,8 @@ final class Debugger {
                 if brush.unrendered {
                     print("about to draw into context in debugger")
                     brush.drawIntoContext(context:view)
+                    let (val, type) = Debugger.getGeneratorValue(brushId: brush.id)
+                    view.scene!.drawGenerator(value:val, type:type)
                 }
                 brushIds.insert(brush.id)
             }

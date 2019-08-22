@@ -55,6 +55,10 @@ public class BrushGraphicsScene {
         }
     }
     
+    public func drawGenerator(value:Double, type:String) {
+        print("~~~~~~ in brush graphics scene drawing gen w ", value, type)
+    }
+    
 }
 
 class BrushGraphic {
