@@ -48,7 +48,20 @@ define(["jquery", "handlebars", "app/Emitter"],
 
 
       dataUpdatedHandler() {
+        var self = this;
         this.initInspector(this.model.data);
+        var prev = null;
+
+        $('input[name="'+(this.groupName == "inputGlobal" ? "generator": this.groupName)+'tabs"]').each(function (index,value) { 
+            value.addEventListener('change', function() {
+               (prev) ? console.log("%%%",prev.value): null;
+               if (this !== prev) {
+                 prev = this;
+               }
+              console.log("%%%",index);
+              self.model.updateSelectedIndex(index);
+            });
+        });
       }
 
 
@@ -89,6 +102,10 @@ define(["jquery", "handlebars", "app/Emitter"],
       }
 
 
+
+      onTabChange(){
+
+      }
 
       visualizeStepThrough(constraint, pastConstraint, data) {
         console.log("! visualizing constraints ", data, " past constraint ", pastConstraint);

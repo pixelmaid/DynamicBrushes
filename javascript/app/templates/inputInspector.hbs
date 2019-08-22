@@ -1,26 +1,42 @@
 
+<div id = "{{groupName}}">
+<h4 class="group-title-inspector input">{{global.name}}</h4> 
+			<section class = "inspectorSection visibleInspector" id="{{global.items.groupName}}content_{{global.items.groupName}}">
+				{{#each global.items.blocks}}
+	    			<ul class="sub-group-inspector"> 
+	    			<h4 class="sub-sub-group-inspector">{{blockName}}</h4>
+	    			{{#each params}}
+	        			<li id="param-{{id}}">{{name}}: <span id="inspector-{{id}}">{{val}}</span></li> 
+	        		{{/each}}
+	    			</ul> 
+	    			<hr class="hr-inspector"/>
+    	{{/each}}
+    </section>
+</div>
+
 <style> 
-{{#each behaviors}}
+{{#each local.behaviors}}
 {{#each this.brushes}}
-{{#if @last}}#{{groupName}}tab_{{this.id}}:checked ~ #{{groupName}}content_{{this.id}}
+{{#if @last}}#{{@root.local.groupName}}tab_{{this.id}}:checked ~ #{{@root.local.groupName}}content_{{this.id}}
 {{else}}
-#{{groupName}}tab_{{this.id}}:checked ~ #{{groupName}}content_{{this.id}},
+#{{@root.local.groupName}}tab_{{this.id}}:checked ~ #{{@root.local.groupName}}content_{{this.id}},
 {{/if}}
 {{/each}}
 {{/each}}
 {display: block;}
 </style>
 
-{{#each behaviors}}
-	<div id = "{{groupName}}">
-		<h4 class="group-title-inspector input">{{this.name}} Generators</h4>
+
+{{#each local.behaviors}}
+	<div id = "{{../local.groupName}}">
+		<h4 class="group-title-inspector input">{{this.name}} {{../local.groupName}}</h4>
 		{{#each this.brushes}} 
-			<input id={{groupName}}tab_{{this.id}} type="radio" name="{{groupName}}tabs" {{#if this.selectedIndex}}checked{{/if}}>
-			<label class = "brushlabels" for="{{groupName}}tab_{{this.id}}"> {{this.index}}</label>
+			<input id={{../../local.groupName}}tab_{{this.id}} type="radio" index ="{{@index}}" name="{{../../local.groupName}}tabs" {{#if this.selectedIndex}}checked{{/if}}>
+			<label class = "brushlabels" for="{{../../local.groupName}}tab_{{this.id}}"> {{this.index}}</label>
 		{{/each}}
 
 	{{#each this.brushes}} 
-		<section class = "inspectorSection" id="{{groupName}}content_{{this.id}}">
+		<section class = "inspectorSection" id="{{../../local.groupName}}content_{{this.id}}">
 		{{!-- <h4 class="sub-group-inspector">{{this.name}}</h4>--}}
 		{{!-- <h4 class="sub-sub-group-inspector">{{this.id}}</h4>--}}
 		<ul class="sub-group-inspector"> 

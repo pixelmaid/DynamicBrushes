@@ -62,24 +62,12 @@ final class Debugger {
         Debugger.debugTimer = nil;
     }
     
+    
+    
   static func generateInputDebugData()->JSON{
        
         var debugData:JSON = [:]
-
-        let generatorCollections = BehaviorManager.signalCollections[2];
-        var generatorCollectionsJSON:JSON = [:]
-        generatorCollectionsJSON["groupName"] = JSON("generator");
-    
-        for(key,value) in generatorCollections{
-            var generatorData:JSON = [:]
-            generatorData["params"] = value.paramsToJSON();
-            generatorData["name"] = JSON(key);
-            generatorData["id"] = JSON(key);
-            generatorCollectionsJSON[key] = generatorData;
-        }
-        
-    
-        print("generatorCollectionsJSON",generatorCollectionsJSON);
+        let generatorCollectionsJSON = Debugger.generateGeneratorDebugData();
         
         let liveCollections = BehaviorManager.signalCollections[3];
         var liveCollectionsJSON:JSON = [:]
@@ -100,6 +88,24 @@ final class Debugger {
         debugData["inputGlobal"] = liveCollectionsJSON;
 
         return debugData;
+    }
+    
+    static func generateGeneratorDebugData()->JSON{
+        
+        let generatorCollections = BehaviorManager.signalCollections[2];
+        var generatorCollectionsJSON:JSON = [:]
+        generatorCollectionsJSON["groupName"] = JSON("generator");
+        
+        for(key,value) in generatorCollections{
+            var generatorData:JSON = [:]
+            generatorData["params"] = value.paramsToJSON();
+            generatorData["name"] = JSON(key);
+            generatorData["id"] = JSON(key);
+            generatorCollectionsJSON[key] = generatorData;
+        }
+        
+        
+       return generatorCollectionsJSON;
     }
     
     static func generateSingleBrushDebugData(brush:Brush)->JSON{

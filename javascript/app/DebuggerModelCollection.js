@@ -11,12 +11,16 @@ define(["app/Emitter", "app/DebuggerModel"],
 				super();
 				this.setupData();
 
-				this.brushModel = new DebuggerModel();
-				this.inputModel = new DebuggerModel();
-				this.outputModel = new DebuggerModel();
+				this.brushModel = new DebuggerModel(this);
+				this.inputModel = new DebuggerModel(this);
+				this.outputModel = new DebuggerModel(this);
 				this.selectedIndex = 0;
 
 
+			}
+
+			updateSelectedIndex(index){
+				this.selectedIndex = index;
 			}
 
 			processInspectorData(newData) {
@@ -24,11 +28,48 @@ define(["app/Emitter", "app/DebuggerModel"],
 				var formattedBrushData = this.formatBrushData(newData.brush);
 				var formattedGeneratorData = this.formatGeneratorData(newData.input.generator.default.params);
 
+				var formattedInputGlobalData = this.formatInputGlobalData(newData.input.inputGlobal);
+				console.log(formattedInputGlobalData);
+
+				var formattedInputData = {local:formattedGeneratorData,global:formattedInputGlobalData};
 				this.brushModel.update(formattedBrushData);
-				this.inputModel.update(formattedGeneratorData);
+				this.inputModel.update(formattedInputData);
 				//this.outputModel.update(newData.output);
 
 
+			}
+
+
+			formatInputGlobalData(data){
+				var self = this;
+				var formattedData = {};
+
+				var group = self.dataTemplate.groups.find(function(group){
+					return group.groupName === "inputGlobal";
+				});
+
+				formattedData.groupName  = "inputGlobal";
+				var formattedItems = [];
+				var items = data.items;
+				
+				var formattedParams = JSON.parse(JSON.stringify(group));
+				for(var j = 0; j<items.length; j++){
+				
+					var item = items[j];
+					var params = item.params;
+
+					for (var key in params) {
+						if (params.hasOwnProperty(key)) {
+							var val = params[key];
+							this.formatParams(formattedParams, key, val);
+						}
+					}
+
+				}
+
+				formattedData.items = formattedParams;
+				formattedData.name = "Global Input";
+				return formattedData;
 			}
 
 			formatBrushData(data) {
@@ -51,12 +92,12 @@ define(["app/Emitter", "app/DebuggerModel"],
 				for (var j = 0; j< brushes.length; j++) {
 					var formattedParams = JSON.parse(JSON.stringify(group));
 					var brush = brushes[j];
-					var params = brushes.params;
+					var params = brush.params;
 
 					for (var key in params) {
 						if (params.hasOwnProperty(key)) {
 							var val = params[key];
-							this.formatBrushParams(formattedParams, key, val);
+							this.formatParams(formattedParams, key, val);
 						}
 					}
 					formattedParams.name = brush.name;
@@ -86,7 +127,7 @@ define(["app/Emitter", "app/DebuggerModel"],
 
 
 
-			formatBrushParams(group, key, val) {
+			formatParams(group, key, val) {
 				for (var i = 0; i < group["blocks"].length; i++) {
 					//iterate through blocks 
 					var params = group["blocks"][i]["params"];
@@ -180,7 +221,7 @@ define(["app/Emitter", "app/DebuggerModel"],
 					}
 
 				}
-				formattedData.groupName = "generator"
+				formattedData.groupName = "generator";
 
 				return formattedData;
 

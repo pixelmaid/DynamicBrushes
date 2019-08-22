@@ -10,14 +10,19 @@ define(["app/Emitter"],
         var DebuggerModel = class extends Emitter {
 
 
-            constructor() {
+            constructor(collection) {
                 super();
                 this.data = {};
+                this.collection = collection;
             }
 
             update(data) {
                 this.data = data;
                 this.trigger("DATA_UPDATED");
+            }
+
+            updateSelectedIndex(index){
+               this.collection.updateSelectedIndex(index) 
             }
         };
 
