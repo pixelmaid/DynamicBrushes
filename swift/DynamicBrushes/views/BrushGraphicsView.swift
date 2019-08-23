@@ -14,6 +14,7 @@ public class BrushGraphicsScene {
     let view: BrushGraphicsView
     var node: Group
     var activeBrushIds = [String:BrushGraphic]() //dictionary
+    var currentGenerator = "none"
     
     init(view: BrushGraphicsView) {
         self.view = view
@@ -55,8 +56,21 @@ public class BrushGraphicsScene {
         }
     }
     
-    public func drawGenerator(value:Double, type:String) {
-        print("~~~~~~ in brush graphics scene drawing gen w ", value, type)
+    public func drawGenerator(value:Double, time:Int, type:String) {
+        for (_, brush) in self.activeBrushIds {
+            if type != self.currentGenerator {
+                print("~~ before type is ", self.currentGenerator)
+                brush.updateGeneratorKind(type: type)
+                self.currentGenerator = type
+                print("~~~ updated generator to ", type)
+            }
+            if type != "none" {
+                brush.updateGeneratorDot(v: value, t: time, type:type)
+                print("~~~~~~ updating dot for id ", brush.id, value, time, type)
+            } else {
+                print("~~~~ none")
+            }
+        }
     }
     
 }
@@ -78,6 +92,8 @@ class BrushGraphic {
     let xAxis: Group
     let yAxis: Group
     
+    let generator: Group
+    
     let id: String
     var ox: Float
     var oy: Float
@@ -95,7 +111,7 @@ class BrushGraphic {
     let axisLen:Double = 50
     var scaleChanged = false
     
-    
+    let inputColor = Macaw.Color.rgba(r: 74, g:137, b:235, a: 1)
     let brushColor = Macaw.Color.rgba(r: 255, g:53, b:95, a: 63)
     let outputColor = Macaw.Color.rgba(r: 134, g: 73, b: 180, a: 63)
     
@@ -117,6 +133,7 @@ class BrushGraphic {
 
         //init brush icon
         node = Group()
+        
         
 //        let rotationIndicator = Shape (form: Polygon(points: [30,0,35,15,30,30]), fill: brushColor)
 //        let originIndicator = Group(contents: [Macaw.Line(x1: 0, y1: 15, x2: 30, y2: 15).stroke(fill: brushColor, width: 2), Macaw.Line(x1: 15, y1: 0, x2: 15, y2: 30).stroke(fill: brushColor, width: 2)])
@@ -162,6 +179,11 @@ class BrushGraphic {
         node.contents.append(computedText)
         print("## init computed icon for brush ", id, " at " , self.cx, self.cy)
 
+        //init generator static location
+        let empty = Shape(form: Circle(r:1), fill: Macaw.Color.rgba(r:0,g:0,b:0,a:0))
+        generator = Group(contents: [empty])
+        generator.place = Transform.move(dx:25, dy:75)
+        node.contents.append(generator)
         
         self.addToScene()
     }
@@ -181,6 +203,49 @@ class BrushGraphic {
             print("## in brush graphic, removed self ", index)
         }
         self.scene.node.contents = array
+    }
+    
+    func updateGeneratorDot(v: Double, t: Int, type:String) {
+        print("dot contents are ~~~~ ", self.generator.contents.count)
+        var multiplier = 10
+        if type == "sawtooth" {
+            multiplier = 1
+        }
+        let dot = self.generator.contents[1] as! Shape
+        dot.place = Transform.move(dx:Double((t*multiplier%100)*2) , dy: 100-v*100)
+        let gText = self.generator.contents[2] as! Text
+        gText.text = "time: "+String(t)+", value: "+String((v*100).rounded()/100)
+    }
+    
+    func updateGeneratorKind(type:String){
+        if self.scene.currentGenerator == "none" { //need to reinit
+            print("~~~ re init generator")
+            let generatorDot = Shape(form: Circle(r: 5), fill: inputColor)
+            let generatorBg = Shape(form: Rect(x:0, y:0, w: 200, h: 100),
+                                    fill: Macaw.Color.white,
+                                    stroke: Macaw.Stroke(fill: Macaw.Color.black, width:2))
+            let generatorText = BrushGraphic.newText("", Transform.move(dx:100,dy:125))
+            self.generator.contents = [generatorBg, generatorDot, generatorText]
+        }
+        switch type {
+        case "sawtooth":
+            print("~~~ saw", self.generator.contents.count)
+
+        case "triangle":
+            print("tri")
+
+        case "sine":
+            print("sine")
+        case "none":
+            //delete
+            let empty = Shape(form: Circle(r:1), fill: Macaw.Color.rgba(r:0,g:0,b:0,a:0))
+            self.generator.contents = [empty]
+            print("~~~ deleted generator")
+        default:
+            //get rid of graph
+            print("default")
+
+        }
     }
     
     func updateBrushIcon(r: Float, ox:Float, oy:Float, sx:Float, sy:Float) {

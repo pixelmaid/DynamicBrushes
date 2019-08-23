@@ -164,8 +164,9 @@ final class Debugger {
         RequestHandler.addRequest(requestData: socketRequest)
     }
     
-    static public func getGeneratorValue(brushId:String) -> (Double, String){
+    static public func getGeneratorValue(brushId:String) -> (Double, Int, String){
         var val = -1.0
+        var time = -1
         var type = "none"
         let generatorJSON = Debugger.generateGeneratorDebugData()
         if generatorJSON["default"].exists()  {
@@ -174,13 +175,14 @@ final class Debugger {
                 for (_, subJson):(String, JSON) in subJsonArr {
                     if (subJson["brushId"].string == brushId) {
                         val = subJson["v"].double ?? -1.0
+                        time = subJson["time"].int ?? -1
                         type = subJson["generatorType"].string ?? "none"
 //                        print("!!!! val, type are ", val, type)
                     }
                 }
             }
         }
-        return (val, type)
+        return (val, time, type)
     }
     
     static public func drawUnrendererdBrushes(view:BrushGraphicsView){
@@ -194,8 +196,8 @@ final class Debugger {
                 if brush.unrendered {
                     print("about to draw into context in debugger")
                     brush.drawIntoContext(context:view)
-                    let (val, type) = Debugger.getGeneratorValue(brushId: brush.id)
-                    view.scene!.drawGenerator(value:val, type:type)
+                    let (val, time, type) = Debugger.getGeneratorValue(brushId: brush.id)
+                    view.scene!.drawGenerator(value:val, time:time, type:type)
                 }
                 brushIds.insert(brush.id)
             }
