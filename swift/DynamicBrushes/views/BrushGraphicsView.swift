@@ -61,7 +61,7 @@ public class BrushGraphicsScene {
 
         for (_, brush) in self.activeBrushIds {
             let numGenerators = valArray.count
-            print("~~~ total num active generators" , numGenerators, self.currentGenerator.count);
+//            print("~~~ total num active generators" , numGenerators, self.currentGenerator.count);
             
             if numGenerators > self.currentGenerator.count { //increase slots
                 let diff = numGenerators - self.currentGenerator.count
@@ -70,15 +70,18 @@ public class BrushGraphicsScene {
                 }
             }
             
-            for (value, time, type) in valArray {
+            //order result alphabetically
+            let sortedValArray = valArray.sorted(by: {$0.2 < $1.2})
+            
+            for (value, time, type) in sortedValArray {
                 if type != self.currentGenerator[i] {
-                    print("~~ before type is ", self.currentGenerator[i])
+//                    print("~~ before type is ", self.currentGenerator[i])
                     brush.updateGeneratorKind(type: type, i:i)
                     self.currentGenerator[i] = type
-                    print("~~~ updated generator to ", type, i)
+//                    print("~~~ updated generator to ", type, i)
                 }
                 if type != "none" {
-                    print("~~~~~~ about to update dot for id ", brush.id, value, time, type, i)
+//                    print("~~~~~~ about to update dot for id ", brush.id, value, time, type, i)
                     brush.updateGeneratorDot(v: value, t: time, type:type, i:i)
                 }
                 i += 1
@@ -213,13 +216,12 @@ class BrushGraphic {
         var array = self.scene.node.contents
         if let index = array.index(of:self.node) {
             array.remove(at: index)
-            print("## in brush graphic, removed self ", index)
         }
         self.scene.node.contents = array
     }
     
     func updateGeneratorDot(v: Double, t: Int, type:String, i: Int) {
-        print("dot contents are ~~~~ ", self.generator.contents.count, " i is ", i)
+//        print("dot contents are ~~~~ ", self.generator.contents.count, " i is ", i)
         var multiplier = 10
         if type == "sawtooth" {
             multiplier = 1
@@ -228,7 +230,6 @@ class BrushGraphic {
             reinitGen(i: i)
         }
         if let genGroup = self.generator.contents[i] as? Group {
-            print("~~~ genGroup len should be 3", genGroup.contents.count)
             let dot = genGroup.contents[1] as! Shape
             dot.place = Transform.move(dx:Double((t*multiplier%100)*2) , dy: 100-v*100)
             let gText = genGroup.contents[2] as! Text
@@ -237,6 +238,7 @@ class BrushGraphic {
             //reinit
             print("~~~ reinit in update dot")
             reinitGen(i: i)
+            updateGeneratorKind(type: type, i: i)
         }
     }
     
@@ -246,41 +248,63 @@ class BrushGraphic {
                                 fill: Macaw.Color.white,
                                 stroke: Macaw.Stroke(fill: Macaw.Color.black, width:2))
         let generatorText = BrushGraphic.newText("", Transform.move(dx:100,dy:125))
-        let genGroup = Group(contents:[generatorBg, generatorDot, generatorText])
+        let generatorGraph = Shape(form: Circle(r: 1), fill: Macaw.Color.rgba(r:0,g:0,b:0,a:0))
+        let genGroup = Group(contents:[generatorBg, generatorDot, generatorText, generatorGraph])
         return genGroup
     }
     
     func reinitGen(i:Int) { //this is only called once!!
         let genGroup = makeGeneratorGroup()
-        genGroup.place = Transform.move(dx:0, dy:Double(i*125+10))
+        genGroup.place = Transform.move(dx:0, dy:Double(i*125+25))
         if i+1 > self.generator.contents.count {
             self.generator.contents.append(genGroup)
         } else {
             self.generator.contents[i] = genGroup
         }
-        print("~~~ reinit generator. now contents are ", self.generator.contents.count , " with i ", i )
+//        print("~~~ reinit generator. now contents are ", self.generator.contents.count , " with i ", i )
     }
     
     func updateGeneratorKind(type:String, i: Int){
-        if self.scene.currentGenerator[i] == "none" { //need to reinit
-            print("~~~ re init generator")
+        if self.scene.currentGenerator[i] == "none" || self.generator.contents.count < i+1 { //need to reinit
+//            print("~~~ reinit generator in update kind")
             reinitGen(i:i)
         }
+        if let _ = self.generator.contents[i] as? Group {
+            //yay
+        } else {
+            reinitGen(i: i)
+        }
+//        print("~~~~ updating generator kind, i is  ", i)
         switch type {
         case "sawtooth":
-            print("~~~ saw total count ", self.generator.contents.count, " i ", i)
+            let graph = Macaw.Line(x1:0, y1:100, x2:200, y2:0).stroke(fill:Macaw.Color.gray, width:2)
+            let group = self.generator.contents[i] as! Group
+            group.contents[3] = graph
 
         case "triangle":
-            print("tri")
-
+            let line1 = Macaw.Line(x1:0, y1:100, x2:100, y2:0).stroke(fill:Macaw.Color.gray, width:2)
+            let line2 = Macaw.Line(x1:100, y1:0, x2:200, y2:100).stroke(fill:Macaw.Color.gray, width:2)
+            let graph = Group(contents:[line1, line2])
+            let group = self.generator.contents[i] as! Group
+            group.contents[3] = graph
+            
+        case "square":
+            let line1 = Macaw.Line(x1:0, y1:0, x2:100, y2:0).stroke(fill:Macaw.Color.gray, width:2)
+            let line2 = Macaw.Line(x1:100, y1:0, x2:100, y2:100).stroke(fill:Macaw.Color.gray, width:2)
+            let line3 = Macaw.Line(x1:100, y1:100, x2:200, y2:100).stroke(fill:Macaw.Color.gray, width:2)
+            let graph = Group(contents:[line1, line2, line3])
+            let group = self.generator.contents[i] as! Group
+            group.contents[3] = graph
+            
         case "sine":
-            print("~~~ sine",  self.generator.contents.count, " i ", i)
+            //do nothing...
+            print("~~sine")
         case "none":
             //delete
             let empty = Shape(form: Circle(r:1), fill: Macaw.Color.rgba(r:0,g:0,b:0,a:0))
             self.generator.contents[i] = Group(contents: [empty])
     
-            print("~~~ deleted generator")
+//            print("~~~ deleted generator")
         default:
             //get rid of graph
             print("default")
