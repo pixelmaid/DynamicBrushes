@@ -164,10 +164,11 @@ final class Debugger {
         RequestHandler.addRequest(requestData: socketRequest)
     }
     
-    static public func getGeneratorValue(brushId:String) -> (Double, Int, String){
+    static public func getGeneratorValue(brushId:String) -> [(Double,Int,String)] {
         var val = -1.0
         var time = -1
         var type = "none"
+        var returnVals:[(val:Double,time:Int,type:String)] = []
         let generatorJSON = Debugger.generateGeneratorDebugData()
         if generatorJSON["default"].exists()  {
             let params:JSON = generatorJSON["default"]["params"]
@@ -177,12 +178,13 @@ final class Debugger {
                         val = subJson["v"].double ?? -1.0
                         time = subJson["time"].int ?? -1
                         type = subJson["generatorType"].string ?? "none"
-//                        print("!!!! val, type are ", val, type)
+                        returnVals.append((val:val, time:time, type:type))
+                        
                     }
                 }
             }
         }
-        return (val, time, type)
+        return returnVals
     }
     
     static public func drawUnrendererdBrushes(view:BrushGraphicsView){
@@ -190,17 +192,21 @@ final class Debugger {
         //check to see which brushes are "unrendered"
        // pass them the UI view and draw into it
         var brushIds = Set<String>()
+        var i = 0 //note - this is only until we get active instance
         for (behaviorId,brushTuple) in behaviors {
             let brushes = brushTuple.1;
-            for brush in brushes {
-                if brush.unrendered {
-                    print("about to draw into context in debugger")
-                    brush.drawIntoContext(context:view)
-                    let (val, time, type) = Debugger.getGeneratorValue(brushId: brush.id)
-                    view.scene!.drawGenerator(value:val, time:time, type:type)
-                }
-                brushIds.insert(brush.id)
+            let brush = brushes[0]
+//            for brush in brushes {
+            if brush.unrendered && i < 1 {
+                print("~~~ about to draw into context in debugger with brush ", brush.id)
+                brush.drawIntoContext(context:view)
+                let valArray = Debugger.getGeneratorValue(brushId: brush.id)
+                view.scene!.drawGenerator(valArray: valArray)
+            
+                i += 1
             }
+            brushIds.insert(brush.id)
+//            }
         }
         //remove brush if not in this list
         let brushesIdsOnCanvas = Set(view.scene!.activeBrushIds.keys)

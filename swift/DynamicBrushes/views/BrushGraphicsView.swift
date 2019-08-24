@@ -14,7 +14,7 @@ public class BrushGraphicsScene {
     let view: BrushGraphicsView
     var node: Group
     var activeBrushIds = [String:BrushGraphic]() //dictionary
-    var currentGenerator = "none"
+    var currentGenerator = ["none"]
     
     init(view: BrushGraphicsView) {
         self.view = view
@@ -56,19 +56,32 @@ public class BrushGraphicsScene {
         }
     }
     
-    public func drawGenerator(value:Double, time:Int, type:String) {
+    public func drawGenerator(valArray: [(Double, Int, String)]) {
+        var i:Int = 0;
+
         for (_, brush) in self.activeBrushIds {
-            if type != self.currentGenerator {
-                print("~~ before type is ", self.currentGenerator)
-                brush.updateGeneratorKind(type: type)
-                self.currentGenerator = type
-                print("~~~ updated generator to ", type)
+            let numGenerators = valArray.count
+            print("~~~ total num active generators" , numGenerators, self.currentGenerator.count);
+            
+            if numGenerators > self.currentGenerator.count { //increase slots
+                let diff = numGenerators - self.currentGenerator.count
+                for _ in 0...diff {
+                    self.currentGenerator.append("none")
+                }
             }
-            if type != "none" {
-                brush.updateGeneratorDot(v: value, t: time, type:type)
-                print("~~~~~~ updating dot for id ", brush.id, value, time, type)
-            } else {
-                print("~~~~ none")
+            
+            for (value, time, type) in valArray {
+                if type != self.currentGenerator[i] {
+                    print("~~ before type is ", self.currentGenerator[i])
+                    brush.updateGeneratorKind(type: type, i:i)
+                    self.currentGenerator[i] = type
+                    print("~~~ updated generator to ", type, i)
+                }
+                if type != "none" {
+                    print("~~~~~~ about to update dot for id ", brush.id, value, time, type, i)
+                    brush.updateGeneratorDot(v: value, t: time, type:type, i:i)
+                }
+                i += 1
             }
         }
     }
@@ -205,41 +218,68 @@ class BrushGraphic {
         self.scene.node.contents = array
     }
     
-    func updateGeneratorDot(v: Double, t: Int, type:String) {
-        print("dot contents are ~~~~ ", self.generator.contents.count)
+    func updateGeneratorDot(v: Double, t: Int, type:String, i: Int) {
+        print("dot contents are ~~~~ ", self.generator.contents.count, " i is ", i)
         var multiplier = 10
         if type == "sawtooth" {
             multiplier = 1
         }
-        let dot = self.generator.contents[1] as! Shape
-        dot.place = Transform.move(dx:Double((t*multiplier%100)*2) , dy: 100-v*100)
-        let gText = self.generator.contents[2] as! Text
-        gText.text = "time: "+String(t)+", value: "+String((v*100).rounded()/100)
+        if i >= self.generator.contents.count {
+            reinitGen(i: i)
+        }
+        if let genGroup = self.generator.contents[i] as? Group {
+            print("~~~ genGroup len should be 3", genGroup.contents.count)
+            let dot = genGroup.contents[1] as! Shape
+            dot.place = Transform.move(dx:Double((t*multiplier%100)*2) , dy: 100-v*100)
+            let gText = genGroup.contents[2] as! Text
+            gText.text = type+", time: "+String(t)+", value: "+String((v*100).rounded()/100)
+        } else {
+            //reinit
+            print("~~~ reinit in update dot")
+            reinitGen(i: i)
+        }
     }
     
-    func updateGeneratorKind(type:String){
-        if self.scene.currentGenerator == "none" { //need to reinit
+    func makeGeneratorGroup() -> Group {
+        let generatorDot = Shape(form: Circle(r: 5), fill: inputColor)
+        let generatorBg = Shape(form: Rect(x:0, y:0, w: 200, h: 100),
+                                fill: Macaw.Color.white,
+                                stroke: Macaw.Stroke(fill: Macaw.Color.black, width:2))
+        let generatorText = BrushGraphic.newText("", Transform.move(dx:100,dy:125))
+        let genGroup = Group(contents:[generatorBg, generatorDot, generatorText])
+        return genGroup
+    }
+    
+    func reinitGen(i:Int) { //this is only called once!!
+        let genGroup = makeGeneratorGroup()
+        genGroup.place = Transform.move(dx:0, dy:Double(i*125+10))
+        if i+1 > self.generator.contents.count {
+            self.generator.contents.append(genGroup)
+        } else {
+            self.generator.contents[i] = genGroup
+        }
+        print("~~~ reinit generator. now contents are ", self.generator.contents.count , " with i ", i )
+    }
+    
+    func updateGeneratorKind(type:String, i: Int){
+        if self.scene.currentGenerator[i] == "none" { //need to reinit
             print("~~~ re init generator")
-            let generatorDot = Shape(form: Circle(r: 5), fill: inputColor)
-            let generatorBg = Shape(form: Rect(x:0, y:0, w: 200, h: 100),
-                                    fill: Macaw.Color.white,
-                                    stroke: Macaw.Stroke(fill: Macaw.Color.black, width:2))
-            let generatorText = BrushGraphic.newText("", Transform.move(dx:100,dy:125))
-            self.generator.contents = [generatorBg, generatorDot, generatorText]
+            reinitGen(i:i)
         }
         switch type {
         case "sawtooth":
-            print("~~~ saw", self.generator.contents.count)
+            print("~~~ saw total count ", self.generator.contents.count, " i ", i)
 
         case "triangle":
             print("tri")
 
         case "sine":
-            print("sine")
+            print("~~~ sine",  self.generator.contents.count, " i ", i)
         case "none":
             //delete
             let empty = Shape(form: Circle(r:1), fill: Macaw.Color.rgba(r:0,g:0,b:0,a:0))
-            self.generator.contents = [empty]
+            self.generator.contents[i] = Group(contents: [empty])
+    
             print("~~~ deleted generator")
         default:
             //get rid of graph
