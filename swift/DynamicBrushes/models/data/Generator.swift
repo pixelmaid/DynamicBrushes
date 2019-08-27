@@ -64,6 +64,7 @@ class Generator:Signal{
             generatorData["brushIndex"] = JSON(self.registeredBrushes[key]!.index.getSilent());
             generatorData["behaviorId"] = JSON(self.registeredBrushes[key]!.behavior_id );
             generatorData["behaviorName"] = JSON(self.registeredBrushes[key]!.behaviorDef!.name);
+            generatorData["settings"] = self.getSettingsJSON();
             data.append(generatorData);
         }
        // let sortedData = data.sorted(by: { $0["behaviorId"].stringValue < $1["behaviorId"].stringValue});
@@ -93,7 +94,7 @@ class Sine:Generator{
     
     
     required init(id:String, fieldName:String, displayName:String, collectionId:String, style:String, settings:JSON){
-        self.freq = 0.01// settings["freq"].floatValue;
+        self.freq = 0.02// settings["freq"].floatValue;
         self.phase =  4.7//settings["phase"].floatValue;
         self.amp = 1.0; //settings["amp"].floatValue;
         super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
