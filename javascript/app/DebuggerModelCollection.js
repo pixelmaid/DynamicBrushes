@@ -21,6 +21,7 @@ define(["app/Emitter", "app/DebuggerModel"],
 
 			updateSelectedIndex(index){
 				this.selectedIndex = index;
+				this.trigger("ON_ACTIVE_INSTANCE_CHANGED",[this.selectedIndex]);
 			}
 
 			processInspectorData(newData) {

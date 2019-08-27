@@ -24,6 +24,7 @@ enum BehaviorError: Error {
 
 class BehaviorManager{
     static var behaviors = [String:BehaviorDefinition]()
+    static var activeInstance = 0;
   // static var imported = [String:SignalCollection]();
   //  static var recordings = [String:SignalCollection]();
    // static var generators = [String:GeneratorCollection]();

@@ -233,6 +233,20 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
             socketController.sendMessage(step_data);
         };
 
+        var updateActiveInstance = function(instanceNum){
+            var instance_data = {
+                type: "debug_request",
+                requester: "authoring",
+                data: {
+                    type:"activeInstanceUpdate",
+                    activeInstance: instanceNum
+                }
+            };
+
+            socketController.sendMessage(instance_data);
+
+        };
+
         var promptConnect = function() {
 
             codename = prompt("please enter your login key");
@@ -275,8 +289,6 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
             socketController.sendMessage(transmit_data);
         };
 
-
-
         socketController.addListener("ON_MESSAGE", onMessage);
         socketController.addListener("ON_DISCONNECT", onDisconnect);
 
@@ -295,6 +307,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
         signalView.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
 
         saveManager.addListener("ON_SAVE_EVENT", onStorageEvent);
+        debuggerModelCollection.addListener("ON_ACTIVE_INSTANCE_CHANGED",updateActiveInstance);
         signalModel.datasetLoader.addListener("ON_IMPORTED_DATASET_READY", onDataReady);
         promptConnect();
 

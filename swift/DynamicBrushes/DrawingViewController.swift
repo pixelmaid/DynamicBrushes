@@ -1313,11 +1313,21 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
             
             break;
         case "debug_request":
-            _ = data.1! as JSON
+            let debugData = (data.1! as JSON)["data"];
             #if DEBUG
-           // print("debug_request",(debug_data["data"] as JSON)["type"].stringValue);
+            //print("debug_request",(debugData["data"] as JSON)["type"].stringValue);
             #endif
-            stylusManager.stepSample();
+            let debugType = debugData["type"].stringValue;
+            switch(debugType){
+                case "stepForward":
+                    stylusManager.stepSample();
+                break;
+                case "activeInstanceUpdate":
+                    BehaviorManager.activeInstance = debugData["activeInstance"].intValue;
+                break;
+                default:
+                break;
+            }
             break;
     
         case "storage_request":
