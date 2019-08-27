@@ -94,7 +94,7 @@ class Sine:Generator{
     
     required init(id:String, fieldName:String, displayName:String, collectionId:String, style:String, settings:JSON){
         self.freq = 0.5// settings["freq"].floatValue;
-        self.phase =  0//settings["phase"].floatValue;
+        self.phase =  4.7//settings["phase"].floatValue;
         self.amp = 1.0; //settings["amp"].floatValue;
         super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
     }
@@ -107,7 +107,7 @@ class Sine:Generator{
         }
     
         let i = self.getIndexById(id: id!);
-        let v =  sin(Float(i)*freq+phase)*amp/2+amp/2;
+        let v =  (1+sin(Float(i)*freq*Float.pi+phase))*amp/2;
         self.update(v: v, id: id!,time: i);
         return v;
     }
