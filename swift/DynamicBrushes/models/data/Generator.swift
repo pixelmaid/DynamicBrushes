@@ -93,7 +93,7 @@ class Sine:Generator{
     
     
     required init(id:String, fieldName:String, displayName:String, collectionId:String, style:String, settings:JSON){
-        self.freq = 0.5// settings["freq"].floatValue;
+        self.freq = 0.01// settings["freq"].floatValue;
         self.phase =  4.7//settings["phase"].floatValue;
         self.amp = 1.0; //settings["amp"].floatValue;
         super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
