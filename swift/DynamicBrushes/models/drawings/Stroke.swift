@@ -7,13 +7,14 @@
 //
 import Foundation
 import UIKit
+import SwiftyJSON
 
 enum DrawError: Error {
     case InvalidArc
     
 }
 protocol Geometry {
-    func toJSON()->String
+    func toJSON()->JSON
 }
 
 struct StoredDrawing:Geometry{
@@ -28,8 +29,8 @@ struct StoredDrawing:Geometry{
     }
     
     //todo: create toJSON method
-    func toJSON()->String{
-        return "placeholder_string"
+    func toJSON()->JSON{
+        return JSON([:]);
     }
 }
 
@@ -152,10 +153,15 @@ struct Segment:Geometry, Equatable {
         return nil
     }
     
-    func toJSON()->String{
-        var string = "{\"point\":{"+self.point.toJSON()+"},"
-        string += "\"time\":"+String(parent!.getTimeElapsed())+"}"
-        return string
+    func toJSON()->JSON{
+        var jsonData:JSON = self.point.toJSON();
+        let color = self.color;
+        jsonData["weight"] =  JSON(self.weight);
+        jsonData["h"] = JSON(color.hue);
+        jsonData["s"] = JSON(color.saturation);
+        jsonData["l"] = JSON(color.lightness);
+        jsonData["a"] = JSON(self.alpha);
+        return jsonData;
     }
     
 }
@@ -277,8 +283,21 @@ class Stroke:TimeSeries, Geometry, Renderable {
     }
     
     
+    func toJSON()->JSON{
+        var jsonData:JSON = [:];
+        if(self.segments.count>0){
+        
+            let currentSegment = self.segments.last!;
+            jsonData = currentSegment.toJSON();
+            
+        }
+        
+        jsonData["numSegments"] = JSON(self.segments.count);
+
+        return jsonData;
+    }
     
-    func toJSON()->String{
+    /*func toJSON()->String{
         var string = "segments:["
         for i in 0...segments.count-1{
             
@@ -290,7 +309,7 @@ class Stroke:TimeSeries, Geometry, Renderable {
         string += "],"
         return string
         
-    }
+    }*/
     
     
     

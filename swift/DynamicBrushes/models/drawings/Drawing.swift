@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import SwiftyJSON
 //Drawing
 //stores geometry
 
@@ -15,7 +16,7 @@ class Drawing: TimeSeries, Hashable, Renderable{
     //check for if segments need drawing;
     var unrendered = false
     
-    private var activeStrokes = [String:[Stroke]]();
+    private var activeStrokes = [String:[String:[Stroke]]]();
     var allStrokes = [Stroke]();
     var initEvent = Event<(WebTransmitter,String)>()
     let strokeGeneratedEvent = Event<(String)>();
@@ -26,6 +27,23 @@ class Drawing: TimeSeries, Hashable, Renderable{
     override init(){
         super.init();
         self.name = "drawing"
+    }
+    
+    func activeStrokesToJSON()->JSON{
+        var strokeJSON:JSON = [:];
+        for (behaviorId,brushStrokeList) in activeStrokes{
+            var brushStrokeJSON:JSON = [:]
+            for(brushId,strokes) in brushStrokeList{
+                var strokeJSON = [JSON]();
+                for stroke in strokes{
+                    strokeJSON.append(stroke.toJSON());
+                }
+                brushStrokeJSON[brushId] = JSON(strokeJSON);
+                
+            }
+            strokeJSON[behaviorId] = brushStrokeJSON;
+        }
+        return strokeJSON;
     }
     
     func drawSegment(context:ModifiedCanvasView){
@@ -76,9 +94,9 @@ class Drawing: TimeSeries, Hashable, Renderable{
         return nil;
     }
     
-    func hitTest(point:Point,threshold:Float,id:String)->Stroke?{
+    func hitTest(point:Point,threshold:Float,behaviorId:String,brushId:String)->Stroke?{
         var targetStroke:Stroke! = nil
-        let targetActiveStrokes = self.activeStrokes[id];
+        let targetActiveStrokes = self.activeStrokes[behaviorId]![brushId];
         if(targetActiveStrokes != nil){
             if(targetActiveStrokes!.count>0){
                 targetStroke = targetActiveStrokes!.last
@@ -116,24 +134,24 @@ class Drawing: TimeSeries, Hashable, Renderable{
         }
     }
     
-    func retireCurrentStrokes(parentID:String){
+    func retireCurrentStrokes(behaviorId:String,brushId:String){
         #if DEBUG
-        print("retire strokes for \(parentID, activeStrokes[parentID])");
+       // print("retire strokes for \(parentID, activeStrokes[behaviorId]![brushId)");
         #endif 
-        if (self.activeStrokes[parentID] != nil){
+        if (self.activeStrokes[behaviorId]![brushId] != nil ){
             var toRemove = [String]();
-            for s in self.activeStrokes[parentID]!{
+            for s in self.activeStrokes[behaviorId]![brushId]!{
                 toRemove.append(s.id);
                 //s.segments.removeAll();
                 
                 s.unrenderedSegments.removeAll()
                 //s.destroy();
             }
-            self.activeStrokes[parentID]!.removeAll();
+            self.activeStrokes[behaviorId]![brushId]!.removeAll();
 
             //self.allStrokes = allStrokes.filter({ $0.parentID != parentID })
             #if DEBUG
-            print("strokes to remove",toRemove)
+            //print("strokes to remove",toRemove)
             #endif
            self.strokeRemovedEvent.raise(data: toRemove);
         }
@@ -142,13 +160,18 @@ class Drawing: TimeSeries, Hashable, Renderable{
         #endif
     }
     
-    func newStroke(parentID:String)->Stroke{
+    func newStroke(behaviorId:String, brushId:String)->Stroke{
        
-        let stroke = Stroke(parentID:parentID);
-        if (self.activeStrokes[parentID] == nil){
-            self.activeStrokes[parentID] = [Stroke]()
+        let stroke = Stroke(parentID:brushId);
+        if (self.activeStrokes[behaviorId] == nil){
+            self.activeStrokes[behaviorId] = [String:[Stroke]]();
+            
+            
         }
-        self.activeStrokes[parentID]!.append(stroke);
+        if (self.activeStrokes[behaviorId]![brushId]==nil){
+            self.activeStrokes[behaviorId]![brushId] = [Stroke]();
+        }
+         self.activeStrokes[behaviorId]![brushId]!.append(stroke);
         
         self.allStrokes.append(stroke);
         self.strokeGeneratedEvent.raise(data: stroke.id)
@@ -156,16 +179,19 @@ class Drawing: TimeSeries, Hashable, Renderable{
         return stroke;
     }
     
-    func addSegmentToStroke(parentID:String, point:Point, weight:Float, color:Color, alpha:Float){
-        if (self.activeStrokes[parentID] == nil){
+    func addSegmentToStroke(behaviorId:String,brushId:String, point:Point, weight:Float, color:Color, alpha:Float){
+        if (self.activeStrokes[behaviorId] == nil){
+            return
+        }
+        if (self.activeStrokes[behaviorId]![brushId] == nil){
             return
         }
         self.unrendered = true;
 
-        for i in 0..<self.activeStrokes[parentID]!.count{
-            let currentStroke = self.activeStrokes[parentID]![i]
+        for i in 0..<self.activeStrokes[behaviorId]![brushId]!.count{
+            let currentStroke = self.activeStrokes[behaviorId]![brushId]![i]
 
-            _ = currentStroke.addSegment(brushId: parentID, point: point,d:weight,color:color,alpha:alpha)
+            _ = currentStroke.addSegment(brushId: brushId, point: point,d:weight,color:color,alpha:alpha)
 
         }
     }

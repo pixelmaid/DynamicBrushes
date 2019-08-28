@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import SwiftyJSON
+
 class Line: Geometry{
     
     var p: Point
@@ -40,9 +42,8 @@ class Line: Geometry{
             self.v = self.v.sub(point: self.p)
         }
     }
-    func toJSON()->String{
-        let string = "\"p\":{"+self.p.toJSON()+"},\"v\":{"+self.v.toJSON()+"}"
-        return string
+    func toJSON()->JSON{
+        return JSON([:]);
     }
 
 

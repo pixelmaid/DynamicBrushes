@@ -416,7 +416,7 @@ class Brush: TimeSeries, Hashable, Renderable{
         self.params.updateAll(data: data);
         
         
-        self.currentDrawing!.addSegmentToStroke(parentID: self.id, point:Point(x:cx,y:cy),weight:weight , color: color,alpha:a)
+        self.currentDrawing!.addSegmentToStroke(behaviorId:self.behavior_id, brushId:self.id, point:Point(x:cx,y:cy),weight:weight , color: color,alpha:a)
         self.unrendered = true;
         
         self.bPosition.x.setSilent(newValue: cx)
@@ -859,8 +859,8 @@ class Brush: TimeSeries, Hashable, Renderable{
     
     
     func newStroke(){
-        self.currentDrawing!.retireCurrentStrokes(parentID: self.id)
-        self.currentDrawing!.newStroke(parentID: self.id);
+        self.currentDrawing!.retireCurrentStrokes(behaviorId: self.behavior_id, brushId:self.id)
+        self.currentDrawing!.newStroke(behaviorId: self.behavior_id, brushId:self.id);
         self.resetDistance();
     }
     
@@ -952,7 +952,7 @@ class Brush: TimeSeries, Hashable, Renderable{
         #if DEBUG
             print("destroying brush: \(self.id)");
         #endif
-        currentDrawing!.retireCurrentStrokes(parentID: self.id)
+        currentDrawing!.retireCurrentStrokes(behaviorId: self.behavior_id, brushId:self.id)
         self.clearBehavior();
         self.clearAllEventHandlers();
         super.destroy();

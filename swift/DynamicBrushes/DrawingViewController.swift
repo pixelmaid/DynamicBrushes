@@ -308,7 +308,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
             var data:JSON = [:]
             data["data"] = authoringData
             do {
-                try _ = behaviorManager?.handleAuthoringRequest(authoring_data: data)
+                try _ = BehaviorManager.handleAuthoringRequest(authoring_data: data)
                 self.synchronizeWithAuthoringClient();
                 
             }
@@ -326,7 +326,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
             var data:JSON = [:]
             data["data"] = authoringData
             do {
-                try _ = behaviorManager?.handleAuthoringRequest(authoring_data: data)
+                try _ = BehaviorManager.handleAuthoringRequest(authoring_data: data)
                 self.synchronizeWithAuthoringClient();
                 
             }
@@ -344,7 +344,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
             var data:JSON = [:]
             data["data"] = authoringData
             do {
-                try _ = behaviorManager?.handleAuthoringRequest(authoring_data: data)
+                try _ = BehaviorManager.handleAuthoringRequest(authoring_data: data)
             }
             catch{
                 #if DEBUG
@@ -391,7 +391,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     func debuggerEventHandler(data: (String), key: String) {
         switch (data) {
         case "INIT":
-            behaviorManager?.refreshAllBehaviors();
+            BehaviorManager.refreshAllBehaviors();
             break;
         default:
             break;
@@ -718,7 +718,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         UserDefaults.standard.synchronize()
         
         _ = self.layerContainerView.saveEvent.addHandler(target: self, handler: DrawingViewController.uploadProjectHandler, key: saveEventKey)
-        self.behaviorManager?.refreshAllBehaviors();
+        BehaviorManager.refreshAllBehaviors();
         //TODO: this is a hack. need to create a delay in case it's saving a stroke to the texture
         
         self.layerContainerView.save();
@@ -899,7 +899,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     @objc func exportImage(){
         self.endBackupTimer()
         _ = self.layerContainerView.exportEvent.addHandler(target: self, handler: DrawingViewController.handleExportRequest, key: exportKey)
-        self.behaviorManager?.refreshAllBehaviors();
+        BehaviorManager.refreshAllBehaviors();
         //TODO: this is a hack. need to create a delay in case it's saving a stroke to the texture
         DispatchQueue.global(qos: .userInteractive).async {
             
@@ -1018,7 +1018,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
                 UserDefaults.standard.set(filename, forKey: "backup_filename")
                 UserDefaults.standard.synchronize()
                 
-                self.behaviorManager?.refreshAllBehaviors();
+               BehaviorManager.refreshAllBehaviors();
                 
                 self.backupProject(filename:filename)
                 
@@ -1069,7 +1069,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     func newLayer(){
         endBackupTimer()
         
-        self.behaviorManager?.refreshAllBehaviors();
+        BehaviorManager.refreshAllBehaviors();
         //TODO: this is a hack. need to create a delay in case it's saving a stroke to the texture
         
         let id = self.layerContainerView.newLayer(name: (self.layerPanelController?.getNextName())!,id:nil, size:self.targetSize);
@@ -1271,7 +1271,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         case "authoring_request":
             do{
                 let authoring_data = data.1! as JSON
-                let attempt = try behaviorManager?.handleAuthoringRequest(authoring_data: authoring_data);
+                let attempt = try BehaviorManager.handleAuthoringRequest(authoring_data: authoring_data);
                 let data = authoring_data["data"]
                 if(data["type"].stringValue == "behavior_added"){
                     
@@ -1436,8 +1436,8 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     
     func initDrawing(){
         currentDrawing = Drawing();
-        behaviorManager = BehaviorManager(drawing: currentDrawing!);
-        
+        let behaviorManager = BehaviorManager();
+        BehaviorManager.setCurrentDrawing(drawing:currentDrawing!)
         _ = currentDrawing?.strokeGeneratedEvent.addHandler(target: self, handler: DrawingViewController.strokeGeneratedHandler, key: strokeGeneratedKey)
         
         _ = currentDrawing?.strokeRemovedEvent.addHandler(target: self, handler: DrawingViewController.strokeRemovedHandler, key: strokeRemovedKey)

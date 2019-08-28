@@ -62,7 +62,10 @@ final class Debugger {
         Debugger.debugTimer = nil;
     }
     
-    
+
+    static func generateOutputDebugData()->JSON{
+        return BehaviorManager.drawing.activeStrokesToJSON();
+    }
     
   static func generateInputDebugData()->JSON{
        
@@ -151,10 +154,11 @@ final class Debugger {
     static public func  generateDebugData()->JSON{
         let inputData = Debugger.generateInputDebugData();
         let brushData = Debugger.generateBrushDebugData();
+        let outputData = Debugger.generateOutputDebugData();
         var debugData:JSON = [:];
         debugData["brush"] = brushData;
         debugData["input"] = inputData;
-            
+        debugData["output"] = outputData;
         return debugData;
     }
     
