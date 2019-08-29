@@ -64,7 +64,10 @@ final class Debugger {
     
 
     static func generateOutputDebugData()->JSON{
-        return BehaviorManager.drawing.activeStrokesToJSON();
+        var debugData:JSON = [:]
+          debugData["groupName"] = JSON("output");
+        debugData["behaviors"] = BehaviorManager.drawing.activeStrokesToJSON();
+        return debugData;
     }
     
   static func generateInputDebugData()->JSON{

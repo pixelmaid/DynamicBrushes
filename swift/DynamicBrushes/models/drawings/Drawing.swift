@@ -29,19 +29,81 @@ class Drawing: TimeSeries, Hashable, Renderable{
         self.name = "drawing"
     }
     
+    func registerNewBrush(behaviorId:String,brushId:String){
+       guard var brushList = self.activeStrokes[behaviorId] else {
+            var brushList = [String:[Stroke]]();
+            brushList[brushId] = [Stroke]();
+            self.activeStrokes[behaviorId] = brushList;
+            return;
+
+        }
+        
+        brushList[brushId] = [Stroke]();
+        
+    }
+    
+    func destroyBrushRegistry(behaviorId:String,brushId:String){
+        guard var brushList = self.activeStrokes[behaviorId] else {
+            return;
+        }
+        guard let _ = brushList[brushId] else {
+            return;
+        }
+        self.retireCurrentStrokes(behaviorId: behaviorId,brushId: brushId);
+        brushList.removeValue(forKey: brushId);
+    }
+    
+    func destroyBehaviorRegistry(behaviorId:String){
+        guard let brushList = self.activeStrokes[behaviorId] else {
+            return;
+        }
+        for (brushId,_) in  brushList{
+            self.destroyBrushRegistry(behaviorId: behaviorId, brushId:  brushId);
+        }
+        self.activeStrokes.removeValue(forKey: behaviorId);
+
+    }
+    
     func activeStrokesToJSON()->JSON{
         var strokeJSON:JSON = [:];
         for (behaviorId,brushStrokeList) in activeStrokes{
             var brushStrokeJSON:JSON = [:]
+            let behavior = BehaviorManager.behaviors[behaviorId];
             for(brushId,strokes) in brushStrokeList{
-                var strokeJSON = [JSON]();
-                for stroke in strokes{
-                    strokeJSON.append(stroke.toJSON());
-                }
-                brushStrokeJSON[brushId] = JSON(strokeJSON);
+                let brush = behavior!.brushInstances.first{$0.id == brushId};
+                var strokeJSON:JSON = [:];
                 
+                strokeJSON["i"] = JSON(brush!.params.i);
+                //print(strokeJSON["i"].floatValue);
+                strokeJSON["name"] = JSON(brush!.name);
+                
+                if(strokes.count < 1){
+                    var emptyParams:JSON = [:]
+                        emptyParams["pen"] = JSON("up")
+                    emptyParams["x"] = 0;
+                    emptyParams["y"] = 0;
+                    emptyParams["h"] = 0;
+                    emptyParams["s"] = 0;
+                    emptyParams["l"] = 0;
+                    emptyParams["a"] = 0;
+                    strokeJSON["params"] = emptyParams;
+                }
+                
+                else{
+                    for stroke in strokes{
+                        var singleStrokeJSON = stroke.toJSON();
+                        singleStrokeJSON["pen"] = JSON("down");
+                        strokeJSON["params"] = singleStrokeJSON;
+
+                    }
+                }
+                brushStrokeJSON[brushId] = strokeJSON;
             }
-            strokeJSON[behaviorId] = brushStrokeJSON;
+            var behaviorJSON:JSON = [:]
+            behaviorJSON["brushes"] = brushStrokeJSON;
+            behaviorJSON["id"] = JSON(behaviorId)
+            behaviorJSON["name"] = JSON(behavior!.name);
+            strokeJSON[behaviorId] = behaviorJSON;
         }
         return strokeJSON;
     }

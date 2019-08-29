@@ -257,6 +257,8 @@ class Brush: TimeSeries, Hashable, Renderable{
         
         
         self.setDrawingTarget(drawing: drawing)
+        drawing.registerNewBrush(behaviorId: self.behavior_id, brushId:self.id);
+
         self.parent = parent
         
         //setup behavior
@@ -952,7 +954,7 @@ class Brush: TimeSeries, Hashable, Renderable{
         #if DEBUG
             print("destroying brush: \(self.id)");
         #endif
-        currentDrawing!.retireCurrentStrokes(behaviorId: self.behavior_id, brushId:self.id)
+        currentDrawing!.destroyBrushRegistry(behaviorId: behavior_id, brushId: self.id);
         self.clearBehavior();
         self.clearAllEventHandlers();
         super.destroy();

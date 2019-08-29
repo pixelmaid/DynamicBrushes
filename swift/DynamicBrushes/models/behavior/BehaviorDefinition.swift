@@ -704,7 +704,7 @@ class BehaviorDefinition {
     }
     
     
-    func clearBehavior(){
+    func clearBehavior(drawing:Drawing){
         //reset associated signals
         for (_, expressionList) in self.storedExpressions {
             for (_, expression) in expressionList {
@@ -746,11 +746,12 @@ class BehaviorDefinition {
         
      
         self.brushInstances.removeAll();
+        drawing.destroyBehaviorRegistry(behaviorId: self.id);
         
     }
     
     func createBehavior(drawing:Drawing){
-        clearBehavior();
+        clearBehavior(drawing: drawing);
         
         if(self.active_status){
             for i in 0..<self.auto_spawn_num{

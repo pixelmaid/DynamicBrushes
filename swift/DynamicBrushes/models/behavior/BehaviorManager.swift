@@ -67,7 +67,7 @@ class BehaviorManager{
         }
     }
     
-    func loadData(json:JSON){
+    static func loadData(json:JSON){
         print("data to load",json);
         BehaviorManager.loadCollectionsFromJSON(data: json["collections"]);
         BehaviorManager.loadBehaviorsFromJSON(json: json["behaviors"], rewriteAll: true)
@@ -78,7 +78,7 @@ class BehaviorManager{
    static func loadBehaviorsFromJSON(json:JSON,rewriteAll:Bool){
         if(rewriteAll){
             for(_,value) in BehaviorManager.behaviors{
-                value.clearBehavior();
+                value.clearBehavior(drawing: BehaviorManager.drawing);
             }
             BehaviorManager.behaviors.removeAll();
             
@@ -87,7 +87,7 @@ class BehaviorManager{
         for value in behaviorArray{
             let id = value["id"].stringValue
             if let val = BehaviorManager.behaviors[id] {
-                val.clearBehavior();
+                val.clearBehavior(drawing: BehaviorManager.drawing);
                 
             }
             let behavior = BehaviorDefinition(id:id,name:value["name"].stringValue);
@@ -112,7 +112,7 @@ class BehaviorManager{
     }
     
     
-    func handleDataRequest(requestData:JSON) ->JSON{
+    static func handleDataRequest(requestData:JSON) ->JSON{
         let data = requestData["data"] as JSON;
         let type = data["type"].stringValue;
         var resultJSON:JSON = [:]
@@ -222,7 +222,7 @@ class BehaviorManager{
             let behaviorId = data["behaviorId"].stringValue;
             let behavior = BehaviorManager.behaviors[behaviorId]!;
             BehaviorManager.behaviors.removeValue(forKey: behaviorId)
-            behavior.clearBehavior();
+            behavior.clearBehavior(drawing: BehaviorManager.drawing);
             resultJSON["result"] = "success"
             return resultJSON
             

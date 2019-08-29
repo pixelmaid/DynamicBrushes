@@ -46,7 +46,6 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     var layerContainerView:LayerContainerView!
     
     
-    var behaviorManager: BehaviorManager?
     var currentDrawing: Drawing?
     
     let drawKey = NSUUID().uuidString
@@ -1153,7 +1152,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
             currentBehaviorName = (data.1?["short_filename"].stringValue)!
             currentBehaviorFile = (data.1?["filename"].stringValue)!
             
-            behaviorManager?.loadData(json: data.1!["data"])
+           BehaviorManager.loadData(json: data.1!["data"])
             
             self.behaviorPanelController?.loadBehaviors(json: data.1!["data"])
             self.synchronizeWithAuthoringClient();
@@ -1262,7 +1261,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
             let requestData = data.1! as JSON;
             
             
-            let data = behaviorManager!.handleDataRequest(requestData: requestData)
+            let data = BehaviorManager.handleDataRequest(requestData: requestData)
             
             let socketRequest = Request(target: "socket", action: "data_request_response", data: data, requester: self)
             
