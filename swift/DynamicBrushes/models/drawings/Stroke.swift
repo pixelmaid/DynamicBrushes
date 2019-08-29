@@ -55,27 +55,29 @@ struct Segment:Geometry, Equatable {
     var color = Color(h: 0, s: 0, l: 0, a: 1);
     var alpha = Float(0.5);
     let id = NSUUID().uuidString;
+    let time: Int
     //let printer = DeallocPrinter()
-    init(x:Float,y:Float) {
-        self.init(x:x,y:y,hi_x:0,hi_y:0,ho_x:0,ho_y:0)
+    init(x:Float,y:Float,time:Int) {
+        self.init(x:x,y:y,hi_x:0,hi_y:0,ho_x:0,ho_y:0,time: time)
     }
     
-    init(point:Point){
-        self.init(point:point,handleIn:Point(x: 0, y: 0),handleOut:Point(x: 0, y: 0))
+    init(point:Point,time:Int){
+        self.init(point:point,handleIn:Point(x: 0, y: 0),handleOut:Point(x: 0, y: 0),time:time)
     }
     
-    init(x:Float,y:Float,hi_x:Float,hi_y:Float,ho_x:Float,ho_y:Float){
+    init(x:Float,y:Float,hi_x:Float,hi_y:Float,ho_x:Float,ho_y:Float,time:Int){
         let point = Point(x:x,y:y)
         let hI = Point(x: hi_x,y: hi_y)
         let hO = Point(x: ho_x,y: ho_y)
-        self.init(point:point,handleIn:hI,handleOut:hO)
+        self.init(point:point,handleIn:hI,handleOut:hO,time: time)
         
     }
     
-    init(point:Point,handleIn:Point,handleOut:Point) {
+    init(point:Point,handleIn:Point,handleOut:Point,time:Int) {
         self.point = point
         self.handleIn = handleIn
         self.handleOut = handleOut
+        self.time = time;
     }
     
     mutating func setHandleOut(point:Point){
@@ -184,11 +186,13 @@ class Stroke:TimeSeries, Geometry, Renderable {
    /* var xBuffer = CircularBuffer();
     var yBuffer = CircularBuffer();
     var weightBuffer = CircularBuffer();*/
-    var parentID: String;
+    var brushId: String;
+    var behaviorId: String;
     var selected = false;
     
-    init(parentID:String){
-        self.parentID = parentID;
+    init(brushId:String,behaviorId:String){
+        self.brushId = brushId;
+        self.behaviorId = behaviorId;
         super.init();
     }
     
@@ -255,10 +259,10 @@ class Stroke:TimeSeries, Geometry, Renderable {
     }
     
     
-    func addSegment(brushId:String, point:Point, d:Float, color:Color, alpha:Float)->Segment?{
+    func addSegment(brushId:String, point:Point, d:Float, color:Color, alpha:Float, time:Int)->Segment?{
         self.unrendered = true;
 
-        var segment = Segment(point:point)
+        var segment = Segment(point:point,time:time)
         segment.weight = d
         segment.color = color;
         segment.alpha = alpha;

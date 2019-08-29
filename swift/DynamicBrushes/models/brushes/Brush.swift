@@ -84,7 +84,7 @@ class Brush: TimeSeries, Hashable, Renderable{
     var signalEvent = Event<(String,String,StateStorage)>()
     //Events
     
-    var behavior_id:String = "default";
+    var behaviorId:String = "default";
     var behaviorDef:BehaviorDefinition?
     var matrix = Matrix();
     var deltaKey = NSUUID().uuidString;
@@ -239,7 +239,7 @@ class Brush: TimeSeries, Hashable, Renderable{
         //==END APPØEND OBSERVABLES==//
         
         
-        self.behavior_id = behaviorDef!.id;
+        self.behaviorId = behaviorDef!.id;
         self.behaviorDef = behaviorDef;
         
         
@@ -257,7 +257,7 @@ class Brush: TimeSeries, Hashable, Renderable{
         
         
         self.setDrawingTarget(drawing: drawing)
-        drawing.registerNewBrush(behaviorId: self.behavior_id, brushId:self.id);
+        drawing.registerNewBrush(behaviorId: self.behaviorId, brushId:self.id);
 
         self.parent = parent
         
@@ -266,6 +266,7 @@ class Brush: TimeSeries, Hashable, Renderable{
             behaviorDef?.addBrush(targetBrush: self)
         }
         self.delta.name = "delta_"+self.id;
+        BrushStorageManager.registerNewBrush(behaviorId: self.behaviorId, brushId: self.id);
     }
     
     
@@ -273,7 +274,7 @@ class Brush: TimeSeries, Hashable, Renderable{
         
         let paramData = ["dx": 0, "dy": 0, "pr": 0, "pt": 0, "ox": 0, "oy": 0, "rotation": 0, "sx": 0, "sy": 0, "weight": 1, "hue": 100, "saturation": 100, "lightness": 100, "alpha": 100, "dist": 0, "xDist": 0, "yDist": 0, "x": 0, "y": 0, "cx":0, "cy":0, "time": 0, "i": self.index.getSilent(), "sc": self.siblingcount.getSilent(), "lv": self.level.getSilent(), "parent": "none", "active":true] as [String : Any]
         self.params.updateAll(data: paramData)
-        self.signalEvent.raise(data: (self.behavior_id,self.id,self.params));
+        self.signalEvent.raise(data: (self.behaviorId,self.id,self.params));
     }
  
     func setupTransition(){
@@ -416,9 +417,11 @@ class Brush: TimeSeries, Hashable, Renderable{
         let data = ["dx":dx,"dy":dy,"pr":pr,"pt":pt,"ox":ox,"oy":oy,"rotation":r,"sx":sx,"sy":sy,"weight":weight,"hue":h,"saturation":s,"lightness":l,"alpha":a,"dist":dist,"xDist":xDist,"yDist":yDist,"x":x,"y":y,"cx":cx,"cy":cy,"time":self.time.getSilent(),"i":self.index.getSilent(),"sc":self.siblingcount.getSilent(),"lv":self.level.getSilent(),"parent": (self.parent != nil ? (self.parent!.behaviorDef?.name)! : "none"), "active":true] as [String : Any];
        
         self.params.updateAll(data: data);
+        BrushStorageManager.storeState(behaviorId: self.behaviorId, brushId: self.id, time: self.params.time, state: self.params.toJSON().rawString()!);
         
-        
-        self.currentDrawing!.addSegmentToStroke(behaviorId:self.behavior_id, brushId:self.id, point:Point(x:cx,y:cy),weight:weight , color: color,alpha:a)
+        let testState = BrushStorageManager.accessState(behaviorId: self.behaviorId, brushId: self.id, time: self.params.time);
+        print(testState!.x);
+        self.currentDrawing!.addSegmentToStroke(behaviorId:self.behaviorId, brushId:self.id, point:Point(x:cx,y:cy),weight:weight , color: color,alpha:a, time: self.params.time)
         self.unrendered = true;
         
         self.bPosition.x.setSilent(newValue: cx)
@@ -427,7 +430,7 @@ class Brush: TimeSeries, Hashable, Renderable{
         // self.distanceIntervalCheck();
         //self.intersectionCheck();
         
-        self.signalEvent.raise(data: (self.behavior_id,self.id,self.params));
+        self.signalEvent.raise(data: (self.behaviorId,self.id,self.params));
         
       //  Debugger.generateBrushDebugData(brush: self, type: "DRAW_SEGMENT");
 
@@ -861,8 +864,8 @@ class Brush: TimeSeries, Hashable, Renderable{
     
     
     func newStroke(){
-        self.currentDrawing!.retireCurrentStrokes(behaviorId: self.behavior_id, brushId:self.id)
-        self.currentDrawing!.newStroke(behaviorId: self.behavior_id, brushId:self.id);
+        self.currentDrawing!.retireCurrentStrokes(behaviorId: self.behaviorId, brushId:self.id)
+        self.currentDrawing!.newStroke(behaviorId: self.behaviorId, brushId:self.id);
         self.resetDistance();
     }
     
@@ -954,7 +957,7 @@ class Brush: TimeSeries, Hashable, Renderable{
         #if DEBUG
             print("destroying brush: \(self.id)");
         #endif
-        currentDrawing!.destroyBrushRegistry(behaviorId: behavior_id, brushId: self.id);
+        currentDrawing!.destroyBrushRegistry(behaviorId: behaviorId, brushId: self.id);
         self.clearBehavior();
         self.clearAllEventHandlers();
         super.destroy();

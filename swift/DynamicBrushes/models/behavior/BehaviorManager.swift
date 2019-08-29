@@ -60,6 +60,14 @@ class BehaviorManager{
     }
   
     
+    static func getBrushById(behaviorId:String, brushId:String)->Brush!{
+        guard let behavior = BehaviorManager.behaviors[behaviorId] else{
+            return nil;
+        }
+        let brush = behavior.getBrushById(id: brushId);
+        return brush;
+    }
+    
     
     static func refreshAllBehaviors(){
         for (_,behavior) in BehaviorManager.behaviors{

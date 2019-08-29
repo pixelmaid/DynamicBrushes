@@ -134,10 +134,10 @@ class Drawing: TimeSeries, Hashable, Renderable{
         var parentStroke:Stroke? = nil
         var stroke:Stroke? = nil
         for i in 0..<allStrokes.count{
-            if(allStrokes[i].parentID == parentId){
+            if(allStrokes[i].brushId == parentId){
                 parentStroke = allStrokes[i];
             }
-            if(allStrokes[i].parentID == id){
+            if(allStrokes[i].brushId == id){
                 stroke = allStrokes[i];
             }        }
         if(stroke != nil && stroke!.segments.count>15 ){
@@ -224,7 +224,7 @@ class Drawing: TimeSeries, Hashable, Renderable{
     
     func newStroke(behaviorId:String, brushId:String)->Stroke{
        
-        let stroke = Stroke(parentID:brushId);
+        let stroke = Stroke(brushId:brushId,behaviorId:behaviorId);
         if (self.activeStrokes[behaviorId] == nil){
             self.activeStrokes[behaviorId] = [String:[Stroke]]();
             
@@ -241,7 +241,7 @@ class Drawing: TimeSeries, Hashable, Renderable{
         return stroke;
     }
     
-    func addSegmentToStroke(behaviorId:String,brushId:String, point:Point, weight:Float, color:Color, alpha:Float){
+    func addSegmentToStroke(behaviorId:String,brushId:String, point:Point, weight:Float, color:Color, alpha:Float, time:Int){
         if (self.activeStrokes[behaviorId] == nil){
             return
         }
@@ -253,7 +253,7 @@ class Drawing: TimeSeries, Hashable, Renderable{
         for i in 0..<self.activeStrokes[behaviorId]![brushId]!.count{
             let currentStroke = self.activeStrokes[behaviorId]![brushId]![i]
 
-            _ = currentStroke.addSegment(brushId: brushId, point: point,d:weight,color:color,alpha:alpha)
+            _ = currentStroke.addSegment(brushId: brushId, point: point,d:weight,color:color,alpha:alpha,time:time)
 
         }
     }

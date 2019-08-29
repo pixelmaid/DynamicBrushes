@@ -15,6 +15,7 @@
 		0A56E3BD2071C09C006243A6 /* BrushSignalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56E3BC2071C09B006243A6 /* BrushSignalManager.swift */; };
 		0A56E3BF2072B916006243A6 /* SignalAccessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56E3BE2072B916006243A6 /* SignalAccessors.swift */; };
 		0A56E3C5207308FA006243A6 /* ExpressionCatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A56E3C4207308FA006243A6 /* ExpressionCatch.m */; };
+		0A5E4A9223186E5F002CE9D7 /* BrushStorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5E4A9123186E5F002CE9D7 /* BrushStorageManager.swift */; };
 		0A67848420B8E327004BB7B9 /* MapFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A67848320B8E327004BB7B9 /* MapFunctions.swift */; };
 		0AAEAB6A20698BFB0082F6E4 /* StylusCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAEAB6920698BFB0082F6E4 /* StylusCollection.swift */; };
 		0AAEAB6C20698C030082F6E4 /* LiveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAEAB6B20698C030082F6E4 /* LiveManager.swift */; };
@@ -188,6 +189,7 @@
 		0A56E3BE2072B916006243A6 /* SignalAccessors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SignalAccessors.swift; path = data/SignalAccessors.swift; sourceTree = "<group>"; };
 		0A56E3C3207308FA006243A6 /* ExpressionCatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExpressionCatch.h; sourceTree = "<group>"; };
 		0A56E3C4207308FA006243A6 /* ExpressionCatch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExpressionCatch.m; sourceTree = "<group>"; };
+		0A5E4A9123186E5F002CE9D7 /* BrushStorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrushStorageManager.swift; sourceTree = "<group>"; };
 		0A67848320B8E327004BB7B9 /* MapFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MapFunctions.swift; path = data/MapFunctions.swift; sourceTree = "<group>"; };
 		0AAEAB6920698BFB0082F6E4 /* StylusCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StylusCollection.swift; path = data/StylusCollection.swift; sourceTree = "<group>"; };
 		0AAEAB6B20698C030082F6E4 /* LiveManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveManager.swift; sourceTree = "<group>"; };
@@ -509,6 +511,7 @@
 				0A3733C922936594009E92DC /* BrushGraphics.swift */,
 				0A56E3BC2071C09B006243A6 /* BrushSignalManager.swift */,
 				5F90F55B1E9D5A5C006BB9FE /* Brush.swift */,
+				0A5E4A9123186E5F002CE9D7 /* BrushStorageManager.swift */,
 			);
 			path = brushes;
 			sourceTree = "<group>";
@@ -1175,6 +1178,7 @@
 				0A3733CA22936594009E92DC /* BrushGraphics.swift in Sources */,
 				5FA4C7261CDA7B5B004A728C /* DrawingViewController.swift in Sources */,
 				5F90F5681E9D5BCC006BB9FE /* Condition.swift in Sources */,
+				0A5E4A9223186E5F002CE9D7 /* BrushStorageManager.swift in Sources */,
 				5F90F5661E9D5BCC006BB9FE /* BehaviorManager.swift in Sources */,
 				5F5CED2A1ED10AED00A253A0 /* ColorUtils.swift in Sources */,
 				5FE34C7B1F1FA61300E26C06 /* PathFunctions.swift in Sources */,

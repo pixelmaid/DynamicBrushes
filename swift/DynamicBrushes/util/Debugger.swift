@@ -70,6 +70,7 @@ final class Debugger {
         return debugData;
     }
     
+    
   static func generateInputDebugData()->JSON{
        
         var debugData:JSON = [:]
@@ -224,6 +225,19 @@ final class Debugger {
             view.scene!.removeActiveId(id:id)
             view.updateNode()
         }
+        
+    }
+    
+    
+    static func jumpToState(stroke:Stroke,segment:Segment){
+        var brushId = stroke.brushId;
+        var behaviorId = stroke.behaviorId;
+        var brush = BehaviorManager.getBrushById(behaviorId: behaviorId, brushId:brushId);
+        
+        var time = segment.time;
+        
+        
+        
         
     }
     

@@ -32,10 +32,10 @@ class PathFitter{
         this.closed = closed;*/
     }
     
-    func addCurve(segments:[Segment], curve:[Point])->[Segment] {
+    func addCurve(segments:[Segment], curve:[Point], time:Int)->[Segment] {
     var prev = segments[segments.count - 1];
     prev.setHandleOut(point: curve[1].sub(point: curve[0]));
-        var s = Segment(point: curve[3]);
+        var s = Segment(point: curve[3],time:time);
         s.setHandleIn(point: curve[2].sub(point:curve[3]));
         var nSegments = [Segment]();
         nSegments.append(contentsOf: segments);
@@ -58,14 +58,14 @@ class PathFitter{
     return u;
     }
     
-    func fit(error:Float)->[Segment] {
+    func fit(error:Float,time:Int)->[Segment] {
         var points = self.points;
         let length = points.count;
         var segments: [Segment]!
         if (length > 0) {
             // To support reducing paths with multiple points in the same place
             // to one segment:
-            segments = [Segment(point: points[0])];
+            segments = [Segment(point: points[0],time:time)];
             if (length > 1) {
                 //self.fitCubic(segments:segments, error:error, first:0, last:length - 1,
                               // Left Tangent

@@ -62,7 +62,7 @@ class Generator:Signal{
             generatorData["generatorType"] = JSON(self.fieldName);
             generatorData["brushId"] = JSON(key);
             generatorData["brushIndex"] = JSON(self.registeredBrushes[key]!.index.getSilent());
-            generatorData["behaviorId"] = JSON(self.registeredBrushes[key]!.behavior_id );
+            generatorData["behaviorId"] = JSON(self.registeredBrushes[key]!.behaviorId );
             generatorData["behaviorName"] = JSON(self.registeredBrushes[key]!.behaviorDef!.name);
             generatorData["settings"] = self.getSettingsJSON();
             data.append(generatorData);
