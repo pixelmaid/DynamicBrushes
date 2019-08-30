@@ -230,7 +230,6 @@ final class Debugger {
         for id in keysToRemove {
             view.scene!.removeActiveId(id:id)
             view.updateNode()
-            view.destroyNode()
         }
         
     }
