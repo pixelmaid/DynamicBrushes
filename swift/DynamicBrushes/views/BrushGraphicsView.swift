@@ -56,12 +56,20 @@ public class BrushGraphicsScene {
         }
     }
     
+    public func removeSine() {
+        for (_, brush) in self.activeBrushIds {
+            brush.removeSine()
+        }
+        print("~~~ called removeSine in scene")
+    }
+    
     public func drawGenerator(valArray: [(Double, Int, String)]) {
         var i:Int = 0;
 
         for (_, brush) in self.activeBrushIds {
             let numGenerators = valArray.count
-//            print("~~~ total num active generators" , numGenerators, self.currentGenerator.count);
+            print("~~~ total num active generators" , numGenerators);
+            
             
             if numGenerators > self.currentGenerator.count { //increase slots
                 let diff = numGenerators - self.currentGenerator.count
@@ -75,10 +83,10 @@ public class BrushGraphicsScene {
             
             for (value, time, type) in sortedValArray {
                 if type != self.currentGenerator[i] {
-//                    print("~~ before type is ", self.currentGenerator[i])
+                    print("~~ before type is ", self.currentGenerator[i])
                     brush.updateGeneratorKind(type: type, i:i)
                     self.currentGenerator[i] = type
-//                    print("~~~ updated generator to ", type, i)
+                    print("~~~ updated generator to ", type, i)
                 }
                 if type != "none" {
 //                    print("~~~~~~ about to update dot for id ", brush.id, value, time, type, i)
@@ -132,6 +140,8 @@ class BrushGraphic {
     let brushColor = Macaw.Color.rgba(r: 255, g:53, b:95, a: 63)
     let outputColor = Macaw.Color.rgba(r: 134, g: 73, b: 180, a: 63)
     
+    let svgView = SVGView(frame: CGRect(x: 25, y: 100, width: 200, height: 100))
+    
     init(view:BrushGraphicsView, scene:BrushGraphicsScene, id:String, ox:Float, oy:Float, r: Float, x: Float, y:Float,
          cx: Float, cy:Float ) {
         self.id = id
@@ -144,7 +154,6 @@ class BrushGraphic {
         self.y = y
         self.cx = cx
         self.cy = cy
-        
         //add to scene
 
 
@@ -202,6 +211,10 @@ class BrushGraphic {
         generator.place = Transform.move(dx:25, dy:75)
         node.contents.append(generator)
         
+        //init sine svg, but don't add it
+        svgView.fileName = "sine"
+        svgView.backgroundColor = UIColor(white:1, alpha:0)
+        
         self.addToScene()
     }
     
@@ -228,7 +241,7 @@ class BrushGraphic {
             multiplier = 1
         }
         else if type == "sine" {
-            multiplier = 5
+            multiplier = 1
         }
         if i >= self.generator.contents.count {
             reinitGen(i: i)
@@ -252,7 +265,7 @@ class BrushGraphic {
                                 fill: Macaw.Color.white,
                                 stroke: Macaw.Stroke(fill: Macaw.Color.black, width:2))
         let generatorText = BrushGraphic.newText("", Transform.move(dx:100,dy:125))
-        let generatorYAxisLabels = BrushGraphic.newText("1\n\n\n\n\n0", Transform.move(dx:-12,dy:10))
+        let generatorYAxisLabels = BrushGraphic.newText("1\n\n\n\n\n\n0", Transform.move(dx:-12,dy:10))
         let generatorGraph = Shape(form: Circle(r: 1), fill: Macaw.Color.rgba(r:0,g:0,b:0,a:0))
         let genGroup = Group(contents:[generatorBg, generatorDot, generatorText, generatorGraph, generatorYAxisLabels])
         return genGroup
@@ -266,7 +279,7 @@ class BrushGraphic {
         } else {
             self.generator.contents[i] = genGroup
         }
-//        print("~~~ reinit generator. now contents are ", self.generator.contents.count , " with i ", i )
+        print("~~~ reinit generator. now contents are ", self.generator.contents.count , " with i ", i )
     }
     
     func updateGeneratorKind(type:String, i: Int){
@@ -279,7 +292,7 @@ class BrushGraphic {
         } else {
             reinitGen(i: i)
         }
-//        print("~~~~ updating generator kind, i is  ", i)
+        print("~~~~ updating generator kind to ", type)
         switch type {
         case "sawtooth":
             let graph = Macaw.Line(x1:0, y1:100, x2:200, y2:0).stroke(fill:lighterInputColor, width:2)
@@ -302,19 +315,30 @@ class BrushGraphic {
             group.contents[3] = graph
             
         case "sine":
-            //do nothing...
-            print("~~sine")
+            
+            self.view.addSubview(self.svgView)
+            
+            self.view.sineActive = true
+            print("~~ added sine")
         case "none":
             //delete
             let empty = Shape(form: Circle(r:1), fill: Macaw.Color.rgba(r:0,g:0,b:0,a:0))
             self.generator.contents[i] = Group(contents: [empty])
-    
-//            print("~~~ deleted generator")
+            //remove sine
+            self.svgView.removeFromSuperview()
+            self.view.sineActive = false
+            print("~~~ deleted generator")
         default:
             //get rid of graph
             print("default")
 
         }
+    }
+    
+    func removeSine() {
+        self.svgView.removeFromSuperview()
+        self.view.sineActive = false
+        print("~~~~ in brush, called reomve sine")
     }
     
     func updateBrushIcon(r: Float, ox:Float, oy:Float, sx:Float, sy:Float) {
@@ -387,7 +411,7 @@ class BrushGraphic {
 class BrushGraphicsView: MacawView {
     //overall container
     var scene: BrushGraphicsScene?
-  
+    var sineActive = false
     override init(frame: CGRect) {
         super.init(frame: frame);
         self.backgroundColor =  UIColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 0.0)
@@ -403,10 +427,18 @@ class BrushGraphicsView: MacawView {
         super.init(node: Group(contents:[brushIcon]), coder: aDecoder)
     }
     
+    func destroyNode() {
+        self.sineActive = false
+        print("~~ set active sine to false" )
+        if !sineActive {
+            self.scene?.removeSine()
+        }
+    }
+    
     func updateNode() {
         let node = scene?.node
         self.node = node!
-        print("## called update node in graphics view", self.node)
+        print("~~ called update node in graphics view", self.node, self.sineActive)
     }
     
 }

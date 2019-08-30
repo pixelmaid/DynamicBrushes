@@ -151,6 +151,7 @@
 		726443622045E00D005A2E9D /* VisualizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 726443612045E00D005A2E9D /* VisualizationView.swift */; };
 		7267DCC120290D9F0093245A /* RecordingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7267DCC020290D9E0093245A /* RecordingViewController.swift */; };
 		7267DCC5202A8ECF0093245A /* RecordingFrameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7267DCC4202A8ECF0093245A /* RecordingFrameCell.swift */; };
+		7288CF7A2318D2D8006C78DD /* sine.svg in Resources */ = {isa = PBXBuildFile; fileRef = 7288CF792318D2D8006C78DD /* sine.svg */; };
 		72D72C092069DF8400C1C9C8 /* MicCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D72C082069DF8400C1C9C8 /* MicCollection.swift */; };
 		72E8C9752295BF0B00F3A7BC /* BrushGraphicsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E8C9742295BF0B00F3A7BC /* BrushGraphicsView.swift */; };
 		72F3CED4204DFD050010A3D0 /* record_off2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F3CED0204DFD040010A3D0 /* record_off2x.png */; };
@@ -336,6 +337,7 @@
 		726443612045E00D005A2E9D /* VisualizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualizationView.swift; sourceTree = "<group>"; };
 		7267DCC020290D9E0093245A /* RecordingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordingViewController.swift; sourceTree = "<group>"; };
 		7267DCC4202A8ECF0093245A /* RecordingFrameCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingFrameCell.swift; sourceTree = "<group>"; };
+		7288CF792318D2D8006C78DD /* sine.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = sine.svg; sourceTree = "<group>"; };
 		72D72C082069DF8400C1C9C8 /* MicCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicCollection.swift; sourceTree = "<group>"; };
 		72E8C9742295BF0B00F3A7BC /* BrushGraphicsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrushGraphicsView.swift; sourceTree = "<group>"; };
 		72F3CED0204DFD040010A3D0 /* record_off2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = record_off2x.png; sourceTree = "<group>"; };
@@ -655,6 +657,7 @@
 		5FD6CD101DE0EE0E007D94AA /* image_assets */ = {
 			isa = PBXGroup;
 			children = (
+				7288CF792318D2D8006C78DD /* sine.svg */,
 				7219D0DE20699EEE0096CB4B /* mic_off2x.png */,
 				7219D0DF20699EEF0096CB4B /* mic_on2x.png */,
 				72F3CED2204DFD050010A3D0 /* loop_button_off2x.png */,
@@ -971,6 +974,7 @@
 				5F9118D81DEE345100A6B247 /* draw_icon.png in Resources */,
 				5FBDF0EC1ED8D95300022B07 /* stencil.fsh in Resources */,
 				5FA4C72B1CDA7B5B004A728C /* Assets.xcassets in Resources */,
+				7288CF7A2318D2D8006C78DD /* sine.svg in Resources */,
 				5FE32F9A1ECF6DC900ADC01E /* trash_button.png in Resources */,
 				5FBDF0E91ED8D95300022B07 /* colorlesspoint.vsh in Resources */,
 				5F9F25AC1DEFE3A0005CB5D8 /* select_icon2x.png in Resources */,

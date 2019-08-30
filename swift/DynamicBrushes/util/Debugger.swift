@@ -187,9 +187,10 @@ final class Debugger {
                         val = subJson["v"].double ?? -1.0
                         time = subJson["time"].int ?? -1
                         type = subJson["generatorType"].string ?? "none"
+                        freq = subJson["settings"]["freq"].float ?? -1.0
 //                        if subJson["settings"].exists() {
-                        print("FREQUENCY OF SINE IS ~~~~~~ ", params.rawString())
-
+//                            print("FREQUENCY OF SINE IS ~~~~~~ ", freq)
+//
 //                        }
                         returnVals.append((val:val, time:time, type:type))
                         
@@ -229,6 +230,7 @@ final class Debugger {
         for id in keysToRemove {
             view.scene!.removeActiveId(id:id)
             view.updateNode()
+            view.destroyNode()
         }
         
     }
