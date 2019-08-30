@@ -24,6 +24,7 @@ enum BehaviorError: Error {
 
 class BehaviorManager{
     static var behaviors = [String:BehaviorDefinition]()
+    static var activeInstance = 0;
   // static var imported = [String:SignalCollection]();
   //  static var recordings = [String:SignalCollection]();
    // static var generators = [String:GeneratorCollection]();
@@ -31,21 +32,22 @@ class BehaviorManager{
     //static var brushProperties = [String:BrushCollection]();
     //static var accessors = [String:AccessorCollection]();
 
-    
 
     static var signalCollections = [[String:SignalCollection](), [String:SignalCollection](),[String:SignalCollection](),[String:SignalCollection](),[String:SignalCollection](),[String:SignalCollection]()];
     
     
 
-    var drawing:Drawing
-    init(drawing:Drawing){
-        self.drawing = drawing;
-       // BehaviorManager.signalCollections.removeAll();
-        //BehaviorManager.signalCollections = [[String:SignalCollection](), [String:SignalCollection](),[String:SignalCollection](),[String:SignalCollection]()];
-        //BehaviorManager.behaviors.removeAll();      
+    static var drawing:Drawing = Drawing();
+    
+ 
+    
+    static func setCurrentDrawing(drawing:Drawing){
+        BehaviorManager.drawing = drawing;
     }
     
-    
+    static func getCurrentDrawing()->Drawing{
+        return BehaviorManager.drawing;
+    }
     
     static func getAllBrushInstances()->[String:(String,[Brush])]{
         var behaviors = [(String):(String,[Brush])]();
@@ -58,25 +60,33 @@ class BehaviorManager{
     }
   
     
+    static func getBrushById(behaviorId:String, brushId:String)->Brush!{
+        guard let behavior = BehaviorManager.behaviors[behaviorId] else{
+            return nil;
+        }
+        let brush = behavior.getBrushById(id: brushId);
+        return brush;
+    }
     
-    func refreshAllBehaviors(){
+    
+    static func refreshAllBehaviors(){
         for (_,behavior) in BehaviorManager.behaviors{
             behavior.createBehavior(drawing:drawing)
         }
     }
     
-    func loadData(json:JSON){
+    static func loadData(json:JSON){
         print("data to load",json);
         BehaviorManager.loadCollectionsFromJSON(data: json["collections"]);
-        self.loadBehaviorsFromJSON(json: json["behaviors"], rewriteAll: true)
+        BehaviorManager.loadBehaviorsFromJSON(json: json["behaviors"], rewriteAll: true)
     }
     
    
     
-    func loadBehaviorsFromJSON(json:JSON,rewriteAll:Bool){
+   static func loadBehaviorsFromJSON(json:JSON,rewriteAll:Bool){
         if(rewriteAll){
             for(_,value) in BehaviorManager.behaviors{
-                value.clearBehavior();
+                value.clearBehavior(drawing: BehaviorManager.drawing);
             }
             BehaviorManager.behaviors.removeAll();
             
@@ -85,7 +95,7 @@ class BehaviorManager{
         for value in behaviorArray{
             let id = value["id"].stringValue
             if let val = BehaviorManager.behaviors[id] {
-                val.clearBehavior();
+                val.clearBehavior(drawing: BehaviorManager.drawing);
                 
             }
             let behavior = BehaviorDefinition(id:id,name:value["name"].stringValue);
@@ -110,7 +120,7 @@ class BehaviorManager{
     }
     
     
-    func handleDataRequest(requestData:JSON) ->JSON{
+    static func handleDataRequest(requestData:JSON) ->JSON{
         let data = requestData["data"] as JSON;
         let type = data["type"].stringValue;
         var resultJSON:JSON = [:]
@@ -136,7 +146,7 @@ class BehaviorManager{
         
     }
     
-    func handleAuthoringRequest(authoring_data:JSON) throws->JSON{
+    static func handleAuthoringRequest(authoring_data:JSON) throws->JSON{
 
         let data = authoring_data["data"] as JSON;
         let type = data["type"].stringValue;
@@ -204,7 +214,7 @@ class BehaviorManager{
         case "delete_behavior_request":
             let behaviorId = data["behaviorId"].stringValue;
             let behavior = BehaviorManager.behaviors[behaviorId]!;
-            let dependents = self.checkDependency(behaviorId:behavior.id);
+            let dependents = BehaviorManager.checkDependency(behaviorId:behavior.id);
             if(dependents.count == 0){
                 resultJSON["result"] = "success";
             }
@@ -220,7 +230,7 @@ class BehaviorManager{
             let behaviorId = data["behaviorId"].stringValue;
             let behavior = BehaviorManager.behaviors[behaviorId]!;
             BehaviorManager.behaviors.removeValue(forKey: behaviorId)
-            behavior.clearBehavior();
+            behavior.clearBehavior(drawing: BehaviorManager.drawing);
             resultJSON["result"] = "success"
             return resultJSON
             
@@ -342,7 +352,7 @@ class BehaviorManager{
        
         case "signal_initialized":
             do {
-                guard let signalData = try self.parseSignalJSON(data:data) else{
+                guard let signalData = try BehaviorManager.parseSignalJSON(data:data) else{
                     resultJSON["result"] = "failure";
                     return resultJSON;
                 }
@@ -359,7 +369,7 @@ class BehaviorManager{
         case "signal_destroyed":
             do {
                 let signalId = data["signalId"].stringValue
-                try self.destroySignalInstance(id:signalId)
+                try BehaviorManager.destroySignalInstance(id:signalId)
               
             }
             catch{
@@ -421,7 +431,7 @@ class BehaviorManager{
     }
     
     
-    private func destroySignalInstance(id:String) throws{
+    static func destroySignalInstance(id:String) throws{
         for collectionList in BehaviorManager.signalCollections{
             for(_,collection) in collectionList{
                 var signal = collection.getInitializedSignal(id:id);
@@ -435,7 +445,7 @@ class BehaviorManager{
         throw SignalError.signalNotFound
     }
     
- private func parseSignalJSON(data:JSON) throws->JSON?{
+ static func parseSignalJSON(data:JSON) throws->JSON?{
         let classType = data["classType"].stringValue;
         let collectionId = data["collectionId"].stringValue;
         let fieldName = data["fieldName"].stringValue;
@@ -669,7 +679,7 @@ class BehaviorManager{
     
     
     //checks to see if other behaviors reference the target behavior
-    func checkDependency(behaviorId:String)->[String:String]{
+    static func checkDependency(behaviorId:String)->[String:String]{
         var dependentBehaviors = [String:String]()
         
         for (_,value) in BehaviorManager.behaviors {

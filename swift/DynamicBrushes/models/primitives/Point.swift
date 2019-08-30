@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import SwiftyJSON
 
 class Point:Observable<(Float,Float)>,Geometry{
   
@@ -40,9 +41,13 @@ class Point:Observable<(Float,Float)>,Geometry{
      
     }
     
-    func toJSON()->String{
-        let string = "\"x\":"+String(self.x.get(id: nil))+",\"y\":"+String(self.y.get(id: nil))
-        return string;
+    func toJSON()->JSON{
+        var json:JSON = [:]
+        json["x"] = JSON(self.x.getSilent());
+        json["y"] = JSON(self.y.getSilent());
+        return json;
+
+        
     }
     
     override func destroy(){

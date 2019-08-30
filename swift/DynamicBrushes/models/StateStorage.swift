@@ -30,6 +30,11 @@ class BaseStateStorage:NSObject, StateStorage{
         super.init();
     }
     
+    init(json:JSON){
+        super.init();
+        self.parseJSON(json:json);
+    }
+    
     func toJSON()->JSON{
         
         var data:JSON = [:];
@@ -41,6 +46,13 @@ class BaseStateStorage:NSObject, StateStorage{
         }
         return data;
         
+    }
+    
+    func parseJSON(json:JSON){
+        
+        for (key, subJson) in json {
+            self.update(key: key,value: subJson.object);
+        }
     }
     
     func update(key:String,value:Any){
@@ -58,6 +70,7 @@ class BaseStateStorage:NSObject, StateStorage{
         }
         
     }
+    
     
     func clear(){
         

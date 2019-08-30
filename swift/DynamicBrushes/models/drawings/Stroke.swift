@@ -7,13 +7,14 @@
 //
 import Foundation
 import UIKit
+import SwiftyJSON
 
 enum DrawError: Error {
     case InvalidArc
     
 }
 protocol Geometry {
-    func toJSON()->String
+    func toJSON()->JSON
 }
 
 struct StoredDrawing:Geometry{
@@ -28,8 +29,8 @@ struct StoredDrawing:Geometry{
     }
     
     //todo: create toJSON method
-    func toJSON()->String{
-        return "placeholder_string"
+    func toJSON()->JSON{
+        return JSON([:]);
     }
 }
 
@@ -54,27 +55,29 @@ struct Segment:Geometry, Equatable {
     var color = Color(h: 0, s: 0, l: 0, a: 1);
     var alpha = Float(0.5);
     let id = NSUUID().uuidString;
+    let time: Int
     //let printer = DeallocPrinter()
-    init(x:Float,y:Float) {
-        self.init(x:x,y:y,hi_x:0,hi_y:0,ho_x:0,ho_y:0)
+    init(x:Float,y:Float,time:Int) {
+        self.init(x:x,y:y,hi_x:0,hi_y:0,ho_x:0,ho_y:0,time: time)
     }
     
-    init(point:Point){
-        self.init(point:point,handleIn:Point(x: 0, y: 0),handleOut:Point(x: 0, y: 0))
+    init(point:Point,time:Int){
+        self.init(point:point,handleIn:Point(x: 0, y: 0),handleOut:Point(x: 0, y: 0),time:time)
     }
     
-    init(x:Float,y:Float,hi_x:Float,hi_y:Float,ho_x:Float,ho_y:Float){
+    init(x:Float,y:Float,hi_x:Float,hi_y:Float,ho_x:Float,ho_y:Float,time:Int){
         let point = Point(x:x,y:y)
         let hI = Point(x: hi_x,y: hi_y)
         let hO = Point(x: ho_x,y: ho_y)
-        self.init(point:point,handleIn:hI,handleOut:hO)
+        self.init(point:point,handleIn:hI,handleOut:hO,time: time)
         
     }
     
-    init(point:Point,handleIn:Point,handleOut:Point) {
+    init(point:Point,handleIn:Point,handleOut:Point,time:Int) {
         self.point = point
         self.handleIn = handleIn
         self.handleOut = handleOut
+        self.time = time;
     }
     
     mutating func setHandleOut(point:Point){
@@ -152,10 +155,15 @@ struct Segment:Geometry, Equatable {
         return nil
     }
     
-    func toJSON()->String{
-        var string = "{\"point\":{"+self.point.toJSON()+"},"
-        string += "\"time\":"+String(parent!.getTimeElapsed())+"}"
-        return string
+    func toJSON()->JSON{
+        var jsonData:JSON = self.point.toJSON();
+        let color = self.color;
+        jsonData["weight"] =  JSON(self.weight);
+        jsonData["h"] = JSON(color.hue);
+        jsonData["s"] = JSON(color.saturation);
+        jsonData["l"] = JSON(color.lightness);
+        jsonData["a"] = JSON(self.alpha);
+        return jsonData;
     }
     
 }
@@ -178,11 +186,13 @@ class Stroke:TimeSeries, Geometry, Renderable {
    /* var xBuffer = CircularBuffer();
     var yBuffer = CircularBuffer();
     var weightBuffer = CircularBuffer();*/
-    var parentID: String;
+    var brushId: String;
+    var behaviorId: String;
     var selected = false;
     
-    init(parentID:String){
-        self.parentID = parentID;
+    init(brushId:String,behaviorId:String){
+        self.brushId = brushId;
+        self.behaviorId = behaviorId;
         super.init();
     }
     
@@ -249,10 +259,10 @@ class Stroke:TimeSeries, Geometry, Renderable {
     }
     
     
-    func addSegment(brushId:String, point:Point, d:Float, color:Color, alpha:Float)->Segment?{
+    func addSegment(brushId:String, point:Point, d:Float, color:Color, alpha:Float, time:Int)->Segment?{
         self.unrendered = true;
 
-        var segment = Segment(point:point)
+        var segment = Segment(point:point,time:time)
         segment.weight = d
         segment.color = color;
         segment.alpha = alpha;
@@ -277,8 +287,21 @@ class Stroke:TimeSeries, Geometry, Renderable {
     }
     
     
+    func toJSON()->JSON{
+        var jsonData:JSON = [:];
+        if(self.segments.count>0){
+        
+            let currentSegment = self.segments.last!;
+            jsonData = currentSegment.toJSON();
+            
+        }
+        
+        jsonData["numSegments"] = JSON(self.segments.count);
+
+        return jsonData;
+    }
     
-    func toJSON()->String{
+    /*func toJSON()->String{
         var string = "segments:["
         for i in 0...segments.count-1{
             
@@ -290,7 +313,7 @@ class Stroke:TimeSeries, Geometry, Renderable {
         string += "],"
         return string
         
-    }
+    }*/
     
     
     

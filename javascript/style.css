@@ -367,6 +367,10 @@ li.collapsibleListClosed{
   background-color: #eb4a63;
 }
 
+.output{
+  background-color: #9259bc;
+}
+
 .method{
   background-color:#eb4a63;
   min-width:200px;
@@ -1242,7 +1246,7 @@ position: absolute;
   bottom: 20px;
   left: 20px; 
   max-height: 400px;
-  width: 615px;
+  width: 660px;
 }
 .inspector-container {
   float: left;

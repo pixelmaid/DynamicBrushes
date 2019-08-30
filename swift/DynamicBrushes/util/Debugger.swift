@@ -62,6 +62,13 @@ final class Debugger {
         Debugger.debugTimer = nil;
     }
     
+
+    static func generateOutputDebugData()->JSON{
+        var debugData:JSON = [:]
+          debugData["groupName"] = JSON("output");
+        debugData["behaviors"] = BehaviorManager.drawing.activeStrokesToJSON();
+        return debugData;
+    }
     
     
   static func generateInputDebugData()->JSON{
@@ -151,10 +158,11 @@ final class Debugger {
     static public func  generateDebugData()->JSON{
         let inputData = Debugger.generateInputDebugData();
         let brushData = Debugger.generateBrushDebugData();
+        let outputData = Debugger.generateOutputDebugData();
         var debugData:JSON = [:];
         debugData["brush"] = brushData;
         debugData["input"] = inputData;
-            
+        debugData["output"] = outputData;
         return debugData;
     }
     
@@ -222,6 +230,19 @@ final class Debugger {
             view.scene!.removeActiveId(id:id)
             view.updateNode()
         }
+        
+    }
+    
+    
+    static func jumpToState(stroke:Stroke,segment:Segment){
+        var brushId = stroke.brushId;
+        var behaviorId = stroke.behaviorId;
+        var brush = BehaviorManager.getBrushById(behaviorId: behaviorId, brushId:brushId);
+        
+        var time = segment.time;
+        
+        
+        
         
     }
     

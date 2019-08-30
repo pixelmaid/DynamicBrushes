@@ -62,8 +62,9 @@ class Generator:Signal{
             generatorData["generatorType"] = JSON(self.fieldName);
             generatorData["brushId"] = JSON(key);
             generatorData["brushIndex"] = JSON(self.registeredBrushes[key]!.index.getSilent());
-            generatorData["behaviorId"] = JSON(self.registeredBrushes[key]!.behavior_id );
+            generatorData["behaviorId"] = JSON(self.registeredBrushes[key]!.behaviorId );
             generatorData["behaviorName"] = JSON(self.registeredBrushes[key]!.behaviorDef!.name);
+            generatorData["settings"] = self.getSettingsJSON();
             data.append(generatorData);
         }
        // let sortedData = data.sorted(by: { $0["behaviorId"].stringValue < $1["behaviorId"].stringValue});
@@ -93,8 +94,8 @@ class Sine:Generator{
     
     
     required init(id:String, fieldName:String, displayName:String, collectionId:String, style:String, settings:JSON){
-        self.freq = 0.5// settings["freq"].floatValue;
-        self.phase =  0//settings["phase"].floatValue;
+        self.freq = 0.02// settings["freq"].floatValue;
+        self.phase =  4.7//settings["phase"].floatValue;
         self.amp = 1.0; //settings["amp"].floatValue;
         super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
     }
@@ -107,7 +108,7 @@ class Sine:Generator{
         }
     
         let i = self.getIndexById(id: id!);
-        let v =  sin(Float(i)*freq+phase)*amp/2+amp/2;
+        let v =  (1+sin(Float(i)*freq*Float.pi+phase))*amp/2;
         self.update(v: v, id: id!,time: i);
         return v;
     }
