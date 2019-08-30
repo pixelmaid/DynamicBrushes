@@ -168,6 +168,7 @@ final class Debugger {
         var val = -1.0
         var time = -1
         var type = "none"
+        var freq:Float = -1.0
         var returnVals:[(val:Double,time:Int,type:String)] = []
         let generatorJSON = Debugger.generateGeneratorDebugData()
         if generatorJSON["default"].exists()  {
@@ -178,6 +179,10 @@ final class Debugger {
                         val = subJson["v"].double ?? -1.0
                         time = subJson["time"].int ?? -1
                         type = subJson["generatorType"].string ?? "none"
+//                        if subJson["settings"].exists() {
+                        print("FREQUENCY OF SINE IS ~~~~~~ ", params.rawString())
+
+//                        }
                         returnVals.append((val:val, time:time, type:type))
                         
                     }

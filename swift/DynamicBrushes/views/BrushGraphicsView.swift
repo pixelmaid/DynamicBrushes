@@ -128,6 +128,7 @@ class BrushGraphic {
     var scaleChanged = false
     
     let inputColor = Macaw.Color.rgba(r: 74, g:137, b:235, a: 1)
+    let lighterInputColor = Macaw.Color.rgba(r: 74, g:137, b:235, a: 200)
     let brushColor = Macaw.Color.rgba(r: 255, g:53, b:95, a: 63)
     let outputColor = Macaw.Color.rgba(r: 134, g: 73, b: 180, a: 63)
     
@@ -226,6 +227,9 @@ class BrushGraphic {
         if type == "sawtooth" {
             multiplier = 1
         }
+        else if type == "sine" {
+            multiplier = 5
+        }
         if i >= self.generator.contents.count {
             reinitGen(i: i)
         }
@@ -248,8 +252,9 @@ class BrushGraphic {
                                 fill: Macaw.Color.white,
                                 stroke: Macaw.Stroke(fill: Macaw.Color.black, width:2))
         let generatorText = BrushGraphic.newText("", Transform.move(dx:100,dy:125))
+        let generatorYAxisLabels = BrushGraphic.newText("1\n\n\n\n\n0", Transform.move(dx:-12,dy:10))
         let generatorGraph = Shape(form: Circle(r: 1), fill: Macaw.Color.rgba(r:0,g:0,b:0,a:0))
-        let genGroup = Group(contents:[generatorBg, generatorDot, generatorText, generatorGraph])
+        let genGroup = Group(contents:[generatorBg, generatorDot, generatorText, generatorGraph, generatorYAxisLabels])
         return genGroup
     }
     
@@ -277,21 +282,21 @@ class BrushGraphic {
 //        print("~~~~ updating generator kind, i is  ", i)
         switch type {
         case "sawtooth":
-            let graph = Macaw.Line(x1:0, y1:100, x2:200, y2:0).stroke(fill:Macaw.Color.gray, width:2)
+            let graph = Macaw.Line(x1:0, y1:100, x2:200, y2:0).stroke(fill:lighterInputColor, width:2)
             let group = self.generator.contents[i] as! Group
             group.contents[3] = graph
 
         case "triangle":
-            let line1 = Macaw.Line(x1:0, y1:100, x2:100, y2:0).stroke(fill:Macaw.Color.gray, width:2)
-            let line2 = Macaw.Line(x1:100, y1:0, x2:200, y2:100).stroke(fill:Macaw.Color.gray, width:2)
+            let line1 = Macaw.Line(x1:0, y1:100, x2:100, y2:0).stroke(fill:lighterInputColor, width:2)
+            let line2 = Macaw.Line(x1:100, y1:0, x2:200, y2:100).stroke(fill:lighterInputColor, width:2)
             let graph = Group(contents:[line1, line2])
             let group = self.generator.contents[i] as! Group
             group.contents[3] = graph
             
         case "square":
-            let line1 = Macaw.Line(x1:0, y1:0, x2:100, y2:0).stroke(fill:Macaw.Color.gray, width:2)
-            let line2 = Macaw.Line(x1:100, y1:0, x2:100, y2:100).stroke(fill:Macaw.Color.gray, width:2)
-            let line3 = Macaw.Line(x1:100, y1:100, x2:200, y2:100).stroke(fill:Macaw.Color.gray, width:2)
+            let line1 = Macaw.Line(x1:0, y1:0, x2:100, y2:0).stroke(fill:lighterInputColor, width:2)
+            let line2 = Macaw.Line(x1:100, y1:0, x2:100, y2:100).stroke(fill:lighterInputColor, width:2)
+            let line3 = Macaw.Line(x1:100, y1:100, x2:200, y2:100).stroke(fill:lighterInputColor, width:2)
             let graph = Group(contents:[line1, line2, line3])
             let group = self.generator.contents[i] as! Group
             group.contents[3] = graph
