@@ -102,7 +102,7 @@ class BrushGraphic {
     let brushIcon: Group
     let stylusText: Text
     let inputIcon: Shape
-    var lastStylusInputs:[Node] = []
+    var lastStylusInputs = Group()
     let inputLimit = 50
     let computedIcon: Shape
     let originText: Text
@@ -121,8 +121,6 @@ class BrushGraphic {
     var y: Float
     var cx: Float
     var cy: Float
-    
-    let currStylusIcon: Shape
     
     let oxOffset:Double = 0
     let oyOffset:Double = 0
@@ -185,9 +183,7 @@ class BrushGraphic {
         print("## init brush icon for brush ", id, " at " , self.ox, self.oy)
 
         //init stylusicon
-        currStylusIcon = Shape(form: Circle(r: 10), fill: inputColor, stroke: Macaw.Stroke(fill: Macaw.Color.white, width:2))
-        node.contents.append(currStylusIcon)
-
+        node.contents.append(lastStylusInputs)
         stylusText = BrushGraphic.newText("stylus x: 0, stylus y: 0", Transform.move(dx:0,dy:10))
         node.contents.append(stylusText)
         print("## init stylus icon for brush ", id, " at " , self.x, self.y)
@@ -384,14 +380,32 @@ class BrushGraphic {
         }
     }
     
+    func updateExistingStylusStrokes() {
+        var i = 1
+        for stroke in lastStylusInputs.contents {
+            let stroke = stroke as! Shape
+            stroke.fill = Macaw.Color.rgba(r: 74, g:137, b:235, a: Double(225-i*2))
+            i += 1
+        }
+        
+    }
+    
+    
     func moveStylusLocation(x: Double, y: Double, force: Double) {
 //        let stylusIcon =
         let forceScale = (force+1)
+        let currStylusIcon = Shape(form: Circle(r: 10), fill: inputColor)//, stroke: Macaw.Stroke(fill: Macaw.Color.white, width:2))
+
         print("~~~ in move stylus location with ", x, y, force)
         stylusText.text = "x: "+String(Int(x))+", y: "+String(Int(y))+", force: "+String((force*10).rounded()/10)
         stylusText.place = Transform.move(dx: x, dy: y + 20)
         currStylusIcon.place = Transform.move(dx:x, dy:y).scale(sx:forceScale, sy:forceScale)
-        
+        lastStylusInputs.contents.append(currStylusIcon)
+        if lastStylusInputs.contents.count > inputLimit {
+            lastStylusInputs.contents.removeFirst()
+        }
+        updateExistingStylusStrokes()
+        print("~~~ node len is ", lastStylusInputs.contents.count)
 //                node.contents.append(stylusIcon)
     }
     
