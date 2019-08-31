@@ -201,6 +201,26 @@ final class Debugger {
         return returnVals
     }
     
+    static public func getStylusInputValue(brushId:String) -> (Double, Double, Double) {
+        var x = 0.0
+        var y = 0.0
+        var force = 0.0
+        let debugData = Debugger.generateInputDebugData()
+        if debugData["inputGlobal"].exists() {
+            let items:JSON = debugData["inputGlobal"]["items"]
+            for (_, subJsonArr):(String, JSON) in items {
+                if subJsonArr["id"] == "stylus" {
+                    let params:JSON = subJsonArr["params"]
+                    x = params["x"].double ?? 0.0
+                    y = params["y"].double ?? 0.0
+                    force = params["force"].double ?? 0.0
+                    
+                }
+            }
+        }
+        return (x, y, force)
+    }
+    
     static public func drawUnrendererdBrushes(view:BrushGraphicsView){
         let behaviors = BehaviorManager.getAllBrushInstances();
         //check to see which brushes are "unrendered"
@@ -212,9 +232,11 @@ final class Debugger {
             let brush = brushes[0]
 //            for brush in brushes {
             if brush.unrendered && i < 1 {
-                print("~~~ about to draw into context in debugger with brush ", brush.id)
-                brush.drawIntoContext(context:view)
+//                print("~~~ about to draw into context in debugger with brush ", brush.id)
                 let valArray = Debugger.getGeneratorValue(brushId: brush.id)
+                let inputInfo = Debugger.getStylusInputValue(brushId: brush.id)
+                brush.drawIntoContext(context:view, info:inputInfo)
+
                 view.scene!.drawGenerator(valArray: valArray)
             
                 i += 1

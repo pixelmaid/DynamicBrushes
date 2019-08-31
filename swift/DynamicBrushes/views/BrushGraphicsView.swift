@@ -29,14 +29,14 @@ public class BrushGraphicsScene {
         self.activeBrushIds[id] = brushGraphic //add to dict
     }
     
-    public func updateBrush(id:String, r: Float, x: Float, y: Float, cx: Float, cy: Float, ox: Float, oy: Float, sx:Float, sy:Float) {
+    public func updateBrush(id:String, r: Float, x: Float, y: Float, cx: Float, cy: Float, ox: Float, oy: Float, sx:Float, sy:Float, ix:Double, iy:Double, force:Double) {
         for (_, brush) in self.activeBrushIds {
             if brush.id == id {
                 print("## updating brush with id ", id)
                 brush.updateBrushIcon(r:r, ox: ox, oy: oy, sx:sx, sy:sy)
                 brush.moveComputedLocation(cx: cx, cy: cy)
-                brush.moveInputLocation(x: x, y: y)
-
+                brush.moveBrushLocation(x: x, y: y)
+                brush.moveStylusLocation(x: ix, y: iy, force:force)
             }
         }
     }
@@ -100,7 +100,10 @@ class BrushGraphic {
     
     var node: Group
     let brushIcon: Group
+    let stylusText: Text
     let inputIcon: Shape
+    var lastStylusInputs:[Node] = []
+    let inputLimit = 50
     let computedIcon: Shape
     let originText: Text
     let inputText: Text
@@ -119,6 +122,7 @@ class BrushGraphic {
     var cx: Float
     var cy: Float
     
+    let currStylusIcon: Shape
     
     let oxOffset:Double = 0
     let oyOffset:Double = 0
@@ -180,6 +184,13 @@ class BrushGraphic {
         node.contents.append(originText)
         print("## init brush icon for brush ", id, " at " , self.ox, self.oy)
 
+        //init stylusicon
+        currStylusIcon = Shape(form: Circle(r: 10), fill: inputColor, stroke: Macaw.Stroke(fill: Macaw.Color.white, width:2))
+        node.contents.append(currStylusIcon)
+
+        stylusText = BrushGraphic.newText("stylus x: 0, stylus y: 0", Transform.move(dx:0,dy:10))
+        node.contents.append(stylusText)
+        print("## init stylus icon for brush ", id, " at " , self.x, self.y)
         
         //init inputicon
         inputIcon = Shape(form: Circle(r: 10), fill: brushColor, stroke: Macaw.Stroke(fill: Macaw.Color.white, width:2))
@@ -309,18 +320,14 @@ class BrushGraphic {
             
             var lineArray:[Macaw.Node] = []
             for t in 0...(sinePoints.count-2) {
-//                if t % 2 == 0 {
-//                    continue
-//                }
-                print("~~ t is", t)
                 lineArray.append(Macaw.Line(x1:Double(t*2), y1:100-100*sinePoints[t], x2:Double((t+1)*2), y2:100-100*sinePoints[t+1]).stroke(fill:lighterInputColor, width:2))
             }
-            print("line array is" , lineArray.count)
+
             let graph = Group(contents:lineArray)
             let group = self.generator.contents[i] as! Group
             group.contents[3] = graph
                 
-            print("~~sine")
+            print("~~ sine wave added")
         case "none":
             //delete
             let empty = Shape(form: Circle(r:1), fill: Macaw.Color.rgba(r:0,g:0,b:0,a:0))
@@ -377,9 +384,18 @@ class BrushGraphic {
         }
     }
     
+    func moveStylusLocation(x: Double, y: Double, force: Double) {
+//        let stylusIcon =
+        let forceScale = (force+1)
+        print("~~~ in move stylus location with ", x, y, force)
+        stylusText.text = "x: "+String(Int(x))+", y: "+String(Int(y))+", force: "+String((force*10).rounded()/10)
+        stylusText.place = Transform.move(dx: x, dy: y + 20)
+        currStylusIcon.place = Transform.move(dx:x, dy:y).scale(sx:forceScale, sy:forceScale)
+        
+//                node.contents.append(stylusIcon)
+    }
     
-    
-    func moveInputLocation(x: Float, y: Float) {
+    func moveBrushLocation(x: Float, y: Float) {
         inputIcon.place = Transform.move(dx: Double(x), dy: Double(y)) //need this offset for some reason?
         self.x = x
         self.y = y
