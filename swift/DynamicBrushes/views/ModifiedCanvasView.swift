@@ -267,23 +267,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
     }
     
     
-    func layerTouchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let touch = touches.first else { return }
-
-        if touch.type == .stylus {
-        
-                if let touch = touches.first  {
-                    let point = touch.location(in: self)
-                    let x = Float(point.x)
-                    let y = Float(point.y)
-                    let force = Float(touch.force);
-                    let angle = Float(touch.azimuthAngle(in: self))
-                    stylusManager.onStylusDown(x: x, y: y, force: force, angle: angle);
-
-                }
-        
-        }
-    }
+   
     
     
     
@@ -354,34 +338,28 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
     }
     
     
-    func layerTouchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let touch = touches.first else { return }
-        var touches = [UITouch]()
-        if let coalescedTouches = event?.coalescedTouches(for: touch) {
-            touches = coalescedTouches
-        } else {
-            touches.append(touch)
+    func recieveTouch(touch:UITouch, state:GestureRecognizer.State, predicted:Bool){
+        let location = touch.location(in: self)
+        let x = Float(location.x);
+        let y = Float(location.y);
+        let force = Float(touch.force);
+        let angle = Float(touch.azimuthAngle(in: self))
+        //let mappedAngle = MathUtil.map(value: angle, low1: 0, high1: 2*Float.pi, low2: 0, high2: 1);
+        
+        switch(state){
+        case .changed:
+            stylusManager.onStylusMove(x: x, y: y, force: force, angle: angle)
+            break;
+        case .ended:
+            stylusManager.onStylusUp(x: x, y: y, force: force, angle: angle)
+            break;
+        case .began:
+              stylusManager.onStylusDown(x: x, y: y, force: force, angle: angle);
+        break
+        default:
+            
+            break
         }
-        #if DEBUG
-            //print("number of coalesced touches \(touches.count)");
-        #endif
-         if touch.type == .stylus {
-        
-            for touch in touches {
-                let location = touch.location(in: self)
-                let x = Float(location.x);
-                let y = Float(location.y);
-                let force = Float(touch.force);
-                let angle = Float(touch.azimuthAngle(in: self))
-                //let mappedAngle = MathUtil.map(value: angle, low1: 0, high1: 2*Float.pi, low2: 0, high2: 1);
-                stylusManager.onStylusMove(x: x, y: y, force: force, angle: angle)
-
-            }
-        
-    }
-        
-        
-        
     }
     
     func eraseCanvas(context:CGContext, start:CGPoint,end:CGPoint,force:CGFloat){
@@ -400,21 +378,6 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
     }
     
     
-    func layerTouchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if let touch = touches.first  {
-            let point = touch.location(in: self)
-            let x = Float(point.x)
-            let y = Float(point.y)
-            let force = Float(touch.force);
-            let angle = Float(touch.azimuthAngle(in: self))
-            stylusManager.onStylusUp(x: x, y: y, force: force, angle: angle)
-        }
-        
-    }
-    
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        //image = drawingImage
-    }
     
     func eraseAll() {
         jotView.clear(true)

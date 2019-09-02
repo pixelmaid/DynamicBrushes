@@ -197,7 +197,6 @@ class StylusCollection:LiveCollection {
         data["yDistance"] = JSON(self.yDistance);
         data["speed"] = JSON(self.speed);
         data["deltaAngle"] = JSON(self.deltaAngle);
-        
         return data;
     }
   

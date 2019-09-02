@@ -103,6 +103,10 @@ class Observable<T>: DisposableObservable {
         
     }
     
+    func brushIsRegistered(brushId:String)->Bool{
+        return false;
+    }
+    
      func removeRegisteredBrush(id:String){
        
     }

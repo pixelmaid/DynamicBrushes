@@ -463,7 +463,7 @@ class BehaviorManager{
                 throw BehaviorError.collectionDoesNotExist;
             }
             id = generatorCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType, style:style, isProto: false, order:nil);
-            print(generatorCollection.initializedSignals);
+            //print(generatorCollection.initializedSignals);
         break;
         case "imported":
             guard let dataCollection = BehaviorManager.signalCollections[0][collectionId] else {

@@ -39,8 +39,8 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     //data source
     public static var gestures = [GestureRecording]()
     //selection handling
-    public static var recording_start = Int.max
-    public static var recording_end = -1
+    public static var recording_start = 0
+    public static var recording_end = 0;
     public static var currKeyframeOffset = 0
     var firstLoopCompleted = false
     

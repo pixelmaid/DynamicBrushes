@@ -420,7 +420,7 @@ class Brush: TimeSeries, Hashable, Renderable{
         BrushStorageManager.storeState(behaviorId: self.behaviorId, brushId: self.id, time: self.params.time, state: self.params.toJSON().rawString()!);
         
         let testState = BrushStorageManager.accessState(behaviorId: self.behaviorId, brushId: self.id, time: self.params.time);
-        print(testState!.x);
+        
         self.currentDrawing!.addSegmentToStroke(behaviorId:self.behaviorId, brushId:self.id, point:Point(x:cx,y:cy),weight:weight , color: color,alpha:a, time: self.params.time)
         self.unrendered = true;
         

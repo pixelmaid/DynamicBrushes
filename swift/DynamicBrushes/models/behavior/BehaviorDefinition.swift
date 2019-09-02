@@ -15,14 +15,12 @@ class BehaviorDefinition {
     var states = [String:(String,Float,Float)]()
     var expressions = [String:(expressionPropertyList:[String],expressionText:String)]();
     internal var conditions = [String:(conditionId:String,referenceAId:String,referenceBId:String,relational:String)]();
-    // var generators = [String:(String,[Any?])]()
     var methods = [String:(transitionId:String,methodId:String,fieldName:String,displayName:String,arguments:[ArgumentData])]()
     var transitions = [String:(transitionId:String,transitionDisplayName: String, conditionId:String, fromStateId:String, toStateId:String)]()
     var mappings = [String:(Emitter?,[String]?,String,String,String,String)]()
     
     var storedExpressions = [String:[String:Expression]]()
     var storedConditions =  [String:[String:Condition]]()
-    //var storedGenerators = [String:[String:Signal]]()
     
     var name:String;
     var id: String;

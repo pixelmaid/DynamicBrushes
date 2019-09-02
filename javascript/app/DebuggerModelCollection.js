@@ -28,7 +28,7 @@ define(["app/Emitter", "app/DebuggerModel"],
 				console.log("! data is ", newData);
 				var formattedOutputData = this.formattedOutputData(newData.output);
 				var formattedBrushData = this.formatBrushData(newData.brush);
-				var formattedGeneratorData = this.formatGeneratorData(newData.input.generator.default.params);
+				var formattedGeneratorData = this.formatGeneratorData(newData.input.generator.params);
 
 				var formattedInputGlobalData = this.formatInputGlobalData(newData.input.inputGlobal);
 

@@ -32,7 +32,11 @@ let kTopMargin =    10.0
 let kRightMargin =      10.0
 let pX = Float(1366)
 let pY = Float(1024)
-class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requester{
+
+
+
+
+class DrawingViewController: UIViewController, Requester{
     
     
     //recording vars
@@ -72,7 +76,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     var layerPanelController: LayerPanelViewController?
     var behaviorPanelController: BehaviorPanelViewController?
     var recordingToolbarVC: RecordingToolbarVC?
-//    var recordingViewController:RecordingViewController?
+    var recordingViewController:RecordingViewController?
     
     var fileListController: SavedFilesPanelViewController?
     let targetSize = CGSize(width:CGFloat(pX),height:CGFloat(pY))
@@ -95,8 +99,9 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     
     var backupNeeded:Bool = false;
     
-    
-   
+    var fingerRecognizer: GestureRecognizer!
+    var pencilRecognizer: GestureRecognizer!
+    var debuggerInterfaceManager: DebuggerInterfaceManager!
     
     var currentBehaviorName = ""
     var currentBehaviorFile = ""
@@ -114,7 +119,6 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         //replace with custom view
 //        brushGraphicsView = BrushGraphicsView(frame:CGRect(x:0, y:47, width:1366, height:1010))
         
-//        recordingViewController = RecordingViewController();
         super.init(coder: coder);
     }
     
@@ -150,9 +154,9 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
             recordingToolbarVC = segue.destination as? RecordingToolbarVC;
             _ =  recordingToolbarVC?.loopEvent.addHandler(target: self, handler: DrawingViewController.recordingEventHandler, key: loopEventKey)
         }
-//        else if(segue.identifier == "recordingViewControllerSegue"){
-//            recordingViewController = segue.destination as? RecordingViewController;
-//        }
+      else if(segue.identifier == "recordingViewControllerSegue"){
+           recordingViewController = segue.destination as? RecordingViewController;
+      }
         
     }
     
@@ -380,7 +384,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     func recordingEventHandler(data: (String), key: String){
         switch(data){
         case "LOOP":
-//            recordingViewController?.loopInitialized()
+            recordingViewController?.loopInitialized()
             break;
         default:
             break;
@@ -419,6 +423,9 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         mic = AKMicrophone()
         tracker = AKFrequencyTracker(mic,hopSize:512,peakCount:20)
         silence = AKBooster(tracker, gain: 0)
+        
+     
+
         
     }
     
@@ -493,7 +500,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         
         layerPanelContainerView.isHidden = true;
         
-        
+
         
         behaviorPanelContainerView.layer.cornerRadius = 8.0
         behaviorPanelContainerView.clipsToBounds = true
@@ -1435,7 +1442,6 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
     
     func initDrawing(){
         currentDrawing = Drawing();
-        let behaviorManager = BehaviorManager();
         BehaviorManager.setCurrentDrawing(drawing:currentDrawing!)
         _ = currentDrawing?.strokeGeneratedEvent.addHandler(target: self, handler: DrawingViewController.strokeGeneratedHandler, key: strokeGeneratedKey)
         
@@ -1447,6 +1453,10 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         
         _ = Debugger.debuggerEvent.addHandler(target:self, handler: DrawingViewController.debuggerEventHandler, key: debuggerKey)
 
+        self.debuggerInterfaceManager = DebuggerInterfaceManager(drawing: self.currentDrawing!, targetView: self.layerContainerView);
+        
+        self.fingerRecognizer = setupGestureRecognizer(isForPencil: false)
+        self.pencilRecognizer = setupGestureRecognizer(isForPencil: true)
         
     }
     
@@ -1460,7 +1470,83 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         // Dispose of any resources that can be recreated.
     }
     
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+    // MARK: Pencil Recognition and UI Adjustments
+    
+    // Timeout the pencil mode if no pencil has been seen for 5 minutes and the app is brought back in foreground.
+   /* let pencilResetInterval = TimeInterval(60.0 * 5)
+    
+    /// Toggles pencil mode for the app.
+    /// - Tag: pencilMode
+    var pencilMode = false {
+        didSet {
+            if pencilMode {
+                if let view = fingerRecognizer.view {
+                    view.removeGestureRecognizer(fingerRecognizer)
+                }
+            } else {
+                if fingerRecognizer.view == nil {
+                    view.addGestureRecognizer(fingerRecognizer)
+                }
+            }
+        }
+    }
+    
+    var lastSeenPencilInteraction: Date? {
+        didSet {
+            if lastSeenPencilInteraction != nil && !pencilMode {
+                pencilMode = true
+            }
+        }
+    }*/
+
+    
+    func setupGestureRecognizer(isForPencil: Bool) -> GestureRecognizer {
+        let recognizer = GestureRecognizer(target: self, action: #selector(gestureUpdated(_:)))
+        recognizer.delegate = self
+        recognizer.cancelsTouchesInView = false
+
+        recognizer.isForPencil = isForPencil
+        if(isForPencil){
+            recognizer.touchTarget = self.layerContainerView;
+            self.layerContainerView.addGestureRecognizer(recognizer);
+
+
+        }
+        else{
+            recognizer.touchTarget = self.debuggerInterfaceManager;
+            self.layerContainerView.addGestureRecognizer(recognizer);
+
+
+        }
+        return recognizer
+    }
+    
+    @objc
+    func gestureUpdated(_ gesture: GestureRecognizer) {
+        
+        if gesture === pencilRecognizer {
+            //lastSeenPencilInteraction = Date()
+        }
+        
+        if gesture.state != .cancelled {
+            if gesture.state == .began {
+                
+            }
+        } else {
+            
+        }
+        
+       
+            if gesture.state == .ended {
+                if gesture === pencilRecognizer {
+                    
+                }
+            }
+        }
+        
+    
+    
+    /*override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         if(layerContainerView.activeLayer != nil){
             self.touchesDown = false;
             layerContainerView.activeLayer?.layerTouchesEnded(touches, with: event)
@@ -1492,7 +1578,7 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
             //layerContainerView.activeLayer?.touchesCancelled(touches, with: event)
         }
         
-    }
+    }*/
     
     
     
@@ -1524,13 +1610,46 @@ class DrawingViewController: UIViewController, UIGestureRecognizerDelegate, Requ
         }
         recognizer.setTranslation(CGPoint.zero, in: self.view)
     }
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
-    }
+ 
     
     
     
 }
 
 
+// MARK: - UIGestureRecognizerDelegate
+
+extension DrawingViewController: UIGestureRecognizerDelegate {
+    
+    // Since our gesture recognizer is beginning immediately, we do the hit test ambiguation here
+    // instead of adding failure requirements to the gesture for minimizing the delay
+    // to the first action sent and therefore the first lines drawn.
+ 
+    
+    // We want the pencil to recognize simultaniously with all others.
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+                           shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        if gestureRecognizer === pencilRecognizer {
+            return otherGestureRecognizer !== fingerRecognizer
+        }
+        
+        return false
+    }
+    
+}
+
+
+// MARK: - UIPencilInteractionDelegate
+
+@available(iOS 12.1, *)
+extension DrawingViewController: UIPencilInteractionDelegate {
+    
+    /// Handles double taps that the user makes on an Apple Pencil.
+    /// - Tag: pencilInteractionDidTap
+    func pencilInteractionDidTap(_ interaction: UIPencilInteraction) {
+        if UIPencilInteraction.preferredTapAction == .switchPrevious {
+           
+        }
+    }
+    
+}

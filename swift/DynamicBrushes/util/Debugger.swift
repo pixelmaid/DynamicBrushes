@@ -99,20 +99,9 @@ final class Debugger {
     
     static func generateGeneratorDebugData()->JSON{
         
-        let generatorCollections = BehaviorManager.signalCollections[2];
-        var generatorCollectionsJSON:JSON = [:]
-        generatorCollectionsJSON["groupName"] = JSON("generator");
+        let generatorCollection = BehaviorManager.signalCollections[2]["default"];
         
-        for(key,value) in generatorCollections{
-            var generatorData:JSON = [:]
-            generatorData["params"] = value.paramsToJSON();
-            generatorData["name"] = JSON(key);
-            generatorData["id"] = JSON(key);
-            generatorCollectionsJSON[key] = generatorData;
-        }
-        
-        
-       return generatorCollectionsJSON;
+        return generatorCollection!.paramsToJSON();
     }
     
     static func generateSingleBrushDebugData(brush:Brush)->JSON{
@@ -178,19 +167,19 @@ final class Debugger {
         var type = "none"
         var returnVals:[(val:Double,time:Int,type:String)] = []
         let generatorJSON = Debugger.generateGeneratorDebugData()
-        if generatorJSON["default"].exists()  {
-            let params:JSON = generatorJSON["default"]["params"]
-            for (_, subJsonArr):(String, JSON) in params {
-                for (_, subJson):(String, JSON) in subJsonArr {
-                    if (subJson["brushId"].string == brushId) {
-                        val = subJson["v"].double ?? -1.0
-                        time = subJson["time"].int ?? -1
-                        type = subJson["generatorType"].string ?? "none"
-                        returnVals.append((val:val, time:time, type:type))
-                        
-                    }
+        
+        let params:JSON = generatorJSON["params"]
+        for (_, subJsonArr):(String, JSON) in params {
+            for (_, subJson):(String, JSON) in subJsonArr {
+                if (subJson["brushId"].string == brushId) {
+                    val = subJson["v"].double ?? -1.0
+                    time = subJson["time"].int ?? -1
+                    type = subJson["generatorType"].string ?? "none"
+                    returnVals.append((val:val, time:time, type:type))
+                    
                 }
             }
+            
         }
         return returnVals
     }
@@ -236,9 +225,11 @@ final class Debugger {
         
         var time = segment.time;
         
-        
-        
-        
+        var BrushState = BrushStorageManager.accessState(behaviorId: behaviorId, brushId: brushId, time: time);
+        let generatorCollections = BehaviorManager.signalCollections[2];
+
+        //var GeneratorState = generatorCollections.accessState(behaviorId: behaviorId, brushId: brushId, time: time);
+        //var InputState = stylusCollection.accessState(behaviorId: behaviorId, brushId: brushId, time: time)
     }
     
 }

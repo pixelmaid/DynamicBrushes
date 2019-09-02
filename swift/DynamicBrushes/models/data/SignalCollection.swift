@@ -54,6 +54,11 @@ class SignalCollection {
         return data;
     }
     
+    //placeholder;
+    public func accessState(behaviorId:String,brushId:String,time:Int)->JSON{
+        return self.paramsToJSON();
+    }
+    
     public func addDataFrom(signalCollection:SignalCollection){
         
         for (key,recSignal) in signalCollection.protoSignals{
@@ -382,6 +387,17 @@ class GeneratorCollection:SignalCollection{
     }
 
     
+    override func accessState(behaviorId: String, brushId: String, time: Int) -> JSON {
+        for (fieldname,signalDict) in self.initializedSignals{
+            for(id,signal) in signalDict{
+                if signal.brushIsRegistered(brushId:brushId){
+                    signal.getAtTime(time: time, id: brushId, shouldUpdate: true);
+                }
+            }
+            
+        }
+        return self.paramsToJSON();
+    }
     
     
     public override func initializeSignalWithId(signalId:String,fieldName:String, displayName:String, settings:JSON, classType:String, style:String, isProto:Bool, order:Int?){
@@ -435,14 +451,17 @@ class GeneratorCollection:SignalCollection{
     //paramsToJSON
     //returns list of all  current values of initialized generator signals
    override public func paramsToJSON()->JSON{
-        var data:JSON = [:]
-
-        for (fieldName,signalDict) in self.initializedSignals{
+        var generatorCollectionJSON:JSON = [:]
+        generatorCollectionJSON["groupName"] = JSON("generator");
+    
+        var params:JSON = [:]
+        for (_,signalDict) in self.initializedSignals{
             for (id,signal) in signalDict{
-                data[id] = signal.paramsToJSON();
+                params[id] = signal.paramsToJSON();
             }
         }
-        return data;
+        generatorCollectionJSON["params"] = params;
+        return generatorCollectionJSON
     }
 }
 

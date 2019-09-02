@@ -10,7 +10,8 @@ import Foundation
 import UIKit
 import SwiftyJSON
 
-class LayerContainerView: UIView {
+class LayerContainerView: UIView, TouchTarget {
+   
     var visualizationLayer:VisualizationView?
     var activeLayer:ModifiedCanvasView?
     var brushGraphicsView:BrushGraphicsView?
@@ -398,7 +399,12 @@ class LayerContainerView: UIView {
     }
     
 
-
+    //MARK: add TouchTarget methods
+    
+    func recieveTouch(touch: UITouch, state: UIGestureRecognizer.State, predicted: Bool) {
+        self.activeLayer!.recieveTouch(touch: touch, state: state, predicted: predicted);
+    }
+    
     
     
 }

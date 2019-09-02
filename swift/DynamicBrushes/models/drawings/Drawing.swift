@@ -156,7 +156,20 @@ class Drawing: TimeSeries, Hashable, Renderable{
         return nil;
     }
     
-    func hitTest(point:Point,threshold:Float,behaviorId:String,brushId:String)->Stroke?{
+    
+    func hitTestByPoint(point:Point,threshold:Float)->Segment?{
+        for i in 0..<allStrokes.count{
+            let stroke = allStrokes[i];
+            
+                let seg = stroke.hitTest(testPoint: point,threshold:threshold,sameStroke: false);
+                if(seg != nil){
+                    return seg;
+                }
+        }
+        return nil
+    }
+    
+    func hitTestByBrush(point:Point,threshold:Float, behaviorId:String, brushId:String)->Stroke?{
         var targetStroke:Stroke! = nil
         let targetActiveStrokes = self.activeStrokes[behaviorId]![brushId];
         if(targetActiveStrokes != nil){

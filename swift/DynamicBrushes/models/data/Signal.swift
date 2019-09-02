@@ -80,6 +80,11 @@ class Signal:Observable<Float>{
         
     }
     
+    //placeholder for data access
+    func getAtTime(time:Int, id:String?, shouldUpdate:Bool)->Float{
+        return self.getSilent();
+    }
+    
     
     override func getSilent()->Float{
         return signalBuffer[self.index];
@@ -143,6 +148,25 @@ class Signal:Observable<Float>{
     public func getSettingsJSON()->JSON{
         return JSON([:]);
     }
+    
+    
+    //PLACEHOLDERS FOR GENERATOR
+    override func registerBrush(brush:Brush){
+        
+    }
+    
+    override func brushIsRegistered(brushId:String)->Bool{
+        return false;
+    }
+    
+    override func removeRegisteredBrush(id:String){
+        
+    }
+    
+   override func clearAllRegisteredBrushes(){
+        
+    }
+
 }
 
 class TimeSignal:Signal{

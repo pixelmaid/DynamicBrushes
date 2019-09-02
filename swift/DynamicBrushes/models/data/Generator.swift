@@ -23,8 +23,20 @@ class Generator:Signal{
         self.registeredBrushes[brush.id] = brush;
         self.paramList[brush.id] = GeneratorStateStorage();
         
-        
     }
+    
+    override func get(id:String?) -> Float {
+        guard id != nil else{
+            print("=============ERROR ATTEMPTED TO GET BY INDEX FOR GENERATOR BUT ID IS NIL===========");
+            return 0;
+        }
+        
+        let i = self.getIndexById(id: id!);
+        
+        return self.getAtTime(time: i, id: id!, shouldUpdate: true)
+    }
+    
+    
     
     override func removeRegisteredBrush(id:String){
         guard self.registeredBrushes[id] != nil else{
@@ -101,17 +113,18 @@ class Sine:Generator{
     }
     
     
-    override func get(id:String?) -> Float {
-        guard id != nil else{
-            print("=============ERROR ATTEMPTED TO GET BY INDEX FOR GENERATOR BUT ID IS NIL===========");
-            return 0;
-        }
+   
     
-        let i = self.getIndexById(id: id!);
-        let v =  (1+sin(Float(i)*freq*Float.pi+phase))*amp/2;
-        self.update(v: v, id: id!,time: i);
+    override func getAtTime(time:Int, id:String?, shouldUpdate:Bool)->Float{
+        let v =  (1+sin(Float(time)*freq*Float.pi+phase))*amp/2;
+       
+        if(shouldUpdate){
+            self.update(v: v, id: id!,time: time);
+        }
         return v;
     }
+    
+
     
     override func getSettingsJSON()->JSON{
         var json = super.getSettingsJSON();
@@ -143,17 +156,14 @@ class Sawtooth:Generator{
         super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
 
     }
+ 
     
-    override func get(id:String?) -> Float {
-        guard id != nil else{
-            
-            print("=============ERROR ATTEMPTED TO GET BY INDEX FOR GENERATOR BUT ID IS NIL===========");
-            return 0;
-        }
+    override func getAtTime(time:Int, id:String?, shouldUpdate:Bool)->Float{
+        let v = Float(time % (100))/100;
         
-        let i = self.getIndexById(id: id!);
-        let v = Float(i % (100))/100;
-        self.update(v: v, id: id!,time: i);
+        if(shouldUpdate){
+            self.update(v: v, id: id!,time: time);
+        }
         return v;
     }
     
@@ -185,22 +195,22 @@ class Triangle:Generator{
     }
     
     
-    override func get(id:String?) -> Float {
-        guard id != nil else{
-            
-            print("=============ERROR ATTEMPTED TO GET BY INDEX FOR GENERATOR BUT ID IS NIL===========");
-            return 0;
-        }
-        
-        let i = self.getIndexById(id: id!);
-        
+    override func getAtTime(time:Int, id:String?, shouldUpdate:Bool)->Float{
         
         let p = Float(10);
-        let r = Float(i)/p;
+        let r = Float(time)/p;
         let v = 2.0*abs(r - floor(r+0.5));
-        self.update(v: v, id: id!,time: i);
+        
+        if(shouldUpdate){
+            self.update(v: v, id: id!,time: time);
+        }
         return v;
     }
+   
+        
+   
+    
+    
     
     override func getSettingsJSON()->JSON{
         var json = super.getSettingsJSON();
@@ -231,27 +241,16 @@ class Square:Generator{
 
     }
     
-    override func get(id:String?) -> Float {
-      
-     
-        guard id != nil else{
-            
-            print("=============ERROR ATTEMPTED TO GET BY INDEX FOR GENERATOR BUT ID IS NIL===========");
-            return 0;
-        }
-        
-    
-    
-        let t = self.getIndexById(id: id!);
-        let i = Float(t);
-    
+    override func getAtTime(time:Int, id:String?, shouldUpdate:Bool)->Float{
+        let i = Float(time);
         let p = Float(0.1);
         let a = floor(p*i);
         let b = floor((2.0*p*i));
         let v = 2.0*a-b+1.0;
-        self.update(v: v, id: id!,time: t);
+        if(shouldUpdate){
+            self.update(v: v, id: id!,time: time);
+        }
         return v;
-        
     }
     
     override func getSettingsJSON()->JSON{
@@ -279,21 +278,15 @@ class Random: Generator{
         
     }
     
-    override func get(id:String?) -> Float {
-        
-       guard id != nil else{
-            print("=============ERROR ATTEMPTED TO GET BY INDEX FOR GENERATOR BUT ID IS NIL===========");
-            return 0;
-        }
+    //TODO: random generator will not return repeating values for same time.... need to address
+    override func getAtTime(time: Int, id: String?, shouldUpdate: Bool) -> Float {
     
-    
-    
-        let i = self.getIndexById(id: id!);
 
         let v = Float(arc4random()) / Float(UINT32_MAX) * abs(self.start - self.end) + min(self.start, self.end)
         
-        
-        self.update(v: v, id: id!,time: i);
+        if(shouldUpdate){
+            self.update(v: v, id: id!,time: time);
+        }
 
         return v
     }

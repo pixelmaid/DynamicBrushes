@@ -16,6 +16,9 @@
 		0A56E3BF2072B916006243A6 /* SignalAccessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56E3BE2072B916006243A6 /* SignalAccessors.swift */; };
 		0A56E3C5207308FA006243A6 /* ExpressionCatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A56E3C4207308FA006243A6 /* ExpressionCatch.m */; };
 		0A5E4A9223186E5F002CE9D7 /* BrushStorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5E4A9123186E5F002CE9D7 /* BrushStorageManager.swift */; };
+		0A5E4A9423188A17002CE9D7 /* GestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5E4A9323188A17002CE9D7 /* GestureRecognizer.swift */; };
+		0A5E4A96231C82B3002CE9D7 /* TouchTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5E4A95231C82B3002CE9D7 /* TouchTarget.swift */; };
+		0A5E4A98231C89A8002CE9D7 /* DebuggerInterfaceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5E4A97231C89A8002CE9D7 /* DebuggerInterfaceManager.swift */; };
 		0A67848420B8E327004BB7B9 /* MapFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A67848320B8E327004BB7B9 /* MapFunctions.swift */; };
 		0AAEAB6A20698BFB0082F6E4 /* StylusCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAEAB6920698BFB0082F6E4 /* StylusCollection.swift */; };
 		0AAEAB6C20698C030082F6E4 /* LiveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAEAB6B20698C030082F6E4 /* LiveManager.swift */; };
@@ -190,6 +193,9 @@
 		0A56E3C3207308FA006243A6 /* ExpressionCatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExpressionCatch.h; sourceTree = "<group>"; };
 		0A56E3C4207308FA006243A6 /* ExpressionCatch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExpressionCatch.m; sourceTree = "<group>"; };
 		0A5E4A9123186E5F002CE9D7 /* BrushStorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrushStorageManager.swift; sourceTree = "<group>"; };
+		0A5E4A9323188A17002CE9D7 /* GestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureRecognizer.swift; sourceTree = "<group>"; };
+		0A5E4A95231C82B3002CE9D7 /* TouchTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchTarget.swift; sourceTree = "<group>"; };
+		0A5E4A97231C89A8002CE9D7 /* DebuggerInterfaceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebuggerInterfaceManager.swift; sourceTree = "<group>"; };
 		0A67848320B8E327004BB7B9 /* MapFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MapFunctions.swift; path = data/MapFunctions.swift; sourceTree = "<group>"; };
 		0AAEAB6920698BFB0082F6E4 /* StylusCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StylusCollection.swift; path = data/StylusCollection.swift; sourceTree = "<group>"; };
 		0AAEAB6B20698C030082F6E4 /* LiveManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveManager.swift; sourceTree = "<group>"; };
@@ -640,6 +646,8 @@
 				72FD33722032AE3D00CD4FAF /* RecordingToolbarVC.swift */,
 				726443612045E00D005A2E9D /* VisualizationView.swift */,
 				72E8C9742295BF0B00F3A7BC /* BrushGraphicsView.swift */,
+				0A5E4A9323188A17002CE9D7 /* GestureRecognizer.swift */,
+				0A5E4A95231C82B3002CE9D7 /* TouchTarget.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -735,6 +743,7 @@
 				0A56E3C3207308FA006243A6 /* ExpressionCatch.h */,
 				0A56E3C4207308FA006243A6 /* ExpressionCatch.m */,
 				0A458793221743E8003695B5 /* Debugger.swift */,
+				0A5E4A97231C89A8002CE9D7 /* DebuggerInterfaceManager.swift */,
 			);
 			path = util;
 			sourceTree = "<group>";
@@ -1158,6 +1167,7 @@
 				5F13B69C1FC3AEBF00E37A37 /* Router.swift in Sources */,
 				5F50372E1EAD48BB004ABAC1 /* MathUtil.swift in Sources */,
 				5F90F5691E9D5BCC006BB9FE /* Expression.swift in Sources */,
+				0A5E4A98231C89A8002CE9D7 /* DebuggerInterfaceManager.swift in Sources */,
 				5FDE68EB205C93F0005A49C3 /* Generator.swift in Sources */,
 				5F90F5491E9D59D4006BB9FE /* WebTransmitter.swift in Sources */,
 				7267DCC5202A8ECF0093245A /* RecordingFrameCell.swift in Sources */,
@@ -1171,6 +1181,7 @@
 				5F90F56A1E9D5BCC006BB9FE /* Signal.swift in Sources */,
 				5FE32F651ECE638B00ADC01E /* LayerPanelViewController.swift in Sources */,
 				5FE32F631ECE535100ADC01E /* LayerContainerView.swift in Sources */,
+				0A5E4A96231C82B3002CE9D7 /* TouchTarget.swift in Sources */,
 				5FFFD797204F5E5D0038A0BA /* SignalCollection.swift in Sources */,
 				5FFC45781EE5C473007B7597 /* BehaviorPanelViewController.swift in Sources */,
 				5F5CED2B1ED10AED00A253A0 /* ColorWheel.swift in Sources */,
@@ -1209,6 +1220,7 @@
 				726443622045E00D005A2E9D /* VisualizationView.swift in Sources */,
 				5F2CF3D71ED32EC00066AC8E /* FileCell.swift in Sources */,
 				5FA4C7241CDA7B5B004A728C /* AppDelegate.swift in Sources */,
+				0A5E4A9423188A17002CE9D7 /* GestureRecognizer.swift in Sources */,
 				5F13B69A1FC3A40C00E37A37 /* ProgrammingViewController.swift in Sources */,
 				7267DCC120290D9F0093245A /* RecordingViewController.swift in Sources */,
 				5F90F5461E9D59D4006BB9FE /* Observable.swift in Sources */,

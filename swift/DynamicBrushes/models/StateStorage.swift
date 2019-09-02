@@ -107,14 +107,33 @@ class BrushStateStorage:BaseStateStorage {
     @objc dynamic var parent: String?
     @objc dynamic var active: Bool = true;
     @objc dynamic var time = Int(0);
-
 }
 
 
 class GeneratorStateStorage:BaseStateStorage {
     @objc dynamic var v = Float(0);
     @objc dynamic var time = Int(0);
+    @objc dynamic var type = String("generator");
+    @objc dynamic var id = String("0");
+
 
     
 
 }
+
+/*class GeneratorCollectionStateStorage:BaseStateStorage{
+    var generators = [String:GeneratorStateStorage]();
+    
+    func addGeneratorState(v:Float,time:Int,type:String,id:String){
+        let generatorState = GeneratorStateStorage();
+        generatorState.updateAll(data:["v":v,"time":time,"type":type,"id":id]);
+        generators[id] = generatorState;
+    }
+    
+    override func toJSON()->JSON{
+        let generatorJSON
+    }
+    
+    
+    
+}*/
