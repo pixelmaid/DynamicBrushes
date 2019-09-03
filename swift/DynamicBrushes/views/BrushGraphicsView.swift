@@ -29,14 +29,14 @@ public class BrushGraphicsScene {
         self.activeBrushIds[id] = brushGraphic //add to dict
     }
     
-    public func updateBrush(id:String, r: Float, x: Float, y: Float, cx: Float, cy: Float, ox: Float, oy: Float, sx:Float, sy:Float) {
+    public func updateBrush(id:String, r: Float, x: Float, y: Float, cx: Float, cy: Float, ox: Float, oy: Float, sx:Float, sy:Float, ix:Double, iy:Double, force:Double) {
         for (_, brush) in self.activeBrushIds {
             if brush.id == id {
                 print("## updating brush with id ", id)
                 brush.updateBrushIcon(r:r, ox: ox, oy: oy, sx:sx, sy:sy)
                 brush.moveComputedLocation(cx: cx, cy: cy)
-                brush.moveInputLocation(x: x, y: y)
-
+                brush.moveBrushLocation(x: x, y: y)
+                brush.moveStylusLocation(x: ix, y: iy, force:force)
             }
         }
     }
@@ -100,7 +100,10 @@ class BrushGraphic {
     
     var node: Group
     let brushIcon: Group
+    let stylusText: Text
     let inputIcon: Shape
+    var lastStylusInputs = Group()
+    let inputLimit = 50
     let computedIcon: Shape
     let originText: Text
     let inputText: Text
@@ -119,7 +122,6 @@ class BrushGraphic {
     var cx: Float
     var cy: Float
     
-    
     let oxOffset:Double = 0
     let oyOffset:Double = 0
     
@@ -128,8 +130,10 @@ class BrushGraphic {
     var scaleChanged = false
     
     let inputColor = Macaw.Color.rgba(r: 74, g:137, b:235, a: 1)
+    let lighterInputColor = Macaw.Color.rgba(r: 74, g:137, b:235, a: 200)
     let brushColor = Macaw.Color.rgba(r: 255, g:53, b:95, a: 63)
     let outputColor = Macaw.Color.rgba(r: 134, g: 73, b: 180, a: 63)
+    
     
     init(view:BrushGraphicsView, scene:BrushGraphicsScene, id:String, ox:Float, oy:Float, r: Float, x: Float, y:Float,
          cx: Float, cy:Float ) {
@@ -178,6 +182,11 @@ class BrushGraphic {
         node.contents.append(originText)
         print("## init brush icon for brush ", id, " at " , self.ox, self.oy)
 
+        //init stylusicon
+        node.contents.append(lastStylusInputs)
+        stylusText = BrushGraphic.newText("stylus x: 0, stylus y: 0", Transform.move(dx:0,dy:10))
+        node.contents.append(stylusText)
+        print("## init stylus icon for brush ", id, " at " , self.x, self.y)
         
         //init inputicon
         inputIcon = Shape(form: Circle(r: 10), fill: brushColor, stroke: Macaw.Stroke(fill: Macaw.Color.white, width:2))
@@ -226,6 +235,9 @@ class BrushGraphic {
         if type == "sawtooth" {
             multiplier = 1
         }
+        else if type == "sine" {
+            multiplier = 1
+        }
         if i >= self.generator.contents.count {
             reinitGen(i: i)
         }
@@ -248,14 +260,15 @@ class BrushGraphic {
                                 fill: Macaw.Color.white,
                                 stroke: Macaw.Stroke(fill: Macaw.Color.black, width:2))
         let generatorText = BrushGraphic.newText("", Transform.move(dx:100,dy:125))
+        let generatorYAxisLabels = BrushGraphic.newText("1\n\n\n\n\n\n0", Transform.move(dx:-12,dy:10))
         let generatorGraph = Shape(form: Circle(r: 1), fill: Macaw.Color.rgba(r:0,g:0,b:0,a:0))
-        let genGroup = Group(contents:[generatorBg, generatorDot, generatorText, generatorGraph])
+        let genGroup = Group(contents:[generatorBg, generatorDot, generatorText, generatorGraph, generatorYAxisLabels])
         return genGroup
     }
     
     func reinitGen(i:Int) { //this is only called once!!
         let genGroup = makeGeneratorGroup()
-        genGroup.place = Transform.move(dx:0, dy:Double(i*125+25))
+        genGroup.place = Transform.move(dx:0, dy:Double(i*130+30))
         if i+1 > self.generator.contents.count {
             self.generator.contents.append(genGroup)
         } else {
@@ -277,28 +290,40 @@ class BrushGraphic {
 //        print("~~~~ updating generator kind, i is  ", i)
         switch type {
         case "sawtooth":
-            let graph = Macaw.Line(x1:0, y1:100, x2:200, y2:0).stroke(fill:Macaw.Color.gray, width:2)
+            let graph = Macaw.Line(x1:0, y1:100, x2:200, y2:0).stroke(fill:lighterInputColor, width:2)
             let group = self.generator.contents[i] as! Group
             group.contents[3] = graph
 
         case "triangle":
-            let line1 = Macaw.Line(x1:0, y1:100, x2:100, y2:0).stroke(fill:Macaw.Color.gray, width:2)
-            let line2 = Macaw.Line(x1:100, y1:0, x2:200, y2:100).stroke(fill:Macaw.Color.gray, width:2)
+            let line1 = Macaw.Line(x1:0, y1:100, x2:100, y2:0).stroke(fill:lighterInputColor, width:2)
+            let line2 = Macaw.Line(x1:100, y1:0, x2:200, y2:100).stroke(fill:lighterInputColor, width:2)
             let graph = Group(contents:[line1, line2])
             let group = self.generator.contents[i] as! Group
             group.contents[3] = graph
             
         case "square":
-            let line1 = Macaw.Line(x1:0, y1:0, x2:100, y2:0).stroke(fill:Macaw.Color.gray, width:2)
-            let line2 = Macaw.Line(x1:100, y1:0, x2:100, y2:100).stroke(fill:Macaw.Color.gray, width:2)
-            let line3 = Macaw.Line(x1:100, y1:100, x2:200, y2:100).stroke(fill:Macaw.Color.gray, width:2)
+            let line1 = Macaw.Line(x1:0, y1:0, x2:100, y2:0).stroke(fill:lighterInputColor, width:2)
+            let line2 = Macaw.Line(x1:100, y1:0, x2:100, y2:100).stroke(fill:lighterInputColor, width:2)
+            let line3 = Macaw.Line(x1:100, y1:100, x2:200, y2:100).stroke(fill:lighterInputColor, width:2)
             let graph = Group(contents:[line1, line2, line3])
             let group = self.generator.contents[i] as! Group
             group.contents[3] = graph
             
         case "sine":
-            //do nothing...
-            print("~~sine")
+            //sorry this is a saved array
+            let sinePoints:[Double] = [0.0, 0.000635981559753418, 0.007733345031738281, 0.007733345031738281, 0.014205098152160645, 0.022594064474105835, 0.03286713361740112, 0.04498377442359924, 0.058896154165267944, 0.07454922795295715, 0.09188148379325867, 0.11082440614700317, 0.13130322098731995, 0.15323710441589355, 0.17653954029083252, 0.20111849904060364, 0.22687700390815735, 0.2537134289741516, 0.2815217971801758, 0.31019240617752075, 0.33961212635040283, 0.3696648180484772, 0.40023186802864075, 0.43119242787361145, 0.46242478489875793, 0.4938054084777832, 0.5252104997634888, 0.5565161108970642, 0.5875986218452454, 0.618335485458374, 0.6486052870750427, 0.6782886385917664, 0.7072683572769165, 0.735430121421814, 0.7626626491546631, 0.7888586521148682, 0.8139146566390991, 0.8377317190170288, 0.8602160215377808, 0.8812786340713501, 0.9008364677429199, 0.9188124537467957, 0.9351356029510498, 0.9497412443161011, 0.9625722765922546, 0.9735774993896484, 0.9827138781547546, 0.9899451732635498, 0.9952428936958313, 0.998586118221283, 0.9999616146087646, 0.9993640184402466, 0.996795654296875, 0.9922667145729065, 0.9857949614524841, 0.9774059057235718, 0.9671329259872437, 0.9550163745880127, 0.941103994846344, 0.9254508018493652, 0.9081185460090637, 0.8891756534576416, 0.8686968088150024, 0.8467628955841064, 0.8234605193138123, 0.7988815307617188, 0.773123025894165, 0.7462871074676514, 0.718478262424469, 0.689807653427124, 0.6603879332542419, 0.6303356885910034, 0.5997686982154846, 0.5688078999519348, 0.5375750660896301, 0.5061944127082825, 0.4747897982597351, 0.44348421692848206, 0.4124016761779785, 0.38166481256484985, 0.35139501094818115, 0.3217116594314575, 0.2927319407463074, 0.2645701766014099, 0.23733758926391602, 0.21114158630371094, 0.18608561158180237, 0.1622684895992279, 0.13978424668312073, 0.118721604347229, 0.0991637110710144, 0.08118772506713867, 0.06486460566520691, 0.050258755683898926, 0.03742784261703491, 0.026422500610351562, 0.01728612184524536, 0.010054826736450195, 0.004757106304168701, 0.0]
+            
+            
+            var lineArray:[Macaw.Node] = []
+            for t in 0...(sinePoints.count-2) {
+                lineArray.append(Macaw.Line(x1:Double(t*2), y1:100-100*sinePoints[t], x2:Double((t+1)*2), y2:100-100*sinePoints[t+1]).stroke(fill:lighterInputColor, width:2))
+            }
+
+            let graph = Group(contents:lineArray)
+            let group = self.generator.contents[i] as! Group
+            group.contents[3] = graph
+                
+            print("~~ sine wave added")
         case "none":
             //delete
             let empty = Shape(form: Circle(r:1), fill: Macaw.Color.rgba(r:0,g:0,b:0,a:0))
@@ -355,9 +380,36 @@ class BrushGraphic {
         }
     }
     
+    func updateExistingStylusStrokes() {
+        var i = 1
+        for stroke in lastStylusInputs.contents {
+            let stroke = stroke as! Shape
+            stroke.fill = Macaw.Color.rgba(r: 74, g:137, b:235, a: Double(225-i*2))
+            i += 1
+        }
+        
+    }
     
     
-    func moveInputLocation(x: Float, y: Float) {
+    func moveStylusLocation(x: Double, y: Double, force: Double) {
+//        let stylusIcon =
+        let forceScale = (force+1)
+        let currStylusIcon = Shape(form: Circle(r: 10), fill: inputColor)//, stroke: Macaw.Stroke(fill: Macaw.Color.white, width:2))
+
+        print("~~~ in move stylus location with ", x, y, force)
+        stylusText.text = "x: "+String(Int(x))+", y: "+String(Int(y))+", force: "+String((force*10).rounded()/10)
+        stylusText.place = Transform.move(dx: x, dy: y + 20)
+        currStylusIcon.place = Transform.move(dx:x, dy:y).scale(sx:forceScale, sy:forceScale)
+        lastStylusInputs.contents.append(currStylusIcon)
+        if lastStylusInputs.contents.count > inputLimit {
+            lastStylusInputs.contents.removeFirst()
+        }
+        updateExistingStylusStrokes()
+        print("~~~ node len is ", lastStylusInputs.contents.count)
+//                node.contents.append(stylusIcon)
+    }
+    
+    func moveBrushLocation(x: Float, y: Float) {
         inputIcon.place = Transform.move(dx: Double(x), dy: Double(y)) //need this offset for some reason?
         self.x = x
         self.y = y
