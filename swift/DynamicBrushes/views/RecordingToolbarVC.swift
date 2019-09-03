@@ -10,6 +10,18 @@ import Foundation
 import UIKit
 import SwiftyJSON
 
+class GestureRecording {
+    var id:String;
+    var x:Recording;
+    var y:Recording;
+    
+    init(id:String,x:Recording,y:Recording) {
+        self.id = id;
+        self.x = x;
+        self.y = y;
+    }
+}
+
 
 class RecordingToolbarVC: UIViewController, Requester {
   
@@ -25,20 +37,26 @@ class RecordingToolbarVC: UIViewController, Requester {
     var isLooping = false
     
     public let loopEvent = Event<(String)>();
+    public var gestures = [GestureRecording]()
+    public var recording_start = 0
+    public var recording_end = 0;
+    var firstLoopCompleted = false
     
+    var isRecordingLoop = false
     override func viewDidLoad() {
-        loopRecording.addTarget(self, action: #selector(RecordingToolbarVC.loop), for: .touchUpInside)
-//        exportButton.addTarget(self, action: #selector(RecordingToolbarVC.showExportDialog), for: .touchUpInside)
+        super.viewDidLoad()
 
-        _ = stylusManager.visualizationEvent.addHandler(target: self, handler: RecordingToolbarVC.recordImgOn, key: recordImgEventKey)
+        loopRecording.addTarget(self, action: #selector(RecordingToolbarVC.loop), for: .touchUpInside)
+       
+        let recordingKey = NSUUID().uuidString
+
+        _ = stylusManager.recordEvent.addHandler(target:self, handler: RecordingToolbarVC.recordingCreatedHandler, key: recordingKey)
+
+        
 
     }
     
-    func recordImgOn(data:String, key:String){
-        if data == "RECORD_IMG_ON" {
-            recordImg.image = UIImage(named: "record_on2x") //set when full loop finishes
-        }
-    }
+   
    
     @IBAction func sliderChanged(_ sender: UISlider) {
         let val = Int(sender.value);
@@ -63,53 +81,10 @@ class RecordingToolbarVC: UIViewController, Requester {
             isLooping = false
             
         }
-       loopEvent.raise(data: ("LOOP"));
+        self.loopInitialized();
     }
     
-    @objc func showExportDialog() { //8/8 not used
-        //Creating UIAlertController and
-        //Setting title and message for the alert dialog
-        let alertController = UIAlertController(title: "Export Recording", message: "Name your recording", preferredStyle: .alert)
-        
-        //the confirm action taking the inputs
-        let confirmAction = UIAlertAction(title: "Confirm", style: .default) { (_) in
-              //getting the input values from user
-            let name = alertController.textFields?[0].text
-            
-            
-            //now actually export it
-            let start_id = RecordingViewController.getGestureId(index:RecordingViewController.recording_start)
-            let end_id = RecordingViewController.getGestureId(index:RecordingViewController.recording_end)
-            print("# exporting from ", start_id, " to ", end_id)
-            print("# index ", RecordingViewController.recording_start, RecordingViewController.recording_end)
-            
-            var collection = stylusManager.exportRecording(startId: start_id, endId: end_id)
-            collection!["name"].stringValue = name!;
-            var collectionList:JSON = [:];
-            collectionList["collections"] = JSON([collection]);
-            
-            BehaviorManager.loadCollectionsFromJSON(data:collectionList["collections"]);
-
-            let request = Request(target: "socket", action: "send_collection_data", data: collectionList, requester: self)
-            RequestHandler.addRequest(requestData: request)
-        }
-        
-        //the cancel action doing nothing
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in }
-        
-        //adding textfields to our dialog box
-        alertController.addTextField { (textField) in
-            textField.placeholder = "Enter Name"
-        }
-        
-        //adding the action to dialogbox
-        alertController.addAction(confirmAction)
-        alertController.addAction(cancelAction)
-        
-        //finally presenting the dialog box
-        self.present(alertController, animated: true, completion: nil)
-    }
-    
+   
     
     //requester stubs
     func processRequest(data: (String, JSON?)) {
@@ -121,5 +96,41 @@ class RecordingToolbarVC: UIViewController, Requester {
 
     }
     
+    
+    
+    //Mark: Recording Event handlers
+    
+    //from an index, go to a gesture stringid
+     func getGestureId(index:Int) -> String {
+        return gestures[index].id
+    }
+    
+    func loopInitialized() {
+        if (self.recording_start >= 0 && self.recording_end >= self.recording_start) {
+            print ("^^ loop pressed from ", self.recording_start, " to ", self.recording_end)
+            let start_id = self.getGestureId(index: 0);
+            let end_id = self.getGestureId(index: self.gestures.count-1);
+            if (stylusManager.liveStatus()) {
+                isRecordingLoop = true
+                stylusManager.prepareDataToLoop(idStart: start_id, idEnd: end_id, startTimer: true);
+                //erase strokes associated with the recording
+                //                stylusManager.eraseStrokesForLooping(idStart:start_id, idEnd:end_id)
+                
+            } else { //stop recording
+                
+                stylusManager.terminateStepAndResumeLive()
+                //stylusManager.setToLive()
+                firstLoopCompleted = true
+            }
+        }
+    }
+    
+    func recordingCreatedHandler (data:(String, RecordingCollection), key:String) {
+        let stylusData = data.1
+        let xRecording = stylusData.protoSignals["x"];
+        let yRecording = stylusData.protoSignals["y"];
+        self.gestures.append(GestureRecording(id: stylusData.id, x:xRecording as! Recording, y:yRecording as! Recording))
+        let IndexPath = NSIndexPath(item: self.gestures.count-1, section:0)
+    }
 
 }

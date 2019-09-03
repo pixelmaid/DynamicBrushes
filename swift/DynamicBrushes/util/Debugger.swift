@@ -99,9 +99,11 @@ final class Debugger {
     
     static func generateGeneratorDebugData()->JSON{
         
-        let generatorCollection = BehaviorManager.signalCollections[2]["default"];
+        guard let generatorCollection = BehaviorManager.signalCollections[2]["default"] else{
+            return JSON([:]);
+        }
         
-        return generatorCollection!.paramsToJSON();
+        return generatorCollection.paramsToJSON();
     }
     
     static func generateSingleBrushDebugData(brush:Brush)->JSON{

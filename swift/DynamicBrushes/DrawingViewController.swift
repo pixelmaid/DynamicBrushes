@@ -76,7 +76,6 @@ class DrawingViewController: UIViewController, Requester{
     var layerPanelController: LayerPanelViewController?
     var behaviorPanelController: BehaviorPanelViewController?
     var recordingToolbarVC: RecordingToolbarVC?
-    var recordingViewController:RecordingViewController?
     
     var fileListController: SavedFilesPanelViewController?
     let targetSize = CGSize(width:CGFloat(pX),height:CGFloat(pY))
@@ -152,11 +151,9 @@ class DrawingViewController: UIViewController, Requester{
         }
         else if(segue.identifier == "recordingToolbarSegue"){
             recordingToolbarVC = segue.destination as? RecordingToolbarVC;
-            _ =  recordingToolbarVC?.loopEvent.addHandler(target: self, handler: DrawingViewController.recordingEventHandler, key: loopEventKey)
+          
         }
-      else if(segue.identifier == "recordingViewControllerSegue"){
-           recordingViewController = segue.destination as? RecordingViewController;
-      }
+   
         
     }
     
@@ -381,15 +378,7 @@ class DrawingViewController: UIViewController, Requester{
     }
     
     
-    func recordingEventHandler(data: (String), key: String){
-        switch(data){
-        case "LOOP":
-            recordingViewController?.loopInitialized()
-            break;
-        default:
-            break;
-        }
-    }
+    
     
     func debuggerEventHandler(data: (String), key: String) {
         switch (data) {
@@ -1387,7 +1376,6 @@ class DrawingViewController: UIViewController, Requester{
         loadJSON["short_filename"] = JSON(filename);
         
         loadJSON["type"] = JSON("load")
-        
         loadJSON["targetFolder"] = JSON("saved_files/"+artistName+"/behaviors/")
         let request = Request(target: "storage", action: "download", data: loadJSON, requester: self)
         RequestHandler.addRequest(requestData: request);

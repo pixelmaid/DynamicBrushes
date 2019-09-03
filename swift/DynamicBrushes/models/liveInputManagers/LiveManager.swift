@@ -209,10 +209,7 @@ final class StylusManager:LiveManager{
         return self.isLive
     }
     
-    public func setToLive(){
-        revertToLiveOnLoopEnd = true;
-    }
-    
+   
     
     
     public func setPlaybackRate(v:Float){
@@ -239,7 +236,7 @@ final class StylusManager:LiveManager{
     
     
     
-    public func prepareDataToLoop(idStart:String,idEnd:String){
+    public func prepareDataToLoop(idStart:String,idEnd:String, startTimer:Bool){
         self.isLive = false;
         self.idStart = idStart;
         self.idEnd = idEnd;
@@ -294,10 +291,56 @@ final class StylusManager:LiveManager{
         }
         
         prepStepData();
+        if(startTimer){
+            delayTimerReinit();
+        }
     }
     
     
+    @objc private func delayTimerReinit(){
+        if(playbackTimer != nil){
+            playbackTimer.invalidate()
+            playbackTimer = nil
+        }
+        
+        startTime = Date();
+        prevTriggerTime = startTime;
+        
+        playbackTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(advanceRecording), userInfo: nil, repeats: true)
+
+        
+    }
     
+    
+    @objc private func advanceRecording(){
+        
+        
+        queue.sync {
+            //            print("total num samples",samples.count)
+            let currentTime = Date();
+            let elapsedTime = currentTime.timeIntervalSince(prevTriggerTime);
+            
+            var timeDifferenceCounter = Float(0);
+            let timeDifferenceMS:Float;
+            
+            /*if(playbackRate >= 10.0){
+                timeDifferenceMS = Float(samples.count);
+                killLoopTimer(delayRestart: false);
+                
+            }
+                
+            else{
+                timeDifferenceMS = Float(elapsedTime)*1000*playbackRate;
+                
+            }
+            
+            while timeDifferenceCounter<timeDifferenceMS{*/
+            stepSample();
+
+            //}
+        }
+    }
+
   
     
     func prepStepData(){
@@ -327,7 +370,6 @@ final class StylusManager:LiveManager{
         
         eraseEvent.raise(data:("ERASE_REQUEST",strokesToErase));
         self.visualizationEvent.raise(data:"ERASE_REQUEST")
-        Debugger.activate();
     }
     
     
@@ -361,7 +403,7 @@ final class StylusManager:LiveManager{
         usedSamples.removeAll();
         prevHash = 0;
         prepStepData();
-        Debugger.deactivate();
+        revertToLiveOnLoopEnd = true;
         self.resumeLiveMode();
 
     }
@@ -375,8 +417,6 @@ final class StylusManager:LiveManager{
         samples.removeAll();
         usedSamples.removeAll();
         currentLoopingPackage = nil;
-        self.visualizationEvent.raise(data:"RECORD_IMG_ON")
-        self.visualizationEvent.raise(data:"DESELECT_LAST")
         self.visualizationEvent.raise(data:"ERASE_REQUEST")
 
     }
@@ -387,12 +427,12 @@ final class StylusManager:LiveManager{
             playbackTimer.invalidate()
             playbackTimer = nil
         }
-        /*if(delayRestart){
+        if(delayRestart){
          playbackTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(delayTimerReinit), userInfo: nil, repeats: false)
          }
          else{
          self.visualizationEvent.raise(data:"ERASE_REQUEST")
-         }*/
+         }
     }
     
     

@@ -9,19 +9,9 @@
 import Foundation
 import UIKit
 
-class GestureRecording {
-    var id:String;
-    var x:Recording;
-    var y:Recording;
-
-    init(id:String,x:Recording,y:Recording) {
-        self.id = id;
-        self.x = x;
-        self.y = y;
-    }
-}
 
 
+/*
 //for random color
 extension CGFloat {
     static var random: CGFloat {
@@ -37,7 +27,6 @@ extension UIColor {
 
 class RecordingViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     //data source
-    public static var gestures = [GestureRecording]()
     //selection handling
     public static var recording_start = 0
     public static var recording_end = 0;
@@ -412,3 +401,4 @@ class RecordingViewController: UIViewController, UICollectionViewDataSource, UIC
     
 }
 
+*/
