@@ -154,6 +154,7 @@ final class Debugger {
         debugData["brush"] = brushData;
         debugData["input"] = inputData;
         debugData["output"] = outputData;
+        debugData["type"] = "state";
         return debugData;
     }
     
@@ -245,6 +246,25 @@ final class Debugger {
             view.scene!.removeActiveId(id:id)
             view.updateNode()
         }
+        
+    }
+    
+    
+    static func highlight(data:JSON){
+        //respond to highlight request from programming interface
+    }
+    
+    static func setupHighlightRequest(){
+        
+        var debugData:JSON = [:]
+        
+        //populate highlight data here
+
+        
+        debugData["type"] = "highlight";
+
+        let socketRequest = Request(target: "socket", action: "send_inspector_data", data: debugData, requester: RequestHandler.sharedInstance)
+        RequestHandler.addRequest(requestData: socketRequest)
         
     }
     

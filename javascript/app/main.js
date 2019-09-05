@@ -247,6 +247,20 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
 
         };
 
+        var onHighlightRequest= function(data){
+            var instance_data = {
+                type: "debug_request",
+                requester: "authoring",
+                data: {
+                    type:"highlightRequest",
+                    data: data
+                }
+            };
+
+            socketController.sendMessage(instance_data);
+
+        };
+
         var promptConnect = function() {
 
             codename = prompt("please enter your login key");
@@ -308,6 +322,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
 
         saveManager.addListener("ON_SAVE_EVENT", onStorageEvent);
         debuggerModelCollection.addListener("ON_ACTIVE_INSTANCE_CHANGED",updateActiveInstance);
+        debuggerModelCollection.addListener("ON_HIGHLIGHT_REQUEST",onHighlightRequest);
+
         signalModel.datasetLoader.addListener("ON_IMPORTED_DATASET_READY", onDataReady);
         promptConnect();
 

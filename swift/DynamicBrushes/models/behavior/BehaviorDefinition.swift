@@ -280,12 +280,12 @@ class BehaviorDefinition {
             
         }
         
-        let orderdMappings = Debugger.orderProps(propList: mappingsArray);
+        let orderedMappings = Debugger.orderProps(propList: mappingsArray);
    
         
         json_obj["states"] = JSON(statesArray);
         json_obj["transitions"] = JSON(transitionsArray);
-        json_obj["mappings"] = JSON(orderdMappings);
+        json_obj["mappings"] = JSON(orderedMappings);
         json_obj["methods"] = JSON(methodArray);
         json_obj["conditions"] = JSON(conditionArray);
         json_obj["expressions"] = JSON(expressionArray);

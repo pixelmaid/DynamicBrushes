@@ -1320,6 +1320,9 @@ class DrawingViewController: UIViewController, Requester{
                 case "activeInstanceUpdate":
                     BehaviorManager.activeInstance = debugData["activeInstance"].intValue;
                 break;
+                
+            case "highlightRequest":
+                Debugger.highlight(data:debugData);
                 default:
                 break;
             }

@@ -24,7 +24,26 @@ define(["app/Emitter", "app/DebuggerModel"],
 				this.trigger("ON_ACTIVE_INSTANCE_CHANGED", [this.selectedIndex]);
 			}
 
+			updateHighlight(data){
+				this.trigger("ON_HIGHLIGHT_ACTION",[data]);
+			}
+
+
 			processInspectorData(newData) {
+				if(newData.type == "state"){
+					this.processStateData(newData);
+				}
+				else if (newData.type == "highlight"){
+					this.highlight(newData);
+				}
+			}
+
+
+			highlight(){
+
+			}
+
+			processStateData(newData){
 				console.log("! data is ", newData);
 				var formattedOutputData = this.formattedOutputData(newData.output);
 				var formattedBrushData = this.formatBrushData(newData.brush);

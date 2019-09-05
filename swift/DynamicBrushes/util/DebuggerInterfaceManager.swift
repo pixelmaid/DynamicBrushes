@@ -33,6 +33,12 @@ class DebuggerInterfaceManager:TouchTarget{
             Debugger.jumpToState(stroke: seg!.parent!, segment: seg!);
             
         }
+        else{
+            //if hit test is not succesful for strokes, test for hit with Maccaw elements
+            //if hit is successful:
+            //Debugger.setupHighlightRequest()
+        }
+        
     }
     
     
