@@ -16,6 +16,14 @@ final class Debugger {
     static public let debuggerEvent = Event<(String)>();
         
     static private var debuggingActive = false;
+    
+    static public var inputGfx = true
+    static public var inputLabel = true
+    static public var brushGfx = true
+    static public var brushLabel = true
+    static public var outputGfx = true
+    static public var outputLabel = true
+    
     static var propSort = ["ox","oy","sx","sy","rotation","dx","dy","x","y","radius","theta","diameter","hue","lightness","saturation","alpha"]
 
     static public func activate(){
@@ -216,13 +224,13 @@ final class Debugger {
     static public func toggleVisualizations(view:BrushGraphicsView, item:String, isOn:Bool) {
         switch(item) {
         case "input":
-            view.scene?.inputGfx = isOn
+            self.inputGfx = isOn
             break
         case "brush":
-            view.scene?.brushGfx = isOn
+            self.brushGfx = isOn
             break
         case "output":
-            view.scene?.outputGfx = isOn
+            self.outputGfx = isOn
             break
         default:
             break
@@ -233,18 +241,27 @@ final class Debugger {
     static public func toggleLabels(view:BrushGraphicsView, item:String, isOn:Bool) {
         switch(item) {
         case "input":
-            view.scene?.inputLabel = isOn
+            self.inputLabel = isOn
             break
         case "brush":
-            view.scene?.brushLabel = isOn
+            self.brushLabel = isOn
             break
         case "output":
-            view.scene?.outputLabel = isOn
+            self.outputLabel = isOn
             break
         default:
             break
         }
         view.scene?.toggleLabel(type:item)
+    }
+    
+    static public func refreshVisualizations(view:BrushGraphicsView) {
+        view.scene?.toggleViz(type:"input")
+        view.scene?.toggleViz(type:"output")
+        view.scene?.toggleViz(type:"brush")
+        view.scene?.toggleLabel(type:"input")
+        view.scene?.toggleLabel(type:"output")
+        view.scene?.toggleLabel(type:"brush")
     }
     
     
@@ -259,6 +276,8 @@ final class Debugger {
             let brush = brushes[BehaviorManager.activeInstance]
             if brush.unrendered {
 //                print("~~~ about to draw into context in debugger with brush ", brush.id)
+                //double check view values since they arent persistent
+                refreshVisualizations(view: view)
                 let valArray = Debugger.getGeneratorValue(brushId: brush.id)
                 let inputInfo = Debugger.getStylusInputValue(brushId: brush.id)
                 brush.drawIntoContext(context:view, info:inputInfo)
@@ -276,6 +295,8 @@ final class Debugger {
         for id in keysToRemove {
             view.scene!.removeActiveId(id:id)
             view.updateNode()
+
+//
         }
         
     }

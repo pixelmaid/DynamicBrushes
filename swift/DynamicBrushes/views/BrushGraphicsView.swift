@@ -16,13 +16,6 @@ public class BrushGraphicsScene {
     var activeBrushIds = [String:BrushGraphic]() //dictionary
     var currentGenerator = ["none"]
     
-    var inputGfx = true
-    var inputLabel = true
-    var brushGfx = true
-    var brushLabel = true
-    var outputGfx = true
-    var outputLabel = true
-    
     init(view: BrushGraphicsView) {
         self.view = view
         self.node = Group()
@@ -30,13 +23,11 @@ public class BrushGraphicsScene {
     }
     
     public func toggleViz(type: String) {
-        print("~~~ calling toggleViz scene", inputGfx, brushGfx, outputGfx)
         for (_, brush) in self.activeBrushIds {
             brush.toggleViz(type: type)
         }
     }
     public func toggleLabel(type: String) {
-        print("~~~ calling toggleLabel scene", inputLabel, brushLabel, outputLabel)
         for (_, brush) in self.activeBrushIds {
             brush.toggleLabel(type: type)
         }
@@ -283,49 +274,49 @@ class BrushGraphic {
     }
 
     func toggleViz(type:String) {
-        print("~~ inside toggle viz brush")
         switch(type) {
         case "input":
             //input stream, input dot, generator viz
-            if self.scene.inputGfx {
+            if Debugger.inputGfx {
                 stylusIcon.fill = inputColor
+                stylusIcon.stroke = Macaw.Stroke(fill: Macaw.Color.white, width:2)
                 updateExistingStylusStrokes()
                 makeGeneratorVisible()
-                self.scene.inputLabel = true
+                Debugger.inputLabel = true
                 
             } else {
                 stylusIcon.fill = hiddenColor
+                stylusIcon.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
                 changeColorInGroup(group: self.lastStylusInputs, color: hiddenColor)
                 makeGeneratorInvisible()
-                self.scene.inputLabel = false
+                Debugger.inputLabel = false
             }
             break
         case "brush":
             //origin icon, brush dot
-            if self.scene.brushGfx {
-                changeColorInGroup(group: brushIcon, color: brushColor)
+            if Debugger.brushGfx {
+                makeBrushIconVisible()
                 inputIcon.fill = brushColor
-                inputIcon.stroke = Macaw.Stroke(fill: brushColor, width:2)
+                inputIcon.stroke = Macaw.Stroke(fill: Macaw.Color.white, width:2)
 
-                self.scene.brushLabel = true
+                Debugger.brushLabel = true
             } else {
-                changeColorInGroup(group: brushIcon, color: hiddenColor)
+                makeBrushIconInvisible()
                 inputIcon.fill = hiddenColor
                 inputIcon.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
-
-                self.scene.brushLabel = false
+                Debugger.brushLabel = false
 
             }
             break
         case "output":
-            if self.scene.outputGfx {
+            if Debugger.outputGfx {
                 computedIcon.fill = outputColor
                 computedIcon.stroke = Macaw.Stroke(fill: Macaw.Color.white, width:2)
-                self.scene.outputLabel = true
+                Debugger.outputLabel = true
             } else {
                 computedIcon.fill = hiddenColor
                 computedIcon.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
-                self.scene.outputLabel = false
+                Debugger.outputLabel = false
             }
             break
         default:
@@ -335,18 +326,17 @@ class BrushGraphic {
     }
     
     func toggleLabel(type:String) {
-        print("~~ inside toggle label brush")
 
         switch(type) {
         case "input":
-            if self.scene.inputLabel {
+            if Debugger.inputLabel {
                 stylusText.fill = Macaw.Color.black
             } else {
                 stylusText.fill = hiddenColor
             }
             break
         case "brush":
-            if self.scene.brushLabel {
+            if Debugger.brushLabel {
                 originText.fill = Macaw.Color.black
                 inputText.fill = Macaw.Color.black
 
@@ -356,7 +346,7 @@ class BrushGraphic {
             }
             break
         case "output":
-            if self.scene.outputLabel {
+            if Debugger.outputLabel {
                 computedText.fill = Macaw.Color.black
             } else {
                 computedText.fill = hiddenColor
@@ -367,10 +357,48 @@ class BrushGraphic {
         }
     }
     
+    func makeBrushIconInvisible() {
+        let xAxis = brushIcon.contents[0] as! Group
+        let xLine = xAxis.contents[0] as! Shape
+        let xTri = xAxis.contents[1] as! Shape
+        xLine.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
+        xTri.fill = hiddenColor
+        let yAxis = brushIcon.contents[1] as! Group
+        let yLine = yAxis.contents[0] as! Shape
+        let yTri = yAxis.contents[1] as! Shape
+        yLine.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
+        yTri.fill = hiddenColor
+        let orgCirc = brushIcon.contents[2] as! Shape
+        orgCirc.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
+        let orgCircBig = brushIcon.contents[3] as! Shape
+        orgCircBig.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
+        let rotArc = brushIcon.contents[4] as! Shape
+        rotArc.stroke = Macaw.Stroke(fill: hiddenColor, width:10)
+    }
+
+    func makeBrushIconVisible() {
+        let xAxis = brushIcon.contents[0] as! Group
+        let xLine = xAxis.contents[0] as! Shape
+        let xTri = xAxis.contents[1] as! Shape
+        xLine.stroke = Macaw.Stroke(fill: brushColor, width:2)
+        xTri.fill = brushColor
+        let yAxis = brushIcon.contents[1] as! Group
+        let yLine = yAxis.contents[0] as! Shape
+        let yTri = yAxis.contents[1] as! Shape
+        yLine.stroke = Macaw.Stroke(fill: brushColor, width:2)
+        yTri.fill = brushColor
+        let orgCirc = brushIcon.contents[2] as! Shape
+        orgCirc.stroke = Macaw.Stroke(fill: brushColor, width:2)
+        let orgCircBig = brushIcon.contents[3] as! Shape
+        orgCircBig.stroke = Macaw.Stroke(fill: brushColor, width:2)
+        let rotArc = brushIcon.contents[4] as! Shape
+        rotArc.stroke = Macaw.Stroke(fill: brushColor, width:10)
+    }
+    
     func makeGeneratorInvisible() {
-        if !self.scene.inputGfx {
-            for group in self.generator.contents {
-                if let group = group as? Group {
+        if !Debugger.inputGfx {
+            for groupo in self.generator.contents {
+                if let group = groupo as? Group {
                     let bg = group.contents[0] as! Shape
                     bg.fill = hiddenColor
                     bg.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
@@ -394,9 +422,9 @@ class BrushGraphic {
     }
     
     func makeGeneratorVisible() {
-        if self.scene.inputGfx {
-            for group in self.generator.contents {
-                if let group = group as? Group {
+        if Debugger.inputGfx {
+            for groupo in self.generator.contents {
+                if let group = groupo as? Group {
                     let bg = group.contents[0] as! Shape
                     bg.fill = Macaw.Color.white
                     bg.stroke = Macaw.Stroke(fill: Macaw.Color.black, width:2)
@@ -459,7 +487,7 @@ class BrushGraphic {
     
     func reinitGen(i:Int) { //this is only called once!!
         let genGroup = makeGeneratorGroup()
-        if !self.scene.inputGfx {
+        if !Debugger.inputGfx {
             makeGeneratorInvisible()
         }
         genGroup.place = Transform.move(dx:0, dy:Double(i*130+30))
@@ -529,7 +557,7 @@ class BrushGraphic {
             print("default")
 
         }
-        if !self.scene.inputGfx {
+        if !Debugger.inputGfx {
             makeGeneratorInvisible()
         }
     }
@@ -543,8 +571,13 @@ class BrushGraphic {
         originText.text = "ox:"+String(Int(ox))+", oy:"+String(Int(oy))+", r:"+String(Int(r))
         print("## rotated brush ", self.id, " by ", r, " Moved to ox ,oy,", ox, oy )
         
+        let rotArc:Shape
         //rotate
-        let rotArc = Macaw.Arc(ellipse: Ellipse(cx:0,cy:0, rx:axisScale*0.75, ry:axisScale*0.75),shift: 0, extent: Double(r * pi/180)).stroke(fill: brushColor, width:10)
+        if Debugger.brushGfx {
+            rotArc = Macaw.Arc(ellipse: Ellipse(cx:0,cy:0, rx:axisScale*0.75, ry:axisScale*0.75),shift: 0, extent: Double(r * pi/180)).stroke(fill: brushColor, width:10)
+        } else {
+            rotArc = Macaw.Arc(ellipse: Ellipse(cx:0,cy:0, rx:axisScale*0.75, ry:axisScale*0.75),shift: 0, extent: Double(r * pi/180)).stroke(fill: hiddenColor, width:10)
+        }
         brushIcon.contents[4] = rotArc
         
         if (sx != 100 || sy != 100 || scaleChanged) {
@@ -593,7 +626,7 @@ class BrushGraphic {
         stylusIcon.place = Transform.move(dx: x, dy: y)
         let currStylusIcon:Shape
         let forceScale = (force+1)
-        if self.scene.inputGfx {
+        if Debugger.inputGfx {
             currStylusIcon = Shape(form: Circle(r: 10), fill: inputColor)
         } else {
             currStylusIcon = Shape(form: Circle(r: 10), fill: hiddenColor)
@@ -608,7 +641,7 @@ class BrushGraphic {
         if lastStylusInputs.contents.count > inputLimit {
             lastStylusInputs.contents.removeFirst()
         }
-        if self.scene.inputGfx {
+        if Debugger.inputGfx {
             updateExistingStylusStrokes()
         }
 //        print("~~~ node len is ", lastStylusInputs.contents.count)
