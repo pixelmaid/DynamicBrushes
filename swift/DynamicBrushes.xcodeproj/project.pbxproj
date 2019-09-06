@@ -17,7 +17,6 @@
 		0A56E3C5207308FA006243A6 /* ExpressionCatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A56E3C4207308FA006243A6 /* ExpressionCatch.m */; };
 		0A5E4A9223186E5F002CE9D7 /* BrushStorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5E4A9123186E5F002CE9D7 /* BrushStorageManager.swift */; };
 		0A5E4A9423188A17002CE9D7 /* GestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5E4A9323188A17002CE9D7 /* GestureRecognizer.swift */; };
-		0A5E4A96231C82B3002CE9D7 /* TouchTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5E4A95231C82B3002CE9D7 /* TouchTarget.swift */; };
 		0A5E4A98231C89A8002CE9D7 /* DebuggerInterfaceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5E4A97231C89A8002CE9D7 /* DebuggerInterfaceManager.swift */; };
 		0A67848420B8E327004BB7B9 /* MapFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A67848320B8E327004BB7B9 /* MapFunctions.swift */; };
 		0AAEAB6A20698BFB0082F6E4 /* StylusCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAEAB6920698BFB0082F6E4 /* StylusCollection.swift */; };
@@ -155,6 +154,10 @@
 		7267DCC120290D9F0093245A /* RecordingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7267DCC020290D9E0093245A /* RecordingViewController.swift */; };
 		7267DCC5202A8ECF0093245A /* RecordingFrameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7267DCC4202A8ECF0093245A /* RecordingFrameCell.swift */; };
 		7288CF7A2318D2D8006C78DD /* sine.svg in Resources */ = {isa = PBXBuildFile; fileRef = 7288CF792318D2D8006C78DD /* sine.svg */; };
+		72C84DCD2321B4ED008A6259 /* inspect_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 72C84DCC2321B4EC008A6259 /* inspect_icon.png */; };
+		72C84DCF2321DBB4008A6259 /* views in Resources */ = {isa = PBXBuildFile; fileRef = 72C84DCE2321DBB4008A6259 /* views */; };
+		72C84DD12321DBE3008A6259 /* InspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72C84DD02321DBE3008A6259 /* InspectorViewController.swift */; };
+		72C84DD32321E19D008A6259 /* TouchTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72C84DD22321E19D008A6259 /* TouchTarget.swift */; };
 		72D72C092069DF8400C1C9C8 /* MicCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D72C082069DF8400C1C9C8 /* MicCollection.swift */; };
 		72E8C9752295BF0B00F3A7BC /* BrushGraphicsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E8C9742295BF0B00F3A7BC /* BrushGraphicsView.swift */; };
 		72F3CED4204DFD050010A3D0 /* record_off2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 72F3CED0204DFD040010A3D0 /* record_off2x.png */; };
@@ -195,7 +198,6 @@
 		0A56E3C4207308FA006243A6 /* ExpressionCatch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExpressionCatch.m; sourceTree = "<group>"; };
 		0A5E4A9123186E5F002CE9D7 /* BrushStorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrushStorageManager.swift; sourceTree = "<group>"; };
 		0A5E4A9323188A17002CE9D7 /* GestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureRecognizer.swift; sourceTree = "<group>"; };
-		0A5E4A95231C82B3002CE9D7 /* TouchTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchTarget.swift; sourceTree = "<group>"; };
 		0A5E4A97231C89A8002CE9D7 /* DebuggerInterfaceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebuggerInterfaceManager.swift; sourceTree = "<group>"; };
 		0A67848320B8E327004BB7B9 /* MapFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MapFunctions.swift; path = data/MapFunctions.swift; sourceTree = "<group>"; };
 		0AAEAB6920698BFB0082F6E4 /* StylusCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StylusCollection.swift; path = data/StylusCollection.swift; sourceTree = "<group>"; };
@@ -344,6 +346,10 @@
 		7267DCC020290D9E0093245A /* RecordingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordingViewController.swift; sourceTree = "<group>"; };
 		7267DCC4202A8ECF0093245A /* RecordingFrameCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingFrameCell.swift; sourceTree = "<group>"; };
 		7288CF792318D2D8006C78DD /* sine.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = sine.svg; sourceTree = "<group>"; };
+		72C84DCC2321B4EC008A6259 /* inspect_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = inspect_icon.png; sourceTree = "<group>"; };
+		72C84DCE2321DBB4008A6259 /* views */ = {isa = PBXFileReference; lastKnownFileType = folder; name = views; sourceTree = "<group>"; };
+		72C84DD02321DBE3008A6259 /* InspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorViewController.swift; sourceTree = "<group>"; };
+		72C84DD22321E19D008A6259 /* TouchTarget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TouchTarget.swift; sourceTree = "<group>"; };
 		72D72C082069DF8400C1C9C8 /* MicCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicCollection.swift; sourceTree = "<group>"; };
 		72E8C9742295BF0B00F3A7BC /* BrushGraphicsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrushGraphicsView.swift; sourceTree = "<group>"; };
 		72F3CED0204DFD040010A3D0 /* record_off2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = record_off2x.png; sourceTree = "<group>"; };
@@ -632,6 +638,8 @@
 		5FA4C7561CDB9EAF004A728C /* views */ = {
 			isa = PBXGroup;
 			children = (
+				72C84DD22321E19D008A6259 /* TouchTarget.swift */,
+				72C84DCE2321DBB4008A6259 /* views */,
 				7267DCC020290D9E0093245A /* RecordingViewController.swift */,
 				7267DCC4202A8ECF0093245A /* RecordingFrameCell.swift */,
 				5FE32F601ECE2EBB00ADC01E /* ToolbarViewController.swift */,
@@ -649,7 +657,7 @@
 				726443612045E00D005A2E9D /* VisualizationView.swift */,
 				72E8C9742295BF0B00F3A7BC /* BrushGraphicsView.swift */,
 				0A5E4A9323188A17002CE9D7 /* GestureRecognizer.swift */,
-				0A5E4A95231C82B3002CE9D7 /* TouchTarget.swift */,
+				72C84DD02321DBE3008A6259 /* InspectorViewController.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -665,6 +673,7 @@
 		5FD6CD101DE0EE0E007D94AA /* image_assets */ = {
 			isa = PBXGroup;
 			children = (
+				72C84DCC2321B4EC008A6259 /* inspect_icon.png */,
 				7288CF792318D2D8006C78DD /* sine.svg */,
 				7219D0DE20699EEE0096CB4B /* mic_off2x.png */,
 				7219D0DF20699EEF0096CB4B /* mic_on2x.png */,
@@ -972,6 +981,7 @@
 				5F9F25AA1DEFE3A0005CB5D8 /* shopbot_position_active@2x.png in Resources */,
 				5FE32F831ECF6D5300ADC01E /* brush_button_active2x.png in Resources */,
 				72F3CED7204DFD050010A3D0 /* record_on2x.png in Resources */,
+				72C84DCF2321DBB4008A6259 /* views in Resources */,
 				5FEE2AC91DE127D800080095 /* dual_pen.png in Resources */,
 				5F9F25AD1DEFE3A0005CB5D8 /* shopbot_position_inactive2x.png in Resources */,
 				5FFC455B1EE1B133007B7597 /* point.vsh in Resources */,
@@ -1014,6 +1024,7 @@
 				72FD3370203256ED00CD4FAF /* recording_export_button.png in Resources */,
 				5F4D8CED1DEE072A008042FE /* shopbot_position_inactive.png in Resources */,
 				5FE32F691ECF61A500ADC01E /* layer_button.png in Resources */,
+				72C84DCD2321B4ED008A6259 /* inspect_icon.png in Resources */,
 				5FE32F891ECF6D5300ADC01E /* erase_button2x.png in Resources */,
 				5FE32F7F1ECF6D5300ADC01E /* behavior_activate_button2x.png in Resources */,
 				5F9F25B01DEFE3A0005CB5D8 /* sm_pen_blue2x.png in Resources */,
@@ -1178,6 +1189,7 @@
 				72FD33732032AE3D00CD4FAF /* RecordingToolbarVC.swift in Sources */,
 				0A458794221743E8003695B5 /* Debugger.swift in Sources */,
 				5F50371B1EA9533A004ABAC1 /* shaderUtil.swift in Sources */,
+				72C84DD32321E19D008A6259 /* TouchTarget.swift in Sources */,
 				5F90F56B1E9D5BCC006BB9FE /* State.swift in Sources */,
 				5F50371A1EA9533A004ABAC1 /* fileUtil.swift in Sources */,
 				5F90F55C1E9D5A5C006BB9FE /* Brush.swift in Sources */,
@@ -1185,7 +1197,6 @@
 				5F90F56A1E9D5BCC006BB9FE /* Signal.swift in Sources */,
 				5FE32F651ECE638B00ADC01E /* LayerPanelViewController.swift in Sources */,
 				5FE32F631ECE535100ADC01E /* LayerContainerView.swift in Sources */,
-				0A5E4A96231C82B3002CE9D7 /* TouchTarget.swift in Sources */,
 				5FFFD797204F5E5D0038A0BA /* SignalCollection.swift in Sources */,
 				5FFC45781EE5C473007B7597 /* BehaviorPanelViewController.swift in Sources */,
 				5F5CED2B1ED10AED00A253A0 /* ColorWheel.swift in Sources */,
@@ -1202,6 +1213,7 @@
 				5FFAC4D71E9D84040009DC5E /* SaveManager.swift in Sources */,
 				5F5037201EA95833004ABAC1 /* NumTypes+Conversion.swift in Sources */,
 				5FFDAB091D21B5C400632A26 /* SocketManager.swift in Sources */,
+				72C84DD12321DBE3008A6259 /* InspectorViewController.swift in Sources */,
 				5F2CF3D51ED32D0B0066AC8E /* SavedFilesPanelViewController.swift in Sources */,
 				5FE32F671ECE66AE00ADC01E /* LayerCell.swift in Sources */,
 				0A56E3C5207308FA006243A6 /* ExpressionCatch.m in Sources */,

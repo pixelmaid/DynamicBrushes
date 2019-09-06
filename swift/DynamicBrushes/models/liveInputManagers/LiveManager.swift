@@ -125,7 +125,6 @@ final class StylusManager:LiveManager{
     
     public let recordEvent = Event<(String,RecordingCollection)>();
     public let keyframeEvent = Event<(Int)>();
-    
     public let layerEvent = Event<(String,String)>();
     public let stylusDataEvent = Event<(String, [Float])>();
     public let visualizationEvent = Event<String>();

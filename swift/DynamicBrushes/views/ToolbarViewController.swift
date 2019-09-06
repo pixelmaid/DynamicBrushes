@@ -18,6 +18,8 @@ class ToolbarViewController: UIViewController {
     @IBOutlet weak var colorPickerButton: UIButton!
     @IBOutlet weak var layerPanelButton: UIButton!
     @IBOutlet weak var behaviorPanelButton: UIButton!
+    @IBOutlet weak var inspectButton: UIButton!
+    
     
     @IBOutlet weak var penButton: UIButton!
     @IBOutlet weak var eraseButton: UIButton!
@@ -84,6 +86,7 @@ class ToolbarViewController: UIViewController {
         colorPickerButton.addTarget(self, action: #selector(ToolbarViewController.panelToggled), for: .touchUpInside)
         behaviorPanelButton.addTarget(self, action: #selector(ToolbarViewController.panelToggled), for: .touchUpInside)
         programViewToggle.addTarget(self, action: #selector(ToolbarViewController.panelToggled), for: .touchUpInside)
+        inspectButton.addTarget(self, action: #selector(ToolbarViewController.panelToggled), for: .touchUpInside)
 
         micButton.addTarget(self, action: #selector(ToolbarViewController.micToggled), for: .touchUpInside)
 
@@ -140,6 +143,8 @@ class ToolbarViewController: UIViewController {
         }
         else if(target == programViewToggle){
             toolEvent.raise(data: ("PROGRAMMING_VIEW_REQUEST"));
+        } else if (target == inspectButton) {
+            toolEvent.raise(data: ("TOGGLE_INSPECTION_PANEL"));
         }
     }
     
