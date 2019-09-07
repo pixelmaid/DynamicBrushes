@@ -107,7 +107,6 @@ class RecordingToolbarVC: UIViewController, Requester {
     
     func loopInitialized() {
         if (self.recording_start >= 0 && self.recording_end >= self.recording_start) {
-            print ("^^ loop pressed from ", self.recording_start, " to ", self.recording_end)
             let start_id = self.getGestureId(index: 0);
             let end_id = self.getGestureId(index: self.gestures.count-1);
             if (stylusManager.liveStatus()) {

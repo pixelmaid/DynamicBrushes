@@ -64,22 +64,76 @@ class Drawing: TimeSeries, Hashable, Renderable{
 
     }
     
+    /*func selectedStrokesToJSON(behaviorId:String?, brushId:String?, time:Int?)->JSON{
+        let targetStrokes:[String:[String:[Stroke]]];
+        if(behaviorId == nil){
+            targetStrokes = activeStrokes;
+        }
+        else{
+            targetStrokes = [String:[String:[Stroke]]]();
+            let behaviorStrokes = allStrokes.filter{ $0.behaviorId == behaviorId };
+            targetStrokes[behaviorId] = [String:[Stroke]]();
+        }
+    }*/
+    
+    func strokesAtGlobalTimeToJSON(globalTime:Int,brushState:BrushStateStorage)->JSON{
+        
+        var allStrokeJSON:JSON;
+        var behaviorJSONList = [String:[String:JSON]]();
+        
+        for stroke in allStrokes{
+            let seg = stroke.getSegmentAtGlobalTime(globalTime:globalTime)
+             if(seg != nil){
+            let behaviorId = stroke.behaviorId;
+            let brushId = stroke.brushId;
+            let behavior = BehaviorManager.behaviors[behaviorId];
+        
+
+
+
+            var strokeJSON:JSON = [:];
+            strokeJSON["i"] = JSON(brushState.i);
+            strokeJSON["name"] = JSON("foo");
+            
+           
+                var singleStrokeJSON = stroke.toJSONAtSegment(segment: seg!);
+                singleStrokeJSON["pen"] = JSON("down");
+                strokeJSON["params"] = singleStrokeJSON;
+            
+            
+            if behaviorJSONList[behaviorId] == nil{
+                
+                var behaviorJSON = [String:JSON]();
+                behaviorJSON["brushes"] = JSON([:]);
+                behaviorJSON["id"] = JSON(behaviorId)
+                behaviorJSON["name"] = JSON(behavior!.name);
+                behaviorJSONList[behaviorId] = behaviorJSON;
+
+
+            }
+           behaviorJSONList[behaviorId]!["brushes"]![brushId] = strokeJSON;
+            }
+        }
+        allStrokeJSON = JSON(behaviorJSONList);
+        return allStrokeJSON;
+    }
+    
     func activeStrokesToJSON()->JSON{
-        var strokeJSON:JSON = [:];
+        var allStrokeJSON:JSON = [:];
         for (behaviorId,brushStrokeList) in activeStrokes{
             var brushStrokeJSON:JSON = [:]
             let behavior = BehaviorManager.behaviors[behaviorId];
+            
             for(brushId,strokes) in brushStrokeList{
                 let brush = behavior!.brushInstances.first{$0.id == brushId};
                 var strokeJSON:JSON = [:];
                 
                 strokeJSON["i"] = JSON(brush!.params.i);
-                //print(strokeJSON["i"].floatValue);
                 strokeJSON["name"] = JSON(brush!.name);
                 
                 if(strokes.count < 1){
                     var emptyParams:JSON = [:]
-                        emptyParams["pen"] = JSON("up")
+                    emptyParams["pen"] = JSON("up")
                     emptyParams["x"] = 0;
                     emptyParams["y"] = 0;
                     emptyParams["h"] = 0;
@@ -103,9 +157,9 @@ class Drawing: TimeSeries, Hashable, Renderable{
             behaviorJSON["brushes"] = brushStrokeJSON;
             behaviorJSON["id"] = JSON(behaviorId)
             behaviorJSON["name"] = JSON(behavior!.name);
-            strokeJSON[behaviorId] = behaviorJSON;
+            allStrokeJSON[behaviorId] = behaviorJSON;
         }
-        return strokeJSON;
+        return allStrokeJSON;
     }
     
     func drawSegment(context:ModifiedCanvasView){
@@ -265,8 +319,8 @@ class Drawing: TimeSeries, Hashable, Renderable{
 
         for i in 0..<self.activeStrokes[behaviorId]![brushId]!.count{
             let currentStroke = self.activeStrokes[behaviorId]![brushId]![i]
-
-            _ = currentStroke.addSegment(brushId: brushId, point: point,d:weight,color:color,alpha:alpha,time:time)
+            let globalTime = StylusManager.globalTime;
+            _ = currentStroke.addSegment(brushId: brushId, point: point,d:weight,color:color,alpha:alpha,time:time,globalTime:globalTime)
 
         }
     }

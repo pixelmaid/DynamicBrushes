@@ -108,7 +108,6 @@ class LayerContainerView: UIView, TouchTarget {
             
             savedJSONList.append(json)
             
-            print("saved values",savedJSONList,savedImageList,savedStateList)
             
             if(savedJSONList.count == layers.count){
                 for s in saveHandlers{
@@ -198,7 +197,6 @@ class LayerContainerView: UIView, TouchTarget {
     }
     
     func loadImageIntoLayer(id:String){
-    print ("load image into layer",id,layers)
         for l in layers{
             if l.id == id {
                 
@@ -207,8 +205,6 @@ class LayerContainerView: UIView, TouchTarget {
             }
             
         }
-        print ("layer not found",id)
-
     }
     
     
@@ -265,7 +261,6 @@ class LayerContainerView: UIView, TouchTarget {
         let vlayer = VisualizationView(name:name,frame: CGRect(origin:CGPoint(x:0,y:0), size:(size)))
         vlayer.center = CGPoint(x:size.width/2,y:size.height / 2);
         self.addSubview(vlayer)
-        print("@@ added vis layer subview")
     }
     
     func addStroke(id:String){

@@ -571,7 +571,7 @@ class BehaviorDefinition {
     
     func generateSignal(brush:Brush, id:String)->Signal?{
         #if DEBUG   
-            print("generate signal",id);
+           // print("generate signal",id);
         #endif
         guard let signal = BehaviorManager.getSignal(id:id) else{
             return nil
@@ -818,7 +818,7 @@ class BehaviorDefinition {
                 initializedArguments.append(expression);
 
             }
-            print("% method transition id is ", method.transitionId)
+           
             targetBrush.addMethod(transitionId:method.transitionId,methodId:method.methodId,fieldName:method.fieldName,arguments:initializedArguments)
                 
             

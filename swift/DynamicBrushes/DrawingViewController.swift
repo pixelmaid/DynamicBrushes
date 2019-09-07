@@ -552,7 +552,6 @@ class DrawingViewController: UIViewController, Requester{
         let connectRequest = Request(target: "socket", action: "connect", data:JSON([]), requester: self)
         RequestHandler.addRequest(requestData:connectRequest);
         loggedIn = true;
-        print("logged in state after connection",loggedIn)
     }
     
     func addProjectInitRequests(){

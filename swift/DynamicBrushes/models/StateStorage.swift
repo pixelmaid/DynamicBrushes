@@ -107,6 +107,8 @@ class BrushStateStorage:BaseStateStorage {
     @objc dynamic var parent: String?
     @objc dynamic var active: Bool = true;
     @objc dynamic var time = Int(0);
+    @objc dynamic var globalTime = Int(0);
+
 }
 
 
@@ -115,12 +117,13 @@ class GeneratorStateStorage:BaseStateStorage {
     @objc dynamic var time = Int(0);
     @objc dynamic var type = String("generator");
     @objc dynamic var id = String("0");
-
-
-    
-
 }
 
+
+class LiveStateStorage:BaseStateStorage{
+
+
+}
 /*class GeneratorCollectionStateStorage:BaseStateStorage{
     var generators = [String:GeneratorStateStorage]();
     

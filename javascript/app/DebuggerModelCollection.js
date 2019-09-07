@@ -24,7 +24,7 @@ define(["app/Emitter", "app/DebuggerModel"],
 				this.trigger("ON_ACTIVE_INSTANCE_CHANGED", [this.selectedIndex]);
 			}
 
-			updateHighlight(data){
+			setupHighlightRequest(data){
 				this.trigger("ON_HIGHLIGHT_ACTION",[data]);
 			}
 
@@ -39,7 +39,7 @@ define(["app/Emitter", "app/DebuggerModel"],
 			}
 
 
-			highlight(){
+			highlight(newData){
 
 			}
 
@@ -216,7 +216,7 @@ define(["app/Emitter", "app/DebuggerModel"],
 							if (key == "parent" || key == "pen") {
 								e["val"] = val;
 							} else {
-								e["val"] = Math.round(val);
+								e["val"] = val.toFixed(2);
 							}
 							return;
 						}

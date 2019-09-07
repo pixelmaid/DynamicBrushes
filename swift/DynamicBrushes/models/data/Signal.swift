@@ -22,7 +22,7 @@ class Signal:Observable<Float>{
     internal let style:String!
     internal var prevV:Float = 0;
 
-    internal let maxVals = 100
+    internal let maxVals = 1000
     var behaviorId:String! = nil
 
     static let stylusUp:Float = 0.0;
@@ -85,6 +85,10 @@ class Signal:Observable<Float>{
         return self.getSilent();
     }
     
+    func getAtIndex(index:Int)->Float{
+        return self.signalBuffer[index];
+    }
+    
     
     override func getSilent()->Float{
         return signalBuffer[self.index];
@@ -118,6 +122,11 @@ class Signal:Observable<Float>{
     
     func addValueFor(behaviorId:String, brushId:String, v:Float){
         self.addValue(v: v);
+    }
+    
+    func getIndexForValue(v:Float)->Int?{
+       return self.signalBuffer.firstIndex(of: v);
+        
     }
     
     func incrementIndex(){

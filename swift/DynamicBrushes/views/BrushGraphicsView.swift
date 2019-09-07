@@ -350,31 +350,31 @@ class BrushGraphic {
         let rotArc = Macaw.Arc(ellipse: Ellipse(cx:0,cy:0, rx:axisScale*0.75, ry:axisScale*0.75),shift: 0, extent: Double(r * pi/180)).stroke(fill: brushColor, width:10)
         brushIcon.contents[4] = rotArc
         
-        if (sx != 100 || sy != 100 || scaleChanged) {
+        if (sx != 1 || sy != 1 || scaleChanged) {
             originText.text = originText.text + "\nsx:"+String(Int(sx))+"%, sy:"+String(Int(sy))+"%"
             scaleChanged = true
             if (sx != 100) {
-                let newLine = Macaw.Line(x1: axisScale, y1: 0, x2: axisScale + (axisLen * Double(sx)/100.0), y2: 0)
+                let newLine = Macaw.Line(x1: axisScale, y1: 0, x2: axisScale + (axisLen * Double(sx)), y2: 0)
                 let xLine = xAxis.contents[0] as! Shape
                 let animation = xLine.formVar.animation(to: newLine, during: 0.1, delay: 0)
                 animation.play()
                 let xTri = xAxis.contents[1] as! Shape
-                xTri.placeVar.animate(to: Transform.move(dx:(axisScale + axisLen * Double(sx)/100.0), dy: 0).rotate(angle:Double(pi)), during: 0.1, delay: Double(0))
+                xTri.placeVar.animate(to: Transform.move(dx:(axisScale + axisLen * Double(sx)), dy: 0).rotate(angle:Double(pi)), during: 0.1, delay: Double(0))
                     //Transform.scale(sx: Double(sx/100.0), sy:1)
                 print("## changed x scale")
             }
             if (sy != 100) {
-                let newLine = Macaw.Line(x1: 0, y1: axisScale, x2: 0, y2: axisScale + (axisLen * Double(sy)/100.0))
+                let newLine = Macaw.Line(x1: 0, y1: axisScale, x2: 0, y2: axisScale + (axisLen * Double(sy)))
                 let yLine = yAxis.contents[0] as! Shape
                 let animation = yLine.formVar.animation(to: newLine, during: 0.1, delay: 0)
                 animation.play()
                 let yTri = yAxis.contents[1] as! Shape
-                yTri.placeVar.animate(to: Transform.move(dx:0, dy: (axisScale + axisLen * Double(sy)/100.0)).rotate(angle:Double(-pi/2)), during: 0.1, delay: Double(0))
+                yTri.placeVar.animate(to: Transform.move(dx:0, dy: (axisScale + axisLen * Double(sy))).rotate(angle:Double(-pi/2)), during: 0.1, delay: Double(0))
 //                yAxis.contents[0].form = Macaw.Line(x1: 0, y1: (-axisScale * sy/100.0), x2: 0, y2:(3*axisScale * sy/100.0))
                     //Transform.scale(sx: 1, sy: Double(sy/100.0))
                 print("## changed y scale")
             }
-            if (sx == 100 && sy == 100) {
+            if (sx == 1 && sy == 1) {
                 scaleChanged = false
             }
         }

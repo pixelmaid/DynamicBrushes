@@ -117,12 +117,11 @@ class BehaviorPanelViewController: UITableViewController{
         let target = ((sender as! UIButton).superview!.superview) as! BehaviorCell
         let target_id = target.id;
         #if DEBUG
-            print("toggle active",target_id,target.active);
+            //print("toggle active",target_id,target.active);
         #endif
         var behavior_data = behaviors.filter({$0.id == target_id});
 
         if(target.active){
-            print("set target inactive")
 
             target.active = false;
             behavior_data[0].active = false
@@ -131,7 +130,6 @@ class BehaviorPanelViewController: UITableViewController{
             (sender as! UIButton).setImage(inactiveIcon, for: UIControl.State.normal)
         }
         else{
-            print("set target active")
             target.active = true;
             behavior_data[0].active = true
 
