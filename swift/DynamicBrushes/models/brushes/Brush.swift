@@ -418,7 +418,7 @@ class Brush: TimeSeries, Hashable, Renderable{
         let data = ["dx":dx,"dy":dy,"pr":pr,"pt":pt,"ox":ox,"oy":oy,"rotation":r,"sx":sx,"sy":sy,"weight":weight,"hue":h,"saturation":s,"lightness":l,"alpha":a,"dist":dist,"xDist":xDist,"yDist":yDist,"x":x,"y":y,"cx":cx,"cy":cy,"time":time, "globalTime":globalTime,"i":self.index.getSilent(),"sc":self.siblingcount.getSilent(),"lv":self.level.getSilent(),"parent": (self.parent != nil ? (self.parent!.behaviorDef?.name)! : "none"), "active":true] as [String : Any];
        
         self.params.updateAll(data: data);
-        BrushStorageManager.storeState(behaviorId: self.behaviorId, brushId: self.id, time: self.params.time, state: self.params.toJSON().rawString()!);
+        BrushStorageManager.storeState(brush:self);
         
       
 
@@ -693,7 +693,7 @@ class Brush: TimeSeries, Hashable, Renderable{
                 intervalTimer.invalidate();
             }
         timer = NSDate();
-        self.time.set(newValue: 0);
+        //self.time.set(newValue: 0);
 
         
 
@@ -951,7 +951,13 @@ class Brush: TimeSeries, Hashable, Renderable{
     
     override func destroy() {
         self.stopInterval();
+        let time = self.time.getSilent();
+        let globalTime = StylusManager.globalTime;
         self.params.update(key:"active",value:false);
+        self.params.update(key:"time",value:time);
+        self.params.update(key:"globalTime",value:globalTime);
+        BrushStorageManager.storeState(brush:self);
+
         if(transitionDelayTimer != nil){
             transitionDelayTimer.invalidate();
         }

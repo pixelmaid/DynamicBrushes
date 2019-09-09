@@ -661,7 +661,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                 console.log("el to make draggable");
                 this.makeDraggable(el);
-                this.addInspector(el);
+                //this.addInspector(el);
                 return expression;
             }
 
@@ -905,7 +905,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     els.every(function(el) {
                         console.log("el to make draggable", el);
                         self.makeDraggable(el);
-                        self.addInspector(el);
+                        //self.addInspector(el);
                     });
                 }
             }

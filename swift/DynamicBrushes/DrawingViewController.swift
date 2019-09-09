@@ -970,6 +970,7 @@ class DrawingViewController: UIViewController, Requester{
                 DispatchQueue.main.async {
                     self.layerContainerView.drawIntoCurrentLayer(drawing:self.currentDrawing!);
                 }
+                Debugger.cacheDebugData();
                 self.backupNeeded = true;
                 
             }
@@ -1046,9 +1047,7 @@ class DrawingViewController: UIViewController, Requester{
         
         DispatchQueue.main.async {
             let alert = UIAlertController(title: "Layers", message: "Adding Layer", preferredStyle: .alert)
-            
             self.present(alert, animated: true, completion: nil)
-            
         }
         
         
@@ -1366,6 +1365,8 @@ class DrawingViewController: UIViewController, Requester{
         let syncJSON:JSON = BehaviorManager.getAllBehaviorAndCollectionJSON();
         let request = Request(target: "socket", action: "synchronize", data: syncJSON, requester: self)
         RequestHandler.addRequest(requestData: request)
+        Debugger.cacheDebugData();
+        Debugger.fireDebugUpdate();
     }
     
     

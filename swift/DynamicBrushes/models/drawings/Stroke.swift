@@ -300,12 +300,12 @@ class Stroke:TimeSeries, Geometry, Renderable {
     }
     
     
-    func toJSONAtSegment(segment:Segment)->JSON{
+    func toJSONAtSegment(segment:Segment?)->JSON{
         var jsonData:JSON = [:];
         if(self.segments.count>0){
            
-            jsonData = segment.toJSON();
-            jsonData["numSegments"] = JSON(segment.index!+1);
+            jsonData = segment!.toJSON();
+            jsonData["numSegments"] = JSON(segment!.index!+1);
 
         }
         else{
@@ -317,7 +317,7 @@ class Stroke:TimeSeries, Geometry, Renderable {
     }
     
     func toJSON()->JSON{
-        let targetSegment = self.segments.last!;
+        let targetSegment = self.segments.last;
         return self.toJSONAtSegment(segment: targetSegment);
     }
     

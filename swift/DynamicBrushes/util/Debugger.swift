@@ -11,22 +11,13 @@ import SwiftyJSON
 import Macaw
 
 final class Debugger {
-    static public let debugInterval:Int = 1
+    static public let debugInterval:Int = 1;
     static public var debugTimer:Timer! = nil
     static public let debuggerEvent = Event<(String)>();
-
-    
-    static private var debuggingActive = false;
+    static public var debugDataQueue = [JSON]();
+    static public var debuggingTimerActive = false;
     static var propSort = ["ox","oy","sx","sy","rotation","dx","dy","x","y","radius","theta","diameter","hue","lightness","saturation","alpha"]
 
-    static public func activate(){
-        Debugger.debuggingActive = true;
-        Debugger.debuggerEvent.raise(data: ("INIT"));
-    }
-    
-    static public func deactivate(){
-        debuggingActive = false;
-    }
     
     static public func orderProps(propList:[JSON])->[JSON]{
         var _propList = propList;
@@ -49,7 +40,8 @@ final class Debugger {
     }
     
     static public func startDebugTimer(interval:Int){
-        self.endDebugTimer();
+        Debugger.endDebugTimer();
+        Debugger.debuggingTimerActive = true;
         Debugger.debugTimer = Timer(timeInterval: TimeInterval(interval), target: self, selector: #selector(Debugger.fireDebugUpdate), userInfo: nil, repeats: true)
         RunLoop.current.add(debugTimer, forMode: RunLoop.Mode.common)
     }
@@ -60,6 +52,8 @@ final class Debugger {
             Debugger.debugTimer.invalidate();
         }
         Debugger.debugTimer = nil;
+        Debugger.debuggingTimerActive = false;
+
     }
     
     
@@ -72,7 +66,7 @@ final class Debugger {
         let brushState = BrushStorageManager.accessState(behaviorId: behaviorId, brushId: brushId, time: localTime);
         let globalTime = brushState!.globalTime;
         
-        let debugData = Debugger.generateDebugData(behaviorId: behaviorId, brushId: brushId, brushState: brushState, globalTime: globalTime, localTime: localTime);
+        let debugData = JSON([Debugger.generateDebugData(behaviorId: behaviorId, brushId: brushId, brushState: brushState, globalTime: globalTime, localTime: localTime)]);
         
         let socketRequest = Request(target: "socket", action: "send_inspector_data", data: debugData, requester: RequestHandler.sharedInstance)
         RequestHandler.addRequest(requestData: socketRequest)
@@ -161,7 +155,14 @@ final class Debugger {
     }
     
     static func generateBrushDebugData(brushState:BrushStateStorage?)->JSON{
-        var debugData:JSON = [:]
+        let behaviorNames = BehaviorManager.getBehaviorNames();
+        
+        guard brushState != nil else{
+            return BrushStorageManager.accessStateAtTime(globalTime: nil, behaviorNames: behaviorNames)
+        }
+       return BrushStorageManager.accessStateAtTime(globalTime: brushState?.globalTime, behaviorNames: behaviorNames)
+        
+        /*var debugData:JSON = [:]
         debugData["groupName"] = JSON("brush");
         var behaviorListJSON = [JSON]();
         var brushesListJSON = [JSON]();
@@ -180,10 +181,10 @@ final class Debugger {
             behaviorJSON["brushes"] = JSON(brushesListJSON);
             behaviorListJSON.append(behaviorJSON);
             
-        debugData["behaviors"] = JSON(behaviorListJSON);
         }
+        debugData["behaviors"] = JSON(behaviorListJSON);
 
-        return debugData;
+        return debugData;*/
     }
     
     
@@ -202,9 +203,19 @@ final class Debugger {
     }
     
     @objc static func fireDebugUpdate(){
+        if(Debugger.debugDataQueue.count>0){
+            let debugJSON = JSON(Debugger.debugDataQueue);
+            let socketRequest = Request(target: "socket", action: "send_inspector_data", data: debugJSON, requester: RequestHandler.sharedInstance)
+            RequestHandler.addRequest(requestData: socketRequest)
+            Debugger.debugDataQueue.removeAll();
+        }
+    }
+    
+    static public func cacheDebugData(){
         let debugData = Debugger.generateDebugData(behaviorId: nil, brushId: nil, brushState: nil ,globalTime: nil,localTime: nil);
-        let socketRequest = Request(target: "socket", action: "send_inspector_data", data: debugData, requester: RequestHandler.sharedInstance)
-        RequestHandler.addRequest(requestData: socketRequest)
+        
+        Debugger.debugDataQueue.append(debugData);
+
     }
     
     static public func getGeneratorValue(brushId:String) -> [(Double,Int,String)] {

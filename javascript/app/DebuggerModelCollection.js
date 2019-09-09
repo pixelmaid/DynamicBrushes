@@ -15,7 +15,9 @@ define(["app/Emitter", "app/DebuggerModel"],
 				this.inputModel = new DebuggerModel(this);
 				this.outputModel = new DebuggerModel(this);
 				this.selectedIndex = 0;
-
+				this.inspectorQueue = [];
+				this.startInspectorInterval();
+			
 
 			}
 
@@ -26,6 +28,39 @@ define(["app/Emitter", "app/DebuggerModel"],
 
 			setupHighlightRequest(data){
 				this.trigger("ON_HIGHLIGHT_ACTION",[data]);
+			}
+
+
+			startInspectorInterval(){
+				if(this.inspectorDataTimer){
+					clearInterval(this.inspectorDataTimer);
+				}
+
+				var self = this;
+				this.inspectorDataTimer = setInterval(function() { self.inspectorDataInterval(); }, 100);
+			}
+
+			terminateInspectorInterval(){
+				if(this.inspectorDataTimer){
+					clearInterval(this.inspectorDataTimer);
+				}
+			}
+
+			clearInspectorDataQueue(){
+				this.inspectorQueue = [];
+			}
+
+			processInspectorDataQueue(dataQueue){
+				this.inspectorQueue.push.apply(this.inspectorQueue,dataQueue);
+
+			}
+
+			inspectorDataInterval(){
+				if(this.inspectorQueue.length>0){
+					let targetData = this.inspectorQueue.shift();
+					this.processInspectorData(targetData);
+					console.log("called inspector interval",this.inspectorDataTimer)
+				}
 			}
 
 

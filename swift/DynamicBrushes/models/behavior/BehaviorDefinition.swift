@@ -737,7 +737,6 @@ class BehaviorDefinition {
         
         for i in 0..<self.brushInstances.count{
             let targetBrush = self.brushInstances[i];
-            targetBrush.clearBehavior();
             targetBrush.destroy();
             
         }

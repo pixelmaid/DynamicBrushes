@@ -108,7 +108,6 @@ class BrushStateStorage:BaseStateStorage {
     @objc dynamic var active: Bool = true;
     @objc dynamic var time = Int(0);
     @objc dynamic var globalTime = Int(0);
-
 }
 
 

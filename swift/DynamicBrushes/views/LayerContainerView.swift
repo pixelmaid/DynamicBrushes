@@ -398,6 +398,9 @@ class LayerContainerView: UIView, TouchTarget {
     
     func recieveTouch(touch: UITouch, state: UIGestureRecognizer.State, predicted: Bool) {
         self.activeLayer!.recieveTouch(touch: touch, state: state, predicted: predicted);
+        if(!Debugger.debuggingTimerActive){
+            Debugger.startDebugTimer(interval: Debugger.debugInterval);
+        }
     }
     
     

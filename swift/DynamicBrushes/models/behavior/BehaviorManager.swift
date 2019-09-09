@@ -68,6 +68,14 @@ class BehaviorManager{
         return brush;
     }
     
+    static func getBehaviorNames()->[String:String]{
+        var names = [String:String]();
+        for (id,behavior) in self.behaviors{
+            names[id] = behavior.name;
+        }
+        return names;
+    }
+    
     
     static func refreshAllBehaviors(){
         for (_,behavior) in BehaviorManager.behaviors{
