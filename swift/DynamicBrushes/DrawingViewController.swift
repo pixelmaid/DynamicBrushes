@@ -610,7 +610,7 @@ class DrawingViewController: UIViewController, Requester{
         
         requestProjectList()
         
-        drawInterval  = Timer.scheduledTimer(timeInterval:0.016 , target: self, selector: #selector(DrawingViewController.drawIntervalCallback), userInfo: nil, repeats: true)
+        drawInterval  = Timer.scheduledTimer(timeInterval:0.015 , target: self, selector: #selector(DrawingViewController.drawIntervalCallback), userInfo: nil, repeats: true)
         
         self.startBackupTimer(interval:self.backupInterval);
         Debugger.startDebugTimer(interval:Debugger.debugInterval);
@@ -1015,7 +1015,6 @@ class DrawingViewController: UIViewController, Requester{
                 DispatchQueue.main.async {
                     self.layerContainerView.drawIntoCurrentLayer(drawing:self.currentDrawing!);
                 }
-                Debugger.cacheDebugData();
                 self.backupNeeded = true;
                 
             }

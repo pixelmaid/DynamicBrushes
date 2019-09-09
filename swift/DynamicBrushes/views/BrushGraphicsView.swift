@@ -58,7 +58,6 @@ public class BrushGraphicsScene {
                 brush.moveBrushLocation(x: x, y: y)
                 brush.moveStylusLocation(x: ix, y: iy, force:force)
                 self.lastPoint = (x, y)
-                print("~~~~ state is ", state )
                 if state == 0 { //penDown
                     
                 }

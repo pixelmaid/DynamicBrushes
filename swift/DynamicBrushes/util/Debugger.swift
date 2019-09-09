@@ -346,7 +346,7 @@ final class Debugger {
         //check to see which brushes are "unrendered"
        // pass them the UI view and draw into it
         var brushIds = Set<String>()
-
+        
         for (behaviorId,brushTuple) in behaviors {
             let brushes = brushTuple.1;
             let brush = brushes[BehaviorManager.activeInstance]
