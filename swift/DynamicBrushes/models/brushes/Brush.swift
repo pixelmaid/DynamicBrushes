@@ -432,7 +432,8 @@ class Brush: TimeSeries, Hashable, Renderable{
         //self.intersectionCheck();
         
         self.signalEvent.raise(data: (self.behaviorId,self.id,self.params));
-        
+        Debugger.cacheDebugData();
+
       //  Debugger.generateBrushDebugData(brush: self, type: "DRAW_SEGMENT");
 
     }
