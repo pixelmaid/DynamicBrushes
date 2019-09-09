@@ -24,8 +24,12 @@ define(["app/Emitter", "app/DebuggerModel"],
 				this.trigger("ON_ACTIVE_INSTANCE_CHANGED", [this.selectedIndex]);
 			}
 
-			updateHighlight(data){
-				this.trigger("ON_HIGHLIGHT_ACTION",[data]);
+			updateHighlight(dataArray){
+				let id = dataArray[0]
+				let isOn = dataArray[1]
+				let data = {'name':id, 'isOn':isOn}
+				console.log("!!!! triggering highlight~ ", data)
+				this.trigger("ON_HIGHLIGHT_REQUEST",[data]);
 			}
 
 
@@ -212,7 +216,7 @@ define(["app/Emitter", "app/DebuggerModel"],
 
 					params.find(function(e) {
 						if (e["id"] == key) {
-							console.log("~~~~ updated ", key, " to ", val);
+							// console.log("~~~~ updated ", key, " to ", val);
 							if (key == "parent" || key == "pen") {
 								e["val"] = val;
 							} else {

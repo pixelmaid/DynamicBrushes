@@ -13,7 +13,7 @@ import Macaw
 final class Debugger {
     static public let debugInterval:Int = 1
     static public var debugTimer:Timer! = nil
-    static public let debuggerEvent = Event<(String)>();
+    static public let debuggerEvent = Event<(String, String)>();
         
     static private var debuggingActive = false;
     
@@ -28,7 +28,7 @@ final class Debugger {
 
     static public func activate(){
         Debugger.debuggingActive = true;
-        Debugger.debuggerEvent.raise(data: ("INIT"));
+        Debugger.debuggerEvent.raise(data: ("INIT", ""));
     }
     
     static public func deactivate(){
@@ -201,10 +201,11 @@ final class Debugger {
         return returnVals
     }
     
-    static public func getStylusInputValue(brushId:String) -> (Double, Double, Double) {
+    static public func getStylusInputValue(brushId:String) -> (Double, Double, Double, Int) {
         var x = 0.0
         var y = 0.0
         var force = 0.0
+        var state = -1
         let debugData = Debugger.generateInputDebugData()
         if debugData["inputGlobal"].exists() {
             let items:JSON = debugData["inputGlobal"]["items"]
@@ -214,11 +215,12 @@ final class Debugger {
                     x = params["x"].double ?? 0.0
                     y = params["y"].double ?? 0.0
                     force = params["force"].double ?? 0.0
+                    state = params["stylusEvent"].int ?? -1 //0 is down, 2 is up
                     
                 }
             }
         }
-        return (x, y, force)
+        return (x, y, force, state)
     }
     
     static public func toggleVisualizations(view:BrushGraphicsView, item:String, isOn:Bool) {
@@ -264,6 +266,10 @@ final class Debugger {
         view.scene?.toggleLabel(type:"brush")
     }
     
+    static public func highlightVisualizations(view:BrushGraphicsView, param:String, on:Bool) {
+        view.scene!.highlightViz(name: param, on:on)
+    }
+    
     
     static public func drawUnrendererdBrushes(view:BrushGraphicsView){
         let behaviors = BehaviorManager.getAllBrushInstances();
@@ -275,13 +281,13 @@ final class Debugger {
             let brushes = brushTuple.1;
             let brush = brushes[BehaviorManager.activeInstance]
             if brush.unrendered {
-//                print("~~~ about to draw into context in debugger with brush ", brush.id)
                 //double check view values since they arent persistent
                 refreshVisualizations(view: view)
                 let valArray = Debugger.getGeneratorValue(brushId: brush.id)
                 let inputInfo = Debugger.getStylusInputValue(brushId: brush.id)
-                brush.drawIntoContext(context:view, info:inputInfo)
+                print("~~~ about to draw into context in debugger with stylus x y ", inputInfo.0, inputInfo.1)
 
+                brush.drawIntoContext(context:view, info:inputInfo)
                 view.scene!.drawGenerator(valArray: valArray)
             
             }
@@ -304,6 +310,15 @@ final class Debugger {
     
     static func highlight(data:JSON){
         //respond to highlight request from programming interface
+        let param = data["data"]["name"].string ?? ""
+        let isOn = data["data"]["isOn"].bool ?? false
+        print("!!~~~ highlight request received! " , param, isOn, data)
+        if isOn {
+            Debugger.debuggerEvent.raise(data: ("HIGHLIGHT", param));
+        } else {
+            Debugger.debuggerEvent.raise(data: ("UNHIGHLIGHT", param));
+        }
+
     }
     
     static func setupHighlightRequest(){

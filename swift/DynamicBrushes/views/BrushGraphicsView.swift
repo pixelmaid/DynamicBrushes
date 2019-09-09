@@ -15,6 +15,15 @@ public class BrushGraphicsScene {
     var node: Group
     var activeBrushIds = [String:BrushGraphic]() //dictionary
     var currentGenerator = ["none"]
+    var lastPoint:(Float,Float) = (0.0, 0.0)
+    
+    //highlight vars for persistence
+    var stylusOn = false
+    var originOn = false
+    var rotationOn = false
+    var scaleOn = false
+    var brushOn = false
+    var outputOn = false
     
     init(view: BrushGraphicsView) {
         self.view = view
@@ -40,14 +49,19 @@ public class BrushGraphicsScene {
         self.activeBrushIds[id] = brushGraphic //add to dict
     }
     
-    public func updateBrush(id:String, r: Float, x: Float, y: Float, cx: Float, cy: Float, ox: Float, oy: Float, sx:Float, sy:Float, ix:Double, iy:Double, force:Double) {
+    public func updateBrush(id:String, r: Float, x: Float, y: Float, cx: Float, cy: Float, ox: Float, oy: Float, sx:Float, sy:Float, ix:Double, iy:Double, force:Double, state:Int) {
         for (_, brush) in self.activeBrushIds {
             if brush.id == id {
-                print("## updating brush with id ", id)
+//                print("## updating brush with id ", id)
                 brush.updateBrushIcon(r:r, ox: ox, oy: oy, sx:sx, sy:sy)
                 brush.moveComputedLocation(cx: cx, cy: cy)
                 brush.moveBrushLocation(x: x, y: y)
                 brush.moveStylusLocation(x: ix, y: iy, force:force)
+                self.lastPoint = (x, y)
+                print("~~~~ state is ", state )
+                if state == 0 { //penDown
+                    
+                }
             }
         }
     }
@@ -67,9 +81,80 @@ public class BrushGraphicsScene {
         }
     }
     
+    public func highlightViz(name: String, on:Bool) {
+        print("!!~~ now finally in brush highlighting ", name, on)
+        for (_, brush) in self.activeBrushIds {
+            switch (name) {
+            case "param-styx", "param-styy":
+                if !Debugger.inputGfx { return }
+                if on {
+                    brush.highlightStylus()
+                    self.stylusOn = true
+                } else {
+                    brush.unhighlightStylus()
+                    self.stylusOn = false
+                }
+                break;
+            case "param-ox", "param-oy":
+                if !Debugger.brushGfx { return }
+                if on {
+                    brush.highlightOrigin()
+                    self.originOn = true
+                } else {
+                    brush.unhighlightOrigin()
+                    self.originOn = false
+                }
+                break;
+            case "param-sx", "param-sy":
+                if !Debugger.brushGfx { return }
+                if on {
+                    brush.highlightScale()
+                    self.scaleOn = true
+                } else {
+                    brush.unhighlightScale()
+                    self.scaleOn = false
+                }
+                break;
+            case "param-rotation":
+                if !Debugger.brushGfx { return }
+                if on {
+                    brush.highlightRotation()
+                    self.rotationOn = true
+                } else {
+                    brush.unhighlightRotation()
+                    self.rotationOn = false
+                }
+                break;
+            case "param-posx", "param-posy":
+                if !Debugger.brushGfx { return }
+                if on {
+                    brush.highlightBrushIcon()
+                    self.brushOn = true
+                } else {
+                    brush.unhighlightBrushIcon()
+                    self.brushOn = false
+                }
+                break;
+            case "param-x", "param-y":
+                if !Debugger.outputGfx { return }
+                if on {
+                    brush.highlightOutput()
+                    self.outputOn = true
+                } else {
+                    brush.unhighlightOutput()
+                    self.outputOn = false
+                }
+                break;
+            default:
+                break;
+            }
+        }
+
+    }
+    
     public func drawGenerator(valArray: [(Double, Int, String)]) {
        //val array is value, time, type
-        print("~~~~ active brushIds are ", self.activeBrushIds.count)
+//        print("~~~~ active brushIds are ", self.activeBrushIds.count)
         for (_, brush) in self.activeBrushIds {
             var newVals = [(Double, Int, String)]()
             var seenTypes = [String]()
@@ -82,12 +167,12 @@ public class BrushGraphicsScene {
         
             let numGenerators = newVals.count
 
-            print("~~~ total num UNIQUE active generators" , numGenerators, self.currentGenerator.count);
+//            print("~~~ total num UNIQUE active generators" , numGenerators, self.currentGenerator.count);
             let currCount = self.currentGenerator.count
             if numGenerators > currCount { //increase slots
                 let diff = numGenerators - currCount
                 for _ in 0...diff {
-                    print("~~~ total Adding!")
+//                    print("~~~ total Adding!")
                     self.currentGenerator.append("none")
                 }
             } else if numGenerators < currCount { //decrease slots
@@ -100,7 +185,7 @@ public class BrushGraphicsScene {
             //order result alphabetically
             let sortedValArray = newVals.sorted(by: {$0.2 < $1.2})
             var i:Int = 0;
-            print("~~~ total after change" , numGenerators, self.currentGenerator.count);
+//            print("~~~ total after change" , numGenerators, self.currentGenerator.count);
 
             for (value, time, type) in sortedValArray {
                 if i >= self.currentGenerator.count {
@@ -143,6 +228,8 @@ class BrushGraphic {
     let computedText: Text
     let xAxis: Group
     let yAxis: Group
+    let stylusDownIcon: Shape
+    let stylusUpIcon: Shape
     
     let generator: Group
     
@@ -162,11 +249,12 @@ class BrushGraphic {
     let axisLen:Double = 50
     var scaleChanged = false
     
-    let inputColor = Macaw.Color.rgba(r: 74, g:137, b:235, a: 1)
+    let inputColor = Macaw.Color.rgba(r: 74, g:137, b:235, a: 63)
     let lighterInputColor = Macaw.Color.rgba(r: 74, g:137, b:235, a: 200)
     let brushColor = Macaw.Color.rgba(r: 255, g:53, b:95, a: 63)
     let outputColor = Macaw.Color.rgba(r: 134, g: 73, b: 180, a: 63)
     let hiddenColor = Macaw.Color.rgba(r:255,g:255,b:255,a:0)
+    let highlightColor = Macaw.Color.rgba(r:0,g:255,b:0,a:63)
     
     init(view:BrushGraphicsView, scene:BrushGraphicsScene, id:String, ox:Float, oy:Float, r: Float, x: Float, y:Float,
          cx: Float, cy:Float ) {
@@ -187,22 +275,20 @@ class BrushGraphic {
         //init brush icon
         node = Group()
         
-        //init inputicon
-        inputIcon = Shape(form: Circle(r: 10), fill: brushColor, stroke: Macaw.Stroke(fill: Macaw.Color.white, width:2))
-        inputIcon.place = Transform.move(dx:Double(self.x), dy:Double(self.y))
-        node.contents.append(inputIcon)
-        inputText = BrushGraphic.newText("pos x: 0, pos y: 0", Transform.move(dx:0,dy:10))
-        node.contents.append(inputText)
-        print("## init input icon for brush ", id, " at " , self.x, self.y)
 
         //init stylusicon
         node.contents.append(lastStylusInputs)
         stylusIcon = Shape(form: Circle(r: 10), fill: inputColor, stroke: Macaw.Stroke(fill: Macaw.Color.white, width:2))
         stylusText = BrushGraphic.newText("stylus x: 0, stylus y: 0", Transform.move(dx:0,dy:10))
         node.contents.append(stylusIcon)
-        node.contents.append(stylusText)
-        print("## init stylus icon for brush ", id, " at " , self.x, self.y)
-        
+        let inputScale = 10.0
+        stylusDownIcon = Polygon(points:[0, -inputScale, inputScale*sqrt(3), 0, 0, inputScale]).fill(with: inputColor)
+        stylusUpIcon = Polygon(points:[-inputScale*0.5, -inputScale, 0, -inputScale, inputScale, 0, 0, inputScale, -inputScale*0.5, inputScale, 0, 0]).fill(with: inputColor)
+        stylusDownIcon.place = Transform.move(dx:500,dy:500)
+        stylusUpIcon.place = Transform.move(dx:800,dy:500)
+        node.contents.append(stylusUpIcon)
+        node.contents.append(stylusDownIcon)
+
         //init reified brush
         let xLine = Shape(form: Macaw.Line(x1: axisScale, y1: 0, x2: axisScale+axisLen, y2:0), stroke: Macaw.Stroke(fill:brushColor, width:2))
         let yLine = Macaw.Line(x1: 0, y1: axisScale, x2: 0, y2:axisScale+axisLen).stroke(fill:brushColor, width:2)
@@ -224,22 +310,31 @@ class BrushGraphic {
         brushIcon.place = Transform.move(dx:Double(0),dy:Double(0))
         
         node.contents.append(brushIcon)
-        node.contents.append(originText)
-        print("## init brush icon for brush ", id, " at " , self.ox, self.oy)
+        
+        //init brush icon
+        inputIcon = Shape(form: Circle(r: 10), fill: brushColor, stroke: Macaw.Stroke(fill: Macaw.Color.white, width:2))
+        inputIcon.place = Transform.move(dx:Double(self.x), dy:Double(self.y))
+        node.contents.append(inputIcon)
+        inputText = BrushGraphic.newText("pos x: 0, pos y: 0", Transform.move(dx:0,dy:10))
 
         //init computedicon
         computedIcon = Shape(form: Circle(r: 10), fill: outputColor, stroke: Macaw.Stroke(fill: Macaw.Color.white, width:2))
         computedIcon.place = Transform.move(dx:Double(self.cx), dy:Double(self.cy))
         node.contents.append(computedIcon)
         computedText = BrushGraphic.newText("abs x: 0, abs y: 0", Transform.move(dx:0,dy:20))
-        node.contents.append(computedText)
-        print("## init computed icon for brush ", id, " at " , self.cx, self.cy)
 
         //init generator static location
         let empty = Shape(form: Circle(r:1), fill: Macaw.Color.rgba(r:0,g:0,b:0,a:0))
         generator = Group(contents: [empty])
         generator.place = Transform.move(dx:25, dy:75)
         node.contents.append(generator)
+        
+        //text
+        node.contents.append(stylusText)
+        node.contents.append(originText)
+        node.contents.append(inputText)
+        node.contents.append(computedText)
+
         
         self.addToScene()
     }
@@ -448,6 +543,83 @@ class BrushGraphic {
         }
     }
     
+   //highlighting funcs
+    
+    func highlightStylus() {
+        stylusIcon.fill = highlightColor
+    }
+    func unhighlightStylus() {
+        stylusIcon.fill = inputColor
+    }
+    
+    func highlightOrigin() {
+        let orgCirc = brushIcon.contents[2] as! Shape
+        orgCirc.stroke = Macaw.Stroke(fill: highlightColor, width:2)
+        let orgCircBig = brushIcon.contents[3] as! Shape
+        orgCircBig.stroke = Macaw.Stroke(fill: highlightColor, width:2)
+    }
+    
+    func unhighlightOrigin() {
+        let orgCirc = brushIcon.contents[2] as! Shape
+        orgCirc.stroke = Macaw.Stroke(fill: brushColor, width:2)
+        let orgCircBig = brushIcon.contents[3] as! Shape
+        orgCircBig.stroke = Macaw.Stroke(fill: brushColor, width:2)
+    }
+    
+    func highlightScale() {
+        let xAxis = brushIcon.contents[0] as! Group
+        let xLine = xAxis.contents[0] as! Shape
+        let xTri = xAxis.contents[1] as! Shape
+        xLine.stroke = Macaw.Stroke(fill: highlightColor, width:2)
+        xTri.fill = highlightColor
+        let yAxis = brushIcon.contents[1] as! Group
+        let yLine = yAxis.contents[0] as! Shape
+        let yTri = yAxis.contents[1] as! Shape
+        yLine.stroke = Macaw.Stroke(fill: highlightColor, width:2)
+        yTri.fill = highlightColor
+    }
+    
+    func unhighlightScale() {
+        let xAxis = brushIcon.contents[0] as! Group
+        let xLine = xAxis.contents[0] as! Shape
+        let xTri = xAxis.contents[1] as! Shape
+        xLine.stroke = Macaw.Stroke(fill: brushColor, width:2)
+        xTri.fill = brushColor
+        let yAxis = brushIcon.contents[1] as! Group
+        let yLine = yAxis.contents[0] as! Shape
+        let yTri = yAxis.contents[1] as! Shape
+        yLine.stroke = Macaw.Stroke(fill: brushColor, width:2)
+        yTri.fill = brushColor
+    }
+
+    func highlightRotation() {
+        let rotArc = brushIcon.contents[4] as! Shape
+        rotArc.stroke = Macaw.Stroke(fill: highlightColor, width:10)
+    }
+    
+    func unhighlightRotation() {
+        let rotArc = brushIcon.contents[4] as! Shape
+        rotArc.stroke = Macaw.Stroke(fill: brushColor, width:10)
+    }
+    
+    func highlightBrushIcon() {
+        inputIcon.fill = highlightColor
+    }
+    
+    func unhighlightBrushIcon() {
+        inputIcon.fill = brushColor
+    }
+    
+    func highlightOutput() {
+        computedIcon.fill = highlightColor
+    }
+    
+    func unhighlightOutput() {
+        computedIcon.fill = brushColor
+    }
+    
+    
+    
     func updateGeneratorDot(v: Double, t: Int, type:String, i: Int) {
 //        print("dot contents are ~~~~ ", self.generator.contents.count, " i is ", i)
         var multiplier = 10
@@ -563,6 +735,7 @@ class BrushGraphic {
     }
     
     func updateBrushIcon(r: Float, ox:Float, oy:Float, sx:Float, sy:Float) {
+
         brushIcon.place = Transform.move(dx: Double(ox) - oxOffset, dy: Double(oy) - oyOffset)
         originText.place = Transform.move(dx: Double(ox), dy: Double(oy) - Double(20))
         self.ox = ox
@@ -608,6 +781,12 @@ class BrushGraphic {
                 scaleChanged = false
             }
         }
+        
+        if self.scene.originOn { self.highlightOrigin() }
+        if self.scene.scaleOn { self.highlightScale() }
+        if self.scene.rotationOn { self.highlightRotation() }
+
+
     }
     
     func updateExistingStylusStrokes() {
@@ -633,7 +812,7 @@ class BrushGraphic {
         }
 
 
-        print("~~~ in move stylus location with ", x, y, force)
+//        print("~~~ in move stylus location with ", x, y, force)
         stylusText.text = "x: "+String(Int(x))+", y: "+String(Int(y))+", force: "+String((force*10).rounded()/10)
         stylusText.place = Transform.move(dx: x, dy: y + 20)
         currStylusIcon.place = Transform.move(dx:x, dy:y).scale(sx:forceScale, sy:forceScale)
@@ -644,6 +823,8 @@ class BrushGraphic {
         if Debugger.inputGfx {
             updateExistingStylusStrokes()
         }
+        if self.scene.stylusOn { self.highlightStylus() }
+
 //        print("~~~ node len is ", lastStylusInputs.contents.count)
 //        self.savedInputArray = lastStylusInputs
 //                node.contents.append(stylusIcon)
@@ -655,18 +836,21 @@ class BrushGraphic {
         self.y = y
         inputText.text = "pos x: "+String(Int(x))+", pos y: "+String(Int(y))
         inputText.place = Transform.move(dx: Double(x), dy: Double(y) - Double(20))
+        if self.scene.brushOn { self.highlightBrushIcon() }
 
-        print("## moved input" , self.id, " to x ,y,", x, y )
+//        print("## moved input" , self.id, " to x ,y,", x, y )
     }
     
     func moveComputedLocation(cx: Float, cy: Float) {
+
         computedIcon.place = Transform.move(dx: Double(cx), dy: Double(cy))
         self.cx = cx
         self.cy = cy
         computedText.text = "abs x: "+String(Int(cx))+", abs y: "+String(Int(cy))
         computedText.place = Transform.move(dx: Double(cx), dy: Double(cy) + Double(30))
+        if self.scene.outputOn { self.highlightOutput() }
 
-        print("## moved computed" , self.id, "to cx cy" , cx, cy)
+//        print("## moved computed" , self.id, "to cx cy" , cx, cy)
     }
     
 }

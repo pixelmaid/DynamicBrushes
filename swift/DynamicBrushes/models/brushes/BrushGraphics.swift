@@ -13,10 +13,11 @@ extension Brush {
     
     
     
-    func drawIntoContext(context: BrushGraphicsView, info:(Double,Double,Double)){
+    func drawIntoContext(context: BrushGraphicsView, info:(Double,Double,Double,Int)){
         let ix = info.0
         let iy = info.1
         let force = info.2
+        let state = info.3
         print("## drawing into context for brush ", self.id )
         let active = context.scene!.checkActiveId(id: self.id)
         print("## is active?", active)
@@ -29,7 +30,7 @@ extension Brush {
             // are input dot
             context.scene!.updateBrush(id:self.id, r: self.params.rotation, x: self.params.x, y:self.params.y,
                                        cx: self.params.cx, cy:self.params.cy, ox: self.params.ox, oy: self.params.oy,
-                                       sx: self.params.sx, sy: self.params.sy, ix:ix, iy:iy, force:force)
+                                       sx: self.params.sx, sy: self.params.sy, ix:ix, iy:iy, force:force, state:state)
         } else {
             //create new, add to active ids
             print("## adding new brush")

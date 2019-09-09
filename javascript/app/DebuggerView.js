@@ -10,18 +10,19 @@ define(["jquery", "handlebars", "app/Emitter"],
     var DebuggerView = class extends Emitter {
 
 
-      constructor(model, element, template, groupName, keyHandler) {
+      constructor(model, modelCollection, element, template, groupName, keyHandler) {
         super();
         this.el = $(element);
         this.model = model;
+        this.modelCollection = modelCollection;
         this.pastConstraint = null;
         this.inspectorInit = false;
         this.keyHandler = keyHandler;
         this.groupName = groupName; //brush, input, or output
         this.template = template;
+        this.currHighlighted = [];
+        this.currInspectorActive = '';
         var self = this;
-       
-
 
         switch (this.groupName) {
           case "brush":
@@ -45,6 +46,94 @@ define(["jquery", "handlebars", "app/Emitter"],
         }.bind(this));
       }
 
+      findBuddies(rowId) {
+        var buddy = ''
+        switch (rowId) {
+          case 'param-ox':
+            buddy = 'param-oy';
+          break;
+          case 'param-oy':
+            buddy = 'param-ox';
+          break;
+          case 'param-styx':
+            buddy = 'param-styy';
+          break;
+          case 'param-styy':
+            buddy = 'param-styx';
+          break;
+          case 'param-sx':
+            buddy = 'param-sy';
+          break;
+          case 'param-sy':
+            buddy = 'param-sx';
+          break;
+          case 'param-posx':
+            buddy = 'param-posy';
+          break;
+          case 'param-posy':
+            buddy = 'param-posx';
+          break;
+          case 'param-x':
+            buddy = 'param-y';
+          break;
+          case 'param-y':
+            buddy = 'param-x';
+          break;
+
+        }
+        return buddy;
+      }
+
+      setUpHighlightClicks(inspectorKind) {
+        let self = this;
+        console.log("~~ before change id ", self.currHighlighted, inspectorKind, self.currInspectorActive);
+  
+
+        $('li').click(function(e) {
+          let rowId = e.target.id
+          var skip = false;
+          if (rowId.includes("param-")) {
+            let activeInspector = $('#'+rowId).parent().parent().parent().parent()[0].id.slice(10);
+            // console.log("~ active ", activeInspector, inspectorKind, rowId);
+            if (activeInspector == inspectorKind) { //if match 
+              var buddy = self.findBuddies(rowId);
+              for (var i = 0; i < self.currHighlighted.length; i++) {
+                console.log("unlighting ~ ");
+                self.unhighlightParamRow(self.currHighlighted[i]);
+                self.modelCollection.updateHighlight([self.currHighlighted[i], false]);   
+                if (rowId == self.currHighlighted[i]) { //unhighlight self
+                  skip = true;
+                  self.unhighlightParamRow(buddy);
+                  self.modelCollection.updateHighlight([buddy, false]);   
+                }
+              }
+              self.currHighlighted = [];
+              if (!skip) {
+                self.highlightParamRow(rowId);
+                self.currHighlighted.push(rowId);
+                self.modelCollection.updateHighlight([rowId, true]);   
+                if (buddy != '') {
+                  self.highlightParamRow(buddy);
+                  self.currHighlighted.push(buddy); 
+                  self.modelCollection.updateHighlight([buddy, true]);                
+                }
+              }
+              self.currInspectorActive = activeInspector;
+            } 
+          }
+        })
+      }
+
+      highlightParamRow(rowId) {
+        $('#'+rowId).css('background-color', '#00ff00');
+        $('#'+rowId).css('color', '#000');
+
+      }
+
+      unhighlightParamRow(unhighlightRowId) {
+              $('#'+unhighlightRowId).css('background-color', '');
+              $('#'+unhighlightRowId).css('color', '');
+      }
 
 
       dataUpdatedHandler() {
@@ -96,9 +185,28 @@ define(["jquery", "handlebars", "app/Emitter"],
        }*/
 
       initInspector(data) {
-        console.log("adding inspector with data", data);
+        let self = this;
         var html = this.template(data);
         this.el.html(html);
+        if (data['groupName'] == 'brush') {          
+          $('#param-dx')[0].previousElementSibling.id = 'param-posy';
+          $('#param-posy')[0].previousElementSibling.id = 'param-posx';   
+          this.setUpHighlightClicks('brush');
+        } 
+        else if (data['groupName'] != 'output' && data['global']['name'] == 'Global Input') {
+          $('#param-force')[0].previousElementSibling.id = 'param-styy';
+          $('#param-styy')[0].previousElementSibling.id = 'param-styx'; 
+          this.setUpHighlightClicks('input');  
+        } else {
+          this.setUpHighlightClicks('output');
+        }
+
+        //rehighlight
+        for (var i = 0; i < self.currHighlighted.length; i++) {
+          console.log("~ rehighlighting ", self.currHighlighted[i]);
+          self.highlightParamRow(self.currHighlighted[i]);
+        }
+
       }
 
 

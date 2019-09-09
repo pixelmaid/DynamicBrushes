@@ -418,10 +418,16 @@ class DrawingViewController: UIViewController, Requester{
     
     
     
-    func debuggerEventHandler(data: (String), key: String) {
-        switch (data) {
+    func debuggerEventHandler(data: (String, String), key: String) {
+        switch (data.0) {
         case "INIT":
             BehaviorManager.refreshAllBehaviors();
+            break;
+        case "HIGHLIGHT":
+            Debugger.highlightVisualizations(view: self.layerContainerView.brushGraphicsView!, param: data.1, on:true)
+            break;
+        case "UNHIGHLIGHT":
+            Debugger.highlightVisualizations(view: self.layerContainerView.brushGraphicsView!, param: data.1, on:false)
             break;
         default:
             break;
