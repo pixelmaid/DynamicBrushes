@@ -167,10 +167,18 @@ define(["jquery", "handlebars", "app/Emitter"],
        }*/
 
       initInspector(data) {
-        let self = this;
         var html = this.template(data);
         this.el.html(html);
-        if (data['groupName'] == 'brush') {          
+        
+        this.setupHighlighting(data);
+
+      }
+
+
+      setupHighlighting(data){
+         let self = this;
+
+         if (data['groupName'] == 'brush') {          
           $('#param-dx')[0].previousElementSibling.id = 'param-posy';
           $('#param-posy')[0].previousElementSibling.id = 'param-posx';   
           this.setUpHighlightClicks('brush');
@@ -188,7 +196,6 @@ define(["jquery", "handlebars", "app/Emitter"],
           console.log("~ rehighlighting ", self.currHighlighted[i]);
           self.highlightParamRow(self.currHighlighted[i]);
         }
-
       }
 
 
