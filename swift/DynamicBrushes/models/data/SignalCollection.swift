@@ -55,7 +55,7 @@ class SignalCollection {
     }
     
     //placeholder;
-    public func accessState(behaviorId:String,brushId:String,time:Int)->JSON{
+    public func accessState(behaviorId:String?,brushId:String?,time:Int?)->JSON{
         return self.paramsToJSON();
     }
     
@@ -92,7 +92,7 @@ class SignalCollection {
                 throw SignalError.protoNotFound
                 
             }
-            for j in 0..<rawData.count{
+            /*for j in 0..<rawData.count{
                 if(rawData[j].count>order){
                 let column = rawData[j].arrayValue;
                 let v = column[order].floatValue;
@@ -101,7 +101,7 @@ class SignalCollection {
                 else{
                     break;
                 }
-            }
+            }*/
           
         
         }
@@ -387,14 +387,16 @@ class GeneratorCollection:SignalCollection{
     }
 
     
-    override func accessState(behaviorId: String, brushId: String, time: Int) -> JSON {
-        for (fieldname,signalDict) in self.initializedSignals{
-            for(id,signal) in signalDict{
-                if signal.brushIsRegistered(brushId:brushId){
-                    signal.getAtTime(time: time, id: brushId, shouldUpdate: true);
+    override func accessState(behaviorId: String?, brushId: String?, time: Int?) -> JSON {
+        if(brushId != nil){
+            for (_,signalDict) in self.initializedSignals{
+            for(_,signal) in signalDict{
+                if signal.brushIsRegistered(brushId:brushId!){
+                    _ = signal.getAtTime(time: time!, id: brushId!, shouldUpdate: true);
                 }
             }
             
+        }
         }
         return self.paramsToJSON();
     }
@@ -468,19 +470,20 @@ class GeneratorCollection:SignalCollection{
 
 class LiveCollection:SignalCollection{
     var startDate:Date;
-
+    var time: Int;
+    
     required init(data:JSON){
         self.startDate = Date();
-
+        self.time = 0;
         super.init(data:data);
         
         
     }
     
-    func getTimeElapsed()->Float{
+    func getTimeElapsed()->Int{
         let currentTime = NSDate();
-        let t = currentTime.timeIntervalSince(startDate as Date)
-        return Float(t);
+        let t = Int(currentTime.timeIntervalSince(startDate as Date)*1000);
+        return t;
     }
 
     override public func initializeSignalWithId(signalId:String, fieldName:String, displayName:String, settings:JSON, classType:String, style:String, isProto:Bool, order:Int?){
@@ -519,10 +522,27 @@ class LiveCollection:SignalCollection{
             }
     }
     
+    public func accessSampleDataByGlobalTime(time:Int)->JSON?{
+        let timeSignal = self.protoSignals["time"]!;
+        guard let timeIndex = timeSignal.getIndexForValue(v: Float(time)) else{
+            return nil;
+        }
+        var jsonState:JSON = [:];
+        
+        for(key,signal) in self.protoSignals{
+            jsonState[key] = JSON(signal.getAtIndex(index: timeIndex));
+            
+        }
+        
+        
+        return jsonState;
+    }
+    
+    
     internal func exportData()->JSON{
         var data:JSON = [:]
         //TOOD: resolve time
-        data["time"] = JSON(self.getTimeElapsed());
+        data["time"] = JSON(self.time);
         return data;
     }
     

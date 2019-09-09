@@ -56,28 +56,31 @@ struct Segment:Geometry, Equatable {
     var alpha = Float(0.5);
     let id = NSUUID().uuidString;
     let time: Int
+    let globalTime:Int
     //let printer = DeallocPrinter()
-    init(x:Float,y:Float,time:Int) {
-        self.init(x:x,y:y,hi_x:0,hi_y:0,ho_x:0,ho_y:0,time: time)
+        
+    init(x:Float,y:Float,time:Int,globalTime:Int) {
+        self.init(x:x,y:y,hi_x:0,hi_y:0,ho_x:0,ho_y:0,time: time,globalTime:globalTime)
     }
     
-    init(point:Point,time:Int){
-        self.init(point:point,handleIn:Point(x: 0, y: 0),handleOut:Point(x: 0, y: 0),time:time)
+    init(point:Point,time:Int,globalTime:Int){
+        self.init(point:point,handleIn:Point(x: 0, y: 0),handleOut:Point(x: 0, y: 0),time:time,globalTime:globalTime)
     }
     
-    init(x:Float,y:Float,hi_x:Float,hi_y:Float,ho_x:Float,ho_y:Float,time:Int){
+    init(x:Float,y:Float,hi_x:Float,hi_y:Float,ho_x:Float,ho_y:Float,time:Int,globalTime:Int){
         let point = Point(x:x,y:y)
         let hI = Point(x: hi_x,y: hi_y)
         let hO = Point(x: ho_x,y: ho_y)
-        self.init(point:point,handleIn:hI,handleOut:hO,time: time)
+        self.init(point:point,handleIn:hI,handleOut:hO,time: time,globalTime: globalTime)
         
     }
     
-    init(point:Point,handleIn:Point,handleOut:Point,time:Int) {
+    init(point:Point,handleIn:Point,handleOut:Point,time:Int,globalTime:Int) {
         self.point = point
         self.handleIn = handleIn
         self.handleOut = handleOut
         self.time = time;
+        self.globalTime = globalTime;
     }
     
     mutating func setHandleOut(point:Point){
@@ -107,7 +110,7 @@ struct Segment:Geometry, Equatable {
         if testPoint == self.point{
             return false
         }
-        if dist <= threshold {
+        if dist <= threshold+self.weight/2 {
             #if DEBUG
             print("hit achieved")
             #endif
@@ -122,13 +125,13 @@ struct Segment:Geometry, Equatable {
             var a_color = self.color;
            a_color.alpha = self.alpha;
             if(a_color.alpha <= 0){
-                a_color.alpha = 0.0001
+                a_color.alpha = 0.0
             }
             if(a_color.alpha > 1){
-                a_color.alpha = 1
+                a_color.alpha = 1.0
             }
-            if(a_color.hue>360){
-                a_color.hue = 360;
+            if(a_color.hue>1){
+                a_color.hue = 1.0;
             }
             
             let w = self.weight
@@ -141,7 +144,7 @@ struct Segment:Geometry, Equatable {
                 mapped_weight = 359
             }
         
-            context.renderStrokeById(currentStrokeId: id, toPoint: self.point.toCGPoint(), toWidth: CGFloat(mapped_weight), toColor: a_color.toUIColor())
+            context.renderStrokeById(currentStrokeId: id, toPoint: self.point.toCGPoint(), toWidth: CGFloat(mapped_weight), toColor: UIColor(hue: CGFloat(a_color.hue), saturation: CGFloat(a_color.saturation), brightness: CGFloat(a_color.lightness), alpha:CGFloat(a_color.alpha)))
         }
     }
     
@@ -259,10 +262,10 @@ class Stroke:TimeSeries, Geometry, Renderable {
     }
     
     
-    func addSegment(brushId:String, point:Point, d:Float, color:Color, alpha:Float, time:Int)->Segment?{
+    func addSegment(brushId:String, point:Point, d:Float, color:Color, alpha:Float, time:Int, globalTime:Int)->Segment?{
         self.unrendered = true;
 
-        var segment = Segment(point:point,time:time)
+        var segment = Segment(point:point,time:time,globalTime:globalTime)
         segment.weight = d
         segment.color = color;
         segment.alpha = alpha;
@@ -274,6 +277,16 @@ class Stroke:TimeSeries, Geometry, Renderable {
         return segment
     }
     
+    func getSegmentAtTime(time:Int)->Segment?{
+        let segment = segments.first(where: { $0.time == time });
+        return segment;
+    }
+    
+    
+    func getSegmentAtGlobalTime(globalTime:Int)->Segment?{
+        let segment = segments.first(where: { $0.globalTime == globalTime });
+        return segment;
+    }
     
     
     func getLength()->Float{
@@ -287,19 +300,28 @@ class Stroke:TimeSeries, Geometry, Renderable {
     }
     
     
-    func toJSON()->JSON{
+    func toJSONAtSegment(segment:Segment?)->JSON{
         var jsonData:JSON = [:];
         if(self.segments.count>0){
-        
-            let currentSegment = self.segments.last!;
-            jsonData = currentSegment.toJSON();
-            
+           
+            jsonData = segment!.toJSON();
+            jsonData["numSegments"] = JSON(segment!.index!+1);
+
         }
+        else{
         
-        jsonData["numSegments"] = JSON(self.segments.count);
+            jsonData["numSegments"] = JSON(0);
+        }
 
         return jsonData;
     }
+    
+    func toJSON()->JSON{
+        let targetSegment = self.segments.last;
+        return self.toJSONAtSegment(segment: targetSegment);
+    }
+    
+    
     
     /*func toJSON()->String{
         var string = "segments:["

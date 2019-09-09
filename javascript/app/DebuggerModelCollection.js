@@ -15,7 +15,9 @@ define(["app/Emitter", "app/DebuggerModel"],
 				this.inputModel = new DebuggerModel(this);
 				this.outputModel = new DebuggerModel(this);
 				this.selectedIndex = 0;
-
+				this.inspectorQueue = [];
+				this.startInspectorInterval();
+			
 
 			}
 
@@ -30,6 +32,39 @@ define(["app/Emitter", "app/DebuggerModel"],
 				let data = {'name':id, 'isOn':isOn}
 				console.log("!!!! triggering highlight~ ", data)
 				this.trigger("ON_HIGHLIGHT_REQUEST",[data]);
+		 }
+
+
+			startInspectorInterval(){
+				if(this.inspectorDataTimer){
+					clearInterval(this.inspectorDataTimer);
+				}
+
+				var self = this;
+				this.inspectorDataTimer = setInterval(function() { self.inspectorDataInterval(); }, 100);
+			}
+
+			terminateInspectorInterval(){
+				if(this.inspectorDataTimer){
+					clearInterval(this.inspectorDataTimer);
+				}
+			}
+
+			clearInspectorDataQueue(){
+				this.inspectorQueue = [];
+			}
+
+			processInspectorDataQueue(dataQueue){
+				this.inspectorQueue.push.apply(this.inspectorQueue,dataQueue);
+
+			}
+
+			inspectorDataInterval(){
+				if(this.inspectorQueue.length>0){
+					let targetData = this.inspectorQueue.shift();
+					this.processInspectorData(targetData);
+					console.log("called inspector interval",this.inspectorDataTimer)
+				}
 			}
 
 
@@ -43,7 +78,7 @@ define(["app/Emitter", "app/DebuggerModel"],
 			}
 
 
-			highlight(){
+			highlight(newData){
 
 			}
 
@@ -220,7 +255,7 @@ define(["app/Emitter", "app/DebuggerModel"],
 							if (key == "parent" || key == "pen") {
 								e["val"] = val;
 							} else {
-								e["val"] = Math.round(val);
+								e["val"] = val.toFixed(2);
 							}
 							return;
 						}

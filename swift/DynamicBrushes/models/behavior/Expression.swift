@@ -16,6 +16,7 @@ class Expression:Observable<Float>{
     let brushId:String;
     let behaviorId:String;
     static let within:String = "|";
+    
     init(id:String,brushId:String,behaviorId:String,operandList:[String:Observable<Float>],text:String){
         self.id = id;
         self.text = text;

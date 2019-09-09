@@ -13,7 +13,7 @@ class DebuggerInterfaceManager:TouchTarget{
     
     var drawing:Drawing;
     var targetView:UIView;
-    var threshold:Float = 10.0;
+    var threshold:Float = 1;
     init(drawing:Drawing,targetView:UIView){
         self.drawing = drawing;
         self.targetView = targetView;

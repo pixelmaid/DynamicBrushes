@@ -11,12 +11,14 @@ import SwiftyJSON
 import Macaw
 
 final class Debugger {
-    static public let debugInterval:Int = 1
+    static public let debugInterval:Int = 1;
     static public var debugTimer:Timer! = nil
     static public let debuggerEvent = Event<(String, String)>();
         
     static private var debuggingActive = false;
-    
+    static public var debugDataQueue = [JSON]();
+    static public var debuggingTimerActive = false;
+
     static public var inputGfx = true
     static public var inputLabel = true
     static public var brushGfx = true
@@ -34,6 +36,7 @@ final class Debugger {
     static public func deactivate(){
         debuggingActive = false;
     }
+    
     
     static public func orderProps(propList:[JSON])->[JSON]{
         var _propList = propList;
@@ -56,7 +59,8 @@ final class Debugger {
     }
     
     static public func startDebugTimer(interval:Int){
-        self.endDebugTimer();
+        Debugger.endDebugTimer();
+        Debugger.debuggingTimerActive = true;
         Debugger.debugTimer = Timer(timeInterval: TimeInterval(interval), target: self, selector: #selector(Debugger.fireDebugUpdate), userInfo: nil, repeats: true)
         RunLoop.current.add(debugTimer, forMode: RunLoop.Mode.common)
     }
@@ -67,50 +71,93 @@ final class Debugger {
             Debugger.debugTimer.invalidate();
         }
         Debugger.debugTimer = nil;
+        Debugger.debuggingTimerActive = false;
+
+    }
+    
+    
+    static func jumpToState(stroke:Stroke,segment:Segment){
+        self.endDebugTimer();
+        let brushId = stroke.brushId;
+        let behaviorId = stroke.behaviorId;
+        
+        let localTime = segment.time;
+        let brushState = BrushStorageManager.accessState(behaviorId: behaviorId, brushId: brushId, time: localTime);
+        let globalTime = brushState!.globalTime;
+        
+        let debugData = JSON([Debugger.generateDebugData(behaviorId: behaviorId, brushId: brushId, brushState: brushState, globalTime: globalTime, localTime: localTime)]);
+        
+        let socketRequest = Request(target: "socket", action: "send_inspector_data", data: debugData, requester: RequestHandler.sharedInstance)
+        RequestHandler.addRequest(requestData: socketRequest)
+        
+        
+        print(debugData);
+        //   debugData["type"] = "jump";
+        
     }
     
 
-    static func generateOutputDebugData()->JSON{
+    static func generateOutputDebugData(globalTime:Int?,brushState:BrushStateStorage?)->JSON{
         var debugData:JSON = [:]
-          debugData["groupName"] = JSON("output");
-        debugData["behaviors"] = BehaviorManager.drawing.activeStrokesToJSON();
+        debugData["groupName"] = JSON("output");
+        if(globalTime == nil){
+            debugData["behaviors"] = BehaviorManager.drawing.activeStrokesToJSON();
+        }
+        else{
+            debugData["behaviors"] = BehaviorManager.drawing.strokesAtGlobalTimeToJSON(globalTime:globalTime!, brushState: brushState!);
+        }
         return debugData;
     }
     
     
-  static func generateInputDebugData()->JSON{
+    static func generateInputDebugData(behaviorId:String?, brushId:String?, globalTime:Int?, localTime:Int?)->JSON{
        
         var debugData:JSON = [:]
-        let generatorCollectionsJSON = Debugger.generateGeneratorDebugData();
-        
+        let generatorCollectionsJSON = Debugger.generateGeneratorDebugData(behaviorId: behaviorId,brushId: brushId,localTime: localTime);
+        let inputGlobalJSON = Debugger.generateGlobalInputDebugData(globalTime:globalTime);
+        debugData["generator"] = generatorCollectionsJSON;
+        debugData["inputGlobal"] = inputGlobalJSON;
+
+        return debugData;
+    }
+    
+    static func generateGlobalInputDebugData(globalTime:Int?)->JSON{
         let liveCollections = BehaviorManager.signalCollections[3];
         var liveCollectionsJSON:JSON = [:]
         liveCollectionsJSON["groupName"] = JSON("inputGlobal");
         var globalItems = [JSON]();
-    
+        
         for(key,value) in liveCollections{
+            let liveCollection = value as! LiveCollection;
             var liveData:JSON = [:]
-            liveData["params"] = value.paramsToJSON();
+            if(globalTime != nil){
+                let params = liveCollection.accessSampleDataByGlobalTime(time:globalTime!);
+                if (params != nil){
+                    liveData["params"] = params!
+                }
+                    //TODO: placeholder for setting up time params for other live input
+                else{
+                    liveData["params"] = JSON([:])
+                }
+            }
+            else{
+                liveData["params"] = liveCollection.paramsToJSON();
+            }
             liveData["name"] = JSON(key);
             liveData["id"] = JSON(key);
             globalItems.append(liveData);
         }
-    
+        
         liveCollectionsJSON["items"] = JSON(globalItems);
-        debugData["generator"] = generatorCollectionsJSON;
-    
-        debugData["inputGlobal"] = liveCollectionsJSON;
-
-        return debugData;
+        return liveCollectionsJSON
     }
     
-    static func generateGeneratorDebugData()->JSON{
-        
+    static func generateGeneratorDebugData(behaviorId:String?,brushId:String?,localTime:Int?)->JSON{
         guard let generatorCollection = BehaviorManager.signalCollections[2]["default"] else{
             return JSON([:]);
         }
         
-        return generatorCollection.paramsToJSON();
+        return generatorCollection.accessState(behaviorId: behaviorId, brushId: brushId , time: localTime);
     }
     
     static func generateSingleBrushDebugData(brush:Brush)->JSON{
@@ -126,8 +173,15 @@ final class Debugger {
         return debugData;
     }
     
-    static func generateBrushDebugData()->JSON{
-        var debugData:JSON = [:]
+    static func generateBrushDebugData(brushState:BrushStateStorage?)->JSON{
+        let behaviorNames = BehaviorManager.getBehaviorNames();
+        
+        guard brushState != nil else{
+            return BrushStorageManager.accessStateAtTime(globalTime: nil, behaviorNames: behaviorNames)
+        }
+       return BrushStorageManager.accessStateAtTime(globalTime: brushState?.globalTime, behaviorNames: behaviorNames)
+        
+        /*var debugData:JSON = [:]
         debugData["groupName"] = JSON("brush");
         var behaviorListJSON = [JSON]();
         var brushesListJSON = [JSON]();
@@ -146,17 +200,19 @@ final class Debugger {
             behaviorJSON["brushes"] = JSON(brushesListJSON);
             behaviorListJSON.append(behaviorJSON);
             
-        debugData["behaviors"] = JSON(behaviorListJSON);
         }
+        debugData["behaviors"] = JSON(behaviorListJSON);
 
-        return debugData;
+        return debugData;*/
     }
     
     
-    static public func  generateDebugData()->JSON{
-        let inputData = Debugger.generateInputDebugData();
-        let brushData = Debugger.generateBrushDebugData();
-        let outputData = Debugger.generateOutputDebugData();
+    static public func generateDebugData(behaviorId:String?,brushId:String?, brushState:BrushStateStorage?,globalTime:Int?,localTime:Int?)->JSON{
+        let inputData = Debugger.generateInputDebugData(behaviorId: behaviorId, brushId: brushId, globalTime: globalTime,localTime: localTime);
+        let brushData = Debugger.generateBrushDebugData(brushState:brushState);
+
+        
+        let outputData = Debugger.generateOutputDebugData(globalTime:globalTime,brushState:brushState);
         var debugData:JSON = [:];
         debugData["brush"] = brushData;
         debugData["input"] = inputData;
@@ -166,9 +222,19 @@ final class Debugger {
     }
     
     @objc static func fireDebugUpdate(){
-        let debugData = Debugger.generateDebugData();
-        let socketRequest = Request(target: "socket", action: "send_inspector_data", data: debugData, requester: RequestHandler.sharedInstance)
-        RequestHandler.addRequest(requestData: socketRequest)
+        if(Debugger.debugDataQueue.count>0){
+            let debugJSON = JSON(Debugger.debugDataQueue);
+            let socketRequest = Request(target: "socket", action: "send_inspector_data", data: debugJSON, requester: RequestHandler.sharedInstance)
+            RequestHandler.addRequest(requestData: socketRequest)
+            Debugger.debugDataQueue.removeAll();
+        }
+    }
+    
+    static public func cacheDebugData(){
+        let debugData = Debugger.generateDebugData(behaviorId: nil, brushId: nil, brushState: nil ,globalTime: nil,localTime: nil);
+        
+        Debugger.debugDataQueue.append(debugData);
+
     }
     
     static public func getGeneratorValue(brushId:String) -> [(Double,Int,String)] {
@@ -177,7 +243,7 @@ final class Debugger {
         var type = "none"
         var freq:Float = -1.0
         var returnVals:[(val:Double,time:Int,type:String)] = []
-        let generatorJSON = Debugger.generateGeneratorDebugData()
+        let generatorJSON = Debugger.generateGeneratorDebugData(behaviorId: nil, brushId: nil, localTime: nil);
         
         let params:JSON = generatorJSON["params"]
         for (_, subJsonArr):(String, JSON) in params {
@@ -206,7 +272,9 @@ final class Debugger {
         var y = 0.0
         var force = 0.0
         var state = -1
-        let debugData = Debugger.generateInputDebugData()
+
+        let debugData = Debugger.generateInputDebugData(behaviorId: nil, brushId: nil,globalTime: nil,localTime: nil)
+
         if debugData["inputGlobal"].exists() {
             let items:JSON = debugData["inputGlobal"]["items"]
             for (_, subJsonArr):(String, JSON) in items {
@@ -336,18 +404,6 @@ final class Debugger {
     }
     
     
-    static func jumpToState(stroke:Stroke,segment:Segment){
-        var brushId = stroke.brushId;
-        var behaviorId = stroke.behaviorId;
-        var brush = BehaviorManager.getBrushById(behaviorId: behaviorId, brushId:brushId);
-        
-        var time = segment.time;
-        
-        var BrushState = BrushStorageManager.accessState(behaviorId: behaviorId, brushId: brushId, time: time);
-        let generatorCollections = BehaviorManager.signalCollections[2];
-
-        //var GeneratorState = generatorCollections.accessState(behaviorId: behaviorId, brushId: brushId, time: time);
-        //var InputState = stylusCollection.accessState(behaviorId: behaviorId, brushId: brushId, time: time)
-    }
+    
     
 }

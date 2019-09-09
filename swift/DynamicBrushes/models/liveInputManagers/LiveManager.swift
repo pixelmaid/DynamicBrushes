@@ -101,6 +101,7 @@ final class StylusManager:LiveManager{
     static let stylusUp = Float(0.0);
     static let stylusMove = Float(1.0);
     static let stylusDown = Float(2.0);
+    static var globalTime = Int(0);
     
     public var isLive = true;
     private var currentRecordingPackage:RecordingCollection!
@@ -164,7 +165,6 @@ final class StylusManager:LiveManager{
     private func beginRecording(start:Date)->RecordingCollection{
         //TODO: find a way to clone recordingpresetdata instead of reassigning ID
         
-        print("preset data",recordingPresetData)
         let rid = NSUUID().uuidString
         recordingPresetData["id"] = JSON(rid)
         let rPackage = RecordingCollection(id: rid,start:start,targetLayer:self.layerId,data:recordingPresetData)
@@ -178,11 +178,9 @@ final class StylusManager:LiveManager{
             recordingPackages.removeFirst(1)
             //todo i know it's not a layerevent but too lazy
             stylusManager.layerEvent.raise(data:("DELETE_FIRST",""));
-            print("% deleting first")
 
         }
         recordingPackages.append(rPackage);
-        print(" % appended to recording packages ", recordingPackages.count)
         
         currentRecordingPackage = rPackage;
         return currentRecordingPackage;
@@ -222,9 +220,7 @@ final class StylusManager:LiveManager{
         var index:Int = 0
         for i in 0 ..< recordingPackages.count {
             let package = recordingPackages[i]
-            print("%% looping thru i ", i , " package ", package)
             if package.id == idStart {
-                print("%% setting internal to ", i , " recording packages has ", recordingPackages.count)
                 index = i
                 currPackage = package
                 return (index, currPackage)
@@ -245,7 +241,6 @@ final class StylusManager:LiveManager{
         currIndex = indexandpackage.0
         currentLoopingPackage = indexandpackage.1
         //        currentLoopingPackage = recordingPackages.first(){$0.id == idStart} //set counter from here
-        print("% starting in settorecording with i = ", currIndex , " start end ids are " , idStart, idEnd)
         prevHash = 0;
         do{
             let signalLength = try currentLoopingPackage.getSignalLength();
@@ -476,6 +471,9 @@ final class StylusManager:LiveManager{
             let sample = (self.collections["stylus"]! as! StylusCollection).exportData();
             currentRecordingPackage.addProtoSample(data:sample);
                 self.moveCounter = 0;
+                
+                StylusManager.globalTime = sample["time"].intValue;
+
             }
             self.moveCounter+=1;
         }
@@ -494,7 +492,10 @@ final class StylusManager:LiveManager{
             }
             let sample = (self.collections["stylus"]! as! StylusCollection).exportData();
             currentRecordingPackage.addProtoSample(data:sample);
+            StylusManager.globalTime = sample["time"].intValue;
             _ = self.endRecording();
+
+
             
         }
     }
@@ -516,6 +517,8 @@ final class StylusManager:LiveManager{
                 
             let sample = (self.collections["stylus"]! as! StylusCollection).exportData();
             currentRecordingPackage.addProtoSample(data:sample);
+            StylusManager.globalTime = sample["time"].intValue;
+
             
         }
     }
@@ -574,7 +577,6 @@ final class StylusManager:LiveManager{
     
     public func exportRecording(startId:String, endId:String)->JSON?{
         let compiledId = NSUUID().uuidString;
-        print("id start / startid is % ", idStart, startId)
         self.recordingPresetData["id"] = JSON(compiledId);
         let compiledRecordingCollection = ImportedRecordingCollection(data:self.recordingPresetData)
         let targetRecording = self.recordingPackages.first(){$0.id == startId}

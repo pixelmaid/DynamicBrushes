@@ -68,6 +68,14 @@ class BehaviorManager{
         return brush;
     }
     
+    static func getBehaviorNames()->[String:String]{
+        var names = [String:String]();
+        for (id,behavior) in self.behaviors{
+            names[id] = behavior.name;
+        }
+        return names;
+    }
+    
     
     static func refreshAllBehaviors(){
         for (_,behavior) in BehaviorManager.behaviors{
@@ -76,7 +84,6 @@ class BehaviorManager{
     }
     
     static func loadData(json:JSON){
-        print("data to load",json);
         BehaviorManager.loadCollectionsFromJSON(data: json["collections"]);
         BehaviorManager.loadBehaviorsFromJSON(json: json["behaviors"], rewriteAll: true)
     }
@@ -253,7 +260,7 @@ class BehaviorManager{
             resultJSON["result"] = "success";
             return resultJSON;
         case "state_removed":
-            print("% called state removed behavior id ", data["behaviorId"].stringValue , " stateid ",  data["stateId"].stringValue)
+          
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.removeState(stateId: data["stateId"].stringValue);
             
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(drawing:drawing)
@@ -407,7 +414,7 @@ class BehaviorManager{
             
         case "dataset_loaded":
              #if DEBUG
-                print("dataset loaded",data);
+               // print("dataset loaded",data);
             #endif
              do {
                 let signalCollection = try BehaviorManager.parseImported(data:data["dataset"])
@@ -472,7 +479,6 @@ class BehaviorManager{
                 throw BehaviorError.collectionDoesNotExist;
             }
              id = dataCollection.initializeSignal(fieldName:fieldName,displayName:displayName,settings:settings,classType: classType, style:style, isProto: false, order:nil);
-            print(dataCollection.initializedSignals);
 
 
         break;
@@ -563,7 +569,6 @@ class BehaviorManager{
         let collectionData = data.arrayValue;
         for collection in collectionData{
             let key = collection["classType"].stringValue;
-            print("key",key);
             let collectionId =  collection["id"].stringValue;
             switch (key) {
             case "live":
@@ -661,10 +666,8 @@ class BehaviorManager{
     
     
    static func parseImported(data:JSON) throws->SignalCollection{
-    print("imported data",data);
     let id = data["id"].stringValue;
     let signalCollection = ImportedCollection(data: data)
-    print ("% signalCollections is ",  signalCollections[0][id])
     if signalCollections[0][id] != nil {
         print("======== WARNING: TRYING TO PARSE AN ALREADY EXISTING DATASET =====")
         throw BehaviorError.duplicateDataSet
@@ -672,7 +675,6 @@ class BehaviorManager{
     
     signalCollection.mapData();
     signalCollections[0][id] = signalCollection;
-    print("imported count",signalCollections[0]);
     return signalCollection;
   
     }
@@ -700,10 +702,8 @@ class BehaviorManager{
     static func getAllCollectionJSON()->JSON{
         var collectionJSON = [JSON]();
         for collectionList in BehaviorManager.signalCollections{
-            print("collectionList",collectionList)
 
             for(_,value) in collectionList {
-                print("export collection by name",value.name,BehaviorManager.signalCollections.count)
                 collectionJSON.append(value.protoToJSON());
             }
             

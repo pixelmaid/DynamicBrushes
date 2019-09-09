@@ -31,9 +31,7 @@ class Mapper:Observable<Float>{
         let inputVal = self.input.get(id: id);
 
         let val = MathUtil.map(value: inputVal, low1: self.low1, high1: self.high1, low2: self.low2, high2: self.high2)
-        #if DEBUG
-            print("mapping results",inputVal,self.high1,self.high2,val);
-       #endif
+     
         return val;
     }
     

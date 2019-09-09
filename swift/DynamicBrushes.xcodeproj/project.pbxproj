@@ -155,7 +155,6 @@
 		7267DCC5202A8ECF0093245A /* RecordingFrameCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7267DCC4202A8ECF0093245A /* RecordingFrameCell.swift */; };
 		7288CF7A2318D2D8006C78DD /* sine.svg in Resources */ = {isa = PBXBuildFile; fileRef = 7288CF792318D2D8006C78DD /* sine.svg */; };
 		72C84DCD2321B4ED008A6259 /* inspect_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 72C84DCC2321B4EC008A6259 /* inspect_icon.png */; };
-		72C84DCF2321DBB4008A6259 /* views in Resources */ = {isa = PBXBuildFile; fileRef = 72C84DCE2321DBB4008A6259 /* views */; };
 		72C84DD12321DBE3008A6259 /* InspectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72C84DD02321DBE3008A6259 /* InspectorViewController.swift */; };
 		72C84DD32321E19D008A6259 /* TouchTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72C84DD22321E19D008A6259 /* TouchTarget.swift */; };
 		72D72C092069DF8400C1C9C8 /* MicCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D72C082069DF8400C1C9C8 /* MicCollection.swift */; };
@@ -347,7 +346,7 @@
 		7267DCC4202A8ECF0093245A /* RecordingFrameCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingFrameCell.swift; sourceTree = "<group>"; };
 		7288CF792318D2D8006C78DD /* sine.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = sine.svg; sourceTree = "<group>"; };
 		72C84DCC2321B4EC008A6259 /* inspect_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = inspect_icon.png; sourceTree = "<group>"; };
-		72C84DCE2321DBB4008A6259 /* views */ = {isa = PBXFileReference; lastKnownFileType = folder; name = views; sourceTree = "<group>"; };
+		72C84DCE2321DBB4008A6259 /* views */ = {isa = PBXFileReference; lastKnownFileType = folder; path = views; sourceTree = "<group>"; };
 		72C84DD02321DBE3008A6259 /* InspectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorViewController.swift; sourceTree = "<group>"; };
 		72C84DD22321E19D008A6259 /* TouchTarget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TouchTarget.swift; sourceTree = "<group>"; };
 		72D72C082069DF8400C1C9C8 /* MicCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicCollection.swift; sourceTree = "<group>"; };
@@ -981,7 +980,6 @@
 				5F9F25AA1DEFE3A0005CB5D8 /* shopbot_position_active@2x.png in Resources */,
 				5FE32F831ECF6D5300ADC01E /* brush_button_active2x.png in Resources */,
 				72F3CED7204DFD050010A3D0 /* record_on2x.png in Resources */,
-				72C84DCF2321DBB4008A6259 /* views in Resources */,
 				5FEE2AC91DE127D800080095 /* dual_pen.png in Resources */,
 				5F9F25AD1DEFE3A0005CB5D8 /* shopbot_position_inactive2x.png in Resources */,
 				5FFC455B1EE1B133007B7597 /* point.vsh in Resources */,

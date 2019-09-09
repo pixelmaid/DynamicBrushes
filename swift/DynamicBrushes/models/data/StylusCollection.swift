@@ -64,7 +64,6 @@ class StylusCollection:LiveCollection {
     var yDistance:Float = 0;
     var euclidDistance:Float = 0;
     var speed:Float = 0;
-    var prevTime:Float = 0;
     var stylusEvent:Float = 0;
     
     
@@ -87,6 +86,7 @@ class StylusCollection:LiveCollection {
         protodata["xDistance"] = JSON(0);
         protodata["yDistance"] = JSON(0);
         protodata["stylusEvent"] = JSON(0);
+        protodata["speed"] = JSON(0);
         protodata["time"] = JSON(0);
         super.addProtoSample(data: protodata);
     }
@@ -100,6 +100,8 @@ class StylusCollection:LiveCollection {
         self.y = y;
         self.speed = 0;
         self.stylusEvent = Signal.stylusUp;
+        self.time = self.getTimeElapsed();
+
         let data = self.exportData();
         self.addProtoSample(data: data)
     }
@@ -116,7 +118,8 @@ class StylusCollection:LiveCollection {
         self.stylusEvent = Signal.stylusDown;
         self.speed = 0;
         self.deltaAngle = 0;
-        self.prevTime = self.getTimeElapsed();
+        self.time = self.getTimeElapsed();
+
         let data = self.exportData();
         self.addProtoSample(data: data)
 
@@ -140,16 +143,19 @@ class StylusCollection:LiveCollection {
         self.yDistance = self.yDistance + abs(dy);
         let euclidDelta = sqrt(pow(dx,2)+pow(dy,2));
         self.euclidDistance = self.euclidDistance + sqrt(pow(dx,2)+pow(dy,2));
-
+        self.time = self.getTimeElapsed();
        
-        let currentTime = self.getTimeElapsed();
-        var rawSpeed = euclidDelta/(currentTime-prevTime)
+       /* let currentTime = self.getTimeElapsed();
+        var rawSpeed = euclidDelta/Float(currentTime-prevTime)
         if(rawSpeed > 5000){
             rawSpeed = 5000;
         }
         self.speed = MathUtil.map(value: rawSpeed, low1:0, high1: 5000, low2: 0, high2: 100);
         
-        self.prevTime = currentTime;
+        self.prevTime = currentTime;*/
+        //TODO: setup speed;
+        self.speed = 0;
+
         self.stylusEvent = Signal.stylusMove;
         let data = self.exportData();
         self.addProtoSample(data: data)

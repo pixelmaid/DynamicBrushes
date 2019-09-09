@@ -72,7 +72,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
 
                 }
                 else{
-                    debuggerModelCollection.processInspectorData(data.data);
+                    debuggerModelCollection.processInspectorDataQueue(data.data);
                 }
 
             } else if (data.type == "synchronize") {
@@ -84,6 +84,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
                 chartViewManager.synchronize(data.data.behaviors);
                 signalModel.datasetLoader.loadCollection(data.data.collections);
                 saveManager.setCurrentFilename(currentBehaviorName, currentBehaviorFile);
+                debuggerModelCollection.clearInspectorDataQueue();
 
 
             } else if (data.type == "collection_data") {

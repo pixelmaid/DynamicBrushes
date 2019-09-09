@@ -13,14 +13,14 @@ class BrushStorageManager{
     static var paramStorage = [String:[String:[Int:String]]]();
     
     static func registerNewBrush(behaviorId:String,brushId:String){
-        guard var brushList =  BrushStorageManager.paramStorage[behaviorId] else {
+        guard BrushStorageManager.paramStorage[behaviorId] != nil else {
             var brushList = [String:[Int:String]]();
             brushList[brushId] = [Int:String]();
             BrushStorageManager.paramStorage[behaviorId] = brushList;
             return;
         }
         
-        brushList[brushId] = [Int:String]();
+        BrushStorageManager.paramStorage[behaviorId]![brushId] = [Int:String]();
         
     }
     
@@ -32,7 +32,7 @@ class BrushStorageManager{
             return;
         }
         
-        brushList.removeValue(forKey: brushId);
+        BrushStorageManager.paramStorage[behaviorId]!.removeValue(forKey: brushId);
     }
     
     static func destroyBehaviorRegistry(behaviorId:String){
@@ -47,17 +47,79 @@ class BrushStorageManager{
         
     }
     
-    static func storeState(behaviorId:String,brushId:String,time:Int,state:String){
-        guard var brushList = BrushStorageManager.paramStorage[behaviorId] else {
+    static func storeState(brush:Brush){
+        guard var brushList = BrushStorageManager.paramStorage[brush.behaviorId] else {
             return;
         }
-        guard var brush = brushList[brushId] else{
+        guard brushList[brush.id] != nil else{
             return;
         }
         
-        BrushStorageManager.paramStorage[behaviorId]![brushId]![time] = state;
+        var stateData:JSON = [:]
+        stateData["behaviorId"] = JSON(brush.behaviorId);
+        stateData["prevState"] = JSON(brush.prevState);
+        stateData["currentState"] = JSON(brush.currentState);
+        stateData["transitionId"] = JSON(brush.prevTransition);
+        stateData["params"] = brush.params.toJSON();
+        stateData["id"] = JSON(brush.id);
+        stateData["constraints"] = brush.states[brush.currentState]!.getConstrainedPropertyNames();
+        stateData["methods"] = brush.transitions[brush.prevTransition]!.getMethodNames();
+        
+        BrushStorageManager.paramStorage[brush.behaviorId]![brush.id]![brush.params.time] = stateData.rawString();
+        print("~~~~",brush.params.time,JSON.init(parseJSON:stateData.rawString()!)["params"]["active"]);
         
     }
+    
+    static func accessStateAtTime(globalTime:Int?,behaviorNames:[String:String])->JSON{
+        var debugData:JSON = [:]
+        debugData["groupName"] = JSON("brush");
+        let behaviors = BrushStorageManager.paramStorage;
+        var behaviorListJSON = [JSON]();
+
+        for (behaviorId,brushes) in behaviors {
+            let behaviorName = behaviorNames[behaviorId]!;
+            var brushesListJSON = [JSON]();
+            for (brushId,paramList) in brushes {
+                if(globalTime != nil ){
+                    let filteredParam = paramList.first{
+                        let bJSON = JSON.init(parseJSON:$0.value);
+                        let bJSONParams = bJSON["params"]
+                        let bJSONTime = bJSONParams["globalTime"].intValue
+                        return bJSONTime == globalTime;
+                        
+                    }
+                    if(filteredParam != nil){
+                        var brushJSON = JSON.init(parseJSON:filteredParam!.value);
+                        brushesListJSON.append(brushJSON);
+                    }
+                    
+                }
+                else{
+                    let sortedParams = paramList.sorted{ $0.0 < $1.0 }
+                    if(sortedParams.count > 0){
+                        
+                        var brushJSON = JSON.init(parseJSON:sortedParams.last!.value);
+                        let bJSONParams = brushJSON["params"]
+                        let bJSONActive = bJSONParams["active"].boolValue;
+                        print("~~~~is active",brushId, bJSONActive,sortedParams.last!.key);
+                        if bJSONActive == true{
+                            brushesListJSON.append(brushJSON);
+                        }
+                    }
+                }
+            }
+            var behaviorJSON:JSON = [:];
+            behaviorJSON["id"] = JSON(behaviorId);
+            behaviorJSON["name"] = JSON(behaviorName);
+            behaviorJSON["brushes"] = JSON(brushesListJSON);
+            behaviorListJSON.append(behaviorJSON);
+            
+        }
+        debugData["behaviors"] = JSON(behaviorListJSON);
+        return debugData;
+    }
+    
+    
     
     static func accessState(behaviorId:String,brushId:String,time:Int)->BrushStateStorage?{
         guard let brushList = BrushStorageManager.paramStorage[behaviorId] else {
@@ -72,7 +134,7 @@ class BrushStorageManager{
         
         let stateJSON = JSON.init(parseJSON: stateString);
         
-        let state = BrushStateStorage(json:stateJSON);
+        let state = BrushStateStorage(json:stateJSON["params"]);
         
         return state;
     }

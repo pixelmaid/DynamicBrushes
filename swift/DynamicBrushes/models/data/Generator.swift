@@ -25,6 +25,11 @@ class Generator:Signal{
         
     }
     
+    override func brushIsRegistered(brushId:String)->Bool{
+        return self.registeredBrushes[brushId] != nil;
+    }
+    
+    
     override func get(id:String?) -> Float {
         guard id != nil else{
             print("=============ERROR ATTEMPTED TO GET BY INDEX FOR GENERATOR BUT ID IS NIL===========");
@@ -106,7 +111,7 @@ class Sine:Generator{
     
     
     required init(id:String, fieldName:String, displayName:String, collectionId:String, style:String, settings:JSON){
-        self.freq = 0.02// settings["freq"].floatValue;
+        self.freq = 0.005// settings["freq"].floatValue;
         self.phase =  4.7//settings["phase"].floatValue;
         self.amp = 1.0; //settings["amp"].floatValue;
         super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
@@ -299,6 +304,33 @@ class Random: Generator{
     }
     
     
+}
+
+class GeneratorTimer:Generator{
+    let time:Float = 0;
+    
+    required init(id: String, fieldName: String, displayName: String, collectionId: String, style: String, settings: JSON) {
+
+        super.init(id: id, fieldName: fieldName, displayName: displayName, collectionId: collectionId, style: style, settings:settings);
+        
+        self.setLiveStatus(status: true);
+        
+    }
+    
+    //TODO: random generator will not return repeating values for same time.... need to address
+    override func getAtTime(time: Int, id: String?, shouldUpdate: Bool) -> Float {
+        
+        
+        let v = self.time;
+        
+        if(shouldUpdate){
+            self.update(v: v, id: id!,time: time);
+        }
+        
+        return v
+    }
+
+
 }
 
 
