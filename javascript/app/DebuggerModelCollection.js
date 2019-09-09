@@ -174,7 +174,16 @@ define(["app/Emitter", "app/DebuggerModel"],
 									}
 									formattedParams.id = brushId;
 									formattedParams.name = brush.name;
-									formattedBrushes.push(formattedParams);
+									formattedBrushes.push({
+										inspectorData:formattedParams,
+										behaviorId:brush.behaviorId,
+										constraints:brush.constraints,
+										currentState:brush.currentState,
+										id:brush.id,
+										methods:brush.methods,
+										prevState:brush.prevState,
+										transitionId:brush.transitionId
+									});
 							}
 
 						}

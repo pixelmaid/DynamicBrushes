@@ -1,4 +1,4 @@
-//Debugger
+//Debugger View
 
 "use strict";
 
@@ -17,29 +17,11 @@ define(["jquery", "handlebars", "app/Emitter"],
         this.modelCollection = modelCollection;
         this.pastConstraint = null;
         this.inspectorInit = false;
-        this.keyHandler = keyHandler;
         this.groupName = groupName; //brush, input, or output
         this.template = template;
         this.currHighlighted = [];
         this.currInspectorActive = '';
         var self = this;
-
-        switch (this.groupName) {
-          case "brush":
-            this.keyHandler.addListener("VIZ_BRUSH_STEP_THROUGH", function() {
-              console.log("! called brush step through");
-              let currentConstraint = this.model.brushVizQueue.shift();
-              this.visualizeStepThrough(currentConstraint, this.pastConstraint, model.data);
-              this.pastConstraint = currentConstraint;
-            }.bind(this));
-            break;
-          case "inputGlobal":
-            break;
-          case "inputLocal":
-            break;
-          case "output":
-            break;
-        }
 
         this.model.addListener("DATA_UPDATED", function() {
           this.dataUpdatedHandler();
@@ -47,7 +29,7 @@ define(["jquery", "handlebars", "app/Emitter"],
       }
 
       findBuddies(rowId) {
-        var buddy = ''
+        var buddy = '';
         switch (rowId) {
           case 'param-ox':
             buddy = 'param-oy';
@@ -90,7 +72,7 @@ define(["jquery", "handlebars", "app/Emitter"],
   
 
         $('li').click(function(e) {
-          let rowId = e.target.id
+          let rowId = e.target.id;
           var skip = false;
           if (rowId.includes("param-")) {
             let activeInspector = $('#'+rowId).parent().parent().parent().parent()[0].id.slice(10);
@@ -112,7 +94,7 @@ define(["jquery", "handlebars", "app/Emitter"],
                 self.highlightParamRow(rowId);
                 self.currHighlighted.push(rowId);
                 self.modelCollection.updateHighlight([rowId, true]);   
-                if (buddy != '') {
+                if (buddy !== '') {
                   self.highlightParamRow(buddy);
                   self.currHighlighted.push(buddy); 
                   self.modelCollection.updateHighlight([buddy, true]);                
@@ -121,7 +103,7 @@ define(["jquery", "handlebars", "app/Emitter"],
               self.currInspectorActive = activeInspector;
             } 
           }
-        })
+        });
       }
 
       highlightParamRow(rowId) {
