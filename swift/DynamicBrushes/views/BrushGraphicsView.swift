@@ -152,6 +152,18 @@ public class BrushGraphicsScene {
 
     }
     
+    public func movePenDown(x:Double, y:Double){
+        for (_, brush) in self.activeBrushIds{
+            brush.movePenDown(x:x, y:y)
+        }
+    }
+    
+    public func movePenUp(x:Double, y:Double){
+        for (_, brush) in self.activeBrushIds{
+            brush.movePenUp(x:x, y:y)
+        }
+    }
+    
     public func drawGenerator(valArray: [(Double, Int, String)]) {
        //val array is value, time, type
 //        print("~~~~ active brushIds are ", self.activeBrushIds.count)
@@ -282,10 +294,10 @@ class BrushGraphic {
         stylusText = BrushGraphic.newText("stylus x: 0, stylus y: 0", Transform.move(dx:0,dy:10))
         node.contents.append(stylusIcon)
         let inputScale = 10.0
-        stylusDownIcon = Polygon(points:[0, -inputScale, inputScale*sqrt(3), 0, 0, inputScale]).fill(with: inputColor)
-        stylusUpIcon = Polygon(points:[-inputScale*0.5, -inputScale, 0, -inputScale, inputScale, 0, 0, inputScale, -inputScale*0.5, inputScale, 0, 0]).fill(with: inputColor)
-        stylusDownIcon.place = Transform.move(dx:500,dy:500)
-        stylusUpIcon.place = Transform.move(dx:800,dy:500)
+        stylusUpIcon = Polygon(points:[0, -inputScale, inputScale*sqrt(3), 0, 0, inputScale]).fill(with: inputColor)
+        stylusDownIcon = Polygon(points:[-inputScale*0.5, -inputScale, 0, -inputScale, inputScale, 0, 0, inputScale, -inputScale*0.5, inputScale, 0, 0]).fill(with: inputColor)
+//        stylusDownIcon.place = Transform.move(dx:500,dy:500)
+//        stylusUpIcon.place = Transform.move(dx:800,dy:500)
         node.contents.append(stylusUpIcon)
         node.contents.append(stylusDownIcon)
 
@@ -851,6 +863,14 @@ class BrushGraphic {
         if self.scene.outputOn { self.highlightOutput() }
 
 //        print("## moved computed" , self.id, "to cx cy" , cx, cy)
+    }
+    
+    func movePenUp(x:Double, y:Double){
+        stylusUpIcon.place = Transform.move(dx: x, dy: y)
+    }
+    
+    func movePenDown(x:Double, y:Double){
+        stylusDownIcon.place = Transform.move(dx: x, dy: y)
     }
     
 }

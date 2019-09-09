@@ -26,6 +26,8 @@ final class Debugger {
     static public var outputGfx = true
     static public var outputLabel = true
     
+    static public var lastState = -1
+    
     static var propSort = ["ox","oy","sx","sy","rotation","dx","dy","x","y","radius","theta","diameter","hue","lightness","saturation","alpha"]
 
     static public func activate(){
