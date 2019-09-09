@@ -70,12 +70,14 @@ class DrawingViewController: UIViewController, Requester{
     let saveEventKey = NSUUID().uuidString
     let loopEventKey = NSUUID().uuidString
     let debuggerKey = NSUUID().uuidString
+    let switchEventKey = NSUUID().uuidString
 
     
     var toolbarController: ToolbarViewController?
     var layerPanelController: LayerPanelViewController?
     var behaviorPanelController: BehaviorPanelViewController?
     var recordingToolbarVC: RecordingToolbarVC?
+    var inspectorViewController: InspectorViewController?
     
     var fileListController: SavedFilesPanelViewController?
     let targetSize = CGSize(width:CGFloat(pX),height:CGFloat(pY))
@@ -108,10 +110,13 @@ class DrawingViewController: UIViewController, Requester{
     var router:Router?
     @IBOutlet weak var layerPanelContainerView: UIView!
     
+    @IBOutlet weak var inspectorPanelContainerView: UIView!
     @IBOutlet weak var colorPickerContainerView: UIView!
     @IBOutlet weak var fileListContainerView: UIView!
     
     @IBOutlet weak var behaviorPanelContainerView: UIView!
+    
+    
     required init?(coder: NSCoder) {
         layerContainerView = LayerContainerView(width:pX,height:pY);
         
@@ -152,6 +157,11 @@ class DrawingViewController: UIViewController, Requester{
         else if(segue.identifier == "recordingToolbarSegue"){
             recordingToolbarVC = segue.destination as? RecordingToolbarVC;
           
+        }
+        else if(segue.identifier == "inspectorPanelSegue"){
+            inspectorViewController = segue.destination as? InspectorViewController;
+            _ = inspectorViewController?.switchEvent.addHandler(target: self, handler: DrawingViewController.switchEventHandler, key: switchEventKey)
+
         }
    
         
@@ -206,6 +216,19 @@ class DrawingViewController: UIViewController, Requester{
         case "AIRBRUSH_MODE":
             self.layerContainerView.removeAllStrokes()
             layerContainerView.setAirbrushActive();
+            break;
+            
+        case "TOGGLE_INSPECTION_PANEL":
+            print("~~~ TOGGLE INSPECTION PANEL~~~~")
+            if(inspectorPanelContainerView?.isHidden == true){
+                inspectorPanelContainerView?.isHidden = false
+            }
+            else{
+                inspectorPanelContainerView?.isHidden = true
+            }
+            colorPickerContainerView?.isHidden = true
+            behaviorPanelContainerView?.isHidden = true
+            layerPanelContainerView?.isHidden = true
             break;
             
             
@@ -273,6 +296,21 @@ class DrawingViewController: UIViewController, Requester{
         }
     }
     
+    
+    
+    func switchEventHandler(data: (String,String,Bool), key: String){
+        //type, IOB, on/off
+        switch(data.0){
+        case "gfx":
+            Debugger.toggleVisualizations(view: self.layerContainerView.brushGraphicsView!, item:data.1, isOn:data.2);
+            break;
+        case "label":
+            Debugger.toggleLabels(view: self.layerContainerView.brushGraphicsView!, item:data.1, isOn:data.2);
+            break;
+        default:
+            break;
+        }
+    }
     
     
     func layerEventHandler(data: (String,String,String?), key: String){
@@ -487,7 +525,8 @@ class DrawingViewController: UIViewController, Requester{
         self.newLayer();
         self.newVisualizationLayer();
         
-        layerPanelContainerView.isHidden = true;
+        layerPanelContainerView.isHidden = true
+        inspectorPanelContainerView.isHidden = true
         
 
         
@@ -1443,7 +1482,8 @@ class DrawingViewController: UIViewController, Requester{
         _ = stylusManager.layerEvent.addHandler(target: self, handler: DrawingViewController.stylusManagerEventHandler, key: stylusManagerKey)
         
         _ = Debugger.debuggerEvent.addHandler(target:self, handler: DrawingViewController.debuggerEventHandler, key: debuggerKey)
-
+        
+        
         self.debuggerInterfaceManager = DebuggerInterfaceManager(drawing: self.currentDrawing!, targetView: self.layerContainerView);
         
         self.fingerRecognizer = setupGestureRecognizer(isForPencil: false)

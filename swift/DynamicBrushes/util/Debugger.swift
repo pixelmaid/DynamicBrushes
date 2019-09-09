@@ -16,6 +16,14 @@ final class Debugger {
     static public let debuggerEvent = Event<(String)>();
     static public var debugDataQueue = [JSON]();
     static public var debuggingTimerActive = false;
+
+    static public var inputGfx = true
+    static public var inputLabel = true
+    static public var brushGfx = true
+    static public var brushLabel = true
+    static public var outputGfx = true
+    static public var outputLabel = true
+    
     static var propSort = ["ox","oy","sx","sy","rotation","dx","dy","x","y","radius","theta","diameter","hue","lightness","saturation","alpha"]
 
     
@@ -268,28 +276,71 @@ final class Debugger {
         return (x, y, force)
     }
     
+    static public func toggleVisualizations(view:BrushGraphicsView, item:String, isOn:Bool) {
+        switch(item) {
+        case "input":
+            self.inputGfx = isOn
+            break
+        case "brush":
+            self.brushGfx = isOn
+            break
+        case "output":
+            self.outputGfx = isOn
+            break
+        default:
+            break
+        }
+        view.scene?.toggleViz(type:item)
+    }
+    
+    static public func toggleLabels(view:BrushGraphicsView, item:String, isOn:Bool) {
+        switch(item) {
+        case "input":
+            self.inputLabel = isOn
+            break
+        case "brush":
+            self.brushLabel = isOn
+            break
+        case "output":
+            self.outputLabel = isOn
+            break
+        default:
+            break
+        }
+        view.scene?.toggleLabel(type:item)
+    }
+    
+    static public func refreshVisualizations(view:BrushGraphicsView) {
+        view.scene?.toggleViz(type:"input")
+        view.scene?.toggleViz(type:"output")
+        view.scene?.toggleViz(type:"brush")
+        view.scene?.toggleLabel(type:"input")
+        view.scene?.toggleLabel(type:"output")
+        view.scene?.toggleLabel(type:"brush")
+    }
+    
+    
     static public func drawUnrendererdBrushes(view:BrushGraphicsView){
         let behaviors = BehaviorManager.getAllBrushInstances();
         //check to see which brushes are "unrendered"
        // pass them the UI view and draw into it
         var brushIds = Set<String>()
-        var i = 0 //note - this is only until we get active instance
+
         for (behaviorId,brushTuple) in behaviors {
             let brushes = brushTuple.1;
-            let brush = brushes[0]
-//            for brush in brushes {
-            if brush.unrendered && i < 1 {
+            let brush = brushes[BehaviorManager.activeInstance]
+            if brush.unrendered {
 //                print("~~~ about to draw into context in debugger with brush ", brush.id)
+                //double check view values since they arent persistent
+                refreshVisualizations(view: view)
                 let valArray = Debugger.getGeneratorValue(brushId: brush.id)
                 let inputInfo = Debugger.getStylusInputValue(brushId: brush.id)
                 brush.drawIntoContext(context:view, info:inputInfo)
 
                 view.scene!.drawGenerator(valArray: valArray)
             
-                i += 1
             }
             brushIds.insert(brush.id)
-//            }
         }
         //remove brush if not in this list
         let brushesIdsOnCanvas = Set(view.scene!.activeBrushIds.keys)
@@ -299,6 +350,8 @@ final class Debugger {
         for id in keysToRemove {
             view.scene!.removeActiveId(id:id)
             view.updateNode()
+
+//
         }
         
     }
