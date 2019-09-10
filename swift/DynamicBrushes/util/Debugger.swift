@@ -19,6 +19,7 @@ final class Debugger {
     static public var debugDataQueue = [JSON]();
     static public var debuggingTimerActive = false;
 
+    //toggle variables
     static public var inputGfx = true
     static public var inputLabel = true
     static public var brushGfx = true
@@ -26,7 +27,11 @@ final class Debugger {
     static public var outputGfx = true
     static public var outputLabel = true
     
+    //showing brush up/down variables
     static public var lastState = -1
+    static public var lastPointX = 0.0
+    static public var lastPointY = 0.0
+    static public var toDrawPenDown = false
     
     static var propSort = ["ox","oy","sx","sy","rotation","dx","dy","x","y","radius","theta","diameter","hue","lightness","saturation","alpha"]
 
@@ -75,6 +80,10 @@ final class Debugger {
         Debugger.debugTimer = nil;
         Debugger.debuggingTimerActive = false;
 
+    }
+    
+    static func testMacawCollision(x:Float, y:Float) {
+        print("~~ testing macaw colision")
     }
     
     

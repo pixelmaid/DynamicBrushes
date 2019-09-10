@@ -15,10 +15,10 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
         var dataView = new DatasetView(signalModel.datasetLoader, "#dataset_select");
         var keypressHandler = new KeypressHandler(debuggerModelCollection);
         var debuggerModelCollection = new DebuggerModelCollection();
-        var debuggerBrushView = new DebuggerView(debuggerModelCollection.brushModel, debuggerModelCollection, "#inspector-brush", brushInspectorTemplate, "brush", keypressHandler);
-        var debuggerInputView = new DebuggerView(debuggerModelCollection.inputModel, debuggerModelCollection, "#inspector-input", inputInspectorTemplate, "inputGlobal", keypressHandler);
+        var debuggerBrushView = new DebuggerView(debuggerModelCollection.brushModel, "#inspector-brush", brushInspectorTemplate, "brush", keypressHandler);
+        var debuggerInputView = new DebuggerView(debuggerModelCollection.inputModel, "#inspector-input", inputInspectorTemplate, "inputGlobal", keypressHandler);
         // note -- make one for inputLocal? 
-        var debuggerOutputView = new DebuggerView(debuggerModelCollection.outputModel, debuggerModelCollection, "#inspector-output", outputInspectorTemplate, "output", keypressHandler);
+        var debuggerOutputView = new DebuggerView(debuggerModelCollection.outputModel, "#inspector-output", outputInspectorTemplate, "output", keypressHandler);
 
         //sets up interface by initializing palette, removing overlay etc.
         var setupInterface = function() {

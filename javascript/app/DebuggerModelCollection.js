@@ -17,8 +17,23 @@ define(["app/Emitter", "app/DebuggerModel"],
 				this.selectedIndex = 0;
 				this.inspectorQueue = [];
 				this.startInspectorInterval();
+
+				this.currHighlighted = [];
+				var self = this;
 			
 
+			}
+
+			getCurrHighlighted() {
+				return this.currHighlighted;
+			}
+
+			pushCurrHighlighted(obj){
+				this.currHighlighted.push(obj);
+			}
+
+			resetCurrHighlighted() {
+				this.currHighlighted = [];
 			}
 
 			updateSelectedIndex(index) {

@@ -10,17 +10,15 @@ define(["jquery", "handlebars", "app/Emitter"],
     var DebuggerView = class extends Emitter {
 
 
-      constructor(model, modelCollection, element, template, groupName, keyHandler) {
+      constructor(model, element, template, groupName, keyHandler) {
         super();
         this.el = $(element);
         this.model = model;
-        this.modelCollection = modelCollection;
         this.pastConstraint = null;
         this.inspectorInit = false;
         this.keyHandler = keyHandler;
         this.groupName = groupName; //brush, input, or output
         this.template = template;
-        this.currHighlighted = [];
         this.currInspectorActive = '';
         var self = this;
 
@@ -61,12 +59,6 @@ define(["jquery", "handlebars", "app/Emitter"],
           case 'param-styy':
             buddy = 'param-styx';
           break;
-          case 'param-sx':
-            buddy = 'param-sy';
-          break;
-          case 'param-sy':
-            buddy = 'param-sx';
-          break;
           case 'param-posx':
             buddy = 'param-posy';
           break;
@@ -86,7 +78,7 @@ define(["jquery", "handlebars", "app/Emitter"],
 
       setUpHighlightClicks(inspectorKind) {
         let self = this;
-        console.log("~~ before change id ", self.currHighlighted, inspectorKind, self.currInspectorActive);
+        console.log("~~ before change id ", self.model.collection.getCurrHighlighted(), inspectorKind, self.currInspectorActive);
   
 
         $('li').click(function(e) {
@@ -97,25 +89,25 @@ define(["jquery", "handlebars", "app/Emitter"],
             // console.log("~ active ", activeInspector, inspectorKind, rowId);
             if (activeInspector == inspectorKind) { //if match 
               var buddy = self.findBuddies(rowId);
-              for (var i = 0; i < self.currHighlighted.length; i++) {
+              for (var i = 0; i < self.model.collection.getCurrHighlighted().length; i++) {
                 console.log("unlighting ~ ");
-                self.unhighlightParamRow(self.currHighlighted[i]);
-                self.modelCollection.updateHighlight([self.currHighlighted[i], false]);   
-                if (rowId == self.currHighlighted[i]) { //unhighlight self
+                self.unhighlightParamRow(self.model.collection.getCurrHighlighted()[i]);
+                self.model.collection.updateHighlight([self.model.collection.getCurrHighlighted()[i], false]);   
+                if (rowId == self.model.collection.getCurrHighlighted()[i]) { //unhighlight self
                   skip = true;
                   self.unhighlightParamRow(buddy);
-                  self.modelCollection.updateHighlight([buddy, false]);   
+                  self.model.collection.updateHighlight([buddy, false]);   
                 }
               }
-              self.currHighlighted = [];
+              self.model.collection.resetCurrHighlighted();
               if (!skip) {
                 self.highlightParamRow(rowId);
-                self.currHighlighted.push(rowId);
-                self.modelCollection.updateHighlight([rowId, true]);   
+                self.model.collection.pushCurrHighlighted(rowId);
+                self.model.collection.updateHighlight([rowId, true]);   
                 if (buddy != '') {
                   self.highlightParamRow(buddy);
-                  self.currHighlighted.push(buddy); 
-                  self.modelCollection.updateHighlight([buddy, true]);                
+                  self.model.collection.pushCurrHighlighted(buddy); 
+                  self.model.collection.updateHighlight([buddy, true]);                
                 }
               }
               self.currInspectorActive = activeInspector;
@@ -125,14 +117,12 @@ define(["jquery", "handlebars", "app/Emitter"],
       }
 
       highlightParamRow(rowId) {
-        $('#'+rowId).css('background-color', '#00ff00');
-        $('#'+rowId).css('color', '#000');
-
+        $('#'+rowId).css('outline', '1px solid #0f0');
+        console.log("~~~ highlighted ", rowId);
       }
 
       unhighlightParamRow(unhighlightRowId) {
-              $('#'+unhighlightRowId).css('background-color', '');
-              $('#'+unhighlightRowId).css('color', '');
+        $('#'+unhighlightRowId).css('outline', '');
       }
 
 
@@ -202,9 +192,9 @@ define(["jquery", "handlebars", "app/Emitter"],
         }
 
         //rehighlight
-        for (var i = 0; i < self.currHighlighted.length; i++) {
-          console.log("~ rehighlighting ", self.currHighlighted[i]);
-          self.highlightParamRow(self.currHighlighted[i]);
+        for (var i = 0; i < self.model.collection.getCurrHighlighted().length; i++) {
+          console.log("~ rehighlighting ", self.model.collection.getCurrHighlighted()[i]);
+          self.highlightParamRow(self.model.collection.getCurrHighlighted()[i]);
         }
 
       }
