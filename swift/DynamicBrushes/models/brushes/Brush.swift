@@ -409,7 +409,7 @@ class Brush: TimeSeries, Hashable, Renderable{
         let data = ["dx":dx,"dy":dy,"pr":pr,"pt":pt,"ox":ox,"oy":oy,"rotation":r,"sx":sx,"sy":sy,"weight":weight,"hue":h,"saturation":s,"lightness":l,"alpha":a,"dist":dist,"xDist":xDist,"yDist":yDist,"x":x,"y":y,"cx":cx,"cy":cy,"time":time, "globalTime":globalTime,"i":self.index.getSilent(),"sc":self.siblingcount.getSilent(),"lv":self.level.getSilent(),"parent": (self.parent != nil ? (self.parent!.behaviorDef?.name)! : "none"), "active":true] as [String : Any];
        
         self.params.updateAll(data: data);
-        BrushStorageManager.storeState(brush:self);
+        BrushStorageManager.storeState(brush:self,event:"DRAW_SEGMENT");
 
 
         self.currentDrawing!.addSegmentToStroke(behaviorId:self.behaviorId, brushId:self.id, point:Point(x:cx,y:cy),weight:weight , color: color,alpha:a, time: self.params.time)
@@ -537,7 +537,7 @@ class Brush: TimeSeries, Hashable, Renderable{
     func transitionToState(transition:StateTransition){
         
         if(states[transition.toStateId]?.name == "die"){
-            //Debugger.generateBrushDebugData(brush:self, type:"STATE_DIE");
+            BrushStorageManager.storeState(brush:self,event:"STATE_DIE");
             self.die();
            
         }
@@ -579,7 +579,7 @@ class Brush: TimeSeries, Hashable, Renderable{
             
         }
         
-        //Debugger.generateBrushDebugData(brush:self, type:"STATE_TRANSITION");
+        BrushStorageManager.storeState(brush:self,event:"STATE_TRANSITION");
 
         
     }
@@ -945,7 +945,8 @@ class Brush: TimeSeries, Hashable, Renderable{
         self.params.update(key:"active",value:false);
         self.params.update(key:"time",value:time);
         self.params.update(key:"globalTime",value:globalTime);
-        BrushStorageManager.storeState(brush:self);
+        BrushStorageManager.storeState(brush:self,event:"DESTROY");
+
 
         if(transitionDelayTimer != nil){
             transitionDelayTimer.invalidate();

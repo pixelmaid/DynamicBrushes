@@ -1,21 +1,22 @@
 "use strict";
 
-define(["app/Emitter", "app/DebuggerModel"],
+define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 
-	function(Emitter, DebuggerModel) {
+	function(Emitter, DebuggerModel, BrushDebuggerModel) {
 
 
 		var DebuggerModelCollection = class extends Emitter {
 
-			constructor() {
+			constructor(chartViewManager) {
 				super();
 				this.setupData();
 
-				this.brushModel = new DebuggerModel(this);
+				this.brushModel = new BrushDebuggerModel(this);
 				this.inputModel = new DebuggerModel(this);
 				this.outputModel = new DebuggerModel(this);
 				this.selectedIndex = 0;
 				this.inspectorQueue = [];
+				this.chartViewManager = chartViewManager;
 				this.startInspectorInterval();
 
 				this.currHighlighted = [];
@@ -42,10 +43,10 @@ define(["app/Emitter", "app/DebuggerModel"],
 			}
 
 			updateHighlight(dataArray){
-				let id = dataArray[0]
-				let isOn = dataArray[1]
-				let data = {'name':id, 'isOn':isOn}
-				console.log("!!!! triggering highlight~ ", data)
+				let id = dataArray[0];
+				let isOn = dataArray[1];
+				let data = {'name':id, 'isOn':isOn};
+				console.log("!!!! triggering highlight~ ", data);
 				this.trigger("ON_HIGHLIGHT_REQUEST",[data]);
 		 }
 
@@ -78,7 +79,7 @@ define(["app/Emitter", "app/DebuggerModel"],
 				if(this.inspectorQueue.length>0){
 					let targetData = this.inspectorQueue.shift();
 					this.processInspectorData(targetData);
-					// console.log("called inspector interval",this.inspectorDataTimer)
+
 				}
 			}
 
@@ -207,7 +208,7 @@ define(["app/Emitter", "app/DebuggerModel"],
 						for (var brushId in brushes) {
 							if (brushes.hasOwnProperty(brushId)) {
 								var formattedParams = JSON.parse(JSON.stringify(group));
-								let brush = brushes[brushId]
+								let brush = brushes[brushId];
 								var params = brush.params;
 								
 								for (var key in params) {
@@ -225,11 +226,12 @@ define(["app/Emitter", "app/DebuggerModel"],
 									}
 									formattedParams.id = brushId;
 									formattedParams.name = brush.name;
+									
 									formattedBrushes.push(formattedParams);
 							}
 
 						}
-					formattedBehavior.id = behaviorId
+					formattedBehavior.id = behaviorId;
 					formattedBehavior.name = behavior.name;
 					formattedBehavior.brushes = formattedBrushes;
 					formattedData.behaviors.push(formattedBehavior);
@@ -278,7 +280,18 @@ define(["app/Emitter", "app/DebuggerModel"],
 						}
 
 						formattedParams.id = brush.id;
-						formattedBrushes.push(formattedParams);
+						formattedBrushes.push({
+										inspector:formattedParams,
+										behaviorId:brush.behaviorId,
+										constraints:brush.constraints,
+										currentState:brush.currentState,
+										event: brush.event,
+										id:brush.id,
+										methods:brush.methods,
+										prevState:brush.prevState,
+										transitionId:brush.transitionId
+									});
+						//formattedBrushes.push(formattedParams);
 
 
 					}
