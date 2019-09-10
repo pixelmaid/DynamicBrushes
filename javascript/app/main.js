@@ -87,6 +87,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
                 signalModel.datasetLoader.loadCollection(data.data.collections);
                 saveManager.setCurrentFilename(currentBehaviorName, currentBehaviorFile);
                 debuggerModelCollection.clearInspectorDataQueue();
+                updateSelectedBehaviorAndBrush();
 
 
             } else if (data.type == "collection_data") {
@@ -136,6 +137,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
             socketController.sendMessage(transmit_data);
 
             hideOverlay();
+            updateSelectedBehaviorAndBrush();
 
         };
 
@@ -236,13 +238,14 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
             socketController.sendMessage(step_data);
         };
 
-        var updateActiveInstance = function(instanceNum){
+        var updateSelectedBehaviorAndBrush = function(){
             var instance_data = {
                 type: "debug_request",
                 requester: "authoring",
                 data: {
-                    type:"activeInstanceUpdate",
-                    activeInstance: instanceNum
+                    type:"selectedBehaviorAndBrushUpdate",
+                    activeInstance: debuggerModelCollection.selectedIndex,
+                    currentlySelectedBehaviorId: chartViewManager.currentView.id
                 }
             };
 
@@ -324,7 +327,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
         signalView.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
 
         saveManager.addListener("ON_SAVE_EVENT", onStorageEvent);
-        debuggerModelCollection.addListener("ON_ACTIVE_INSTANCE_CHANGED",updateActiveInstance);
+        debuggerModelCollection.addListener("ON_ACTIVE_INSTANCE_CHANGED",updateSelectedBehaviorAndBrush);
+
         debuggerModelCollection.addListener("ON_HIGHLIGHT_REQUEST",onHighlightRequest);
 
         signalModel.datasetLoader.addListener("ON_IMPORTED_DATASET_READY", onDataReady);

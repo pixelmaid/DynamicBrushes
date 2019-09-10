@@ -25,6 +25,7 @@ enum BehaviorError: Error {
 class BehaviorManager{
     static var behaviors = [String:BehaviorDefinition]()
     static var activeInstance = 0;
+    static var currentlySelectedBehaviorId:String! = nil;
   // static var imported = [String:SignalCollection]();
   //  static var recordings = [String:SignalCollection]();
    // static var generators = [String:GeneratorCollection]();
@@ -196,7 +197,6 @@ class BehaviorManager{
             print("data to load",data);
             BehaviorManager.loadCollectionsFromJSON(data: data["data"]["collections"]);
             self.loadBehaviorsFromJSON(json: data["data"]["behaviors"], rewriteAll: false)
-            
           /*  let name = data["name"].stringValue;
             let id = data["id"].stringValue;
             let data = data["data"]
