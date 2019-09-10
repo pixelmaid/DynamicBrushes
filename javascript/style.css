@@ -1275,5 +1275,9 @@ position: absolute;
 }
 
 
+.sub-group-inspector li{
+    list-style-position: inside;
+    border-radius: 6px;
+}
  
 

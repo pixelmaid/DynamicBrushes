@@ -116,12 +116,14 @@ define(["jquery", "handlebars", "app/Emitter"],
       }
 
       highlightParamRow(rowId) {
-        $('#'+rowId).css('outline', '1px solid #0f0');
+       // $('#'+rowId).css('outline', '1px solid #0f0');
+       $('#'+rowId).css('border', '1px solid #00ff03');
+  
         // console.log("~~~ highlighted ", rowId);
       }
 
       unhighlightParamRow(unhighlightRowId) {
-        $('#'+unhighlightRowId).css('outline', '');
+        $('#'+unhighlightRowId).css('border', '');
       }
 
 
@@ -188,9 +190,6 @@ define(["jquery", "handlebars", "app/Emitter"],
         }
 
         
-        this.setupHighlighting(data);
-
-
         //rehighlight
         for (var i = 0; i < this.model.collection.getCurrHighlighted().length; i++) {
           // console.log("~ rehighlighting ", self.model.collection.getCurrHighlighted()[i]);
