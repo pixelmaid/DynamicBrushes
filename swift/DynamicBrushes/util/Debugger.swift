@@ -329,7 +329,7 @@ final class Debugger {
             let targetIndex = BehaviorManager.activeInstance;
             let targetBehavior =  BehaviorManager.behaviors[targetBehaviorId]!;
             let targetBrush = targetBehavior.brushInstances[targetIndex];
-            
+            if(targetBrush.unrendered){
             for currentData in Debugger.drawingDebugDataQueue {
                 
                 
@@ -361,8 +361,45 @@ final class Debugger {
             }
             Debugger.drawingDebugDataQueue.removeAll();
         }
+        }
         
     }
+        
+/*static public func drawUnrendererdBrushes(view:BrushGraphicsView){
+ let behaviors = BehaviorManager.getAllBrushInstances();
+ //check to see which brushes are "unrendered"
+ // pass them the UI view and draw into it
+ var brushIds = Set<String>()
+ 
+ for (behaviorId,brushTuple) in behaviors {
+ let brushes = brushTuple.1;
+ let brush = brushes[BehaviorManager.activeInstance]
+ if brush.unrendered {
+ //                print("~~~ about to draw into context in debugger with brush ", brush.id)
+ //double check view values since they arent persistent
+ refreshVisualizations(view: view)
+ let valArray = Debugger.getGeneratorValue(brushId: brush.id)
+ let inputInfo = Debugger.getStylusInputValue(brushId: brush.id)
+ brush.drawIntoContext(context:view, info:inputInfo)
+ 
+ view.scene!.drawGenerator(valArray: valArray)
+ 
+ }
+ brushIds.insert(brush.id)
+ }
+ //remove brush if not in this list
+ let brushesIdsOnCanvas = Set(view.scene!.activeBrushIds.keys)
+ 
+ let keysToRemove = Array(brushesIdsOnCanvas.symmetricDifference(brushIds))
+ //        print("##keys to remove is ", keysToRemove)
+ for id in keysToRemove {
+ view.scene!.removeActiveId(id:id)
+ view.updateNode()
+ 
+ //
+ }
+ 
+ }*/
     
     
     static func highlight(data:JSON){

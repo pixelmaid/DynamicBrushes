@@ -1015,6 +1015,7 @@ class DrawingViewController: UIViewController, Requester{
                 DispatchQueue.main.async {
                     self.layerContainerView.drawIntoCurrentLayer(drawing:self.currentDrawing!);
                 }
+                Debugger.cacheDebugData();
                 self.backupNeeded = true;
                
             }

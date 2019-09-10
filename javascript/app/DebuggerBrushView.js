@@ -26,11 +26,10 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 			}
 
 			setupHighlighting(data){
-			/*	 if (data['groupName'] == 'brush') {          
           $('#param-dx')[0].previousElementSibling.id = 'param-posy';
           $('#param-posy')[0].previousElementSibling.id = 'param-posx';   
           this.setUpHighlightClicks('brush');
-        } */
+        
 			}
 
 			
