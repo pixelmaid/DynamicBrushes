@@ -1022,8 +1022,8 @@ class DrawingViewController: UIViewController, Requester{
             //add check for brush unrendered
        
         }
-        if(BehaviorManager.behaviors.count>0){
-            Debugger.drawCurrentBrushState(view: self.layerContainerView.brushGraphicsView!,targetBehaviorId: BehaviorManager.behaviors.first!.key);
+        if(BehaviorManager.behaviors.count>0 && BehaviorManager.currentlySelectedBehaviorId != nil){
+            Debugger.drawCurrentBrushState(view: self.layerContainerView.brushGraphicsView!,targetBehaviorId: BehaviorManager.currentlySelectedBehaviorId);
         
         }
     }
@@ -1360,8 +1360,10 @@ class DrawingViewController: UIViewController, Requester{
                 case "stepForward":
                     stylusManager.stepSample();
                 break;
-                case "activeInstanceUpdate":
+                case "selectedBehaviorAndBrushUpdate":
                     BehaviorManager.activeInstance = debugData["activeInstance"].intValue;
+                    BehaviorManager.currentlySelectedBehaviorId = debugData["currentlySelectedBehaviorId"].stringValue;
+
                 break;
                 
             case "highlightRequest":
