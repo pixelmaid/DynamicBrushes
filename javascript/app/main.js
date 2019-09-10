@@ -14,7 +14,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
         var codename;
         var dataView = new DatasetView(signalModel.datasetLoader, "#dataset_select");
         var keypressHandler = new KeypressHandler(debuggerModelCollection);
-        var debuggerModelCollection = new DebuggerModelCollection();
+        var debuggerModelCollection = new DebuggerModelCollection(chartViewManager);
         var debuggerBrushView = new DebuggerBrushView(debuggerModelCollection.brushModel, "#inspector-brush", brushInspectorTemplate, "brush", keypressHandler);
         var debuggerInputView = new DebuggerView(debuggerModelCollection.inputModel, "#inspector-input", inputInspectorTemplate, "inputGlobal", keypressHandler);
         // note -- make one for inputLocal? 

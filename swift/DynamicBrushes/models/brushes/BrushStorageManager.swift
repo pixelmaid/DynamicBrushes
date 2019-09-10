@@ -47,7 +47,7 @@ class BrushStorageManager{
         
     }
     
-    static func storeState(brush:Brush){
+    static func storeState(brush:Brush,event:String){
         guard var brushList = BrushStorageManager.paramStorage[brush.behaviorId] else {
             return;
         }
@@ -62,6 +62,7 @@ class BrushStorageManager{
         stateData["transitionId"] = JSON(brush.prevTransition);
         stateData["params"] = brush.params.toJSON();
         stateData["id"] = JSON(brush.id);
+        stateData["event"] = JSON(event);
         stateData["constraints"] = brush.states[brush.currentState]!.getConstrainedPropertyNames();
         stateData["methods"] = brush.transitions[brush.prevTransition]!.getMethodNames();
         

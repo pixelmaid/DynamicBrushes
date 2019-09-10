@@ -11,18 +11,32 @@ define(["app/DebuggerModel"],
 
 
 			constructor(collection) {
-				super();
+				super(collection);
 
 				this.brushVizQueue = [];
 
 			}
 
-			processInspectorData(data) {
+			update(data){
+			   this.data = data;
+			   if(this.collection.chartViewManager.currentView){
+			  	 let currentBehaviorId = this.collection.chartViewManager.currentView.id;
+			  	 let selectedIndex = this.collection.selectedIndex;
 
-				console.log("! data type is ", data.type);
-				console.log("! data is ", data);
-				this.updateBrushData(data.brushState);
-				switch (data.type) {
+			  	 let targetBehaviorData = data.behaviors[currentBehaviorId];
+			  	 let targetBrushData = targetBehaviorData.brushes[selectedIndex];
+			  	 this.processStepData(targetBrushData);
+
+			  	}
+
+			  	this.trigger("DATA_UPDATED");
+
+
+			}
+
+			processStepData (data) {
+
+				switch (data.event) {
 					case "DRAW_SEGMENT":
 
 						//this.trigger("ON_VIZ_DRAW_SEGMENT",[data]);
@@ -31,7 +45,6 @@ define(["app/DebuggerModel"],
 
 					case "STATE_TRANSITION":
 						//this.trigger("ON_STATE_TRANSITION",[data]);
-						console.log("! calling display transition");
 						this.displayTransition(data);
 						break;
 
@@ -75,7 +88,7 @@ define(["app/DebuggerModel"],
 		};
 
 
-		return DebuggerModel;
+		return BrushDebuggerModel;
 
 
 	});

@@ -7,7 +7,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 
 		var DebuggerModelCollection = class extends Emitter {
 
-			constructor() {
+			constructor(chartViewManager) {
 				super();
 				this.setupData();
 
@@ -16,6 +16,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 				this.outputModel = new DebuggerModel(this);
 				this.selectedIndex = 0;
 				this.inspectorQueue = [];
+				this.chartViewManager = chartViewManager;
 				this.startInspectorInterval();
 
 				this.currHighlighted = [];
@@ -284,6 +285,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 										behaviorId:brush.behaviorId,
 										constraints:brush.constraints,
 										currentState:brush.currentState,
+										event: brush.event,
 										id:brush.id,
 										methods:brush.methods,
 										prevState:brush.prevState,
