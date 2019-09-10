@@ -34,7 +34,6 @@ extension Brush {
             context.scene!.addBrushGraphic(id:self.id, ox:self.params.ox, oy:self.params.oy, r: self.params.rotation,
                                            x: self.params.x, y:self.params.y, cx: self.params.cx, cy:self.params.cy, ix:ix, iy:iy )
         }
-        
         if Debugger.toDrawPenDown {
             context.scene!.movePenDown(x: ix, y: iy, lastX: Debugger.lastPointX, lastY: Debugger.lastPointY)
             Debugger.toDrawPenDown = false
@@ -51,6 +50,7 @@ extension Brush {
         Debugger.lastState = state
         Debugger.lastPointX = ix
         Debugger.lastPointY = iy
+        print("~~~ draw into context called")
     }
     
     //to do - remove brush visualizations
