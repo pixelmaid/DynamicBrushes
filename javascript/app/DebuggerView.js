@@ -194,25 +194,38 @@ define(["jquery", "handlebars", "app/Emitter"],
         let self = this;
         var html = this.template(data);
         this.el.html(html);
-        if (data['groupName'] == 'brush') {          
-          $('#param-dx')[0].previousElementSibling.id = 'param-posy';
-          $('#param-posy')[0].previousElementSibling.id = 'param-posx';   
-          this.setUpHighlightClicks('brush');
-        } 
-        else if (data['groupName'] != 'output' && data['global']['name'] == 'Global Input') {
-          $('#param-force')[0].previousElementSibling.id = 'param-styy';
-          $('#param-styy')[0].previousElementSibling.id = 'param-styx'; 
-          this.setUpHighlightClicks('input');  
-        } else {
-          this.setUpHighlightClicks('output');
+        if ($("#inspector-input").children().length) {
+          self.modifyInspectorInput();          
         }
-
+        if ($("#inspector-brush").children().length) {
+          self.modifyInspectorBrush();          
+        }
+        if ($("#inspector-output").children().length) {
+          self.modifyInspectorOutput();          
+        }
         //rehighlight
         for (var i = 0; i < self.model.collection.getCurrHighlighted().length; i++) {
-          // console.log("~ rehighlighting ", self.model.collection.getCurrHighlighted()[i]);
           self.highlightParamRow(self.model.collection.getCurrHighlighted()[i]);
         }
 
+      }
+
+      modifyInspectorInput() {
+        if ($('#param-dx').length) {
+          $('#param-dx')[0].previousElementSibling.id = 'param-posy';
+          $('#param-posy')[0].previousElementSibling.id = 'param-posx';             
+        }
+          this.setUpHighlightClicks('brush');
+      }
+      modifyInspectorBrush() {
+        if ($('#param-force').length) {
+          $('#param-force')[0].previousElementSibling.id = 'param-styy';
+          $('#param-styy')[0].previousElementSibling.id = 'param-styx';           
+        }
+          this.setUpHighlightClicks('input');  
+      }
+      modifyInspectorOutput() {
+        this.setUpHighlightClicks('output');
       }
 
 

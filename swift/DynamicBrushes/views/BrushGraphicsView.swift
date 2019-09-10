@@ -229,9 +229,17 @@ public class BrushGraphicsScene {
     
     public func movePenDown(x:Double, y:Double, lastX:Double, lastY:Double){
         for (_, brush) in self.activeBrushIds{
+            var angle:Double
             let newX = x - lastX
-            let newY = y - lastY
-            let angle = acos(newX / sqrt(pow(newX,2) + pow(newY,2)))
+            var newY = y - lastY
+            print("diff for down is ~~~ ", newX, newY, " original ", x, y, " new ", lastX, lastY)
+            if newY < 0 {
+                print("~~ down neg")
+//                newY = -newY
+                angle = acos(newX / sqrt(pow(newX,2) + pow(newY,2)))*180/Double(pi)// + 180
+            } else {
+                angle = acos(newX / sqrt(pow(newX,2) + pow(newY,2)))*180/Double(pi)
+            }
             brush.movePenDown(x:x, y:y, angle:angle)
             
         }
@@ -239,9 +247,17 @@ public class BrushGraphicsScene {
     
     public func movePenUp(x:Double, y:Double, lastX:Double, lastY:Double){
         for (_, brush) in self.activeBrushIds{
+            var angle:Double
             let newX = x - lastX
-            let newY = y - lastY
-            let angle = acos(newX / sqrt(pow(newX,2) + pow(newY,2)))
+            var newY = y - lastY
+            print("diff for up is ~~~ ", newX, newY, " original ", x, y, " new ", lastX, lastY)
+            if newY < 0 {
+                print("~~ up neg")
+//                newY = -newY
+                angle = acos(newX / sqrt(pow(newX,2) + pow(newY,2)))*180/Double(pi) //+ 180
+            } else {
+                angle = acos(newX / sqrt(pow(newX,2) + pow(newY,2)))*180/Double(pi)
+            }
             brush.movePenUp(x:x, y:y, angle:angle)
         }
     }
@@ -316,6 +332,10 @@ class BrushGraphic {
     let stylusText: Text
     let inputIcon: Shape
     var lastStylusInputs = Group()
+    var stylusStream = Group()
+    var brushStream = Group()
+    var outputStream = Group()
+    let streamLimit = 400
     let inputLimit = 50
     let computedIcon: Shape
     let stylusIcon: Shape
@@ -383,12 +403,13 @@ class BrushGraphic {
         stylusText = BrushGraphic.newText("stylus x: 0, stylus y: 0", Transform.move(dx:0,dy:10))
         node.contents.append(stylusIcon)
         let inputScale = 10.0
-        stylusUpIcon = Polygon(points:[0, -inputScale, inputScale*sqrt(3), 0, 0, inputScale]).fill(with: inputColor)
+        stylusUpIcon = Polygon(points:[0, -inputScale, inputScale, 0, 0, inputScale]).fill(with: inputColor)
         stylusDownIcon = Polygon(points:[-inputScale*0.5, -inputScale, 0, -inputScale, inputScale, 0, 0, inputScale, -inputScale*0.5, inputScale, 0, 0]).fill(with: inputColor)
 //        stylusDownIcon.place = Transform.move(dx:500,dy:500)
 //        stylusUpIcon.place = Transform.move(dx:800,dy:500)
         node.contents.append(stylusUpIcon)
         node.contents.append(stylusDownIcon)
+        node.contents.append(stylusStream)
 
         //init reified brush
         let xLine = Shape(form: Macaw.Line(x1: axisScale, y1: 0, x2: axisScale+axisLen, y2:0), stroke: Macaw.Stroke(fill:brushColor, width:2))
@@ -411,6 +432,7 @@ class BrushGraphic {
         brushIcon.place = Transform.move(dx:Double(0),dy:Double(0))
         
         node.contents.append(brushIcon)
+        node.contents.append(brushStream)
         
         //init brush icon
         inputIcon = Shape(form: Circle(r: 10), fill: brushColor, stroke: Macaw.Stroke(fill: Macaw.Color.white, width:2))
@@ -423,6 +445,7 @@ class BrushGraphic {
         computedIcon.place = Transform.move(dx:Double(self.cx), dy:Double(self.cy))
         node.contents.append(computedIcon)
         computedText = BrushGraphic.newText("abs x: 0, abs y: 0", Transform.move(dx:0,dy:20))
+        node.contents.append(outputStream)
 
         //init generator static location
         let empty = Shape(form: Circle(r:1), fill: Macaw.Color.rgba(r:0,g:0,b:0,a:0))
@@ -955,11 +978,14 @@ class BrushGraphic {
         
         stylusIcon.place = Transform.move(dx: x, dy: y)
         let currStylusIcon:Shape
+        let currStylusStream:Shape
         let forceScale = (force+1)
         if Debugger.inputGfx {
             currStylusIcon = Shape(form: Circle(r: 10), fill: inputColor)
+            currStylusStream = Shape(form: Circle(r: 10), fill: inputColor)
         } else {
             currStylusIcon = Shape(form: Circle(r: 10), fill: hiddenColor)
+            currStylusStream = Shape(form: Circle(r: 10), fill: hiddenColor)
         }
 
 
@@ -967,9 +993,14 @@ class BrushGraphic {
         stylusText.text = "x: "+String(Int(x))+", y: "+String(Int(y))+", force: "+String((force*10).rounded()/10)
         stylusText.place = Transform.move(dx: x, dy: y + 20)
         currStylusIcon.place = Transform.move(dx:x, dy:y).scale(sx:forceScale, sy:forceScale)
+        currStylusStream.place = Transform.move(dx:x, dy:y)
         lastStylusInputs.contents.append(currStylusIcon)
+        stylusStream.contents.append(currStylusStream)
         if lastStylusInputs.contents.count > inputLimit {
             lastStylusInputs.contents.removeFirst()
+        }
+        if stylusStream.contents.count > streamLimit {
+            stylusStream.contents.removeFirst()
         }
         if Debugger.inputGfx {
             updateExistingStylusStrokes()
@@ -989,6 +1020,17 @@ class BrushGraphic {
         inputText.place = Transform.move(dx: Double(x), dy: Double(y) - Double(20))
         if self.scene.brushOn { self.highlightBrushIcon() }
 
+        let currBrushStream:Shape
+        if Debugger.brushGfx {
+            currBrushStream = Shape(form: Circle(r: 10), fill: inputColor)
+        } else {
+            currBrushStream = Shape(form: Circle(r: 10), fill: hiddenColor)
+        }
+        currBrushStream.place = Transform.move(dx:Double(x), dy:Double(y))
+        brushStream.contents.append(currBrushStream)
+        if brushStream.contents.count > streamLimit {
+            brushStream.contents.removeFirst()
+        }
 //        print("## moved input" , self.id, " to x ,y,", x, y )
     }
     
@@ -1000,7 +1042,19 @@ class BrushGraphic {
         computedText.text = "abs x: "+String(Int(cx))+", abs y: "+String(Int(cy))
         computedText.place = Transform.move(dx: Double(cx), dy: Double(cy) + Double(30))
         if self.scene.outputOn { self.highlightOutput() }
-
+        
+        let currOutputStream:Shape
+        if Debugger.outputGfx {
+            currOutputStream = Shape(form: Circle(r: 10), fill: inputColor)
+        } else {
+            currOutputStream = Shape(form: Circle(r: 10), fill: hiddenColor)
+        }
+        currOutputStream.place = Transform.move(dx:Double(x), dy:Double(y))
+        outputStream.contents.append(currOutputStream)
+        if outputStream.contents.count > streamLimit {
+            outputStream.contents.removeFirst()
+        }
+        
 //        print("## moved computed" , self.id, "to cx cy" , cx, cy)
     }
     
@@ -1009,14 +1063,14 @@ class BrushGraphic {
         print("~~~~ penup angle is ", angle)
         if angle.isNaN { correctedAngle = 0}
         //todo figure out orientation of rotation
-        stylusUpIcon.place = Transform.move(dx: x, dy: y).rotate(angle:-correctedAngle)
+        stylusUpIcon.place = Transform.move(dx: x, dy: y).rotate(angle:correctedAngle)
     }
     
     func movePenDown(x:Double, y:Double, angle:Double){
         print("~~~~ pendown angle is ", angle)
         var correctedAngle = angle
         if angle.isNaN { correctedAngle = 0}
-        stylusDownIcon.place = Transform.move(dx: x, dy: y).rotate(angle:-correctedAngle)
+        stylusDownIcon.place = Transform.move(dx: x, dy: y).rotate(angle:correctedAngle)
     }
     
 }

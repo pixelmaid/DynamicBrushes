@@ -37,7 +37,6 @@ final class Debugger {
     static public var lastPointX = 0.0
     static public var lastPointY = 0.0
     static public var toDrawPenDown = false
-    static public var toDrawPenUp = false
     
     static var propSort = ["ox","oy","sx","sy","rotation","dx","dy","x","y","radius","theta","diameter","hue","lightness","saturation","alpha"]
     

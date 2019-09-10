@@ -34,20 +34,16 @@ extension Brush {
             context.scene!.addBrushGraphic(id:self.id, ox:self.params.ox, oy:self.params.oy, r: self.params.rotation,
                                            x: self.params.x, y:self.params.y, cx: self.params.cx, cy:self.params.cy, ix:ix, iy:iy )
         }
-
-        if state == 2 || (state == 1 && Debugger.lastState == 0) {
-            Debugger.toDrawPenDown = true //queue for next one
-        } else if state == 0 && Debugger.lastState == 1 {
-            Debugger.toDrawPenUp = true
-        }
         
         if Debugger.toDrawPenDown {
             context.scene!.movePenDown(x: ix, y: iy, lastX: Debugger.lastPointX, lastY: Debugger.lastPointY)
             Debugger.toDrawPenDown = false
         }
-        if Debugger.toDrawPenUp  {
+
+        if state == 2 || (state == 1 && Debugger.lastState == 0) {
+            Debugger.toDrawPenDown = true //queue for next one
+        } else if state == 0 && Debugger.lastState == 1 {
             context.scene!.movePenUp(x: ix, y: iy, lastX: Debugger.lastPointX, lastY: Debugger.lastPointY)
-            Debugger.toDrawPenUp = false
         }
         
         context.updateNode()

@@ -94,7 +94,7 @@ define(["app/Emitter", "app/DebuggerModel"],
 
 
 			highlight(newData){
-				console.log("~~~~~ received data final!! ", newData, this.brushModel);
+				// console.log("~~~~~ received data final!! ", newData, this.brushModel);
 				let type = newData.kind;
 				let isOn = newData.isOn;
 				switch (type) {
