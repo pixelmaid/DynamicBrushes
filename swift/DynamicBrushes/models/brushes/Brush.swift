@@ -370,22 +370,13 @@ class Brush: TimeSeries, Hashable, Renderable{
         let x = self.x.get(id:nil);
         let y = self.y.get(id:nil);
         
-        let r =  self.rotation.get(id:nil); //MathUtil.map(value: self.rotation.get(id:nil), low1: 0.0, high1: 100.0, low2: 0.0, high2: 360.0)
+        let r =  self.rotation.get(id:nil);
         
         let sx = self.scaling.x.get(id:nil)
         let sy = self.scaling.y.get(id:nil)
         
       
         let weight = self.weight.get(id:nil);
-        
-        
-       /* let h =   MathUtil.map(value: self.hue.get(id:nil), low1: 0.0, high1: 100.0, low2: 0.0, high2: 1.0)
-        
-        let s = MathUtil.map(value: self.saturation.get(id:nil), low1: 0.0, high1: 100.0, low2: 0.0, high2: 1.0)
-        
-        let l = MathUtil.map(value: self.lightness.get(id:nil), low1: 0.0, high1: 100.0, low2: 0.0, high2: 1.0)
-        let mapped_alpha = pow(1.054,self.alpha.get(id:nil))*0.54
-        let a = MathUtil.map(value: mapped_alpha, low1: 0.0, high1: 100.0, low2: 0.0, high2: 1.0)*/
         
         let h =  self.hue.get(id:nil);
         let s = self.saturation.get(id:nil);
@@ -419,8 +410,7 @@ class Brush: TimeSeries, Hashable, Renderable{
        
         self.params.updateAll(data: data);
         BrushStorageManager.storeState(brush:self);
-        
-      
+
 
         self.currentDrawing!.addSegmentToStroke(behaviorId:self.behaviorId, brushId:self.id, point:Point(x:cx,y:cy),weight:weight , color: color,alpha:a, time: self.params.time)
         self.unrendered = true;
@@ -431,10 +421,8 @@ class Brush: TimeSeries, Hashable, Renderable{
         // self.distanceIntervalCheck();
         //self.intersectionCheck();
         
-        self.signalEvent.raise(data: (self.behaviorId,self.id,self.params));
-        Debugger.cacheDebugData();
+        //self.signalEvent.raise(data: (self.behaviorId,self.id,self.params));
 
-      //  Debugger.generateBrushDebugData(brush: self, type: "DRAW_SEGMENT");
 
     }
 

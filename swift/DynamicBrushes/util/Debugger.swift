@@ -12,13 +12,17 @@ import Macaw
 
 final class Debugger {
     static public let debugInterval:Int = 1;
-    static public var debugTimer:Timer! = nil
-    static public let debuggerEvent = Event<(String, String)>();
-        
-    static private var debuggingActive = false;
-    static public var debugDataQueue = [JSON]();
-    static public var debuggingTimerActive = false;
+    static public var programViewDebugTimer:Timer! = nil
+    static private var debugCacheTimer:Timer! = nil
 
+    static public let debuggerEvent = Event<(String, String)>();
+    
+    static private var debuggingActive = false;
+    static public var programDebugDataQueue = [JSON]();
+    static public var drawingDebugDataQueue = [JSON]();
+    
+    static public var debuggingTimerActive = false;
+    
     static public var inputGfx = true
     static public var inputLabel = true
     static public var brushGfx = true
@@ -29,7 +33,7 @@ final class Debugger {
     static public var lastState = -1
     
     static var propSort = ["ox","oy","sx","sy","rotation","dx","dy","x","y","radius","theta","diameter","hue","lightness","saturation","alpha"]
-
+    
     static public func activate(){
         Debugger.debuggingActive = true;
         Debugger.debuggerEvent.raise(data: ("INIT", ""));
@@ -43,19 +47,19 @@ final class Debugger {
     static public func orderProps(propList:[JSON])->[JSON]{
         var _propList = propList;
         var sortedMappings = [JSON]();
-
+        
         propSort.forEach { key in
-        var found = false;
-        _propList = _propList.filter { (mapping) -> Bool in
-            
-            if( !found && mapping["relativePropertyName"].stringValue == key){
-                sortedMappings.append(mapping);
-                found = true;
-                return false;
-            } else{
-                return true;
+            var found = false;
+            _propList = _propList.filter { (mapping) -> Bool in
+                
+                if( !found && mapping["relativePropertyName"].stringValue == key){
+                    sortedMappings.append(mapping);
+                    found = true;
+                    return false;
+                } else{
+                    return true;
+                }
             }
-        }
         }
         return sortedMappings;
     }
@@ -63,18 +67,29 @@ final class Debugger {
     static public func startDebugTimer(interval:Int){
         Debugger.endDebugTimer();
         Debugger.debuggingTimerActive = true;
-        Debugger.debugTimer = Timer(timeInterval: TimeInterval(interval), target: self, selector: #selector(Debugger.fireDebugUpdate), userInfo: nil, repeats: true)
-        RunLoop.current.add(debugTimer, forMode: RunLoop.Mode.common)
+       Debugger.programViewDebugTimer = Timer(timeInterval: TimeInterval(interval), target: self, selector: #selector(Debugger.fireDebugUpdate), userInfo: nil, repeats: true)
+        Debugger.debugCacheTimer = Timer(timeInterval:0.001, target: self, selector: #selector(Debugger.cacheDebugData), userInfo: nil, repeats: true)
+        RunLoop.current.add(programViewDebugTimer, forMode: RunLoop.Mode.common)
+        RunLoop.current.add(debugCacheTimer, forMode: RunLoop.Mode.common)
+
     }
     
     
-   static public func endDebugTimer(){
-        if(Debugger.debugTimer != nil){
-            Debugger.debugTimer.invalidate();
-        }
-        Debugger.debugTimer = nil;
-        Debugger.debuggingTimerActive = false;
+    static public func endDebugTimer(){
+        if(Debugger.programViewDebugTimer != nil){
+            Debugger.programViewDebugTimer.invalidate();
 
+        }
+        
+        if(Debugger.debugCacheTimer != nil){
+            Debugger.debugCacheTimer.invalidate();
+
+        }
+        Debugger.programViewDebugTimer = nil;
+        Debugger.debugCacheTimer = nil;
+
+        Debugger.debuggingTimerActive = false;
+        
     }
     
     
@@ -92,13 +107,9 @@ final class Debugger {
         let socketRequest = Request(target: "socket", action: "send_inspector_data", data: debugData, requester: RequestHandler.sharedInstance)
         RequestHandler.addRequest(requestData: socketRequest)
         
-        
-        print(debugData);
-        //   debugData["type"] = "jump";
-        
     }
     
-
+    
     static func generateOutputDebugData(globalTime:Int?,brushState:BrushStateStorage?)->JSON{
         var debugData:JSON = [:]
         debugData["groupName"] = JSON("output");
@@ -113,13 +124,13 @@ final class Debugger {
     
     
     static func generateInputDebugData(behaviorId:String?, brushId:String?, globalTime:Int?, localTime:Int?)->JSON{
-       
+        
         var debugData:JSON = [:]
         let generatorCollectionsJSON = Debugger.generateGeneratorDebugData(behaviorId: behaviorId,brushId: brushId,localTime: localTime);
         let inputGlobalJSON = Debugger.generateGlobalInputDebugData(globalTime:globalTime);
         debugData["generator"] = generatorCollectionsJSON;
         debugData["inputGlobal"] = inputGlobalJSON;
-
+        
         return debugData;
     }
     
@@ -181,39 +192,13 @@ final class Debugger {
         guard brushState != nil else{
             return BrushStorageManager.accessStateAtTime(globalTime: nil, behaviorNames: behaviorNames)
         }
-       return BrushStorageManager.accessStateAtTime(globalTime: brushState?.globalTime, behaviorNames: behaviorNames)
-        
-        /*var debugData:JSON = [:]
-        debugData["groupName"] = JSON("brush");
-        var behaviorListJSON = [JSON]();
-        var brushesListJSON = [JSON]();
-        let behaviors = BehaviorManager.getAllBrushInstances();
-        for (behaviorId,brushTuple) in behaviors {
-            let behaviorName = brushTuple.0;
-            let brushes = brushTuple.1;
-            for brush in brushes {
-                var brushJSON = generateSingleBrushDebugData(brush: brush);
-                brushJSON["name"] = JSON(brush.name);
-                brushesListJSON.append(brushJSON);
-        }
-            var behaviorJSON:JSON = [:];
-            behaviorJSON["id"] = JSON(behaviorId);
-            behaviorJSON["name"] = JSON(behaviorName);
-            behaviorJSON["brushes"] = JSON(brushesListJSON);
-            behaviorListJSON.append(behaviorJSON);
-            
-        }
-        debugData["behaviors"] = JSON(behaviorListJSON);
-
-        return debugData;*/
+        return BrushStorageManager.accessStateAtTime(globalTime: brushState?.globalTime, behaviorNames: behaviorNames)
     }
     
     
     static public func generateDebugData(behaviorId:String?,brushId:String?, brushState:BrushStateStorage?,globalTime:Int?,localTime:Int?)->JSON{
         let inputData = Debugger.generateInputDebugData(behaviorId: behaviorId, brushId: brushId, globalTime: globalTime,localTime: localTime);
         let brushData = Debugger.generateBrushDebugData(brushState:brushState);
-
-        
         let outputData = Debugger.generateOutputDebugData(globalTime:globalTime,brushState:brushState);
         var debugData:JSON = [:];
         debugData["brush"] = brushData;
@@ -224,30 +209,37 @@ final class Debugger {
     }
     
     @objc static func fireDebugUpdate(){
-        if(Debugger.debugDataQueue.count>0){
-            let debugJSON = JSON(Debugger.debugDataQueue);
+        if(Debugger.programDebugDataQueue.count>0){
+            let debugJSON = JSON(Debugger.programDebugDataQueue);
             let socketRequest = Request(target: "socket", action: "send_inspector_data", data: debugJSON, requester: RequestHandler.sharedInstance)
             RequestHandler.addRequest(requestData: socketRequest)
-            Debugger.debugDataQueue.removeAll();
+            Debugger.programDebugDataQueue.removeAll();
         }
     }
     
-    static public func cacheDebugData(){
+    @objc static func cacheDebugData(){
         let debugData = Debugger.generateDebugData(behaviorId: nil, brushId: nil, brushState: nil ,globalTime: nil,localTime: nil);
         
-        Debugger.debugDataQueue.append(debugData);
-
+        Debugger.programDebugDataQueue.append(debugData);
+        Debugger.drawingDebugDataQueue.append(debugData);
+        
     }
     
-    static public func getGeneratorValue(brushId:String) -> [(Double,Int,String)] {
+    static public func resetDebugStatus(){
+        Debugger.programDebugDataQueue.removeAll();
+        Debugger.drawingDebugDataQueue.removeAll();
+        Debugger.startDebugTimer(interval: Debugger.debugInterval);
+        
+    }
+    
+    static public func getGeneratorValue(brushId:String,debugData:JSON) -> [(Double,Int,String)] {
         var val = -1.0
         var time = -1
         var type = "none"
         var freq:Float = -1.0
         var returnVals:[(val:Double,time:Int,type:String)] = []
-        let generatorJSON = Debugger.generateGeneratorDebugData(behaviorId: nil, brushId: nil, localTime: nil);
         
-        let params:JSON = generatorJSON["params"]
+        let params:JSON = debugData["params"]
         for (_, subJsonArr):(String, JSON) in params {
             for (_, subJson):(String, JSON) in subJsonArr {
                 if (subJson["brushId"].string == brushId) {
@@ -269,27 +261,24 @@ final class Debugger {
         return returnVals
     }
     
-    static public func getStylusInputValue(brushId:String) -> (Double, Double, Double, Int) {
+    static public func getStylusInputValue(debugData:JSON) -> (Double, Double, Double, Int) {
         var x = 0.0
         var y = 0.0
         var force = 0.0
         var state = -1
-
-        let debugData = Debugger.generateInputDebugData(behaviorId: nil, brushId: nil,globalTime: nil,localTime: nil)
-
-        if debugData["inputGlobal"].exists() {
-            let items:JSON = debugData["inputGlobal"]["items"]
-            for (_, subJsonArr):(String, JSON) in items {
-                if subJsonArr["id"] == "stylus" {
-                    let params:JSON = subJsonArr["params"]
-                    x = params["x"].double ?? 0.0
-                    y = params["y"].double ?? 0.0
-                    force = params["force"].double ?? 0.0
-                    state = params["stylusEvent"].int ?? -1 //0 is down, 2 is up
-                    
-                }
+        
+        let items:JSON = debugData["items"]
+        for (_, subJsonArr):(String, JSON) in items {
+            if subJsonArr["id"] == "stylus" {
+                let params:JSON = subJsonArr["params"]
+                x = params["x"].double ?? 0.0
+                y = params["y"].double ?? 0.0
+                force = params["force"].double ?? 0.0
+                state = params["stylusEvent"].int ?? -1 //0 is down, 2 is up
+                
             }
         }
+        
         return (x, y, force, state)
     }
     
@@ -341,38 +330,46 @@ final class Debugger {
     }
     
     
-    static public func drawUnrendererdBrushes(view:BrushGraphicsView){
-        let behaviors = BehaviorManager.getAllBrushInstances();
+    static public func drawCurrentBrushState(view:BrushGraphicsView,targetBehaviorId:String){
+        //let behaviors = BehaviorManager.getAllBrushInstances();
         //check to see which brushes are "unrendered"
-       // pass them the UI view and draw into it
-        var brushIds = Set<String>()
-        
-        for (behaviorId,brushTuple) in behaviors {
-            let brushes = brushTuple.1;
-            let brush = brushes[BehaviorManager.activeInstance]
-            if brush.unrendered {
+        // pass them the UI view and draw into it
+        if(Debugger.drawingDebugDataQueue.count>0){
+            var brushIds = Set<String>()
+            let targetIndex = BehaviorManager.activeInstance;
+            let targetBehavior =  BehaviorManager.behaviors[targetBehaviorId]!;
+            let targetBrush = targetBehavior.brushInstances[targetIndex];
+            
+            for currentData in Debugger.drawingDebugDataQueue {
+                
+                
+                
                 //double check view values since they arent persistent
                 refreshVisualizations(view: view)
-                let valArray = Debugger.getGeneratorValue(brushId: brush.id)
-                let inputInfo = Debugger.getStylusInputValue(brushId: brush.id)
-                print("~~~ about to draw into context in debugger with stylus x y ", inputInfo.0, inputInfo.1)
-
-                brush.drawIntoContext(context:view, info:inputInfo)
+                
+                let valArray = Debugger.getGeneratorValue(brushId: targetBrush.id,debugData: currentData["input"]["generator"]);
+                let inputInfo = Debugger.getStylusInputValue(debugData: currentData["input"]["inputGlobal"]);
+              //  print("~~~ about to draw into context in debugger with stylus x y ", inputInfo.0, inputInfo.1)
+                
+                targetBrush.drawIntoContext(context:view, info:inputInfo)
                 view.scene!.drawGenerator(valArray: valArray)
-            
+                
+                
+                brushIds.insert(targetBrush.id)
+                
+                //remove brush if not in this list
+                let brushesIdsOnCanvas = Set(view.scene!.activeBrushIds.keys)
+                
+                let keysToRemove = Array(brushesIdsOnCanvas.symmetricDifference(brushIds))
+                //        print("##keys to remove is ", keysToRemove)
+                for id in keysToRemove {
+                    view.scene!.removeActiveId(id:id)
+                    view.updateNode()
+                    
+                    //
+                }
             }
-            brushIds.insert(brush.id)
-        }
-        //remove brush if not in this list
-        let brushesIdsOnCanvas = Set(view.scene!.activeBrushIds.keys)
-        
-        let keysToRemove = Array(brushesIdsOnCanvas.symmetricDifference(brushIds))
-//        print("##keys to remove is ", keysToRemove)
-        for id in keysToRemove {
-            view.scene!.removeActiveId(id:id)
-            view.updateNode()
-
-//
+            Debugger.drawingDebugDataQueue.removeAll();
         }
         
     }
@@ -382,13 +379,13 @@ final class Debugger {
         //respond to highlight request from programming interface
         let param = data["data"]["name"].string ?? ""
         let isOn = data["data"]["isOn"].bool ?? false
-        print("!!~~~ highlight request received! " , param, isOn, data)
+        //print("!!~~~ highlight request received! " , param, isOn, data)
         if isOn {
             Debugger.debuggerEvent.raise(data: ("HIGHLIGHT", param));
         } else {
             Debugger.debuggerEvent.raise(data: ("UNHIGHLIGHT", param));
         }
-
+        
     }
     
     static func setupHighlightRequest(){
@@ -396,10 +393,10 @@ final class Debugger {
         var debugData:JSON = [:]
         
         //populate highlight data here
-
+        
         
         debugData["type"] = "highlight";
-
+        
         let socketRequest = Request(target: "socket", action: "send_inspector_data", data: debugData, requester: RequestHandler.sharedInstance)
         RequestHandler.addRequest(requestData: socketRequest)
         
