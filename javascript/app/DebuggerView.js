@@ -10,21 +10,34 @@ define(["jquery", "handlebars", "app/Emitter"],
     var DebuggerView = class extends Emitter {
 
 
-      constructor(model, modelCollection, element, template, groupName, keyHandler) {
+      constructor(model, element, template, groupName, keyHandler) {
         super();
         this.el = $(element);
         this.model = model;
-        this.modelCollection = modelCollection;
-        this.pastConstraint = null;
+        
         this.inspectorInit = false;
         this.groupName = groupName; //brush, input, or output
         this.template = template;
-        this.currHighlighted = [];
         this.currInspectorActive = '';
         var self = this;
 
         this.model.addListener("DATA_UPDATED", function() {
           this.dataUpdatedHandler();
+        }.bind(this));
+
+        this.model.addListener("DATA_HIGHLIGHTED", function(data) {
+          console.log("~~~~ data highlighted  in view ", data);
+          this.highlightParamRow(data);
+          self.model.collection.pushCurrHighlighted(data);
+        }.bind(this));
+
+        this.model.addListener("DATA_UNHIGHLIGHTED", function() {
+          console.log("~~~~ data unhighlighted  in view ");
+          for (var i = 0; i < this.model.collection.getCurrHighlighted().length; i++) {
+            let p = this.model.collection.getCurrHighlighted()[i];
+            this.unhighlightParamRow(p);
+          }
+          this.model.collection.resetCurrHighlighted();
         }.bind(this));
       }
 
@@ -43,12 +56,6 @@ define(["jquery", "handlebars", "app/Emitter"],
           case 'param-styy':
             buddy = 'param-styx';
           break;
-          case 'param-sx':
-            buddy = 'param-sy';
-          break;
-          case 'param-sy':
-            buddy = 'param-sx';
-          break;
           case 'param-posx':
             buddy = 'param-posy';
           break;
@@ -66,9 +73,10 @@ define(["jquery", "handlebars", "app/Emitter"],
         return buddy;
       }
 
+
       setUpHighlightClicks(inspectorKind) {
         let self = this;
-        console.log("~~ before change id ", self.currHighlighted, inspectorKind, self.currInspectorActive);
+        // console.log("~~ before change id ", self.model.collection.getCurrHighlighted(), inspectorKind, self.currInspectorActive);
   
 
         $('li').click(function(e) {
@@ -79,25 +87,26 @@ define(["jquery", "handlebars", "app/Emitter"],
             // console.log("~ active ", activeInspector, inspectorKind, rowId);
             if (activeInspector == inspectorKind) { //if match 
               var buddy = self.findBuddies(rowId);
-              for (var i = 0; i < self.currHighlighted.length; i++) {
-                console.log("unlighting ~ ");
-                self.unhighlightParamRow(self.currHighlighted[i]);
-                self.modelCollection.updateHighlight([self.currHighlighted[i], false]);   
-                if (rowId == self.currHighlighted[i]) { //unhighlight self
+              for (var i = 0; i < self.model.collection.getCurrHighlighted().length; i++) {
+                // console.log("unlighting ~ ");
+                self.unhighlightParamRow(self.model.collection.getCurrHighlighted()[i]);
+                self.model.collection.updateHighlight([self.model.collection.getCurrHighlighted()[i], false]);   
+                if (rowId == self.model.collection.getCurrHighlighted()[i]) { //unhighlight self
                   skip = true;
                   self.unhighlightParamRow(buddy);
-                  self.modelCollection.updateHighlight([buddy, false]);   
+                  self.model.collection.updateHighlight([buddy, false]);   
                 }
               }
-              self.currHighlighted = [];
+              self.model.collection.resetCurrHighlighted();
               if (!skip) {
                 self.highlightParamRow(rowId);
-                self.currHighlighted.push(rowId);
-                self.modelCollection.updateHighlight([rowId, true]);   
+
+                self.model.collection.pushCurrHighlighted(rowId);
+                self.model.collection.updateHighlight([rowId, true]);   
                 if (buddy !== '') {
                   self.highlightParamRow(buddy);
-                  self.currHighlighted.push(buddy); 
-                  self.modelCollection.updateHighlight([buddy, true]);                
+                  self.model.collection.pushCurrHighlighted(buddy); 
+                  self.model.collection.updateHighlight([buddy, true]);                
                 }
               }
               self.currInspectorActive = activeInspector;
@@ -107,14 +116,12 @@ define(["jquery", "handlebars", "app/Emitter"],
       }
 
       highlightParamRow(rowId) {
-        $('#'+rowId).css('background-color', '#00ff00');
-        $('#'+rowId).css('color', '#000');
-
+        $('#'+rowId).css('outline', '1px solid #0f0');
+        // console.log("~~~ highlighted ", rowId);
       }
 
       unhighlightParamRow(unhighlightRowId) {
-              $('#'+unhighlightRowId).css('background-color', '');
-              $('#'+unhighlightRowId).css('color', '');
+        $('#'+unhighlightRowId).css('outline', '');
       }
 
 
@@ -176,7 +183,6 @@ define(["jquery", "handlebars", "app/Emitter"],
 
 
       setupHighlighting(data){
-         let self = this;
 
         
        if (data['groupName'] != 'output' && data['global']['name'] == 'Global Input') {
@@ -187,10 +193,15 @@ define(["jquery", "handlebars", "app/Emitter"],
           this.setUpHighlightClicks('output');
         }
 
-        //rehighlight
-        for (var i = 0; i < self.currHighlighted.length; i++) {
-          console.log("~ rehighlighting ", self.currHighlighted[i]);
-          self.highlightParamRow(self.currHighlighted[i]);
+        this.setupRehighlight();
+      }
+
+      setupRehighlight(){
+
+         //rehighlight
+        for (var i = 0; i < this.model.collection.getCurrHighlighted().length; i++) {
+          // console.log("~ rehighlighting ", self.model.collection.getCurrHighlighted()[i]);
+          this.highlightParamRow(this.model.collection.getCurrHighlighted()[i]);
         }
       }
 
@@ -200,70 +211,7 @@ define(["jquery", "handlebars", "app/Emitter"],
 
       }
 
-      visualizeStepThrough(constraint, pastConstraint, data) {
-        console.log("! visualizing constraints ", data, " past constraint ", pastConstraint);
-        var arrowObject;
-        if (pastConstraint) {
-          switch (pastConstraint.type) {
-            case "method":
-              $("#" + pastConstraint.methodId).removeClass("method-inspect");
-              break;
-            case "binding":
-              $("#" + pastConstraint.constraintId).removeClass("debug");
-              $("#param-" + pastConstraint.relativePropertyName).removeClass("debug-inspect");
-              break;
-            case "transition":
-              if (pastConstraint.transitionId == "start") {
-                $(".setup").children().eq(1).removeClass("start-highlight");
-              } else if ($("#" + pastConstraint.transitionId).hasClass("transition_statement")) {
-                $("#" + pastConstraint.transitionId).children().first().removeClass("method-inspect");
-              } else { //it's a state
-                $("#" + pastConstraint.transitionId).children().eq(1).removeClass("active");
-              }
-              //remove arrow highlight                     
-              arrowObject = $("#" + pastConstraint.transitionId).parent().prev();
-              arrowObject.children().eq(1).attr("stroke", "#efac1f");
-              arrowObject.children().eq(2).attr("stroke", "#efac1f");
-              arrowObject.children().eq(2).attr("fill", "#efac1f");
-              break;
-          }
-        }
-
-        switch (constraint.type) {
-          case "method":
-            console.log("!!VIZ METHOD ", constraint);
-            $("#" + constraint.methodId).addClass("method-inspect");
-            break;
-          case "binding":
-            $("#" + constraint.constraintId).addClass("debug");
-            $("#param-" + constraint.relativePropertyName).addClass("debug-inspect");
-            // console.log("data is ", this.model.data);
-            $("#" + data.currentState).children(".state").addClass("active");
-
-            let id = constraint.relativePropertyName;
-
-
-            break;
-          case "transition":
-            console.log("!!VIZ TRANSITION ", constraint, pastConstraint);
-            if (constraint.transitionId == "start") {
-              $(".setup").children().eq(1).addClass("start-highlight");
-            }
-            if ($("#" + constraint.transitionId).hasClass("transition_statement")) {
-              //outline header
-              $("#" + constraint.transitionId).children().first().addClass("method-inspect");
-            } else { //it's a state
-              $("#" + constraint.transitionId).children().eq(1).addClass("active");
-            }
-            //add arrow highlight                     
-            arrowObject = $("#" + constraint.transitionId).parent().prev();
-            arrowObject.children().eq(1).attr("stroke", "aqua");
-            arrowObject.children().eq(2).attr("stroke", "aqua");
-            arrowObject.children().eq(2).attr("fill", "aqua");
-            break;
-        }
-
-      }
+      
 
     };
 

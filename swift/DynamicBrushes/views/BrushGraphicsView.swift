@@ -21,7 +21,8 @@ public class BrushGraphicsScene {
     var stylusOn = false
     var originOn = false
     var rotationOn = false
-    var scaleOn = false
+    var scaleXOn = false
+    var scaleYOn = false
     var brushOn = false
     var outputOn = false
     
@@ -43,9 +44,9 @@ public class BrushGraphicsScene {
     }
 
     public func addBrushGraphic(id:String, ox:Float, oy:Float, r: Float,
-                         x: Float, y:Float, cx: Float, cy:Float ) {
+                                x: Float, y:Float, cx: Float, cy:Float, ix:Double, iy:Double) {
         //add to id, create new class
-        let brushGraphic = BrushGraphic(view:self.view, scene:self, id:id, ox:ox, oy:oy, r:r, x:x, y:y, cx:cx, cy:cy)
+        let brushGraphic = BrushGraphic(view:self.view, scene:self, id:id, ox:ox, oy:oy, r:r, x:x, y:y, cx:cx, cy:cy, ix:ix, iy:iy)
         self.activeBrushIds[id] = brushGraphic //add to dict
     }
     
@@ -80,7 +81,72 @@ public class BrushGraphicsScene {
         }
     }
     
+    public func checkCollisions(x: Float, y:Float) {
+        var hit = ""
+        for (_, brush) in self.activeBrushIds {
+            hit = brush.checkCollision(x:x, y:y)
+        }
+        print("~~~ FINAL HIT WAS ", hit)
+        switch (hit) {
+        case "input":
+            self.highlightViz(name: "param-styx", on: true)
+            break;
+        case "origin":
+            self.highlightViz(name: "param-ox", on: true)
+            break;
+        case "scale-x":
+            self.highlightViz(name: "param-sx", on: true)
+            break;
+        case "scale-y":
+            self.highlightViz(name: "param-sy", on: true)
+            break;
+        case "rotation":
+            self.highlightViz(name: "param-rotation", on: true)
+            break;
+        case "brush":
+            self.highlightViz(name: "param-posx", on: true)
+            break;
+        case "output":
+            self.highlightViz(name: "param-x", on: true)
+            break;
+        default:
+            break;
+        }
+        if hit == "" {
+            clearHighlights()
+            Debugger.setupHighlightRequest(kind: "clear")
+        } else {
+            Debugger.setupHighlightRequest(kind: "clear")
+            Debugger.setupHighlightRequest(kind: hit)
+        }
+    }
+    
+    func clearHighlights(){
+        self.stylusOn = false
+        self.originOn = false
+        self.rotationOn = false
+        self.scaleXOn = false
+        self.scaleYOn = false
+        self.brushOn = false
+        self.outputOn = false
+        for (_, brush) in self.activeBrushIds{
+            if Debugger.inputGfx {
+                brush.unhighlightStylus()
+            }
+            if Debugger.brushGfx {
+                brush.unhighlightOrigin()
+                brush.unhighlightScaleX()
+                brush.unhighlightScaleY()
+                brush.unhighlightRotation()
+            }
+            if Debugger.outputGfx {
+                brush.unhighlightOutput()
+            }
+        }
+    }
+    
     public func highlightViz(name: String, on:Bool) {
+        self.clearHighlights()
         print("!!~~ now finally in brush highlighting ", name, on)
         for (_, brush) in self.activeBrushIds {
             switch (name) {
@@ -104,14 +170,24 @@ public class BrushGraphicsScene {
                     self.originOn = false
                 }
                 break;
-            case "param-sx", "param-sy":
+            case "param-sx":
                 if !Debugger.brushGfx { return }
                 if on {
-                    brush.highlightScale()
-                    self.scaleOn = true
+                    brush.highlightScaleX()
+                    self.scaleXOn = true
                 } else {
-                    brush.unhighlightScale()
-                    self.scaleOn = false
+                    brush.unhighlightScaleX()
+                    self.scaleXOn = false
+                }
+                break;
+            case "param-sy":
+                if !Debugger.brushGfx { return }
+                if on {
+                    brush.highlightScaleY()
+                    self.scaleYOn = true
+                } else {
+                    brush.unhighlightScaleY()
+                    self.scaleYOn = false
                 }
                 break;
             case "param-rotation":
@@ -151,15 +227,22 @@ public class BrushGraphicsScene {
 
     }
     
-    public func movePenDown(x:Double, y:Double){
+    public func movePenDown(x:Double, y:Double, lastX:Double, lastY:Double){
         for (_, brush) in self.activeBrushIds{
-            brush.movePenDown(x:x, y:y)
+            let newX = x - lastX
+            let newY = y - lastY
+            let angle = acos(newX / sqrt(pow(newX,2) + pow(newY,2)))
+            brush.movePenDown(x:x, y:y, angle:angle)
+            
         }
     }
     
-    public func movePenUp(x:Double, y:Double){
+    public func movePenUp(x:Double, y:Double, lastX:Double, lastY:Double){
         for (_, brush) in self.activeBrushIds{
-            brush.movePenUp(x:x, y:y)
+            let newX = x - lastX
+            let newY = y - lastY
+            let angle = acos(newX / sqrt(pow(newX,2) + pow(newY,2)))
+            brush.movePenUp(x:x, y:y, angle:angle)
         }
     }
     
@@ -254,6 +337,8 @@ class BrushGraphic {
     var y: Float
     var cx: Float
     var cy: Float
+    var ix: Double
+    var iy: Double
     
     let oxOffset:Double = 0
     let oyOffset:Double = 0
@@ -270,7 +355,7 @@ class BrushGraphic {
     let highlightColor = Macaw.Color.rgba(r:0,g:255,b:0,a:63)
     
     init(view:BrushGraphicsView, scene:BrushGraphicsScene, id:String, ox:Float, oy:Float, r: Float, x: Float, y:Float,
-         cx: Float, cy:Float ) {
+         cx: Float, cy:Float, ix:Double, iy:Double ) {
         self.id = id
         self.view = view
         self.scene = scene
@@ -281,6 +366,8 @@ class BrushGraphic {
         self.y = y
         self.cx = cx
         self.cy = cy
+        self.ix = ix
+        self.iy = iy
         
         //add to scene
 
@@ -292,6 +379,7 @@ class BrushGraphic {
         //init stylusicon
         node.contents.append(lastStylusInputs)
         stylusIcon = Shape(form: Circle(r: 10), fill: inputColor, stroke: Macaw.Stroke(fill: Macaw.Color.white, width:2))
+        stylusIcon.place = Transform.move(dx:ix, dy:iy)
         stylusText = BrushGraphic.newText("stylus x: 0, stylus y: 0", Transform.move(dx:0,dy:10))
         node.contents.append(stylusIcon)
         let inputScale = 10.0
@@ -350,6 +438,43 @@ class BrushGraphic {
 
         
         self.addToScene()
+    }
+    
+    func pointInCircle(x: Float, y:Float, cx:Float, cy:Float, radius:Float) -> Bool {
+        print("!!~~ point in circle", x, y, cx, cy)
+        let dist = pow((x-cx),2) + pow((y-cy),2)
+        let j = dist <= pow(radius, 2)
+        print("!!~~ ", j )
+        return j
+    }
+    
+    func pointInBox(x: Float, y: Float, ix: Float, iy: Float, ax: Float, ay: Float) -> Bool {
+        //ixy are top left, axy are bottom right
+        return ix <= x && x <= ax && iy <= y && y <= ay
+    }
+    
+    func checkCollision(x:Float, y:Float) -> String {
+        let boxThres:Float = 5
+        print("!!~ output is at ", self.cx, self.cy )
+        if pointInCircle(x:x, y:y, cx:self.cx, cy:self.cy, radius:15) {
+            return "output"
+        } else if pointInCircle(x:x, y:y, cx:self.x, cy:self.y, radius:15) {
+            return "brush"
+        } else if pointInCircle(x:x, y:y, cx:Float(self.ix), cy:Float(self.iy), radius:15) {
+            return "input"
+        } else if pointInCircle(x:x, y:y, cx:self.ox, cy:self.oy, radius: Float(self.axisScale*0.33) + 5.0) {
+            return "origin"
+        } else if pointInCircle(x:x, y:y, cx:self.ox, cy:self.oy, radius:Float(self.axisScale) + 5.0) {
+            return "rotation"
+        } else if pointInBox(x:x, y:y, ix:self.ox - boxThres, iy:self.oy+Float(self.axisScale),
+                             ax: self.ox + boxThres, ay: self.oy + Float(self.axisScale + self.axisLen)) {
+            return "scale-y"
+        } else if pointInBox(x:x, y:y, ix:self.ox+Float(self.axisScale), iy:self.oy-boxThres,
+                             ax: self.ox + Float(self.axisScale + self.axisLen), ay: self.oy + boxThres) {
+            return "scale-x"
+        }
+        
+        return ""
     }
     
     static func newText(_ text: String, _ place: Transform, baseline: Baseline = .bottom) -> Text {
@@ -568,23 +693,30 @@ class BrushGraphic {
     func highlightOrigin() {
         let orgCirc = brushIcon.contents[2] as! Shape
         orgCirc.stroke = Macaw.Stroke(fill: highlightColor, width:2)
-        let orgCircBig = brushIcon.contents[3] as! Shape
-        orgCircBig.stroke = Macaw.Stroke(fill: highlightColor, width:2)
     }
     
     func unhighlightOrigin() {
         let orgCirc = brushIcon.contents[2] as! Shape
         orgCirc.stroke = Macaw.Stroke(fill: brushColor, width:2)
-        let orgCircBig = brushIcon.contents[3] as! Shape
-        orgCircBig.stroke = Macaw.Stroke(fill: brushColor, width:2)
     }
     
-    func highlightScale() {
+    func highlightScaleX() {
         let xAxis = brushIcon.contents[0] as! Group
         let xLine = xAxis.contents[0] as! Shape
         let xTri = xAxis.contents[1] as! Shape
         xLine.stroke = Macaw.Stroke(fill: highlightColor, width:2)
         xTri.fill = highlightColor
+    }
+    
+    func unhighlightScaleX() {
+        let xAxis = brushIcon.contents[0] as! Group
+        let xLine = xAxis.contents[0] as! Shape
+        let xTri = xAxis.contents[1] as! Shape
+        xLine.stroke = Macaw.Stroke(fill: brushColor, width:2)
+        xTri.fill = brushColor
+    }
+
+    func highlightScaleY() {
         let yAxis = brushIcon.contents[1] as! Group
         let yLine = yAxis.contents[0] as! Shape
         let yTri = yAxis.contents[1] as! Shape
@@ -592,27 +724,29 @@ class BrushGraphic {
         yTri.fill = highlightColor
     }
     
-    func unhighlightScale() {
-        let xAxis = brushIcon.contents[0] as! Group
-        let xLine = xAxis.contents[0] as! Shape
-        let xTri = xAxis.contents[1] as! Shape
-        xLine.stroke = Macaw.Stroke(fill: brushColor, width:2)
-        xTri.fill = brushColor
+    func unhighlightScaleY() {
         let yAxis = brushIcon.contents[1] as! Group
         let yLine = yAxis.contents[0] as! Shape
         let yTri = yAxis.contents[1] as! Shape
         yLine.stroke = Macaw.Stroke(fill: brushColor, width:2)
         yTri.fill = brushColor
     }
-
+    
+    
+    
     func highlightRotation() {
         let rotArc = brushIcon.contents[4] as! Shape
         rotArc.stroke = Macaw.Stroke(fill: highlightColor, width:10)
+        let orgCircBig = brushIcon.contents[3] as! Shape
+        orgCircBig.stroke = Macaw.Stroke(fill: highlightColor, width:2)
+
     }
     
     func unhighlightRotation() {
         let rotArc = brushIcon.contents[4] as! Shape
         rotArc.stroke = Macaw.Stroke(fill: brushColor, width:10)
+        let orgCircBig = brushIcon.contents[3] as! Shape
+        orgCircBig.stroke = Macaw.Stroke(fill: brushColor, width:2)
     }
     
     func highlightBrushIcon() {
@@ -754,6 +888,7 @@ class BrushGraphic {
         self.ox = ox
         self.oy = oy
         self.r = r
+
         originText.text = "ox:"+String(Int(ox))+", oy:"+String(Int(oy))+", r:"+String(Int(r))
        // print("## rotated brush ", self.id, " by ", r, " Moved to ox ,oy,", ox, oy )
         
@@ -796,7 +931,8 @@ class BrushGraphic {
         }
         
         if self.scene.originOn { self.highlightOrigin() }
-        if self.scene.scaleOn { self.highlightScale() }
+        if self.scene.scaleXOn { self.highlightScaleX() }
+        if self.scene.scaleYOn { self.highlightScaleY() }
         if self.scene.rotationOn { self.highlightRotation() }
 
 
@@ -814,7 +950,9 @@ class BrushGraphic {
     
     
     func moveStylusLocation(x: Double, y: Double, force: Double) {
-
+        self.ix = x
+        self.iy = y
+        
         stylusIcon.place = Transform.move(dx: x, dy: y)
         let currStylusIcon:Shape
         let forceScale = (force+1)
@@ -866,12 +1004,19 @@ class BrushGraphic {
 //        print("## moved computed" , self.id, "to cx cy" , cx, cy)
     }
     
-    func movePenUp(x:Double, y:Double){
-        stylusUpIcon.place = Transform.move(dx: x, dy: y)
+    func movePenUp(x:Double, y:Double, angle:Double){
+        var correctedAngle = angle
+        print("~~~~ penup angle is ", angle)
+        if angle.isNaN { correctedAngle = 0}
+        //todo figure out orientation of rotation
+        stylusUpIcon.place = Transform.move(dx: x, dy: y).rotate(angle:-correctedAngle)
     }
     
-    func movePenDown(x:Double, y:Double){
-        stylusDownIcon.place = Transform.move(dx: x, dy: y)
+    func movePenDown(x:Double, y:Double, angle:Double){
+        print("~~~~ pendown angle is ", angle)
+        var correctedAngle = angle
+        if angle.isNaN { correctedAngle = 0}
+        stylusDownIcon.place = Transform.move(dx: x, dy: y).rotate(angle:-correctedAngle)
     }
     
 }

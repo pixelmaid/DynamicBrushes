@@ -27,13 +27,15 @@ class DebuggerInterfaceManager:TouchTarget{
         let x = Float(location.x);
         let y = Float(location.y);
         let point = Point(x: x, y: y);
-   
+
+        Debugger.testMacawCollision(x:x, y:y)
+        
         let seg = drawing.hitTestByPoint(point: point, threshold: self.threshold);
         if(seg != nil){
             Debugger.jumpToState(stroke: seg!.parent!, segment: seg!);
             
         }
-        else{
+        else {
             //if hit test is not succesful for strokes, test for hit with Maccaw elements
             //if hit is successful:
             //Debugger.setupHighlightRequest()

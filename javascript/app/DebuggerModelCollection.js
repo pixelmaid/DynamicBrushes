@@ -1,8 +1,8 @@
 "use strict";
 
-define(["app/Emitter", "app/DebuggerModel"],
+define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 
-	function(Emitter, DebuggerModel) {
+	function(Emitter, DebuggerModel, BrushDebuggerModel) {
 
 
 		var DebuggerModelCollection = class extends Emitter {
@@ -11,14 +11,29 @@ define(["app/Emitter", "app/DebuggerModel"],
 				super();
 				this.setupData();
 
-				this.brushModel = new DebuggerModel(this);
+				this.brushModel = new BrushDebuggerModel(this);
 				this.inputModel = new DebuggerModel(this);
 				this.outputModel = new DebuggerModel(this);
 				this.selectedIndex = 0;
 				this.inspectorQueue = [];
 				this.startInspectorInterval();
+
+				this.currHighlighted = [];
+				var self = this;
 			
 
+			}
+
+			getCurrHighlighted() {
+				return this.currHighlighted;
+			}
+
+			pushCurrHighlighted(obj){
+				this.currHighlighted.push(obj);
+			}
+
+			resetCurrHighlighted() {
+				this.currHighlighted = [];
 			}
 
 			updateSelectedIndex(index) {
@@ -63,7 +78,7 @@ define(["app/Emitter", "app/DebuggerModel"],
 				if(this.inspectorQueue.length>0){
 					let targetData = this.inspectorQueue.shift();
 					this.processInspectorData(targetData);
-					console.log("called inspector interval",this.inspectorDataTimer);
+
 				}
 			}
 
@@ -79,18 +94,54 @@ define(["app/Emitter", "app/DebuggerModel"],
 
 
 			highlight(newData){
-
+				console.log("~~~~~ received data final!! ", newData, this.brushModel);
+				let type = newData.kind;
+				let isOn = newData.isOn;
+				switch (type) {
+					case "clear":
+						this.inputModel.highlight("none", false);
+						this.brushModel.highlight("none", false);
+						this.outputModel.highlight("none", false);
+						break;
+					case "input":
+						this.inputModel.highlight("param-styx", true);
+						this.inputModel.highlight("param-styy", true);
+			            break;
+			        case "origin":
+						this.brushModel.highlight("param-ox", true);
+						this.brushModel.highlight("param-oy", true);			            
+						break;
+			        case "scale-x":
+						this.brushModel.highlight("param-sx", true);
+						break;
+			        case "scale-y":
+						this.brushModel.highlight("param-sy", true);				            
+			            break;
+			        case "rotation":
+						this.brushModel.highlight("param-rotation", true);				           
+			            break;
+			        case "brush":
+						this.brushModel.highlight("param-posx", true);
+						this.brushModel.highlight("param-posy", true);			            
+						break;
+			        case "output":
+						this.outputModel.highlight("param-x", true);
+						this.outputModel.highlight("param-y", true);			            
+						break;
+					default:
+					break;
+				}
 			}
 
 			processStateData(newData){
-				console.log("! data is ", newData);
+				// console.log("! data is ", newData);
 				var formattedOutputData = this.formattedOutputData(newData.output);
 				var formattedBrushData = this.formatBrushData(newData.brush);
 				var formattedGeneratorData = this.formatGeneratorData(newData.input.generator.params);
 
 				var formattedInputGlobalData = this.formatInputGlobalData(newData.input.inputGlobal);
 
-				console.log(formattedInputGlobalData);
+				// console.log(formattedInputGlobalData);
 
 				var formattedInputData = {
 					local: formattedGeneratorData,

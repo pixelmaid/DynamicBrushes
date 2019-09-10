@@ -415,7 +415,10 @@ class DrawingViewController: UIViewController, Requester{
         }
     }
     
-    
+    func collisionEventHandler(data: (Float, Float), key: String) {
+        Debugger.checkForCollisions(view: self.layerContainerView.brushGraphicsView!, x:data.0, y:data.1)
+    }
+
     
     
     func debuggerEventHandler(data: (String, String), key: String) {
@@ -1511,7 +1514,8 @@ class DrawingViewController: UIViewController, Requester{
         _ = stylusManager.layerEvent.addHandler(target: self, handler: DrawingViewController.stylusManagerEventHandler, key: stylusManagerKey)
         
         _ = Debugger.debuggerEvent.addHandler(target:self, handler: DrawingViewController.debuggerEventHandler, key: debuggerKey)
-        
+        _ = Debugger.collisionEvent.addHandler(target:self, handler: DrawingViewController.collisionEventHandler, key: debuggerKey)
+
         
         self.debuggerInterfaceManager = DebuggerInterfaceManager(drawing: self.currentDrawing!, targetView: self.layerContainerView);
         

@@ -21,6 +21,14 @@ define(["app/Emitter"],
                 this.trigger("DATA_UPDATED");
             }
 
+            highlight(type, isOn) {
+                if (isOn) {
+                    this.trigger("DATA_HIGHLIGHTED", [type]);
+                } else {
+                    this.trigger("DATA_UNHIGHLIGHTED");
+                }
+            }
+
             updateSelectedIndex(index){
                this.collection.updateSelectedIndex(index) 
             }

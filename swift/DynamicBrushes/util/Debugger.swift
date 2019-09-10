@@ -15,6 +15,7 @@ final class Debugger {
     static public var programViewDebugTimer:Timer! = nil
 
     static public let debuggerEvent = Event<(String, String)>();
+    static public let collisionEvent = Event<(Float, Float)>();
     
     static private var debuggingActive = false;
     static public var programDebugDataQueue = [JSON]();
@@ -22,6 +23,7 @@ final class Debugger {
     
     static public var debuggingTimerActive = false;
     
+    //toggle variables
     static public var inputGfx = true
     static public var inputLabel = true
     static public var brushGfx = true
@@ -29,7 +31,12 @@ final class Debugger {
     static public var outputGfx = true
     static public var outputLabel = true
     
+    //showing brush up/down variables
     static public var lastState = -1
+    static public var lastPointX = 0.0
+    static public var lastPointY = 0.0
+    static public var toDrawPenDown = false
+    static public var toDrawPenUp = false
     
     static var propSort = ["ox","oy","sx","sy","rotation","dx","dy","x","y","radius","theta","diameter","hue","lightness","saturation","alpha"]
     
@@ -80,6 +87,14 @@ final class Debugger {
         Debugger.programViewDebugTimer = nil;
         Debugger.debuggingTimerActive = false;
         
+    }
+    
+    static func testMacawCollision(x:Float, y:Float) {
+        Debugger.collisionEvent.raise(data: (x, y));
+    }
+    
+    static func checkForCollisions(view:BrushGraphicsView, x:Float, y:Float) {
+        view.scene!.checkCollisions(x:x, y:y)
     }
     
     
@@ -415,14 +430,15 @@ final class Debugger {
         
     }
     
-    static func setupHighlightRequest(){
-        
-        var debugData:JSON = [:]
+    static func setupHighlightRequest(kind:String){
+        var on = true
+        if kind == "clear" { on = false}
+        var debugData:JSON = ["kind":kind, "isOn":on]
         
         //populate highlight data here
         
-        
         debugData["type"] = "highlight";
+//        debugData["kind"] = kind as JSON;
         
         let socketRequest = Request(target: "socket", action: "send_inspector_data", data: debugData, requester: RequestHandler.sharedInstance)
         RequestHandler.addRequest(requestData: socketRequest)
