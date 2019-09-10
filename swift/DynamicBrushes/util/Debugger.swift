@@ -13,7 +13,6 @@ import Macaw
 final class Debugger {
     static public let debugInterval:Int = 1;
     static public var programViewDebugTimer:Timer! = nil
-    static private var debugCacheTimer:Timer! = nil
 
     static public let debuggerEvent = Event<(String, String)>();
     static public let collisionEvent = Event<(Float, Float)>();
@@ -74,9 +73,7 @@ final class Debugger {
         Debugger.endDebugTimer();
         Debugger.debuggingTimerActive = true;
        Debugger.programViewDebugTimer = Timer(timeInterval: TimeInterval(interval), target: self, selector: #selector(Debugger.fireDebugUpdate), userInfo: nil, repeats: true)
-        Debugger.debugCacheTimer = Timer(timeInterval:0.001, target: self, selector: #selector(Debugger.cacheDebugData), userInfo: nil, repeats: true)
         RunLoop.current.add(programViewDebugTimer, forMode: RunLoop.Mode.common)
-        RunLoop.current.add(debugCacheTimer, forMode: RunLoop.Mode.common)
 
     }
     
@@ -86,14 +83,7 @@ final class Debugger {
             Debugger.programViewDebugTimer.invalidate();
 
         }
-        
-        if(Debugger.debugCacheTimer != nil){
-            Debugger.debugCacheTimer.invalidate();
-
-        }
         Debugger.programViewDebugTimer = nil;
-        Debugger.debugCacheTimer = nil;
-
         Debugger.debuggingTimerActive = false;
         
     }
@@ -353,7 +343,7 @@ final class Debugger {
             let targetIndex = BehaviorManager.activeInstance;
             let targetBehavior =  BehaviorManager.behaviors[targetBehaviorId]!;
             let targetBrush = targetBehavior.brushInstances[targetIndex];
-            
+            if(targetBrush.unrendered){
             for currentData in Debugger.drawingDebugDataQueue {
                 
                 
@@ -385,8 +375,45 @@ final class Debugger {
             }
             Debugger.drawingDebugDataQueue.removeAll();
         }
+        }
         
     }
+        
+/*static public func drawUnrendererdBrushes(view:BrushGraphicsView){
+ let behaviors = BehaviorManager.getAllBrushInstances();
+ //check to see which brushes are "unrendered"
+ // pass them the UI view and draw into it
+ var brushIds = Set<String>()
+ 
+ for (behaviorId,brushTuple) in behaviors {
+ let brushes = brushTuple.1;
+ let brush = brushes[BehaviorManager.activeInstance]
+ if brush.unrendered {
+ //                print("~~~ about to draw into context in debugger with brush ", brush.id)
+ //double check view values since they arent persistent
+ refreshVisualizations(view: view)
+ let valArray = Debugger.getGeneratorValue(brushId: brush.id)
+ let inputInfo = Debugger.getStylusInputValue(brushId: brush.id)
+ brush.drawIntoContext(context:view, info:inputInfo)
+ 
+ view.scene!.drawGenerator(valArray: valArray)
+ 
+ }
+ brushIds.insert(brush.id)
+ }
+ //remove brush if not in this list
+ let brushesIdsOnCanvas = Set(view.scene!.activeBrushIds.keys)
+ 
+ let keysToRemove = Array(brushesIdsOnCanvas.symmetricDifference(brushIds))
+ //        print("##keys to remove is ", keysToRemove)
+ for id in keysToRemove {
+ view.scene!.removeActiveId(id:id)
+ view.updateNode()
+ 
+ //
+ }
+ 
+ }*/
     
     
     static func highlight(data:JSON){

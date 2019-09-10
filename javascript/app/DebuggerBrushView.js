@@ -1,0 +1,105 @@
+//Debugger Brush View
+
+
+define(["jquery", "handlebars", "app/DebuggerView"],
+
+	function($, Handlebars, DebuggerView) {
+
+
+		var DebuggerBrushView = class extends DebuggerView {
+
+			constructor(model, element, template, groupName, keyHandler) {
+				super(model, element, template, groupName, keyHandler);
+				this.keyHandler = keyHandler;
+				this.pastConstraint = null;
+				this.keyHandler.addListener("VIZ_BRUSH_STEP_THROUGH", function() {
+					console.log("! called brush step through");
+					let currentConstraint = this.model.brushVizQueue.shift();
+					this.visualizeStepThrough(currentConstraint, this.pastConstraint, model.data);
+					this.pastConstraint = currentConstraint;
+				}.bind(this));
+			}
+
+
+			dataUpdatedHandler() {
+				super.dataUpdatedHandler();
+			}
+
+			setupHighlighting(data) {
+				$('#param-dx')[0].previousElementSibling.id = 'param-posy';
+				$('#param-posy')[0].previousElementSibling.id = 'param-posx';
+				this.setUpHighlightClicks('brush');
+				this.setupRehighlight();
+			}
+
+			visualizeStepThrough(constraint, pastConstraint, data) {
+				console.log("! visualizing constraints ", data, " past constraint ", pastConstraint);
+				var arrowObject;
+				if (pastConstraint) {
+					switch (pastConstraint.type) {
+						case "method":
+							$("#" + pastConstraint.methodId).removeClass("method-inspect");
+							break;
+						case "binding":
+							$("#" + pastConstraint.constraintId).removeClass("debug");
+							$("#param-" + pastConstraint.relativePropertyName).removeClass("debug-inspect");
+							break;
+						case "transition":
+							if (pastConstraint.transitionId == "start") {
+								$(".setup").children().eq(1).removeClass("start-highlight");
+							} else if ($("#" + pastConstraint.transitionId).hasClass("transition_statement")) {
+								$("#" + pastConstraint.transitionId).children().first().removeClass("method-inspect");
+							} else { //it's a state
+								$("#" + pastConstraint.transitionId).children().eq(1).removeClass("active");
+							}
+							//remove arrow highlight                     
+							arrowObject = $("#" + pastConstraint.transitionId).parent().prev();
+							arrowObject.children().eq(1).attr("stroke", "#efac1f");
+							arrowObject.children().eq(2).attr("stroke", "#efac1f");
+							arrowObject.children().eq(2).attr("fill", "#efac1f");
+							break;
+					}
+				}
+
+				switch (constraint.type) {
+					case "method":
+						console.log("!!VIZ METHOD ", constraint);
+						$("#" + constraint.methodId).addClass("method-inspect");
+						break;
+					case "binding":
+						$("#" + constraint.constraintId).addClass("debug");
+						$("#param-" + constraint.relativePropertyName).addClass("debug-inspect");
+						// console.log("data is ", this.model.data);
+						$("#" + data.currentState).children(".state").addClass("active");
+
+						let id = constraint.relativePropertyName;
+
+
+						break;
+					case "transition":
+						console.log("!!VIZ TRANSITION ", constraint, pastConstraint);
+						if (constraint.transitionId == "start") {
+							$(".setup").children().eq(1).addClass("start-highlight");
+						}
+						if ($("#" + constraint.transitionId).hasClass("transition_statement")) {
+							//outline header
+							$("#" + constraint.transitionId).children().first().addClass("method-inspect");
+						} else { //it's a state
+							$("#" + constraint.transitionId).children().eq(1).addClass("active");
+						}
+						//add arrow highlight                     
+						arrowObject = $("#" + constraint.transitionId).parent().prev();
+						arrowObject.children().eq(1).attr("stroke", "aqua");
+						arrowObject.children().eq(2).attr("stroke", "aqua");
+						arrowObject.children().eq(2).attr("fill", "aqua");
+						break;
+				}
+
+			}
+
+
+
+		};
+
+		return DebuggerBrushView;
+	});

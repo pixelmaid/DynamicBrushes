@@ -2,9 +2,9 @@
 <style> 
 {{#each behaviors}}
 {{#each this.brushes}}
-{{#if @last}}#{{groupName}}tab_{{this.id}}:checked ~ #{{groupName}}content_{{this.id}}
+{{#if @last}}#{{inspector.groupName}}tab_{{this.inspector.id}}:checked ~ #{{inspector.groupName}}content_{{this.inspector.id}}
 {{else}}
-#{{groupName}}tab_{{this.id}}:checked ~ #{{groupName}}content_{{this.id}},
+#{{groupName}}tab_{{this.inspector.id}}:checked ~ #{{inspector.groupName}}content_{{this.inspector.id}},
 {{/if}}
 {{/each}}
 {{/each}}
@@ -16,14 +16,14 @@
 	<div id="groupName"> 
 		<h4 class="group-title-inspector brush">{{this.name}} Brush Properties</h4>
 		{{#each this.brushes}} 
-			<input id={{groupName}}tab_{{this.id}} type="radio" index ="{{@index}}" name="{{groupName}}tabs" {{#if this.selectedIndex}}checked{{/if}}>
-			<label class = "brushlabels" for="{{groupName}}tab_{{this.id}}"> {{this.index}}</label>
+			<input id={{inspector.groupName}}tab_{{this.inspector.id}} type="radio" index ="{{@index}}" name="{{inspector.groupName}}tabs" {{#if this.inspector.selectedIndex}}checked{{/if}}>
+			<label class = "brushlabels" for="{{inspector.groupName}}tab_{{this.id}}"> {{this.inspector.index}}</label>
 		{{/each}}
 
 
 		{{#each brushes}}
-			<section class = "inspectorSection" id="{{groupName}}content_{{this.id}}">
-				{{#each blocks}}
+			<section class = "inspectorSection" id="{{inspector.groupName}}content_{{this.inspector.id}}">
+				{{#each inspector.blocks}}
 	    			<ul class="sub-group-inspector"> 
 	    			<h4 class="sub-sub-group-inspector">{{this.blockName}}</h4>
 	    			{{#each this.params}}

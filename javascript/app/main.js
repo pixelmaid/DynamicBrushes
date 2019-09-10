@@ -1,8 +1,8 @@
 'use strict';
 
-define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection", "app/DebuggerView", "app/SaveManager", "app/SaveView", "app/SignalView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart", "app/DatasetView", "app/SignalModel", "app/KeypressHandler", "hbs!app/templates/brushInspector","hbs!app/templates/inputInspector","hbs!app/templates/outputInspector"],
+define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection", "app/DebuggerView", "app/DebuggerBrushView","app/SaveManager", "app/SaveView", "app/SignalView", "app/SocketController", "app/SocketView", "app/ChartViewManager", "app/graph", "app/PositionSeries", "app/AngleSeries", "app/AreaChart", "app/DatasetView", "app/SignalModel", "app/KeypressHandler", "hbs!app/templates/brushInspector","hbs!app/templates/inputInspector","hbs!app/templates/outputInspector"],
  
-    function($, paper, Handlebars, ID, DebuggerModelCollection, DebuggerView, SaveManager, SaveView, SignalView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart, DatasetView, SignalModel, KeypressHandler,brushInspectorTemplate,inputInspectorTemplate,outputInspectorTemplate) {
+    function($, paper, Handlebars, ID, DebuggerModelCollection, DebuggerView, DebuggerBrushView, SaveManager, SaveView, SignalView, SocketController, SocketView, ChartViewManager, Graph, PositionSeries, AngleSeries, AreaChart, DatasetView, SignalModel, KeypressHandler,brushInspectorTemplate,inputInspectorTemplate,outputInspectorTemplate) {
 
         var socketController = new SocketController();
         var socketView = new SocketView(socketController, "#socket");
@@ -14,8 +14,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
         var codename;
         var dataView = new DatasetView(signalModel.datasetLoader, "#dataset_select");
         var keypressHandler = new KeypressHandler(debuggerModelCollection);
-        var debuggerModelCollection = new DebuggerModelCollection();
-        var debuggerBrushView = new DebuggerView(debuggerModelCollection.brushModel, "#inspector-brush", brushInspectorTemplate, "brush", keypressHandler);
+        var debuggerModelCollection = new DebuggerModelCollection(chartViewManager);
+        var debuggerBrushView = new DebuggerBrushView(debuggerModelCollection.brushModel, "#inspector-brush", brushInspectorTemplate, "brush", keypressHandler);
         var debuggerInputView = new DebuggerView(debuggerModelCollection.inputModel, "#inspector-input", inputInspectorTemplate, "inputGlobal", keypressHandler);
         // note -- make one for inputLocal? 
         var debuggerOutputView = new DebuggerView(debuggerModelCollection.outputModel, "#inspector-output", outputInspectorTemplate, "output", keypressHandler);
@@ -245,7 +245,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
                 data: {
                     type:"selectedBehaviorAndBrushUpdate",
                     activeInstance: debuggerModelCollection.selectedIndex,
-                    currentlySelectedBehaviorId: chartViewManager.currentView.id
+                    currentlySelectedBehaviorId: chartViewManager.currentView === null? null : chartViewManager.currentView.id
                 }
             };
 
