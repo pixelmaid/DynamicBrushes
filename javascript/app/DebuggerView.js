@@ -77,7 +77,6 @@ define(["jquery", "handlebars", "app/Emitter"],
       setUpHighlightClicks(inspectorKind) {
         let self = this;
         // console.log("~~ before change id ", self.model.collection.getCurrHighlighted(), inspectorKind, self.currInspectorActive);
-        console.log("~~~ setup clicked in inspector ", inspectorKind);
 
         $('li').click(function(e) {
           let rowId = e.target.id;
@@ -99,7 +98,6 @@ define(["jquery", "handlebars", "app/Emitter"],
               }
               self.model.collection.resetCurrHighlighted();
               if (!skip) {
-                console.log("~~ should be highlighting ", rowId);
                 self.highlightParamRow(rowId);
 
                 self.model.collection.pushCurrHighlighted(rowId);
@@ -109,9 +107,7 @@ define(["jquery", "handlebars", "app/Emitter"],
                   self.model.collection.pushCurrHighlighted(buddy); 
                   self.model.collection.updateHighlight([buddy, true]);                
                 }
-              } else {
-                console.log("~~ skipping ", rowId);
-              }
+              } 
               self.currInspectorActive = activeInspector;
             } 
           }
@@ -121,8 +117,6 @@ define(["jquery", "handlebars", "app/Emitter"],
       highlightParamRow(rowId) {
        // $('#'+rowId).css('outline', '1px solid #0f0');
        $('#'+rowId).css('border', '1px solid #00ff03');
-  
-        console.log("~~~ highlighted finished ", rowId);
       }
 
       unhighlightParamRow(unhighlightRowId) {
@@ -179,7 +173,7 @@ define(["jquery", "handlebars", "app/Emitter"],
        }*/
 
       initInspector(data) {
-        console.log("~~ in sepctor data is ", data);
+
         var groupName;
         if (data["groupName"]) {
           groupName = data["groupName"];
@@ -216,7 +210,6 @@ define(["jquery", "handlebars", "app/Emitter"],
           $('#param-hue')[0].previousElementSibling.id = 'param-strweight';                        
         }
           this.setUpHighlightClicks('brush');
-          console.log("~~~!!! finshed set up brush");
       }
       
       modifyInspectorInput() {

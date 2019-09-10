@@ -538,6 +538,9 @@ class BrushGraphic {
                 stylusIcon.stroke = Macaw.Stroke(fill: Macaw.Color.white, width:2)
                 updateExistingStylusStrokes()
                 makeGeneratorVisible()
+                stylusUpIcon.fill = inputColor
+                stylusDownIcon.fill = inputColor
+                changeColorInGroup(group: stylusStream, color: inputColor)
                 Debugger.inputLabel = true
                 
             } else {
@@ -545,6 +548,9 @@ class BrushGraphic {
                 stylusIcon.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
                 changeColorInGroup(group: self.lastStylusInputs, color: hiddenColor)
                 makeGeneratorInvisible()
+                stylusUpIcon.fill = hiddenColor
+                stylusDownIcon.fill = hiddenColor
+                changeColorInGroup(group: stylusStream, color: hiddenColor)
                 Debugger.inputLabel = false
             }
             break
@@ -554,12 +560,13 @@ class BrushGraphic {
                 makeBrushIconVisible()
                 inputIcon.fill = brushColor
                 inputIcon.stroke = Macaw.Stroke(fill: Macaw.Color.white, width:2)
-
+                changeColorInGroup(group: brushStream, color: brushColor)
                 Debugger.brushLabel = true
             } else {
                 makeBrushIconInvisible()
                 inputIcon.fill = hiddenColor
                 inputIcon.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
+                changeColorInGroup(group: brushStream, color: hiddenColor)
                 Debugger.brushLabel = false
 
             }
@@ -568,10 +575,12 @@ class BrushGraphic {
             if Debugger.outputGfx {
                 computedIcon.fill = outputColor
                 computedIcon.stroke = Macaw.Stroke(fill: Macaw.Color.white, width:2)
+                changeColorInGroup(group: outputStream, color: outputColor)
                 Debugger.outputLabel = true
             } else {
                 computedIcon.fill = hiddenColor
                 computedIcon.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
+                changeColorInGroup(group: outputStream, color: hiddenColor)
                 Debugger.outputLabel = false
             }
             break
