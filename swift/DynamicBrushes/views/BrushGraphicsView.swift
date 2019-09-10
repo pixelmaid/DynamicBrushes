@@ -981,11 +981,11 @@ class BrushGraphic {
         let currStylusStream:Shape
         let forceScale = (force+1)
         if Debugger.inputGfx {
-            currStylusIcon = Shape(form: Circle(r: 10), fill: inputColor)
-            currStylusStream = Shape(form: Circle(r: 10), fill: inputColor)
+            currStylusIcon = Shape(form: Circle(r: 5), fill: inputColor)
+            currStylusStream = Shape(form: Circle(r: 5), fill: inputColor)
         } else {
-            currStylusIcon = Shape(form: Circle(r: 10), fill: hiddenColor)
-            currStylusStream = Shape(form: Circle(r: 10), fill: hiddenColor)
+            currStylusIcon = Shape(form: Circle(r: 5), fill: hiddenColor)
+            currStylusStream = Shape(form: Circle(r: 5), fill: hiddenColor)
         }
 
 
@@ -1022,9 +1022,9 @@ class BrushGraphic {
 
         let currBrushStream:Shape
         if Debugger.brushGfx {
-            currBrushStream = Shape(form: Circle(r: 10), fill: inputColor)
+            currBrushStream = Shape(form: Circle(r: 5), fill: inputColor)
         } else {
-            currBrushStream = Shape(form: Circle(r: 10), fill: hiddenColor)
+            currBrushStream = Shape(form: Circle(r: 5), fill: hiddenColor)
         }
         currBrushStream.place = Transform.move(dx:Double(x), dy:Double(y))
         brushStream.contents.append(currBrushStream)
@@ -1045,9 +1045,9 @@ class BrushGraphic {
         
         let currOutputStream:Shape
         if Debugger.outputGfx {
-            currOutputStream = Shape(form: Circle(r: 10), fill: inputColor)
+            currOutputStream = Shape(form: Circle(r: 5), fill: inputColor)
         } else {
-            currOutputStream = Shape(form: Circle(r: 10), fill: hiddenColor)
+            currOutputStream = Shape(form: Circle(r: 5), fill: hiddenColor)
         }
         currOutputStream.place = Transform.move(dx:Double(x), dy:Double(y))
         outputStream.contents.append(currOutputStream)
@@ -1097,7 +1097,7 @@ class BrushGraphicsView: MacawView {
     func updateNode() {
         let node = scene?.node
         self.node = node!
-       // print("## called update node in graphics view", self.node)
+//        print("## called update node in graphics view", self.node)
     }
     
 }

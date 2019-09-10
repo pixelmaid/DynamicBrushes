@@ -348,6 +348,8 @@ final class Debugger {
         //let behaviors = BehaviorManager.getAllBrushInstances();
         //check to see which brushes are "unrendered"
         // pass them the UI view and draw into it
+        print("~~ draw curr brush state called" )
+        var i = 0
         if(Debugger.drawingDebugDataQueue.count>0){
             var brushIds = Set<String>()
             let targetIndex = BehaviorManager.activeInstance;
@@ -355,8 +357,8 @@ final class Debugger {
             let targetBrush = targetBehavior.brushInstances[targetIndex];
             
             for currentData in Debugger.drawingDebugDataQueue {
-                
-                
+                print("~~~ curr queue length is" , i, Debugger.drawingDebugDataQueue.count, currentData)
+                i += 1;
                 
                 //double check view values since they arent persistent
                 refreshVisualizations(view: view)
@@ -367,7 +369,7 @@ final class Debugger {
                 
                 targetBrush.drawIntoContext(context:view, info:inputInfo)
                 view.scene!.drawGenerator(valArray: valArray)
-                
+                print("~~ draw gen called")
                 
                 brushIds.insert(targetBrush.id)
                 
