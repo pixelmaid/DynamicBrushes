@@ -1022,8 +1022,8 @@ class DrawingViewController: UIViewController, Requester{
             //add check for brush unrendered
        
         }
-        if(BehaviorManager.behaviors.count>0 && BehaviorManager.currentlySelectedBehaviorId != nil){
-            Debugger.drawCurrentBrushState(view: self.layerContainerView.brushGraphicsView!,targetBehaviorId: BehaviorManager.currentlySelectedBehaviorId);
+        if(BehaviorManager.behaviors.count>0){
+            Debugger.drawCurrentBrushState(view: self.layerContainerView.brushGraphicsView!,targetBehaviorId: BehaviorManager.behaviors.first!.key);
         
         }
     }

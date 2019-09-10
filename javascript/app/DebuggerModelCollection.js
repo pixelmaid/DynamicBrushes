@@ -174,6 +174,7 @@ define(["app/Emitter", "app/DebuggerModel"],
 									}
 									formattedParams.id = brushId;
 									formattedParams.name = brush.name;
+									
 									formattedBrushes.push(formattedParams);
 							}
 

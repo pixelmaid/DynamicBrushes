@@ -178,12 +178,8 @@ define(["jquery", "handlebars", "app/Emitter"],
       setupHighlighting(data){
          let self = this;
 
-         if (data['groupName'] == 'brush') {          
-          $('#param-dx')[0].previousElementSibling.id = 'param-posy';
-          $('#param-posy')[0].previousElementSibling.id = 'param-posx';   
-          this.setUpHighlightClicks('brush');
-        } 
-        else if (data['groupName'] != 'output' && data['global']['name'] == 'Global Input') {
+        
+       if (data['groupName'] != 'output' && data['global']['name'] == 'Global Input') {
           $('#param-force')[0].previousElementSibling.id = 'param-styy';
           $('#param-styy')[0].previousElementSibling.id = 'param-styx'; 
           this.setUpHighlightClicks('input');  

@@ -23,10 +23,10 @@
 
 		{{#each brushes}}
 			<section class = "inspectorSection" id="{{inspector.groupName}}content_{{this.inspector.id}}">
-				{{#each blocks}}
+				{{#each inspector.blocks}}
 	    			<ul class="sub-group-inspector"> 
-	    			<h4 class="sub-sub-group-inspector">{{this.inspector.blockName}}</h4>
-	    			{{#each this.inspector.params}}
+	    			<h4 class="sub-sub-group-inspector">{{this.blockName}}</h4>
+	    			{{#each this.params}}
 	        			<li id="param-{{id}}">{{name}}: <span id="inspector-{{id}}">{{val}}</span></li> 
 	        		{{/each}}
 	    			</ul> 

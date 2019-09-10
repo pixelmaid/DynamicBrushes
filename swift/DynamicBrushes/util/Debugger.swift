@@ -68,7 +68,7 @@ final class Debugger {
         Debugger.endDebugTimer();
         Debugger.debuggingTimerActive = true;
        Debugger.programViewDebugTimer = Timer(timeInterval: TimeInterval(interval), target: self, selector: #selector(Debugger.fireDebugUpdate), userInfo: nil, repeats: true)
-        Debugger.debugCacheTimer = Timer(timeInterval:0.001, target: self, selector: #selector(Debugger.cacheDebugData), userInfo: nil, repeats: true)
+        Debugger.debugCacheTimer = Timer(timeInterval:0.016, target: self, selector: #selector(Debugger.cacheDebugData), userInfo: nil, repeats: true)
         RunLoop.current.add(programViewDebugTimer, forMode: RunLoop.Mode.common)
         RunLoop.current.add(debugCacheTimer, forMode: RunLoop.Mode.common)
 

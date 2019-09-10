@@ -243,7 +243,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
                 data: {
                     type:"selectedBehaviorAndBrushUpdate",
                     activeInstance: debuggerModelCollection.selectedIndex,
-                    currentlySelectedBehaviorId: chartViewManager.currentView.id
+                    currentlySelectedBehaviorId: chartViewManager.currentView === null? null : chartViewManager.currentView.id
                 }
             };
 
