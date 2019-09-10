@@ -147,8 +147,8 @@ class Brush: TimeSeries, Hashable, Renderable{
         self.time = Observable<Float>(0)
         
         self.weight = Observable<Float>(1)
-        self.weight.printname = "brush_diameter"
-        self.weight.name = "diameter";
+        self.weight.printname = "weight"
+        self.weight.name = "weight";
 
         self.alpha = Observable<Float>(1)
         self.hue = Observable<Float>(1)
@@ -195,7 +195,7 @@ class Brush: TimeSeries, Hashable, Renderable{
         self.kvcDictionary["index"] = self.index;
         self.kvcDictionary["level"] = self.level;
         self.kvcDictionary["siblingcount"] = self.siblingcount;
-        self.kvcDictionary["diameter"] = self.weight;
+        self.kvcDictionary["weight"] = self.weight;
         self.kvcDictionary["alpha"] = self.alpha;
         self.kvcDictionary["hue"] = self.hue;
         self.kvcDictionary["lightness"] = self.lightness;
@@ -618,8 +618,7 @@ class Brush: TimeSeries, Hashable, Renderable{
                // print("executing method:\(method.fieldName,self.id,self.name,method.arguments)");
             #endif
             switch (methodName){
-            case "newStroke",
-                 "setOrigin":
+            case "setOrigin":
                 let xArg = method.arguments[0];
                 let yArg = method.arguments[1];
                 let x = xArg.calculateValue();
@@ -627,9 +626,13 @@ class Brush: TimeSeries, Hashable, Renderable{
                 if(x != nil && y != nil){
                     self.setOrigin(x:x!, y: y!)
                 }
-                if(methodName == "newStroke"){
-                    self.newStroke();
-                }
+            case "penDown":
+                self.penDown();
+                
+                break;
+            case "penUp":
+                self.penUp();
+                
                 break;
             case "startTimer":
                 self.startInterval();
@@ -853,9 +856,14 @@ class Brush: TimeSeries, Hashable, Renderable{
     
     
     
-    func newStroke(){
-        self.currentDrawing!.retireCurrentStrokes(behaviorId: self.behaviorId, brushId:self.id)
-        self.currentDrawing!.newStroke(behaviorId: self.behaviorId, brushId:self.id);
+    func penDown(){
+        if(!self.currentDrawing!.hasActiveStroke(behaviorId: self.behaviorId, brushId: self.id)){
+            _ = self.currentDrawing!.newStroke(behaviorId: self.behaviorId, brushId:self.id);
+        }
+    }
+    
+    func penUp(){
+        self.currentDrawing!.retireCurrentStrokes(behaviorId: self.behaviorId, brushId:self.id);
         self.resetDistance();
     }
     

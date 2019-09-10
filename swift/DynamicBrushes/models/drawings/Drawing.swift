@@ -263,6 +263,18 @@ class Drawing: TimeSeries, Hashable, Renderable{
         }
     }
     
+    func hasActiveStroke(behaviorId:String,brushId:String)->Bool{
+        if (self.activeStrokes[behaviorId]![brushId] == nil ){
+            return false;
+        }
+        else if (self.activeStrokes[behaviorId]![brushId]!.count>0){
+            return true;
+        }
+        
+        return false;
+    
+    }
+    
     func retireCurrentStrokes(behaviorId:String,brushId:String){
         #if DEBUG
        // print("retire strokes for \(parentID, activeStrokes[behaviorId]![brushId)");

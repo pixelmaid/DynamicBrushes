@@ -37,7 +37,7 @@ final class Debugger {
     static public var lastPointY = 0.0
     static public var toDrawPenDown = false
     
-    static var propSort = ["ox","oy","sx","sy","rotation","dx","dy","x","y","radius","theta","diameter","hue","lightness","saturation","alpha"]
+    static var propSort = ["ox","oy","sx","sy","rotation","dx","dy","x","y","radius","theta","weight","hue","lightness","saturation","alpha"]
     
     static public func activate(){
         Debugger.debuggingActive = true;
@@ -338,9 +338,9 @@ final class Debugger {
         //let behaviors = BehaviorManager.getAllBrushInstances();
         //check to see which brushes are "unrendered"
         // pass them the UI view and draw into it
-//        print("~~ draw curr brush state called" )
         var i = 0
         if(Debugger.drawingDebugDataQueue.count>0){
+
             var brushIds = Set<String>()
             let targetIndex = BehaviorManager.activeInstance;
             let targetBehavior =  BehaviorManager.behaviors[targetBehaviorId]!;

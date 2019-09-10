@@ -606,7 +606,7 @@ class DrawingViewController: UIViewController, Requester{
         
         
         var templateJSON:JSON = [:]
-        templateJSON["filename"] = "templates/default_state.json"
+        templateJSON["filename"] = "templates/default_state_pendown.json"
         templateJSON["type"] = JSON("load")
         let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: self)
         RequestHandler.addRequest(requestData:behaviorDownloadRequest);
@@ -1028,7 +1028,7 @@ class DrawingViewController: UIViewController, Requester{
             
         }
         if(BehaviorManager.behaviors.count>0){
-           Debugger.drawCurrentBrushState(view: self.layerContainerView.brushGraphicsView!,targetBehaviorId: BehaviorManager.behaviors.first!.key);
+          // Debugger.drawCurrentBrushState(view: self.layerContainerView.brushGraphicsView!,targetBehaviorId: BehaviorManager.behaviors.first!.key);
 
         }
     }

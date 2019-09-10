@@ -16,7 +16,7 @@ class UICollection: LiveCollection {
     var lightness:Float = 25
      var saturation:Float = 100
     var alpha:Float = 100;
-     var diameter:Float = 20
+     var weight:Float = 20
 
     required init(data: JSON) {
         super.init(data: data);
@@ -25,7 +25,7 @@ class UICollection: LiveCollection {
         protodata["lightness"] = JSON(0);
         protodata["saturation"] = JSON(0);
         protodata["alpha"] = JSON(0);
-        protodata["diameter"] = JSON(0);
+        protodata["weight"] = JSON(0);
         protodata["time"] = JSON(0);
         super.addProtoSample(data: protodata);
     }
@@ -48,7 +48,7 @@ class UICollection: LiveCollection {
     
     
     func setDiameter(val:Float){
-        self.diameter = val;
+        self.weight = val;
         let data = self.exportData();
         self.addProtoSample(data: data)
     }
@@ -67,7 +67,7 @@ class UICollection: LiveCollection {
         data["lightness"] = JSON(self.lightness);
         data["saturation"] = JSON(self.saturation);
         data["alpha"] = JSON(self.alpha);
-        data["diameter"] = JSON(self.diameter);
+        data["weight"] = JSON(self.weight);
     
      
        

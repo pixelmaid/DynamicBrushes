@@ -50,8 +50,8 @@
                              },
 
                               {
-                             "fieldName": "diameter",
-                             "displayName": "diameter",
+                             "fieldName": "weight",
+                             "displayName": "stroke weight",
                              "classType": "BrushProperty",
                              "order": 8,
                              },

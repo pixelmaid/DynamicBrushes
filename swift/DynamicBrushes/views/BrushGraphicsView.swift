@@ -988,7 +988,7 @@ class BrushGraphic {
         stylusIcon.place = Transform.move(dx: x, dy: y)
         let currStylusIcon:Shape
         let currStylusStream:Shape
-        let forceScale = (force+1)
+        let forceScale = (force+1)/20/2;
         if Debugger.inputGfx {
             currStylusIcon = Shape(form: Circle(r: 10), fill: inputColor)
             currStylusStream = Shape(form: Circle(r: 3), fill: inputColor)
