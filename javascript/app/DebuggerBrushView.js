@@ -25,18 +25,18 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 				super.dataUpdatedHandler();
 			}
 
-			setupHighlighting(data) {
-				if ($('#param-dx').length) {
-					$('#param-dx')[0].previousElementSibling.id = 'param-posy';
-					$('#param-posy')[0].previousElementSibling.id = 'param-posx';					
-				}
-				this.setUpHighlightClicks('brush');
-				for (var i = 0; i < this.model.collection.getCurrHighlighted().length; i++) {
-		          // console.log("~ rehighlighting ", self.model.collection.getCurrHighlighted()[i]);
-		          this.highlightParamRow(this.model.collection.getCurrHighlighted()[i]);
+			// setupHighlighting(data) {
+			// 	if ($('#param-dx').length) {
+			// 		$('#param-dx')[0].previousElementSibling.id = 'param-posy';
+			// 		$('#param-posy')[0].previousElementSibling.id = 'param-posx';					
+			// 	}
+			// 	this.setUpHighlightClicks('brush');
+			// 	for (var i = 0; i < this.model.collection.getCurrHighlighted().length; i++) {
+		 //          // console.log("~ rehighlighting ", self.model.collection.getCurrHighlighted()[i]);
+		 //          this.highlightParamRow(this.model.collection.getCurrHighlighted()[i]);
 
-		        }    
-			}
+		 //        }    
+			// }
 
 			visualizeStepThrough(constraint, pastConstraint, data) {
 				console.log("! visualizing constraints ", data, " past constraint ", pastConstraint);

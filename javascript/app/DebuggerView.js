@@ -77,15 +77,15 @@ define(["jquery", "handlebars", "app/Emitter"],
       setUpHighlightClicks(inspectorKind) {
         let self = this;
         // console.log("~~ before change id ", self.model.collection.getCurrHighlighted(), inspectorKind, self.currInspectorActive);
-  
+        console.log("~~~ setup clicked in inspector ", inspectorKind);
 
         $('li').click(function(e) {
           let rowId = e.target.id;
           var skip = false;
           if (rowId.includes("param-")) {
             let activeInspector = $('#'+rowId).parent().parent().parent().parent()[0].id.slice(10);
-            // console.log("~ active ", activeInspector, inspectorKind, rowId);
             if (activeInspector == inspectorKind) { //if match 
+              console.log("~ active ", activeInspector, inspectorKind, rowId);
               var buddy = self.findBuddies(rowId);
               for (var i = 0; i < self.model.collection.getCurrHighlighted().length; i++) {
                 // console.log("unlighting ~ ");
@@ -99,6 +99,7 @@ define(["jquery", "handlebars", "app/Emitter"],
               }
               self.model.collection.resetCurrHighlighted();
               if (!skip) {
+                console.log("~~ should be highlighting ", rowId);
                 self.highlightParamRow(rowId);
 
                 self.model.collection.pushCurrHighlighted(rowId);
@@ -108,6 +109,8 @@ define(["jquery", "handlebars", "app/Emitter"],
                   self.model.collection.pushCurrHighlighted(buddy); 
                   self.model.collection.updateHighlight([buddy, true]);                
                 }
+              } else {
+                console.log("~~ skipping ", rowId);
               }
               self.currInspectorActive = activeInspector;
             } 
@@ -119,7 +122,7 @@ define(["jquery", "handlebars", "app/Emitter"],
        // $('#'+rowId).css('outline', '1px solid #0f0');
        $('#'+rowId).css('border', '1px solid #00ff03');
   
-        // console.log("~~~ highlighted ", rowId);
+        console.log("~~~ highlighted finished ", rowId);
       }
 
       unhighlightParamRow(unhighlightRowId) {
@@ -176,16 +179,23 @@ define(["jquery", "handlebars", "app/Emitter"],
        }*/
 
       initInspector(data) {
+        console.log("~~ in sepctor data is ", data);
+        var groupName;
+        if (data["groupName"]) {
+          groupName = data["groupName"];
+        } else {
+          groupName = data["global"]["groupName"]; //inputGlobal
+        }
         let self = this;
         var html = this.template(data);
         this.el.html(html);
-        if ($("#inspector-input").children().length) {
+        if (groupName == 'inputGlobal') {
           self.modifyInspectorInput();          
         }
-        if ($("#inspector-brush").children().length) {
+        else if (groupName == 'brush') {
           self.modifyInspectorBrush();          
         }
-        if ($("#inspector-output").children().length) {
+        else if (groupName == 'output') {
           self.modifyInspectorOutput();          
         }
 
@@ -199,15 +209,17 @@ define(["jquery", "handlebars", "app/Emitter"],
 
       
 
-      modifyInspectorInput() {
+      modifyInspectorBrush() {
         if ($('#param-dx').length) {
           $('#param-dx')[0].previousElementSibling.id = 'param-posy';
-          $('#param-posy')[0].previousElementSibling.id = 'param-posx';             
+          $('#param-posy')[0].previousElementSibling.id = 'param-posx';
+          $('#param-hue')[0].previousElementSibling.id = 'param-strweight';                        
         }
           this.setUpHighlightClicks('brush');
+          console.log("~~~!!! finshed set up brush");
       }
       
-      modifyInspectorBrush() {
+      modifyInspectorInput() {
         if ($('#param-force').length) {
           $('#param-force')[0].previousElementSibling.id = 'param-styy';
           $('#param-styy')[0].previousElementSibling.id = 'param-styx';           
@@ -215,7 +227,6 @@ define(["jquery", "handlebars", "app/Emitter"],
           this.setUpHighlightClicks('input');  
       }
       modifyInspectorOutput() {
-        console.log("~~~~ output?")
         this.setUpHighlightClicks('output');
       }
 
