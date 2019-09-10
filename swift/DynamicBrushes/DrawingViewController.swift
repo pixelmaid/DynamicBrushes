@@ -91,7 +91,7 @@ class DrawingViewController: UIViewController, Requester{
         return true
     }
     var drawInterval:Timer!
-    
+
     //variables for setting backups
     var backupTimer:Timer!
     //var cancelBackupTimer:Timer!
@@ -415,7 +415,10 @@ class DrawingViewController: UIViewController, Requester{
         }
     }
     
-    
+    func collisionEventHandler(data: (Float, Float), key: String) {
+        Debugger.checkForCollisions(view: self.layerContainerView.brushGraphicsView!, x:data.0, y:data.1)
+    }
+
     
     
     func debuggerEventHandler(data: (String, String), key: String) {
@@ -610,7 +613,7 @@ class DrawingViewController: UIViewController, Requester{
         
         requestProjectList()
         
-        drawInterval  = Timer.scheduledTimer(timeInterval:0.016 , target: self, selector: #selector(DrawingViewController.drawIntervalCallback), userInfo: nil, repeats: true)
+        drawInterval  = Timer.scheduledTimer(timeInterval:0.006 , target: self, selector: #selector(DrawingViewController.drawIntervalCallback), userInfo: nil, repeats: true)
         
         self.startBackupTimer(interval:self.backupInterval);
         Debugger.startDebugTimer(interval:Debugger.debugInterval);
@@ -1015,18 +1018,17 @@ class DrawingViewController: UIViewController, Requester{
                 DispatchQueue.main.async {
                     self.layerContainerView.drawIntoCurrentLayer(drawing:self.currentDrawing!);
                 }
-                Debugger.cacheDebugData();
                 self.backupNeeded = true;
                 
             }
             
             //add check for brush unrendered
-            
+       
         }
+        if(BehaviorManager.behaviors.count>0){
+            Debugger.drawCurrentBrushState(view: self.layerContainerView.brushGraphicsView!,targetBehaviorId: BehaviorManager.behaviors.first!.key);
         
-        Debugger.drawUnrendererdBrushes(view: self.layerContainerView.brushGraphicsView!);
-//        Debugger.renderGenerators(view: self.layerContainerView.brushGraphicsView!);
-
+        }
     }
     
     
@@ -1333,6 +1335,7 @@ class DrawingViewController: UIViewController, Requester{
                 let socketRequest = Request(target: "socket", action: "authoring_response", data: attempt, requester: self)
                 
                 RequestHandler.addRequest(requestData:socketRequest);
+                Debugger.resetDebugStatus();
                 
             }
             catch{
@@ -1488,7 +1491,8 @@ class DrawingViewController: UIViewController, Requester{
         _ = stylusManager.layerEvent.addHandler(target: self, handler: DrawingViewController.stylusManagerEventHandler, key: stylusManagerKey)
         
         _ = Debugger.debuggerEvent.addHandler(target:self, handler: DrawingViewController.debuggerEventHandler, key: debuggerKey)
-        
+        _ = Debugger.collisionEvent.addHandler(target:self, handler: DrawingViewController.collisionEventHandler, key: debuggerKey)
+
         
         self.debuggerInterfaceManager = DebuggerInterfaceManager(drawing: self.currentDrawing!, targetView: self.layerContainerView);
         

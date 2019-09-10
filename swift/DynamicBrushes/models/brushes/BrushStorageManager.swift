@@ -66,7 +66,6 @@ class BrushStorageManager{
         stateData["methods"] = brush.transitions[brush.prevTransition]!.getMethodNames();
         
         BrushStorageManager.paramStorage[brush.behaviorId]![brush.id]![brush.params.time] = stateData.rawString();
-        print("~~~~",brush.params.time,JSON.init(parseJSON:stateData.rawString()!)["params"]["active"]);
         
     }
     
@@ -101,7 +100,6 @@ class BrushStorageManager{
                         var brushJSON = JSON.init(parseJSON:sortedParams.last!.value);
                         let bJSONParams = brushJSON["params"]
                         let bJSONActive = bJSONParams["active"].boolValue;
-                        print("~~~~is active",brushId, bJSONActive,sortedParams.last!.key);
                         if bJSONActive == true{
                             brushesListJSON.append(brushJSON);
                         }

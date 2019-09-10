@@ -70,6 +70,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
                 if(data.data.type == "signal_data"){
                     chartViewManager.processInspectorData(data.data);
 
+                } else if (data.data.type == "highlight") {
+                    debuggerModelCollection.processInspectorData(data.data);
                 }
                 else{
                     debuggerModelCollection.processInspectorDataQueue(data.data);

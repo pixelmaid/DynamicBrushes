@@ -17,7 +17,7 @@ extension Brush {
         let iy = info.1
         let force = info.2
         let state = info.3 // 2- pen down, 0 - pen up
-        print("## drawing into context for brush ", self.id, " state is ", state  )
+       // print("## drawing into context for brush ", self.id, " state is ", state  )
 
         let active = context.scene!.checkActiveId(id: self.id)
         //first, check if brush is already active
@@ -34,15 +34,22 @@ extension Brush {
             context.scene!.addBrushGraphic(id:self.id, ox:self.params.ox, oy:self.params.oy, r: self.params.rotation,
                                            x: self.params.x, y:self.params.y, cx: self.params.cx, cy:self.params.cy, ix:ix, iy:iy )
         }
+
+        if state == 2 || (state == 1 && Debugger.lastState == 0) {
+            Debugger.toDrawPenDown = true //queue for next one
+        } else if state == 0 && Debugger.lastState == 1 {
+            Debugger.toDrawPenUp = true
+        }
+        
         if Debugger.toDrawPenDown {
             context.scene!.movePenDown(x: ix, y: iy, lastX: Debugger.lastPointX, lastY: Debugger.lastPointY)
             Debugger.toDrawPenDown = false
         }
-        if state == 2 || (state == 1 && Debugger.lastState == 0) {
-            Debugger.toDrawPenDown = true //queue for next one
-        } else if state == 0  {
+        if Debugger.toDrawPenUp  {
             context.scene!.movePenUp(x: ix, y: iy, lastX: Debugger.lastPointX, lastY: Debugger.lastPointY)
+            Debugger.toDrawPenUp = false
         }
+        
         context.updateNode()
         self.unrendered = false;
         Debugger.lastState = state
