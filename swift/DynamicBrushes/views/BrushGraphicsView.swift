@@ -981,11 +981,11 @@ class BrushGraphic {
         let currStylusStream:Shape
         let forceScale = (force+1)
         if Debugger.inputGfx {
-            currStylusIcon = Shape(form: Circle(r: 5), fill: inputColor)
-            currStylusStream = Shape(form: Circle(r: 5), fill: inputColor)
+            currStylusIcon = Shape(form: Circle(r: 10), fill: inputColor)
+            currStylusStream = Shape(form: Circle(r: 3), fill: inputColor)
         } else {
-            currStylusIcon = Shape(form: Circle(r: 5), fill: hiddenColor)
-            currStylusStream = Shape(form: Circle(r: 5), fill: hiddenColor)
+            currStylusIcon = Shape(form: Circle(r: 10), fill: hiddenColor)
+            currStylusStream = Shape(form: Circle(r: 3), fill: hiddenColor)
         }
 
 
@@ -1022,9 +1022,9 @@ class BrushGraphic {
 
         let currBrushStream:Shape
         if Debugger.brushGfx {
-            currBrushStream = Shape(form: Circle(r: 5), fill: inputColor)
+            currBrushStream = Shape(form: Circle(r: 3), fill: brushColor)
         } else {
-            currBrushStream = Shape(form: Circle(r: 5), fill: hiddenColor)
+            currBrushStream = Shape(form: Circle(r: 3), fill: hiddenColor)
         }
         currBrushStream.place = Transform.move(dx:Double(x), dy:Double(y))
         brushStream.contents.append(currBrushStream)
@@ -1045,11 +1045,11 @@ class BrushGraphic {
         
         let currOutputStream:Shape
         if Debugger.outputGfx {
-            currOutputStream = Shape(form: Circle(r: 5), fill: inputColor)
+            currOutputStream = Shape(form: Circle(r: 3), fill: outputColor)
         } else {
-            currOutputStream = Shape(form: Circle(r: 5), fill: hiddenColor)
+            currOutputStream = Shape(form: Circle(r: 3), fill: hiddenColor)
         }
-        currOutputStream.place = Transform.move(dx:Double(x), dy:Double(y))
+        currOutputStream.place = Transform.move(dx:Double(cx), dy:Double(cy))
         outputStream.contents.append(currOutputStream)
         if outputStream.contents.count > streamLimit {
             outputStream.contents.removeFirst()

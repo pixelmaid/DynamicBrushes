@@ -59,37 +59,38 @@ class VisualizationView: ModifiedCanvasView {
         
     }
     
+         //don't do anything now
     func drawingEventHandler(data:(String,[Float]),key:String){
-        let coords = data.1
-        let x:Double = Double(coords[0]);
-        let y:Double = Double(coords[1]);
-        let point = CGPoint(x:x, y:y)
-        
-        switch(data.0){
-        case "STYLUS_UP":
-            self.renderStrokeById(currentStrokeId:currentStrokeID, toPoint:point, toWidth:2.0, toColor:UIColor.cyan)
-            self.endShapeLayer.isHidden = false;
-            CATransaction.setValue(true, forKey: kCATransactionDisableActions)
-            endShapeLayer.position = point;
-            CATransaction.commit();
-            break
-        case "STYLUS_DOWN":
-            currentStrokeID = "vstrokeB_" + NSUUID().uuidString;
-            self.beginStroke(id:currentStrokeID);
-            self.startShapeLayer.isHidden = false;
-            CATransaction.begin();
-            CATransaction.setValue(true, forKey: kCATransactionDisableActions)
-            startShapeLayer.position = point;
-            CATransaction.commit();
-
-            break
-        case "STYLUS_MOVE":
-            self.renderStrokeById(currentStrokeId:currentStrokeID, toPoint:point, toWidth:2.0, toColor:UIColor.cyan)
-            break
-        default:
-            break
-        }
-        
+//        let coords = data.1
+//        let x:Double = Double(coords[0]);
+//        let y:Double = Double(coords[1]);
+//        let point = CGPoint(x:x, y:y)
+//
+//        switch(data.0){
+//        case "STYLUS_UP":
+//            self.renderStrokeById(currentStrokeId:currentStrokeID, toPoint:point, toWidth:2.0, toColor:UIColor.cyan)
+//            self.endShapeLayer.isHidden = false;
+//            CATransaction.setValue(true, forKey: kCATransactionDisableActions)
+//            endShapeLayer.position = point;
+//            CATransaction.commit();
+//            break
+//        case "STYLUS_DOWN":
+//            currentStrokeID = "vstrokeB_" + NSUUID().uuidString;
+//            self.beginStroke(id:currentStrokeID);
+//            self.startShapeLayer.isHidden = false;
+//            CATransaction.begin();
+//            CATransaction.setValue(true, forKey: kCATransactionDisableActions)
+//            startShapeLayer.position = point;
+//            CATransaction.commit();
+//
+//            break
+//        case "STYLUS_MOVE":
+//            self.renderStrokeById(currentStrokeId:currentStrokeID, toPoint:point, toWidth:2.0, toColor:UIColor.cyan)
+//            break
+//        default:
+//            break
+//        }
+//
     }
     
 }

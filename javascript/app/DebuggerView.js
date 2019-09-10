@@ -187,9 +187,6 @@ define(["jquery", "handlebars", "app/Emitter"],
           self.modifyInspectorOutput();          
         }
 
-        
-        this.setupHighlighting(data);
-
 
         //rehighlight
         for (var i = 0; i < this.model.collection.getCurrHighlighted().length; i++) {
@@ -217,6 +214,7 @@ define(["jquery", "handlebars", "app/Emitter"],
           this.setUpHighlightClicks('input');  
       }
       modifyInspectorOutput() {
+        console.log("~~~~ output?")
         this.setUpHighlightClicks('output');
       }
 
