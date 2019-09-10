@@ -1016,19 +1016,39 @@ class DrawingViewController: UIViewController, Requester{
                     self.layerContainerView.drawIntoCurrentLayer(drawing:self.currentDrawing!);
                 }
                 self.backupNeeded = true;
-                
+               
             }
             
-            //add check for brush unrendered
        
+        
+            
         }
         if(BehaviorManager.behaviors.count>0){
             Debugger.drawCurrentBrushState(view: self.layerContainerView.brushGraphicsView!,targetBehaviorId: BehaviorManager.behaviors.first!.key);
-        
+
         }
     }
     
-    
+/* @objc func drawIntervalCallback(){
+ DispatchQueue.global(qos: .userInteractive).async {
+ if(self.currentDrawing!.unrendered){
+ DispatchQueue.main.async {
+ self.layerContainerView.drawIntoCurrentLayer(drawing:self.currentDrawing!);
+ }
+ Debugger.cacheDebugData();
+ self.backupNeeded = true;
+ 
+ }
+ 
+ //add check for brush unrendered
+ 
+ }
+ 
+ Debugger.drawUnrendererdBrushes(view: self.layerContainerView.brushGraphicsView!);
+ //        Debugger.renderGenerators(view: self.layerContainerView.brushGraphicsView!);
+ }
+
+ */
     @objc func cancelBackupCallback(){
         RequestHandler.emptyQueue()
         self.layerContainerView.saveEvent.removeAllHandlers();
