@@ -236,6 +236,8 @@ final class StylusManager:LiveManager{
         self.idStart = idStart;
         self.idEnd = idEnd;
         revertToLiveOnLoopEnd = false;
+        Debugger.resetDebugStatus();
+
         currentStartDate = Date();
         let indexandpackage = getIndexandCurrentPackage(idStart: idStart)
         currIndex = indexandpackage.0
@@ -412,6 +414,7 @@ final class StylusManager:LiveManager{
         usedSamples.removeAll();
         currentLoopingPackage = nil;
         self.visualizationEvent.raise(data:"ERASE_REQUEST")
+        Debugger.resetDebugStatus();
 
     }
     
@@ -464,11 +467,10 @@ final class StylusManager:LiveManager{
             //let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
             
             
-            for (_,stylusCollection) in self.collections{
+            
                 
-                (stylusCollection as! StylusCollection).onStylusMove(x: x, y: y, force: force, angle: angle)
-            }
-            let sample = (self.collections["stylus"]! as! StylusCollection).exportData();
+        
+                let sample = (self.collections["stylus"]! as! StylusCollection).onStylusMove(x: x, y: y, force: force, angle: angle);
             currentRecordingPackage.addProtoSample(data:sample);
                 self.moveCounter = 0;
                 

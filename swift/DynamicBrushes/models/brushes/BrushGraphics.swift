@@ -17,7 +17,7 @@ extension Brush {
         let iy = info.1
         let force = info.2
         let state = info.3 // 2- pen down, 0 - pen up
-        print("## drawing into context for brush ", self.id, " state is ", state  )
+       // print("## drawing into context for brush ", self.id, " state is ", state  )
 
         let active = context.scene!.checkActiveId(id: self.id)
         //first, check if brush is already active

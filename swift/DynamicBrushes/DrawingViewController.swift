@@ -91,7 +91,7 @@ class DrawingViewController: UIViewController, Requester{
         return true
     }
     var drawInterval:Timer!
-    
+
     //variables for setting backups
     var backupTimer:Timer!
     //var cancelBackupTimer:Timer!
@@ -610,7 +610,7 @@ class DrawingViewController: UIViewController, Requester{
         
         requestProjectList()
         
-        drawInterval  = Timer.scheduledTimer(timeInterval:0.015 , target: self, selector: #selector(DrawingViewController.drawIntervalCallback), userInfo: nil, repeats: true)
+        drawInterval  = Timer.scheduledTimer(timeInterval:0.006 , target: self, selector: #selector(DrawingViewController.drawIntervalCallback), userInfo: nil, repeats: true)
         
         self.startBackupTimer(interval:self.backupInterval);
         Debugger.startDebugTimer(interval:Debugger.debugInterval);
@@ -1020,12 +1020,12 @@ class DrawingViewController: UIViewController, Requester{
             }
             
             //add check for brush unrendered
-            
+       
         }
+        if(BehaviorManager.behaviors.count>0){
+            Debugger.drawCurrentBrushState(view: self.layerContainerView.brushGraphicsView!,targetBehaviorId: BehaviorManager.behaviors.first!.key);
         
-        Debugger.drawUnrendererdBrushes(view: self.layerContainerView.brushGraphicsView!);
-//        Debugger.renderGenerators(view: self.layerContainerView.brushGraphicsView!);
-
+        }
     }
     
     
@@ -1332,6 +1332,7 @@ class DrawingViewController: UIViewController, Requester{
                 let socketRequest = Request(target: "socket", action: "authoring_response", data: attempt, requester: self)
                 
                 RequestHandler.addRequest(requestData:socketRequest);
+                Debugger.resetDebugStatus();
                 
             }
             catch{

@@ -189,7 +189,9 @@ public class BrushGraphicsScene {
             } else if numGenerators < currCount { //decrease slots
                 let diff = currCount - numGenerators
                 for _ in 0...diff {
-                    self.currentGenerator.removeLast()
+                    if(self.currentGenerator.count>0){
+                        self.currentGenerator.removeLast()
+                    }
                 }
             }
             
@@ -753,7 +755,7 @@ class BrushGraphic {
         self.oy = oy
         self.r = r
         originText.text = "ox:"+String(Int(ox))+", oy:"+String(Int(oy))+", r:"+String(Int(r))
-        print("## rotated brush ", self.id, " by ", r, " Moved to ox ,oy,", ox, oy )
+       // print("## rotated brush ", self.id, " by ", r, " Moved to ox ,oy,", ox, oy )
         
         let rotArc:Shape
         //rotate
@@ -775,7 +777,7 @@ class BrushGraphic {
                 let xTri = xAxis.contents[1] as! Shape
                 xTri.placeVar.animate(to: Transform.move(dx:(axisScale + axisLen * Double(sx)), dy: 0).rotate(angle:Double(pi)), during: 0.1, delay: Double(0))
                     //Transform.scale(sx: Double(sx/100.0), sy:1)
-                print("## changed x scale")
+               //print("## changed x scale")
             }
             if (sy != 100) {
                 let newLine = Macaw.Line(x1: 0, y1: axisScale, x2: 0, y2: axisScale + (axisLen * Double(sy)))
@@ -786,7 +788,7 @@ class BrushGraphic {
                 yTri.placeVar.animate(to: Transform.move(dx:0, dy: (axisScale + axisLen * Double(sy))).rotate(angle:Double(-pi/2)), during: 0.1, delay: Double(0))
 //                yAxis.contents[0].form = Macaw.Line(x1: 0, y1: (-axisScale * sy/100.0), x2: 0, y2:(3*axisScale * sy/100.0))
                     //Transform.scale(sx: 1, sy: Double(sy/100.0))
-                print("## changed y scale")
+               // print("## changed y scale")
             }
             if (sx == 1 && sy == 1) {
                 scaleChanged = false
@@ -881,7 +883,7 @@ class BrushGraphicsView: MacawView {
     override init(frame: CGRect) {
         super.init(frame: frame);
         self.backgroundColor =  UIColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 0.0)
-        print("## (1) initialized BG view")
+       // print("## (1) initialized BG view")
         scene = BrushGraphicsScene(view:self)
         self.updateNode()
     }
@@ -896,7 +898,7 @@ class BrushGraphicsView: MacawView {
     func updateNode() {
         let node = scene?.node
         self.node = node!
-        print("## called update node in graphics view", self.node)
+       // print("## called update node in graphics view", self.node)
     }
     
 }

@@ -27,7 +27,6 @@ class BrushCollection:LiveCollection{
 
     
     public func addProtoSampleForId(behaviorId:String, brushId:String, data: JSON) {
-        print(data, self.protoSignals);
         for (key,value) in data {
             guard let targetProtoSignal = self.protoSignals[key] else {
                 print("ERROR ---------NO PROTO SIGNAL FOUND THAT CORRESPOND WITH FIELD NAME-----------",key,self.protoSignals)
@@ -125,7 +124,7 @@ class StylusCollection:LiveCollection {
 
     }
     
-    func onStylusMove(x:Float,y:Float,force:Float,angle:Float){
+    func onStylusMove(x:Float,y:Float,force:Float,angle:Float)->JSON{
       
         //TODO: REFACTOR FOR STYLUS MOVE BY
         self.pX = self.x;
@@ -137,12 +136,12 @@ class StylusCollection:LiveCollection {
         self.dx = x-pX;
         self.dy = y-pY;
         
-        let rawDeltaAngle = MathUtil.cartToPolar(x1: self.oX, y1: self.oY, x2: self.x, y2: self.y).1;
-        self.deltaAngle = MathUtil.map(value: rawDeltaAngle, low1:0.0, high1: 2*Float.pi, low2: 0.0, high2: 100.0)
-        self.xDistance = self.xDistance + abs(dx);
-        self.yDistance = self.yDistance + abs(dy);
-        let euclidDelta = sqrt(pow(dx,2)+pow(dy,2));
-        self.euclidDistance = self.euclidDistance + sqrt(pow(dx,2)+pow(dy,2));
+        //let rawDeltaAngle = MathUtil.cartToPolar(x1: self.oX, y1: self.oY, x2: self.x, y2: self.y).1;
+        self.deltaAngle = 0//MathUtil.map(value: rawDeltaAngle, low1:0.0, high1: 2*Float.pi, low2: 0.0, high2: 100.0)
+        self.xDistance = 0//self.xDistance + abs(dx);
+        self.yDistance = 0//self.yDistance + abs(dy);
+       // let euclidDelta = sqrt(pow(dx,2)+pow(dy,2));
+        self.euclidDistance = 0//self.euclidDistance + sqrt(pow(dx,2)+pow(dy,2));
         self.time = self.getTimeElapsed();
        
        /* let currentTime = self.getTimeElapsed();
@@ -159,6 +158,7 @@ class StylusCollection:LiveCollection {
         self.stylusEvent = Signal.stylusMove;
         let data = self.exportData();
         self.addProtoSample(data: data)
+        return data;
 
      
     }
