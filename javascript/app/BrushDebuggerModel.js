@@ -59,7 +59,8 @@ define(["app/DebuggerModel"],
 				// $("#" + data.currentState).children(".state").addClass("active");
 				for (var i = 0; i < data.constraints.length; i++) {
 					data.constraints[i].type = "binding";
-					data.constraints[i].value = brushState[data.constraints[i].constraintId];
+					//START HERE!!!!!!!!
+					//data.constraints[i].value = brushState[data.constraints[i].constraintId];
 					this.brushVizQueue.push(data.constraints[i]);
 				}
 			}
