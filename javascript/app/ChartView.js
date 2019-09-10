@@ -823,6 +823,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 console.log("initialize behavior");
                 var self = this;
 
+           
 
                 for (var i = 0; i < data.states.length; i++) {
                     this.newNode(data.states[i]);

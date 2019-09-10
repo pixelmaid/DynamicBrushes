@@ -32,20 +32,12 @@
 	}]
 }, {
 	"displayName": "pen down",
-	"fieldName": "newStroke",
-	"argumentList": [{
-		"displayName": "x",
-		"fieldName": "x",
-		"isExpression": true,
-		"isDropdown": false,
-		"default": "100"
-	}, {
-		"displayName": "y",
-		"fieldName": "y",
-		"isExpression": true,
-		"isDropdown": false,
-		"default": "100"
-	}]
+	"fieldName": "penDown",
+	"argumentList": []
+},{
+	"displayName": "pen up",
+	"fieldName": "penUp",
+	"argumentList": []
 }, {
 	"displayName": "start timer",
 	"fieldName": "startTimer",

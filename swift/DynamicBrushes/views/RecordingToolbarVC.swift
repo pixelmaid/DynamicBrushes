@@ -26,7 +26,6 @@ class GestureRecording {
 class RecordingToolbarVC: UIViewController, Requester {
   
     
-    let playbackSpeeds: [Float] = [0.1, 0.25, 0.5, 0.75, 1, 1.5, 2, 4, 10] //real playback speeds
     let recordImgEventKey = NSUUID().uuidString
 
     @IBOutlet weak var exportButton: UIButton!
@@ -60,7 +59,7 @@ class RecordingToolbarVC: UIViewController, Requester {
    
     @IBAction func sliderChanged(_ sender: UISlider) {
         let val = Int(sender.value);
-        let speed = playbackSpeeds[val];
+        let speed =  Float(val)/100;// playbackSpeeds[val];
         sender.setValue(Float(val), animated: false)
         print("^^ playback speed set to ", speed)
         speedLabel.text = "\(speed)x"

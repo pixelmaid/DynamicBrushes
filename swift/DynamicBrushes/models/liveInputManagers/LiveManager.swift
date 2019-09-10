@@ -130,8 +130,6 @@ final class StylusManager:LiveManager{
     public let stylusDataEvent = Event<(String, [Float])>();
     public let visualizationEvent = Event<String>();
     private var playbackMultiplier = 10;
-    private var startTime:Date!
-    private var prevTriggerTime:Date!
     private var prevHash:Float = 0;
     private var playbackRate:Float = 1;
     private var revertToLiveOnLoopEnd = false;
@@ -299,10 +297,8 @@ final class StylusManager:LiveManager{
             playbackTimer = nil
         }
         
-        startTime = Date();
-        prevTriggerTime = startTime;
-        
-        playbackTimer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(advanceRecording), userInfo: nil, repeats: true)
+      
+        playbackTimer = Timer.scheduledTimer(timeInterval: TimeInterval(0.016/playbackRate), target: self, selector: #selector(advanceRecording), userInfo: nil, repeats: false)
 
         
     }
@@ -312,28 +308,8 @@ final class StylusManager:LiveManager{
         
         
         queue.sync {
-            //            print("total num samples",samples.count)
-            let currentTime = Date();
-            let elapsedTime = currentTime.timeIntervalSince(prevTriggerTime);
-            
-            var timeDifferenceCounter = Float(0);
-            let timeDifferenceMS:Float;
-            
-            /*if(playbackRate >= 10.0){
-                timeDifferenceMS = Float(samples.count);
-                killLoopTimer(delayRestart: false);
-                
-            }
-                
-            else{
-                timeDifferenceMS = Float(elapsedTime)*1000*playbackRate;
-                
-            }
-            
-            while timeDifferenceCounter<timeDifferenceMS{*/
+        
             stepSample();
-
-            //}
         }
     }
 
@@ -390,6 +366,9 @@ final class StylusManager:LiveManager{
                             prepStepData();
                             
                         }
+                        if(self.isLive == false){
+                            delayTimerReinit();
+                        }
                     }
         
         
@@ -400,6 +379,8 @@ final class StylusManager:LiveManager{
         prevHash = 0;
         prepStepData();
         revertToLiveOnLoopEnd = true;
+        self.playbackTimer.invalidate();
+        playbackTimer = nil
         self.resumeLiveMode();
 
     }
@@ -409,7 +390,6 @@ final class StylusManager:LiveManager{
         self.isLive = true;
         self.idStart = nil;
         self.idEnd = nil;
-        //killLoopTimer(delayRestart: false);
         samples.removeAll();
         usedSamples.removeAll();
         currentLoopingPackage = nil;
@@ -419,42 +399,6 @@ final class StylusManager:LiveManager{
     }
     
     
-    private func killLoopTimer(delayRestart:Bool){
-        if playbackTimer != nil {
-            playbackTimer.invalidate()
-            playbackTimer = nil
-        }
-        if(delayRestart){
-         playbackTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(delayTimerReinit), userInfo: nil, repeats: false)
-         }
-         else{
-         self.visualizationEvent.raise(data:"ERASE_REQUEST")
-         }
-    }
-    
-    
-    
-    @objc private func timerAdvanceRecording(){
-        
-        
-        //            print("total num samples",samples.count)
-        let currentTime = Date();
-        let elapsedTime = currentTime.timeIntervalSince(prevTriggerTime);
-        
-        //var timeDifferenceCounter = Float(0);
-        let timeDifferenceMS:Float;
-        
-        if(playbackRate >= 10.0){
-            timeDifferenceMS = Float(samples.count);
-            killLoopTimer(delayRestart: false);
-            
-        }
-            
-        else{
-            timeDifferenceMS = Float(elapsedTime)*1000*playbackRate;
-            
-        }
-    }
     
     //TOOD: NEED TO MAKE THESE SYMMETRICAL TO STYLUSCOLLECTION EVENTS TO CALCULATE ACCURATE DATA
     public func onStylusMove(x:Float,y:Float,force:Float,angle:Float){
@@ -470,7 +414,7 @@ final class StylusManager:LiveManager{
             
                 
         
-                let sample = (self.collections["stylus"]! as! StylusCollection).onStylusMove(x: x, y: y, force: force, angle: angle);
+                let sample = (self.collections["stylus"]! as! StylusCollection).onStylusMove(x: x, y: y, force: force*20, angle: angle);
             currentRecordingPackage.addProtoSample(data:sample);
                 self.moveCounter = 0;
                 
@@ -513,7 +457,7 @@ final class StylusManager:LiveManager{
             
             
             for (_,stylusCollection) in self.collections{
-                (stylusCollection as! StylusCollection).onStylusDown(x: x, y: y, force: force, angle: angle);
+                (stylusCollection as! StylusCollection).onStylusDown(x: x, y: y, force: force*20, angle: angle);
             }
           
                 

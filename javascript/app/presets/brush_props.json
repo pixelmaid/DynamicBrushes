@@ -56,8 +56,8 @@
                              },
 
                               {
-                             "fieldName": "diameter",
-                             "displayName": "diameter",
+                             "fieldName": "weight",
+                             "displayName": "weight",
                              "classType": "BrushProperty",
                              "order": 9
                              },
