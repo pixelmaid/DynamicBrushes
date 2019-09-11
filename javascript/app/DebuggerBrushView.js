@@ -13,7 +13,13 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 				this.keyHandler = keyHandler;
 				this.pastConstraint = null;
 				this.keyHandler.addListener("VIZ_BRUSH_STEP_THROUGH", function() {
-					console.log("! called brush step through");
+					let currentConstraint = this.model.brushVizQueue.shift();
+					this.visualizeStepThrough(currentConstraint, this.pastConstraint, model.data);
+					this.pastConstraint = currentConstraint;
+				}.bind(this));
+
+				this.model.collection.addListener("VIZ_BRUSH_STEP_THROUGH", function() {
+					// console.log("~~~~ !!! called brush step through in main");
 					let currentConstraint = this.model.brushVizQueue.shift();
 					this.visualizeStepThrough(currentConstraint, this.pastConstraint, model.data);
 					this.pastConstraint = currentConstraint;
