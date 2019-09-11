@@ -14,7 +14,7 @@ define(["app/DebuggerModel"],
 				super(collection);
 
 				this.brushVizQueue = [];
-
+				this.stepThroughOn = true;
 			}
 
 			update(data){
@@ -25,7 +25,8 @@ define(["app/DebuggerModel"],
 
 			  	 let targetBehaviorData = data.behaviors[currentBehaviorId];
 			  	 let targetBrushData = targetBehaviorData.brushes[selectedIndex];
-			  	 this.processStepData(targetBrushData);
+			  	 if (this.stepThroughOn)
+				  	 this.processStepData(targetBrushData);
 
 
 			  	}

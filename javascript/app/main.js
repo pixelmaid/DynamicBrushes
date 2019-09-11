@@ -354,13 +354,15 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
             if (this.checked) {
                 //this.value = input, brush, or output
                 $("#inspector-"+this.value).css("visibility", "visible");
+                if (this.value == "brush")                     
+                    this.debuggerModelCollection.brushModel.stepThroughOn = true;
             } else {
 
                 $("#inspector-"+this.value).css("visibility", "hidden");
                 if (this.value == "brush") {
+                    this.debuggerModelCollection.brushModel.stepThroughOn = false;
                     $(".mappings").each(function(i) {
                         $(".mappings").children().each(function(i) {
-                            console.log("~~ loping ", this);
                             if ($(this).hasClass("debug"))
                                 $(this).removeClass("debug");
                         });

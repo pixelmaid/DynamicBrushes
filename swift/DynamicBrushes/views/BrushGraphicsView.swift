@@ -106,6 +106,9 @@ public class BrushGraphicsScene {
         }
         print("~~~ FINAL HIT WAS ", hit)
         switch (hit) {
+        case "off":
+            return;
+            break;
         case "input":
             self.highlightViz(name: "param-styx", on: true)
             break;
@@ -555,20 +558,27 @@ class BrushGraphic {
         let boxThres:Float = 5
         print("!!~ output is at ", self.cx, self.cy )
         if pointInCircle(x:x, y:y, cx:self.cx, cy:self.cy, radius:15) {
+            if !Debugger.outputGfx { return "off"}
             return "output"
         } else if pointInCircle(x:x, y:y, cx:self.x, cy:self.y, radius:15) {
+            if !Debugger.brushGfx { return "off"}
             return "brush"
         } else if pointInCircle(x:x, y:y, cx:Float(self.ix), cy:Float(self.iy), radius:15) {
+            if !Debugger.inputGfx { return "off"}
             return "input"
         } else if pointInCircle(x:x, y:y, cx:self.ox, cy:self.oy, radius: Float(self.axisScale*0.33) + 5.0) {
+            if !Debugger.brushGfx { return "off"}
             return "origin"
         } else if pointInCircle(x:x, y:y, cx:self.ox, cy:self.oy, radius:Float(self.axisScale) + 5.0) {
+            if !Debugger.brushGfx { return "off"}
             return "rotation"
         } else if pointInBox(x:x, y:y, ix:self.ox - boxThres, iy:self.oy+Float(self.axisScale),
                              ax: self.ox + boxThres, ay: self.oy + Float(self.axisScale + self.axisLen)) {
+            if !Debugger.brushGfx { return "off"}
             return "scale-y"
         } else if pointInBox(x:x, y:y, ix:self.ox+Float(self.axisScale), iy:self.oy-boxThres,
                              ax: self.ox + Float(self.axisScale + self.axisLen), ay: self.oy + boxThres) {
+            if !Debugger.brushGfx { return "off"}
             return "scale-x"
         }
         
