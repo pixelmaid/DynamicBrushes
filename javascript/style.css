@@ -404,6 +404,10 @@ li.collapsibleListClosed{
   padding-top: 7px
 }
 
+.visible {
+  display: inline-block !important;
+}
+
 .arrow-left {
   float:left;
   width: 0; 
@@ -716,7 +720,7 @@ input[type="button"]{
   position: relative;
   min-height: 100%;
   height: 100%;
-  padding: 50px 0px 0px 0px;
+  margin: 50px 0px 0px 0px;
   z-index:100;
 }
 

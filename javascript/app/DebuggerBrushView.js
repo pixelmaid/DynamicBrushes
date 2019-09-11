@@ -45,6 +45,10 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 			// }
 
 			visualizeStepThrough(constraint, pastConstraint, data) {
+
+				if (!$("#brush-toggle").is(":checked")) { return; }
+
+
 				console.log("! visualizing constraints ", data, " past constraint ", pastConstraint);
 				var arrowObject;
 				if (pastConstraint) {
@@ -80,6 +84,7 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 						break;
 					case "binding":
 						console.log("binding name ", constraint.relativePropertyName, constraint);
+						var name = constraint.relativePropertyName;
 						$("#" + constraint.constraintId).addClass("debug");
 						$("#param-" + constraint.relativePropertyName).addClass("debug-inspect");
 						// console.log("data is ", this.model.data);
