@@ -1333,6 +1333,8 @@ class DrawingViewController: UIViewController, Requester{
             do{
                 let authoring_data = data.1! as JSON
                 let attempt = try BehaviorManager.handleAuthoringRequest(authoring_data: authoring_data);
+                stylusManager.restartLoop();
+
                 let data = authoring_data["data"]
                 if(data["type"].stringValue == "behavior_added"){
                     

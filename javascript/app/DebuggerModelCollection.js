@@ -58,7 +58,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 				}
 
 				var self = this;
-				this.inspectorDataTimer = setInterval(function() { self.inspectorDataInterval(); }, 100);
+				this.inspectorDataTimer = setInterval(function() { self.inspectorDataInterval(); }, 50);
 			}
 
 			terminateInspectorInterval(){
