@@ -293,9 +293,9 @@ final class StylusManager:LiveManager{
     
     public func restartLoop(){
         if(!self.isLive){
-            self.clearCachedData()
-            self.stopLoopTimer();
-            resumeLiveMode();
+            //self.clearCachedData()
+           // self.stopLoopTimer();
+            //resumeLiveMode();
             //self.startLoopTimer();
         }
 

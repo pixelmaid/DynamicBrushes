@@ -151,22 +151,21 @@ h1{
   background: #000;
 }
 
-.debug-inspect {
-    color: black;
-    background-color: #00ff00;
-}
+
 
 .start-highlight {
   background-color: #00ff00 !important;
 }
 
-.mapping.debug {
-  background-color: #00ff00;
-  outline: 9px solid #0f0;
+.mapping.debug, .method-inspect, .debug-inspect {
+ 
+    background-color: #00ff004d;
+    border: 1px solid #0f0;
+    border-radius: 6px
 }
 
-.method-inspect {
-   background-color: #00ff00;
+.method-inspect{
+  border-width: 2px;
 }
 
 .state-title-inspect {
@@ -185,7 +184,7 @@ h1{
 
 .state{
   width: auto;
-  min-width:200px;
+  min-width:300px;
   min-height: 100px;
   padding:10px;
   float:left;
@@ -297,10 +296,10 @@ div.text_entry, div.property{
 }
 
 .mapping{
-  margin-top: 5px;
-  margin-bottom: 5px;
-  height: 22px;
-  display: inline-block;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    height: 32px;
+    display: inline-block;
 }
 
 .block{
