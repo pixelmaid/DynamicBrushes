@@ -27,10 +27,10 @@ define(["app/DebuggerModel"],
 			  	 let targetBrushData = targetBehaviorData.brushes[selectedIndex];
 			  	 this.processStepData(targetBrushData);
 
+
 			  	}
 
 			  	this.trigger("DATA_UPDATED");
-
 
 			}
 

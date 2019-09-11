@@ -16,9 +16,9 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 				this.outputModel = new DebuggerModel(this);
 				this.selectedIndex = 0;
 				this.inspectorQueue = [];
+				// this.stepThroughQueue = []; //list of lists 
 				this.chartViewManager = chartViewManager;
 				this.startInspectorInterval();
-				this.timerPaused = false;
 
 				this.currHighlighted = [];
 				var self = this;
@@ -49,12 +49,11 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 				let data = {'name':id, 'isOn':isOn};
 				console.log("!!!! triggering highlight~ ", data);
 				this.trigger("ON_HIGHLIGHT_REQUEST",[data]);
-		 }
+		 	}
 
 
 			startInspectorInterval(){
 				if(this.inspectorDataTimer){
-					console.log("~~starting recording");
 					clearInterval(this.inspectorDataTimer);
 				}
 
@@ -64,7 +63,6 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 
 			terminateInspectorInterval(){
 				if(this.inspectorDataTimer){
-					console.log("~~stopping recording");
 					clearInterval(this.inspectorDataTimer);
 				}
 			}
@@ -79,7 +77,10 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 			}
 
 			inspectorDataInterval(){
-				if(this.inspectorQueue.length>0){
+				if (this.brushModel.brushVizQueue.length > 0) {
+					this.trigger("VIZ_BRUSH_STEP_THROUGH");
+				}
+				else if (this.inspectorQueue.length>0){
 					let targetData = this.inspectorQueue.shift();
 					this.processInspectorData(targetData);
 
@@ -90,6 +91,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 			processInspectorData(newData) {
 				if(newData.type == "state"){
 					this.processStateData(newData);
+					// if brush queue. then an event that trigger the HANDLE_VIZ 
 				}
 				else if (newData.type == "highlight"){
 					this.highlight(newData);
@@ -137,7 +139,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 				}
 			}
 
-			processStateData(newData){
+			processStateData(newData){ //this is on timer  
 				// console.log("! data is ", newData);
 				var formattedOutputData = this.formattedOutputData(newData.output);
 				var formattedBrushData = this.formatBrushData(newData.brush);
@@ -151,7 +153,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 					local: formattedGeneratorData,
 					global: formattedInputGlobalData
 				};
-				this.brushModel.update(formattedBrushData);
+				this.brushModel.update(formattedBrushData); 
 				this.inputModel.update(formattedInputData);
 				this.outputModel.update(formattedOutputData);
 
