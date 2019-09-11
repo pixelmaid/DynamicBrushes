@@ -293,26 +293,42 @@ final class StylusManager:LiveManager{
     
     public func restartLoop(){
         if(!self.isLive){
-            //self.clearCachedData()
-           // self.stopLoopTimer();
-            //resumeLiveMode();
-            //self.startLoopTimer();
+            self.stopLoopTimer();
+            self.clearCachedData()
+            samples.removeAll();
+            currentLoopingPackage = nil;
+            self.prepareDataToLoop(idStart: self.idStart, idEnd: self.idEnd, startTimer: true);
+            self.startLoopTimer();
         }
 
     }
     
+    
+    
+    private func resumeLiveMode(){
+        self.isLive = true;
+        self.idStart = nil;
+        self.idEnd = nil;
+        samples.removeAll();
+        usedSamples.removeAll();
+        currentLoopingPackage = nil;
+        self.visualizationEvent.raise(data:"ERASE_REQUEST")
+        Debugger.resetDebugStatus();
+        
+    }
+    
+    
+    
     public func terminateLoopAndResumeLive(){
-        self.clearCachedData()
+      
         revertToLiveOnLoopEnd = true;
-        self.stopLoopTimer();
-        self.resumeLiveMode();
+        
         
     }
     
     private func clearCachedData(){
         usedSamples.removeAll();
         prevHash = 0;
-        prepStepData();
     }
     
     private func stopLoopTimer(){
@@ -375,48 +391,41 @@ final class StylusManager:LiveManager{
     
     
     func stepSample(){
-                if(samples.count>0){
+        if(samples.count>0){
+            
+            let currentSample = samples.remove(at: 0);
+            if(currentSample["hash"].floatValue == Float(0)){
+                currentLoopingPackage = recordingPackages.first(){$0.id == currentSample["recordingId"].stringValue};
+            }
+            self.consumer.consume(liveManager:self, sample:currentSample);
+            
+            usedSamples.append(currentSample);
+            if(currentSample["isLastinRecording"].boolValue){
+                if(self.revertToLiveOnLoopEnd){
                     
-                    
-                        let currentSample = samples.remove(at: 0);
-                        if(currentSample["hash"].floatValue == Float(0)){
-                            currentLoopingPackage = recordingPackages.first(){$0.id == currentSample["recordingId"].stringValue};
-                        }
-//                        print("sample hash",currentSample["hash"].stringValue);
-                        self.consumer.consume(liveManager:self, sample:currentSample);
-                        
-                        // print(currentSample.stylusEvent,"sample hash, last hash",currentSample.hash,currentSample.lastHash)
-                        usedSamples.append(currentSample);
-                        if(currentSample["isLastinRecording"].boolValue){
-                            samples.append(contentsOf:usedSamples);
-                            
-                            usedSamples.removeAll();
-                            prevHash = 0;
-                            prepStepData();
-                            
-                        }
-                        if(self.isLive == false){
-                            self.startLoopTimer();
-                        }
-                    }
+                    self.clearCachedData()
+                    self.stopLoopTimer();
+                    self.resumeLiveMode();
+                }
+                else{
+                    samples.append(contentsOf:usedSamples);
+                    usedSamples.removeAll();
+                    prevHash = 0;
+                    prepStepData();
+                }
+                
+            }
+                
+             if(self.isLive == false){
+                self.startLoopTimer();
+            }
+        }
         
         
     }
     
   
-    
-    
-    private func resumeLiveMode(){
-        self.isLive = true;
-        self.idStart = nil;
-        self.idEnd = nil;
-        samples.removeAll();
-        usedSamples.removeAll();
-        currentLoopingPackage = nil;
-        //self.visualizationEvent.raise(data:"ERASE_REQUEST")
-        Debugger.resetDebugStatus();
-
-    }
+  
     
     
     
