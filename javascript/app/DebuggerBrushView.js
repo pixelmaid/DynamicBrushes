@@ -79,6 +79,7 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 						$("#" + constraint.methodId).addClass("method-inspect");
 						break;
 					case "binding":
+						console.log("binding name ", constraint.relativePropertyName, constraint);
 						$("#" + constraint.constraintId).addClass("debug");
 						$("#param-" + constraint.relativePropertyName).addClass("debug-inspect");
 						// console.log("data is ", this.model.data);
@@ -101,9 +102,9 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 						}
 						//add arrow highlight                     
 						arrowObject = $("#" + constraint.transitionId).parent().prev();
-						arrowObject.children().eq(1).attr("stroke", "aqua");
-						arrowObject.children().eq(2).attr("stroke", "aqua");
-						arrowObject.children().eq(2).attr("fill", "aqua");
+						arrowObject.children().eq(1).attr("stroke", "#00ff00");
+						arrowObject.children().eq(2).attr("stroke", "#00ff00");
+						arrowObject.children().eq(2).attr("fill", "#00ff00");
 						break;
 				}
 
