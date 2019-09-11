@@ -194,7 +194,7 @@ h1{
 
 }
 .state.active{
- background-color: #00ffff7a !important
+ background-color: #030 !important
 }
 
 .setup .state, .die .state {

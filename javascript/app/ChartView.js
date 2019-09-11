@@ -116,10 +116,17 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                             self.trigger("ON_TRANSITION_REMOVED", [self.id, c_id]);
                         }
+                        if (key=="minimize"){
+                            var c_id = options.$trigger[0]._jsPlumb.getParameter("id");
+                            self.minimizeTransition(c_id);
+                        }
                     },
                     items: {
                         "delete": {
-                            name: "Delete Transition",
+                            name: "Delete Trans.",
+                        },
+                        "minimize": {
+                            name: "Minimize Trans.",
                         }
                     }
 
@@ -909,6 +916,18 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                         //self.addInspector(el);
                     });
                 }
+            }
+
+            minimizeTransition(id) {
+                
+                var connections = this.instance.getConnections();
+                var connection = connections.find(function(c) {
+                    return c.getParameter("id") == id;
+                });
+                console.log("connetion for id is ~~~ ", connections, id, connection);
+                connection.getOverlay("transition_" + id).hide();
+                            connection.getOverlay("toggle_" + id).show();
+
             }
 
             addOverlayToConnection(transitionData,conditionData) {
