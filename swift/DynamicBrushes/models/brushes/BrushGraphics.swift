@@ -50,7 +50,7 @@ extension Brush {
         Debugger.lastState = state
         Debugger.lastPointX = ix
         Debugger.lastPointY = iy
-        print("~~~ draw into context called")
+//        print("~~~ draw into context called")
     }
     
     //to do - remove brush visualizations

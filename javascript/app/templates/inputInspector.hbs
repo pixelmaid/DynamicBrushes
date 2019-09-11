@@ -42,10 +42,10 @@
 		<ul class="sub-group-inspector"> 
 		{{#each this.generators}}
 			{{#if this.instances.length}}
-				<h4 class="sub-sub-group-inspector">{{this.type}}</h4>
+				<h4 class="sub-sub-group-inspector" id="gen-{{this.type}}">{{this.type}}</h4>
 				{{#each this.instances}}
-					<li id="time}">time:<span id="inspector-{{id}}">{{time}}</span></li>
-					<li id="val}">value:<span id="inspector-{{id}}">{{val}}</span></li>
+					<li id="time">time:<span id="inspector-{{id}}">{{time}}</span></li>
+					<li id="val">value:<span id="inspector-{{id}}">{{val}}</span></li>
 				{{/each}}
 			{{/if}}
 

@@ -25,11 +25,29 @@ public class BrushGraphicsScene {
     var scaleYOn = false
     var brushOn = false
     var outputOn = false
+    var generatorOn = true
+    var generatorOnName = ""
+    
+    let eraseEventKey = NSUUID().uuidString
     
     init(view: BrushGraphicsView) {
         self.view = view
         self.node = Group()
         print("## (2) init BG scene")
+        _ = stylusManager.visualizationEvent.addHandler(target: self, handler: BrushGraphicsScene.eraseEventHandler, key: eraseEventKey)
+
+    }
+    
+    func eraseEventHandler(data:String, key:String){
+        if data == "ERASE_REQUEST" {
+            print("~~~~!! erase request")
+            for (_, brush) in self.activeBrushIds {
+                brush.stylusStream.contents = []
+                brush.brushStream.contents = []
+                brush.outputStream.contents = []
+
+            }
+        }
     }
     
     public func toggleViz(type: String) {
@@ -129,9 +147,11 @@ public class BrushGraphicsScene {
         self.scaleYOn = false
         self.brushOn = false
         self.outputOn = false
+        self.generatorOn = false
         for (_, brush) in self.activeBrushIds{
             if Debugger.inputGfx {
                 brush.unhighlightStylus()
+                brush.unhighlightGenerator()
             }
             if Debugger.brushGfx {
                 brush.unhighlightOrigin()
@@ -158,6 +178,61 @@ public class BrushGraphicsScene {
                 } else {
                     brush.unhighlightStylus()
                     self.stylusOn = false
+                }
+                break;
+            case "gen-sawtooth":
+                if !Debugger.inputGfx { return }
+                if on {
+                    brush.highlightGenerator(name:"sawtooth")
+                    self.generatorOn = true
+                    self.generatorOnName = "sawtooth"
+                } else {
+                    brush.unhighlightGenerator()
+                    self.generatorOn = false
+                }
+                break;
+            case "gen-square":
+                if !Debugger.inputGfx { return }
+                if on {
+                    brush.highlightGenerator(name:"square")
+                    self.generatorOn = true
+                    self.generatorOnName = "square"
+                } else {
+                    brush.unhighlightGenerator()
+                    self.generatorOn = false
+                }
+                break;
+            case "gen-triangle":
+                if !Debugger.inputGfx { return }
+                if on {
+                    brush.highlightGenerator(name:"triangle")
+                    self.generatorOn = true
+                    self.generatorOnName = "triangle"
+                } else {
+                    brush.unhighlightGenerator()
+                    self.generatorOn = false
+                }
+                break;
+            case "gen-sine":
+                if !Debugger.inputGfx { return }
+                if on {
+                    brush.highlightGenerator(name:"sine")
+                    self.generatorOnName = "sine"
+                    self.generatorOn = true
+                } else {
+                    brush.unhighlightGenerator()
+                    self.generatorOn = false
+                }
+                break;
+            case "gen-random":
+                if !Debugger.inputGfx { return }
+                if on {
+                    brush.highlightGenerator(name:"random")
+                    self.generatorOnName = "random"
+                    self.generatorOn = true
+                } else {
+                    brush.unhighlightGenerator()
+                    self.generatorOn = false
                 }
                 break;
             case "param-ox", "param-oy":
@@ -335,8 +410,8 @@ class BrushGraphic {
     var stylusStream = Group()
     var brushStream = Group()
     var outputStream = Group()
-    let streamLimit = 400
-    let inputLimit = 50
+    let streamLimit = 80
+    let inputLimit = 25
     let computedIcon: Shape
     let stylusIcon: Shape
     let originText: Text
@@ -798,14 +873,40 @@ class BrushGraphic {
     }
     
     
+    func highlightGenerator(name:String) {
+        if Debugger.inputGfx {
+            for groupo in self.generator.contents {
+                if let group = groupo as? Group {
+                    let text = group.contents[2] as! Text
+                    if text.text.contains(name) {
+                        let bg = group.contents[0] as! Shape
+                        bg.stroke = Macaw.Stroke(fill: highlightColor, width:2)
+                    }
+                }
+            }
+        }
+    }
+    
+    func unhighlightGenerator() {
+        if Debugger.inputGfx {
+            for groupo in self.generator.contents {
+                if let group = groupo as? Group {
+                    let bg = group.contents[0] as! Shape
+                    bg.stroke = Macaw.Stroke(fill: Macaw.Color.black, width:2)
+                }
+            }
+        }
+    }
+    
     
     func updateGeneratorDot(v: Double, t: Int, type:String, i: Int) {
 //        print("dot contents are ~~~~ ", self.generator.contents.count, " i is ", i)
-        var multiplier = 10
+        let biggestMultiplier = 400 //sine
+        var multiplier = 40
         if type == "sawtooth" {
-            multiplier = 1
+            multiplier = 4
         }
-        else if type == "sine" {
+        else if type == "sine" { //period now 400
             multiplier = 1
         }
         if i >= self.generator.contents.count {
@@ -813,7 +914,7 @@ class BrushGraphic {
         }
         if let genGroup = self.generator.contents[i] as? Group {
             let dot = genGroup.contents[1] as! Shape
-            dot.place = Transform.move(dx:Double((t*multiplier%100)*2) , dy: 100-v*100)
+            dot.place = Transform.move(dx:Double((t*multiplier%biggestMultiplier)/2) , dy: 100-v*100)
             let gText = genGroup.contents[2] as! Text
             gText.text = type+", time: "+String(t)+", value: "+String((v*100).rounded()/100)
         } else {
@@ -988,7 +1089,7 @@ class BrushGraphic {
         stylusIcon.place = Transform.move(dx: x, dy: y)
         let currStylusIcon:Shape
         let currStylusStream:Shape
-        let forceScale = (force+1)/20/2;
+        let forceScale = (force+1)/10;
         if Debugger.inputGfx {
             currStylusIcon = Shape(form: Circle(r: 10), fill: inputColor)
             currStylusStream = Shape(form: Circle(r: 3), fill: inputColor)
@@ -1015,6 +1116,7 @@ class BrushGraphic {
             updateExistingStylusStrokes()
         }
         if self.scene.stylusOn { self.highlightStylus() }
+        if self.scene.generatorOn { self.highlightGenerator(name:self.scene.generatorOnName) }
 
 //        print("~~~ node len is ", lastStylusInputs.contents.count)
 //        self.savedInputArray = lastStylusInputs
