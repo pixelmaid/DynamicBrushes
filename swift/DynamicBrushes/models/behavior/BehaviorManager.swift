@@ -129,6 +129,7 @@ class BehaviorManager{
     
     
     static func handleDataRequest(requestData:JSON) ->JSON{
+        
         let data = requestData["data"] as JSON;
         let type = data["type"].stringValue;
         var resultJSON:JSON = [:]
