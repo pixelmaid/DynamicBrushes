@@ -18,6 +18,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 				this.inspectorQueue = [];
 				this.chartViewManager = chartViewManager;
 				this.startInspectorInterval();
+				this.timerPaused = false;
 
 				this.currHighlighted = [];
 				var self = this;
@@ -53,6 +54,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 
 			startInspectorInterval(){
 				if(this.inspectorDataTimer){
+					console.log("~~starting recording");
 					clearInterval(this.inspectorDataTimer);
 				}
 
@@ -62,6 +64,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 
 			terminateInspectorInterval(){
 				if(this.inspectorDataTimer){
+					console.log("~~stopping recording");
 					clearInterval(this.inspectorDataTimer);
 				}
 			}
