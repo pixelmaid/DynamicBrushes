@@ -914,7 +914,7 @@ class BrushGraphic {
         }
         if let genGroup = self.generator.contents[i] as? Group {
             let dot = genGroup.contents[1] as! Shape
-            dot.place = Transform.move(dx:Double((t*multiplier%biggestMultiplier)/2) , dy: 100-v*100)
+            dot.place = Transform.move(dx:Double((t*multiplier%biggestMultiplier)/2)  , dy: 100-v*100)
             let gText = genGroup.contents[2] as! Text
             gText.text = type+", time: "+String(t)+", value: "+String((v*100).rounded()/100)
         } else {
