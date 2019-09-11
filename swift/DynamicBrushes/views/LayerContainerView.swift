@@ -12,7 +12,7 @@ import SwiftyJSON
 
 class LayerContainerView: UIView, TouchTarget {
    
-    var visualizationLayer:VisualizationView?
+    //var visualizationLayer:VisualizationView?
     var activeLayer:ModifiedCanvasView?
     var brushGraphicsView:BrushGraphicsView?
 
@@ -257,11 +257,11 @@ class LayerContainerView: UIView, TouchTarget {
         
     }
     
-    func addVisualizationLayer(name:String,id:String?,size:CGSize) {
+    /*func addVisualizationLayer(name:String,id:String?,size:CGSize) {
         let vlayer = VisualizationView(name:name,frame: CGRect(origin:CGPoint(x:0,y:0), size:(size)))
         vlayer.center = CGPoint(x:size.width/2,y:size.height / 2);
         self.addSubview(vlayer)
-    }
+    }*/
     
     func addStroke(id:String){
         if(self.activeLayer != nil){

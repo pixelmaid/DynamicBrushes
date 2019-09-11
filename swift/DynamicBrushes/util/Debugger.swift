@@ -37,7 +37,7 @@ final class Debugger {
     static public var lastPointY = 0.0
     static public var toDrawPenDown = false
     
-    static var propSort = ["ox","oy","sx","sy","rotation","dx","dy","x","y","radius","theta","weight","hue","lightness","saturation","alpha"]
+    static var propSort = ["ox","oy","sx","sy","rotation","dx","dy","weight","hue","lightness","saturation","alpha"]
     
     static public func activate(){
         Debugger.debuggingActive = true;
@@ -56,7 +56,7 @@ final class Debugger {
         propSort.forEach { key in
             var found = false;
             _propList = _propList.filter { (mapping) -> Bool in
-                
+                let name = mapping["relativePropertyName"].stringValue;
                 if( !found && mapping["relativePropertyName"].stringValue == key){
                     sortedMappings.append(mapping);
                     found = true;
@@ -185,7 +185,7 @@ final class Debugger {
         debugData["transitionId"] = JSON(brush.prevTransition);
         debugData["params"] = brush.params.toJSON();
         debugData["id"] = JSON(brush.id);
-        debugData["constraints"] = brush.states[brush.currentState]!.getConstrainedPropertyNames();
+        debugData["constraints"] = brush.states[brush.currentState]!.getConstrainedPropertyNames(targetBrush: brush);
         debugData["methods"] = brush.transitions[brush.prevTransition]!.getMethodNames();
         return debugData;
     }

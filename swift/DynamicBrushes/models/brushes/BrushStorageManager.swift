@@ -63,7 +63,7 @@ class BrushStorageManager{
         stateData["params"] = brush.params.toJSON();
         stateData["id"] = JSON(brush.id);
         stateData["event"] = JSON(event);
-        stateData["constraints"] = brush.states[brush.currentState]!.getConstrainedPropertyNames();
+        stateData["constraints"] = brush.states[brush.currentState]!.getConstrainedPropertyNames(targetBrush:brush);
         stateData["methods"] = brush.transitions[brush.prevTransition]!.getMethodNames();
         
         BrushStorageManager.paramStorage[brush.behaviorId]![brush.id]![brush.params.time] = stateData.rawString();

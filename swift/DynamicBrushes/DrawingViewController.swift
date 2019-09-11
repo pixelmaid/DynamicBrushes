@@ -532,7 +532,7 @@ class DrawingViewController: UIViewController, Requester{
         layerPanelContainerView.layer.cornerRadius = 8.0
         layerPanelContainerView.clipsToBounds = true
         self.newLayer();
-        self.newVisualizationLayer();
+        //self.newVisualizationLayer();
         
         layerPanelContainerView.isHidden = true
         inspectorPanelContainerView.isHidden = true
@@ -1139,9 +1139,9 @@ class DrawingViewController: UIViewController, Requester{
         
     }
     
-    func newVisualizationLayer() {
+   /* func newVisualizationLayer() {
         self.layerContainerView.addVisualizationLayer(name: "Vis layer",id:nil, size:self.targetSize);
-    }
+    }*/
     
     func onErase(sender: UIButton!) {
         layerContainerView.eraseCurrentLayer();

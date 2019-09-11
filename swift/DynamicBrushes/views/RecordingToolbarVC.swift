@@ -116,7 +116,7 @@ class RecordingToolbarVC: UIViewController, Requester {
                 
             } else { //stop recording
                 
-                stylusManager.terminateStepAndResumeLive()
+                stylusManager.terminateLoopAndResumeLive()
                 //stylusManager.setToLive()
                 firstLoopCompleted = true
             }

@@ -120,7 +120,7 @@ final class StylusManager:LiveManager{
     private var usedSamples = [JSON]();
     private var firstRecording:String!
     private var lastRecording:String!
-    
+    private var recordingLoopCount:Int = 0;
     //events
     public let eraseEvent = Event<(String,[String:[String]])>();
     
@@ -195,6 +195,7 @@ final class StylusManager:LiveManager{
     
     
     
+    
     public func setRecordingPresetData(data:JSON){
         self.recordingPresetData = data;
     }
@@ -235,7 +236,7 @@ final class StylusManager:LiveManager{
         self.idEnd = idEnd;
         revertToLiveOnLoopEnd = false;
         Debugger.resetDebugStatus();
-
+        self.recordingLoopCount = 0;
         currentStartDate = Date();
         let indexandpackage = getIndexandCurrentPackage(idStart: idStart)
         currIndex = indexandpackage.0
@@ -286,16 +287,41 @@ final class StylusManager:LiveManager{
         
         prepStepData();
         if(startTimer){
-            delayTimerReinit();
+            startLoopTimer();
         }
     }
     
+    public func restartLoop(){
+        self.stopLoopTimer();
+        self.clearCachedData()
+        revertToLiveOnLoopEnd = true;
+        self.startLoopTimer();
+
+    }
     
-    @objc private func delayTimerReinit(){
+    public func terminateLoopAndResumeLive(){
+        self.clearCachedData()
+        revertToLiveOnLoopEnd = true;
+        self.stopLoopTimer();
+        self.resumeLiveMode();
+        
+    }
+    
+    private func clearCachedData(){
+        usedSamples.removeAll();
+        prevHash = 0;
+        prepStepData();
+    }
+    
+    private func stopLoopTimer(){
         if(playbackTimer != nil){
             playbackTimer.invalidate()
             playbackTimer = nil
         }
+    }
+    
+    private func startLoopTimer(){
+        self.stopLoopTimer();
         
       
         playbackTimer = Timer.scheduledTimer(timeInterval: TimeInterval(0.016/playbackRate), target: self, selector: #selector(advanceRecording), userInfo: nil, repeats: false)
@@ -316,7 +342,8 @@ final class StylusManager:LiveManager{
   
     
     func prepStepData(){
-      
+        self.recordingLoopCount+=1;
+        print("recording Loop count",self.recordingLoopCount);
         var strokesToErase = [String:[String]]();
         currentLoopingPackage = recordingPackages.first(){$0.id == self.idStart}
         while (true){
@@ -367,23 +394,14 @@ final class StylusManager:LiveManager{
                             
                         }
                         if(self.isLive == false){
-                            delayTimerReinit();
+                            self.startLoopTimer();
                         }
                     }
         
         
     }
     
-    func terminateStepAndResumeLive(){
-        usedSamples.removeAll();
-        prevHash = 0;
-        prepStepData();
-        revertToLiveOnLoopEnd = true;
-        self.playbackTimer.invalidate();
-        playbackTimer = nil
-        self.resumeLiveMode();
-
-    }
+  
     
     
     private func resumeLiveMode(){
@@ -393,7 +411,7 @@ final class StylusManager:LiveManager{
         samples.removeAll();
         usedSamples.removeAll();
         currentLoopingPackage = nil;
-        self.visualizationEvent.raise(data:"ERASE_REQUEST")
+        //self.visualizationEvent.raise(data:"ERASE_REQUEST")
         Debugger.resetDebugStatus();
 
     }
@@ -539,9 +557,7 @@ final class StylusManager:LiveManager{
 
 class StylusDataProducer{
     
-    
     func produce(index:Int,recordingPackage:RecordingCollection)->JSON?{
-        
         let sample = recordingPackage.getProtoSample(index:index);
         return sample;
     }
@@ -569,7 +585,6 @@ class StylusDataConsumer{
                 (stylusCollection as! StylusCollection).onStylusDown(x: sample["x"].floatValue, y: sample["y"].floatValue, force: sample["force"].floatValue, angle: sample["angle"].floatValue);
             }
             
-            stylusManager.visualizationEvent.raise(data:"ADVANCE_KEYFRAME")
             break;
         case StylusManager.stylusMove:
             stylusManager.stylusDataEvent.raise(data:("STYLUS_MOVE", [sample["x"].floatValue, sample["y"].floatValue]))

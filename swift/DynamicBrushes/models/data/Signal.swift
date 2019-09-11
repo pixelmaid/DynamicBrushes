@@ -47,6 +47,7 @@ class Signal:Observable<Float>{
     }
     
     public func paramsToJSON()->JSON{
+        print("params to json",self.index);
         return JSON(signalBuffer[self.index]);
     }
     
