@@ -626,7 +626,7 @@ class BrushGraphic {
                 stylusUpIcon.fill = inputColor
                 stylusDownIcon.fill = inputColor
                 changeColorInGroup(group: stylusStream, color: inputColor)
-                Debugger.inputLabel = true
+                
                 
             } else {
                 stylusIcon.fill = hiddenColor
@@ -646,7 +646,7 @@ class BrushGraphic {
                 inputIcon.fill = brushColor
                 inputIcon.stroke = Macaw.Stroke(fill: Macaw.Color.white, width:2)
                 changeColorInGroup(group: brushStream, color: brushColor)
-                Debugger.brushLabel = true
+
             } else {
                 makeBrushIconInvisible()
                 inputIcon.fill = hiddenColor
@@ -661,7 +661,7 @@ class BrushGraphic {
                 computedIcon.fill = outputColor
                 computedIcon.stroke = Macaw.Stroke(fill: Macaw.Color.white, width:2)
                 changeColorInGroup(group: outputStream, color: outputColor)
-                Debugger.outputLabel = true
+
             } else {
                 computedIcon.fill = hiddenColor
                 computedIcon.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
@@ -689,7 +689,6 @@ class BrushGraphic {
             if Debugger.brushLabel {
                 originText.fill = Macaw.Color.black
                 inputText.fill = Macaw.Color.black
-
             } else {
                 originText.fill = hiddenColor
                 inputText.fill = hiddenColor
@@ -1025,6 +1024,11 @@ class BrushGraphic {
     }
     
     func updateBrushIcon(r: Float, ox:Float, oy:Float, sx:Float, sy:Float) {
+        if !Debugger.brushLabel {
+            originText.fill = hiddenColor
+        }
+        
+        print("~~ movinf brush" , Debugger.brushLabel)
 
         brushIcon.place = Transform.move(dx: Double(ox) - oxOffset, dy: Double(oy) - oyOffset)
         originText.place = Transform.move(dx: Double(ox), dy: Double(oy) - Double(20))
@@ -1095,6 +1099,9 @@ class BrushGraphic {
     func moveStylusLocation(x: Double, y: Double, force: Double) {
         self.ix = x
         self.iy = y
+        if !Debugger.inputLabel {
+            stylusText.fill = hiddenColor
+        }
         
         stylusIcon.place = Transform.move(dx: x, dy: y)
         let currStylusIcon:Shape
@@ -1134,6 +1141,10 @@ class BrushGraphic {
     }
     
     func moveBrushLocation(x: Float, y: Float) {
+        if !Debugger.brushLabel {
+            inputText.fill = hiddenColor
+        }
+        
         inputIcon.place = Transform.move(dx: Double(x), dy: Double(y)) //need this offset for some reason?
         self.x = x
         self.y = y
@@ -1156,7 +1167,10 @@ class BrushGraphic {
     }
     
     func moveComputedLocation(cx: Float, cy: Float) {
-
+        if !Debugger.outputLabel {
+            computedText.fill = hiddenColor
+        }
+        
         computedIcon.place = Transform.move(dx: Double(cx), dy: Double(cy))
         self.cx = cx
         self.cy = cy
