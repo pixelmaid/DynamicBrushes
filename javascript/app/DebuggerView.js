@@ -241,7 +241,6 @@ define(["jquery", "handlebars", "app/Emitter"],
         if ($('#param-dx').length) {
           $('#param-dx')[0].previousElementSibling.id = 'param-posy';
           $('#param-posy')[0].previousElementSibling.id = 'param-posx';
-          $('#param-hue')[0].previousElementSibling.id = 'param-strweight';                        
         }
           this.setUpHighlightClicks('brush');
       }
@@ -254,6 +253,7 @@ define(["jquery", "handlebars", "app/Emitter"],
           this.setUpHighlightClicks('input');  
       }
       modifyInspectorOutput() {
+        $('#param-h')[0].previousElementSibling.id = 'param-outweight';                        
         this.setUpHighlightClicks('output');
       }
 

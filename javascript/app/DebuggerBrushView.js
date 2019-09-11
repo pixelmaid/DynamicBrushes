@@ -12,6 +12,7 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 				super(model, element, template, groupName, keyHandler);
 				this.keyHandler = keyHandler;
 				this.pastConstraint = null;
+				this.stateHighlighted = false;
 				this.keyHandler.addListener("VIZ_BRUSH_STEP_THROUGH", function() {
 					let currentConstraint = this.model.brushVizQueue.shift();
 					this.visualizeStepThrough(currentConstraint, this.pastConstraint, model.data);
@@ -44,7 +45,26 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 		 //        }    
 			// }
 
+
+			removeStateHighlight(pastConstraint) {
+				$("#" + pastConstraint.transitionId).children().eq(1).removeClass("active");
+			}
+
+
+			removeMethodHighlight(pastConstraint) {
+				if (pastConstraint.type == method) {
+					$("#" + pastConstraint.methodId).removeClass("method-inspect");
+
+				} else {
+					$("#" + pastConstraint.transitionId).children().first().removeClass("method-inspect");
+				}
+			}
+
 			visualizeStepThrough(constraint, pastConstraint, data) {
+				var self = this;
+				if (!$("#brush-toggle").is(":checked")) { return; }
+
+
 				console.log("! visualizing constraints ", data, " past constraint ", pastConstraint);
 				var arrowObject;
 				if (pastConstraint) {
@@ -62,7 +82,6 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 							} else if ($("#" + pastConstraint.transitionId).hasClass("transition_statement")) {
 								$("#" + pastConstraint.transitionId).children().first().removeClass("method-inspect");
 							} else { //it's a state
-								$("#" + pastConstraint.transitionId).children().eq(1).removeClass("active");
 							}
 							//remove arrow highlight                     
 							arrowObject = $("#" + pastConstraint.transitionId).parent().prev();
@@ -77,8 +96,18 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 					case "method":
 						console.log("!!VIZ METHOD ", constraint);
 						$("#" + constraint.methodId).addClass("method-inspect");
+						if (pastConstraint) {
+							if (pastConstraint.type == "transition") {
+								console.log("~~~ REMOVING METHOD !", constraint);
+								// self.removeMethodHighlight(constraint);
+								self.removeStateHighlight(constraint);
+								return;
+							}
+						}
 						break;
 					case "binding":
+						console.log("binding name ", constraint.relativePropertyName, constraint);
+						var name = constraint.relativePropertyName;
 						$("#" + constraint.constraintId).addClass("debug");
 						$("#param-" + constraint.relativePropertyName).addClass("debug-inspect");
 						// console.log("data is ", this.model.data);
@@ -90,20 +119,34 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 						break;
 					case "transition":
 						console.log("!!VIZ TRANSITION ", constraint, pastConstraint);
+
+						if (pastConstraint) {
+							if (pastConstraint.type == "binding" && self.stateHighlighted == true) {
+								console.log("~~~ REMOVING TRANS !", constraint);
+								// self.removeMethodHighlight(constraint);
+								self.removeStateHighlight(constraint);
+								self.stateHighlighted = false;
+								return;
+							}
+						}
 						if (constraint.transitionId == "start") {
 							$(".setup").children().eq(1).addClass("start-highlight");
 						}
 						if ($("#" + constraint.transitionId).hasClass("transition_statement")) {
 							//outline header
+							console.log("~highlight header")
 							$("#" + constraint.transitionId).children().first().addClass("method-inspect");
+							self.stateHighlighted = true;
 						} else { //it's a state
+							console.log("~highlight state")
 							$("#" + constraint.transitionId).children().eq(1).addClass("active");
+							self.stateHighlighted = true;
 						}
 						//add arrow highlight                     
 						arrowObject = $("#" + constraint.transitionId).parent().prev();
-						arrowObject.children().eq(1).attr("stroke", "aqua");
-						arrowObject.children().eq(2).attr("stroke", "aqua");
-						arrowObject.children().eq(2).attr("fill", "aqua");
+						arrowObject.children().eq(1).attr("stroke", "#00ff00");
+						arrowObject.children().eq(2).attr("stroke", "#00ff00");
+						arrowObject.children().eq(2).attr("fill", "#00ff00");
 						break;
 				}
 

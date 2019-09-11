@@ -153,28 +153,29 @@ h1{
 
 .debug-inspect {
     color: black;
-    background-color: aqua;
+    background-color: #00ff00;
 }
 
 .start-highlight {
-  background-color: aqua !important;
+  background-color: #00ff00 !important;
 }
 
-.debug .expression {
-  outline: 3px solid aqua;
+.mapping.debug {
+  background-color: #00ff00;
+  outline: 9px solid #0f0;
 }
 
 .method-inspect {
-    outline: 3px solid aqua;
+   background-color: #00ff00;
 }
 
 .state-title-inspect {
-  background-color: aqua;
+  background-color: #00ff00;
   color: black;
 }
 
 .arrrow-inspect {
-  fill: aqua;
+  fill: #00ff00;
 }
 
 .expression{
@@ -193,7 +194,7 @@ h1{
 
 }
 .state.active{
- background-color: #00ffff7a !important
+ background-color: #030 !important
 }
 
 .setup .state, .die .state {
@@ -401,6 +402,10 @@ li.collapsibleListClosed{
 .transition-arrow{
   height: 100px;
   padding-top: 7px
+}
+
+.visible {
+  display: inline-block !important;
 }
 
 .arrow-left {
@@ -715,7 +720,7 @@ input[type="button"]{
   position: relative;
   min-height: 100%;
   height: 100%;
-  padding: 50px 0px 0px 0px;
+  margin: 50px 0px 0px 0px;
   z-index:100;
 }
 

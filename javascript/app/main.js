@@ -343,6 +343,33 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
           console.log("mouseup palette");
         });
 
+        //handle inspector toggles
+        //first initialize them 
+        $("#input-toggle").prop('checked', true);
+        $("#brush-toggle").prop('checked', true);
+        $("#output-toggle").prop('checked', true);
+
+        $('#inspector-toggle :checkbox').change(function() {
+            // this will contain a reference to the checkbox   
+            if (this.checked) {
+                //this.value = input, brush, or output
+                $("#inspector-"+this.value).css("visibility", "visible");
+            } else {
+
+                $("#inspector-"+this.value).css("visibility", "hidden");
+                if (this.value == "brush") {
+                    $(".mappings").each(function(i) {
+                        $(".mappings").children().each(function(i) {
+                            console.log("~~ loping ", this);
+                            if ($(this).hasClass("debug"))
+                                $(this).removeClass("debug");
+                        });
+                    });
+                }
+            }
+        });
+
+
 
     }
     );
