@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class VisualizationView: ModifiedCanvasView {
+/*class VisualizationView: ModifiedCanvasView {
     let drawingEventKey = NSUUID().uuidString
     let eraseEventKey = NSUUID().uuidString
     let stylusDataEvent = Event<(String, [Float])>();
@@ -94,3 +94,4 @@ class VisualizationView: ModifiedCanvasView {
     }
     
 }
+*/

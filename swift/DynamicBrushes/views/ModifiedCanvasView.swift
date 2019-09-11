@@ -127,9 +127,9 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
             value.unlock();
 
         }
-        if self is VisualizationView {
+        /*if self is VisualizationView {
             print ("@@ activeStrokes are ", self.activeStrokes)
-        }
+        }*/
         
         self.allStrokes.removeAll();
         self.activeStrokes.removeAll();
