@@ -71,12 +71,13 @@ class State {
         }
     }
     
-    func getConstrainedPropertyNames()->JSON{
+    func getConstrainedPropertyNames(targetBrush:Brush)->JSON{
         var names = [JSON]();
         
         for (key,mapping) in constraint_mappings{
             var jsonMapping: JSON = [:]
-            jsonMapping["relativePropertyName"] = JSON(mapping.relativeProperty.name);
+            let match = targetBrush.kvcDictionary.first{$0.value === mapping.relativeProperty};
+            jsonMapping["relativePropertyName"] = JSON(match!.key);
             jsonMapping["constraintId"] = JSON(key);
             names.append(jsonMapping);
         }
