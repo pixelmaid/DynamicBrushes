@@ -119,7 +119,7 @@ class DrawingViewController: UIViewController, Requester{
     
     required init?(coder: NSCoder) {
         layerContainerView = LayerContainerView(width:pX,height:pY);
-        
+        Debugger.brushGraphicsView = layerContainerView!.brushGraphicsView;
         //replace with custom view
 //        brushGraphicsView = BrushGraphicsView(frame:CGRect(x:0, y:47, width:1366, height:1010))
         
@@ -1028,7 +1028,7 @@ class DrawingViewController: UIViewController, Requester{
             
         }
         if(BehaviorManager.behaviors.count>0){
-           Debugger.drawCurrentBrushState(view: self.layerContainerView.brushGraphicsView!,targetBehaviorId: BehaviorManager.behaviors.first!.key);
+            Debugger.drawCurrentBrushState(view: self.layerContainerView.brushGraphicsView!,targetBehaviorId: BehaviorManager.behaviors.first!.key, jump:false,time:nil);
 
         }
     }
