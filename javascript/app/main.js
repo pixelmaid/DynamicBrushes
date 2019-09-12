@@ -19,7 +19,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
         var debuggerInputView = new DebuggerView(debuggerModelCollection.inputModel, "#inspector-input", inputInspectorTemplate, "inputGlobal", keypressHandler);
         // note -- make one for inputLocal? 
         var debuggerOutputView = new DebuggerView(debuggerModelCollection.outputModel, "#inspector-output", outputInspectorTemplate, "output", keypressHandler);
-
+        var self = this;
         //sets up interface by initializing palette, removing overlay etc.
         var setupInterface = function() {
 
@@ -350,7 +350,6 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
 
         chartViewManager.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
 
-        debuggerModelCollection.addListener("STEP_FORWARD", stepDrawingViewForward);
         debuggerModelCollection.addListener("INITIALIZE_STEPPING", initializeStepping);
         debuggerModelCollection.addListener("DEINITIALIZE_STEPPING", deinitializeStepping);
 
@@ -380,28 +379,37 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
         $("#input-toggle").prop('checked', true);
         $("#brush-toggle").prop('checked', true);
         $("#output-toggle").prop('checked', true);
+        $("#step-toggle").prop('checked', true);
 
         $('#inspector-toggle :checkbox').change(function() {
             // this will contain a reference to the checkbox   
             if (this.checked) {
-                //this.value = input, brush, or output
-                $("#inspector-"+this.value).css("visibility", "visible");
-                if (this.value == "brush"){                     
-                    this.debuggerModelCollection.brushModel.stepThroughOn = true;
+                //this.value = input, brush, or output, or step 
+                if (this.value == 'step') {
+                    debuggerModelCollection.brushModel.stepThroughOn = true;
+                } else {
+                    $("#inspector-"+this.value).css("visibility", "visible");
+                    if (this.value == "brush"){                     
+                        debuggerModelCollection.brushModel.stepThroughOn = true;
+                    }
                 }
             } else {
-
-                $("#inspector-"+this.value).css("visibility", "hidden");
-                if (this.value == "brush") {
-                    this.debuggerModelCollection.brushModel.stepThroughOn = false;
-                    $(".mappings").each(function(i) {
-                        $(".mappings").children().each(function(i) {
-                            console.log("~~ looping ", this);
-                            if ($(this).hasClass("debug")){
-                                $(this).removeClass("debug");
-                            }
+                if (this.value == 'step') {
+                    debuggerModelCollection.brushModel.stepThroughOn = false;
+                    console.log("~~ turned stepping off ");
+                } else {
+                    $("#inspector-"+this.value).css("visibility", "hidden");
+                    if (this.value == "brush") {
+                        debuggerModelCollection.brushModel.stepThroughOn = false;
+                        $(".mappings").each(function(i) {
+                            $(".mappings").children().each(function(i) {
+                                console.log("~~ looping ", this);
+                                if ($(this).hasClass("debug")){
+                                    $(this).removeClass("debug");
+                                }
+                            });
                         });
-                    });
+                    }
                 }
             }
         });

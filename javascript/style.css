@@ -136,6 +136,10 @@ h1{
   margin: 3px -21px 0px 3px !important;
 }
 
+.transition-front {
+  z-index: 500 !important;
+}
+
 .event_block {
   float: left;
   min-width: 124px;

@@ -31,6 +31,10 @@ final class Debugger {
     static public var outputGfx = true
     static public var outputLabel = true
     
+    static public var inputLabelTurnedOff = false
+    static public var brushLabelTurnedOff = false
+    static public var outputLabelTurnedOff = false
+
     //showing brush up/down variables
     static public var lastState = -1
     static public var lastPointX = 0.0

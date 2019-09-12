@@ -249,6 +249,12 @@ define(["jquery", "handlebars", "app/Emitter"],
           $('#param-dy')[0].previousElementSibling.id = 'param-dx';
         }
           this.setUpHighlightClicks('brush');
+          
+        let selectables = ["#param-ox", "#param-oy", "#param-sx", "#param-sy",
+          "#param-rotation", "#param-dx", "#param-dy"];
+        for (var i = 0; i < selectables.length; i++) {
+          $(selectables[i]).css("font-weight","Bold");
+        }
       }
       
       modifyInspectorInput() {
@@ -257,8 +263,19 @@ define(["jquery", "handlebars", "app/Emitter"],
           $('#param-styy')[0].previousElementSibling.id = 'param-styx';           
         }
           this.setUpHighlightClicks('input');  
+
+        let selectables = ["#param-styx", "#param-styy"];
+        for (var i = 0; i < selectables.length; i++) {
+          $(selectables[i]).css("font-weight","Bold");
+        }
       }
+
       modifyInspectorOutput() {
+        let selectables = ["#param-x", "#param-y"];
+        for (var i = 0; i < selectables.length; i++) {
+          $(selectables[i]).css("font-weight","Bold");
+        }
+
         $('#param-h')[0].previousElementSibling.id = 'param-outweight';                        
         this.setUpHighlightClicks('output');
       }
