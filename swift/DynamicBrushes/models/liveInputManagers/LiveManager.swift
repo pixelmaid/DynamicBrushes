@@ -431,7 +431,7 @@ final class StylusManager:LiveManager{
                 
             }
                 
-             if(self.isLive == false){
+             if(self.isLive == false && self.isStepping == false){
                 self.startLoopTimer();
             }
         }
