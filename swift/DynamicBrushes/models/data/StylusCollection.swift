@@ -87,6 +87,9 @@ class StylusCollection:LiveCollection {
         protodata["stylusEvent"] = JSON(0);
         protodata["speed"] = JSON(0);
         protodata["time"] = JSON(0);
+        protodata["stylusUp"] = JSON(StylusManager.stylusUp);
+        protodata["stylusDown"] = JSON(StylusManager.stylusDown);
+        protodata["stylusMove"] = JSON(StylusManager.stylusMove);
         super.addProtoSample(data: protodata);
     }
     
@@ -198,6 +201,9 @@ class StylusCollection:LiveCollection {
         data["force"] = JSON(self.force);
         data["angle"] = JSON(self.angle);
         data["stylusEvent"] = JSON(self.stylusEvent);
+        data["stylusUp"] = JSON(StylusManager.stylusUp);
+        data["stylusDown"] = JSON(StylusManager.stylusDown);
+        data["stylusMove"] = JSON(StylusManager.stylusMove);
         data["euclidDistance"] = JSON(self.euclidDistance);
         data["xDistance"] = JSON(self.xDistance);
         data["yDistance"] = JSON(self.yDistance);

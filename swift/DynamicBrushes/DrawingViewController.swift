@@ -606,7 +606,7 @@ class DrawingViewController: UIViewController, Requester{
         
         
         var templateJSON:JSON = [:]
-        templateJSON["filename"] = "templates/default_state_pendown.json"
+        templateJSON["filename"] = "templates/default_stylus_events.json"
         templateJSON["type"] = JSON("load")
         let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: self)
         RequestHandler.addRequest(requestData:behaviorDownloadRequest);
@@ -1447,8 +1447,7 @@ class DrawingViewController: UIViewController, Requester{
     }
     
     func synchronizeWithAuthoringClient(){
-        Debugger.setupResetInspectionRequest();
-
+       
         let syncJSON:JSON = BehaviorManager.getAllBehaviorAndCollectionJSON();
         let request = Request(target: "socket", action: "synchronize", data: syncJSON, requester: self)
         RequestHandler.addRequest(requestData: request)

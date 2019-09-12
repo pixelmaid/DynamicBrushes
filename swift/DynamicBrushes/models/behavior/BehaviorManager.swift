@@ -704,7 +704,8 @@ class BehaviorManager{
         var collectionJSON = [JSON]();
         for collectionList in BehaviorManager.signalCollections{
 
-            for(_,value) in collectionList {
+            for(key,value) in collectionList {
+                print(key)
                 collectionJSON.append(value.protoToJSON());
             }
             

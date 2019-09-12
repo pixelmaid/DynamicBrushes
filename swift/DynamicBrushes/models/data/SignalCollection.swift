@@ -136,7 +136,7 @@ class SignalCollection {
         var json:JSON = [:];
         var signals = [JSON]();
         
-        for (_,value) in self.protoSignals{
+        for (key,value) in self.protoSignals{
            let data = value.getMetaJSON();
             signals.append(data);
         }

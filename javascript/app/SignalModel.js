@@ -28,7 +28,26 @@ define(['emitter', 'app/id', 'app/Emitter', 'app/DatasetLoader'],
             this.data["recordings"].items.push(items[0]); 
             break;
           case "live":
-            this.data["live_input"].items.push(items[0]); 
+            if(items[0].collectionId != "ui" &&  items[0].collectionId != "mic"){
+              let signals = items[0].signals;
+              let filteredSignals = signals.filter(function(signal){
+                switch (signal.fieldName){
+                  case "time":
+                  case "euclidDistance":
+                  case "xDistance":
+                  case "yDistance":
+                  case "speed":
+                  case "deltaAngle":
+
+                    return false;
+                  
+                  default:
+                    return true;
+                }
+              });
+              items[0].signals = filteredSignals;
+              this.data["live_input"].items.push(items[0]); 
+            }
             break;
           case "generator":
             this.data["generators"].items.push(items[0]); 
