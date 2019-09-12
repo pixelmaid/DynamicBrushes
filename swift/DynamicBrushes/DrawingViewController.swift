@@ -1318,7 +1318,6 @@ class DrawingViewController: UIViewController, Requester{
             break;
         case "synchronize_request", "authoring_client_connected":
             self.synchronizeWithAuthoringClient();
-            Debugger.setupResetInspectionRequest();
 
             break;
         case "data_request":
@@ -1448,11 +1447,12 @@ class DrawingViewController: UIViewController, Requester{
     }
     
     func synchronizeWithAuthoringClient(){
-       
+        Debugger.setupResetInspectionRequest();
+
         let syncJSON:JSON = BehaviorManager.getAllBehaviorAndCollectionJSON();
         let request = Request(target: "socket", action: "synchronize", data: syncJSON, requester: self)
         RequestHandler.addRequest(requestData: request)
-        Debugger.setupResetInspectionRequest();
+        
         Debugger.cacheDebugData();
         Debugger.fireDebugUpdate();
         

@@ -80,6 +80,11 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 
 			}
 
+			stepDrawingViewForward(){
+				this.trigger("STEP_FORWARD");
+
+			}
+
 
 			resetInspection(){
 				this.clearInspectorDataQueue();
@@ -343,9 +348,25 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 							// console.log("~~~~ updated ", key, " to ", val);
 							if (key == "parent" || key == "pen") {
 								e["val"] = val;
-							} else {
+							}
+							else if( key == "stylusEvent"){
+								switch (val){
+									case 0: 
+									e["val"] = "stylus up";
+									break;
+									case 1: 
+									e["val"] = "stylus move";
+									break;
+									case 2: 
+									e["val"] = "stylus down";
+									break;
+								}
+							}
+							 else {
 								e["val"] = val.toFixed(2);
 							}
+
+
 							return;
 						}
 					});
@@ -503,7 +524,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 									name: "rotation",
 									id: "rotation",
 									val: 0
-								}, {
+								}, /*{
 									name: "position x",
 									id: "x",
 									val: 0
@@ -511,7 +532,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 									name: "position y",
 									id: "y",
 									val: 0
-								}, {
+								},*/ {
 									name: "delta x",
 									id: "dx",
 									val: 0
@@ -519,7 +540,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 									name: "delta y",
 									id: "dy",
 									val: 0
-								}, {
+								}/*, {
 									name: "polar radius",
 									id: "pr",
 									val: 0
@@ -527,7 +548,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 									name: "polar theta",
 									id: "pt",
 									val: 0
-								}]
+								}*/]
 							}, {
 								blockName: "style",
 								params: [{
@@ -579,6 +600,10 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 
 								blockName: "stylus",
 								params: [{
+									name: "stylus event",
+									id: "stylusEvent",
+									val: 0
+								},{
 									name: "stylus x",
 									id: "x",
 									val: 0
