@@ -95,7 +95,15 @@ class RecordingToolbarVC: UIViewController, Requester {
 
     }
     
+    func disable(){
+        playbackSpeed.isEnabled = false;
+        loopRecording.isEnabled = false;
+    }
     
+    func enable(){
+        playbackSpeed.isEnabled = true;
+        loopRecording.isEnabled = true;
+    }
     
     //Mark: Recording Event handlers
     

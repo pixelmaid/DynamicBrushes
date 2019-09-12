@@ -19,7 +19,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 				// this.stepThroughQueue = []; //list of lists 
 				this.chartViewManager = chartViewManager;
 				this.startInspectorInterval();
-
+				this.manualSteppingOn = false;
 				this.currHighlighted = [];
 				var self = this;
 			
@@ -65,6 +65,24 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 				if(this.inspectorDataTimer){
 					clearInterval(this.inspectorDataTimer);
 				}
+			}
+
+			initializeStepping(){
+				this.resetInspection();
+				this.manualSteppingOn = true;
+				this.trigger("INITIALIZE_STEPPING");
+			}
+
+			deinitializeStepping(){
+				this.resetInspection();
+				this.manualSteppingOn = false;
+				this.trigger("DEINITIALIZE_STEPPING");
+
+			}
+
+
+			resetInspection(){
+				this.clearInspectorDataQueue();
 			}
 
 			clearInspectorDataQueue(){

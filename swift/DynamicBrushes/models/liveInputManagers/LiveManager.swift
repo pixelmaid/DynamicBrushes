@@ -104,6 +104,7 @@ final class StylusManager:LiveManager{
     static var globalTime = Int(0);
     
     public var isLive = true;
+    public var isStepping = false;
     private var currentRecordingPackage:RecordingCollection!
     private var currentLoopingPackage:RecordingCollection!
     
@@ -229,6 +230,17 @@ final class StylusManager:LiveManager{
     }
     
     
+    public func initializeStepping(){
+        if(self.recordingPackages.count>0){
+            self.prepareDataToLoop(idStart: self.recordingPackages.last!.id, idEnd: self.recordingPackages.last!.id, startTimer: false);
+            self.isStepping = true;
+        }
+    }
+    
+    public func deinitializeStepping(){
+        self.isStepping = false;
+        self.resumeLiveMode();
+    }
     
     public func prepareDataToLoop(idStart:String,idEnd:String, startTimer:Bool){
         self.isLive = false;
@@ -358,6 +370,7 @@ final class StylusManager:LiveManager{
     }
 
   
+    
     
     func prepStepData(){
         self.recordingLoopCount+=1;

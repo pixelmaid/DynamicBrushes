@@ -73,6 +73,9 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
                 } else if (data.data.type == "highlight") {
                     debuggerModelCollection.processInspectorData(data.data);
                 }
+                else if (data.data.type == "resetQueue") {
+                    debuggerModelCollection.resetQueue();
+                }
                 else{
                     debuggerModelCollection.processInspectorDataQueue(data.data);
                 }
@@ -226,16 +229,42 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
             socketController.sendMessage(file_request_data);
         };
 
-        var stepForward = function(){
-              var step_data = {
+        var initializeStepping = function(){
+             var step_data = {
                 type: "debug_request",
                 requester: "authoring",
                 data: {
-                    type: "stepForward",
+                    type: "initializeStepping",
                 }
 
             };
             socketController.sendMessage(step_data);
+        };
+
+           var deinitializeStepping = function(){
+             var step_data = {
+                type: "debug_request",
+                requester: "authoring",
+                data: {
+                    type: "deinitializeStepping",
+                }
+
+            };
+            socketController.sendMessage(step_data);
+        };
+
+        var stepForward = function(){
+            if(debuggerModelCollection.manualSteppingOn){
+                var step_data = {
+                    type: "debug_request",
+                    requester: "authoring",
+                    data: {
+                        type: "stepForward",
+                    }
+
+                };
+                socketController.sendMessage(step_data);
+            }
         };
 
         var updateSelectedBehaviorAndBrush = function(){
@@ -320,7 +349,10 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
         socketController.addListener("ON_KEY_RECOGNIZED", onKeyRecognized);
 
         chartViewManager.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
+
         keypressHandler.addListener("STEP_FORWARD", stepForward);
+        debuggerModelCollection.addListener("INITIALIZE_STEPPING", initializeStepping);
+        debuggerModelCollection.addListener("DEINITIALIZE_STEPPING", deinitializeStepping);
 
         chartViewManager.addListener("ON_DATA_REQUEST_EVENT", onDataRequestEvent);
 
@@ -354,8 +386,9 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
             if (this.checked) {
                 //this.value = input, brush, or output
                 $("#inspector-"+this.value).css("visibility", "visible");
-                if (this.value == "brush")                     
+                if (this.value == "brush"){                     
                     this.debuggerModelCollection.brushModel.stepThroughOn = true;
+                }
             } else {
 
                 $("#inspector-"+this.value).css("visibility", "hidden");
@@ -363,8 +396,10 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
                     this.debuggerModelCollection.brushModel.stepThroughOn = false;
                     $(".mappings").each(function(i) {
                         $(".mappings").children().each(function(i) {
-                            if ($(this).hasClass("debug"))
+                            console.log("~~ looping ", this);
+                            if ($(this).hasClass("debug")){
                                 $(this).removeClass("debug");
+                            }
                         });
                     });
                 }
