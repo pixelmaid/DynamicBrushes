@@ -1448,8 +1448,15 @@ class DrawingViewController: UIViewController, Requester{
     
     func synchronizeWithAuthoringClient(){
        
-        let syncJSON:JSON = BehaviorManager.getAllBehaviorAndCollectionJSON();
+        var syncJSON:JSON = BehaviorManager.getAllBehaviorAndCollectionJSON();
         //add execution status - live, stepping, looping <- isStepping is true. if isLive and isStepping false = looping
+        if stylusManager.isStepping {
+            syncJSON["executionStatus"] = "stepping"
+        } else if !stylusManager.isLive && !stylusManager.isStepping {
+            syncJSON["executionStatus"] = "looping"
+        } else {
+            syncJSON["executionStatus"] = "live"
+        }
         let request = Request(target: "socket", action: "synchronize", data: syncJSON, requester: self)
         RequestHandler.addRequest(requestData: request)
         

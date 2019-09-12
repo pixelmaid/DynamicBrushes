@@ -92,7 +92,13 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
                 debuggerModelCollection.clearInspectorDataQueue();
                 updateSelectedBehaviorAndBrush();
                 //init stepping here
-
+                var status = data.data["executionStatus"];
+                console.log("~~~~ exec status is ", status);
+                if (status == 'stepping') {
+                    debuggerModelCollection.initializeStepping();
+                    $('#step-mode-change').text('turn step off');
+                    debuggerModelCollection.inspectorDataInterval();                            
+                }
 
             } else if (data.type == "collection_data") {
                 signalModel.datasetLoader.loadCollection(data.data.collections);
