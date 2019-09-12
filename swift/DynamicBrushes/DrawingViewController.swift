@@ -857,11 +857,11 @@ class DrawingViewController: UIViewController, Requester{
     
     
     func startBackupTimer(interval:Int){
-        self.endBackupTimer();
+       /* self.endBackupTimer();*/
         self.toolbarController?.enableSaveLoad();
-        self.dismiss(animated: true, completion: nil)
+        /*self.dismiss(animated: true, completion: nil)
         //self.endCancelTimer();
-        backupTimer  = Timer.scheduledTimer(timeInterval:TimeInterval(interval), target: self, selector: #selector(DrawingViewController.backupCallback), userInfo: nil, repeats: true)
+        backupTimer  = Timer.scheduledTimer(timeInterval:TimeInterval(interval), target: self, selector: #selector(DrawingViewController.backupCallback), userInfo: nil, repeats: true)*/
         
     }
     
