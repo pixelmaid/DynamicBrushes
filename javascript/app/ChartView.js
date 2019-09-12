@@ -120,6 +120,10 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                             var c_id = options.$trigger[0]._jsPlumb.getParameter("id");
                             self.minimizeTransition(c_id);
                         }
+                        if (key == "max") {
+                            var c_id = options.$trigger[0]._jsPlumb.getParameter("id");
+                            self.maximizeTransition(c_id);
+                        }
                     },
                     items: {
                         "delete": {
@@ -127,6 +131,9 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                         },
                         "minimize": {
                             name: "Minimize Trans.",
+                        }, 
+                        "max" : {
+                            name: "Maximize Trans.",
                         }
                     }
 
@@ -930,6 +937,17 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
             }
 
+            maximizeTransition(id) {
+                
+                var connections = this.instance.getConnections();
+                var connection = connections.find(function(c) {
+                    return c.getParameter("id") == id;
+                });
+                connection.getOverlay("transition_" + id).show();
+                connection.getOverlay("toggle_" + id).hide();
+
+            }
+
             addOverlayToConnection(transitionData,conditionData) {
               
 
@@ -990,7 +1008,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                                 }
                             }*/
                             connection.getOverlay("transition_" + id).show();
-                            console.log("transition overlay", id, $('#' + id).parent());
+                            console.log("!!! maximize transition overlay", id, $('#' + id).parent());
                             $('#' + id).parent().css('z-index', 50);
 
                             //connection.getOverlay("toggle_" + id).hide();

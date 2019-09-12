@@ -39,6 +39,8 @@ extension Brush {
 
         if state == 2 || (state == 1 && Debugger.lastState == 0) {
             Debugger.toDrawPenDown = true //queue for next one
+            context.scene!.clearStreams()
+
         } else if state == 0 && Debugger.lastState == 1 {
             context.scene!.movePenUp(x: ix, y: iy, lastX: Debugger.lastPointX, lastY: Debugger.lastPointY)
         }

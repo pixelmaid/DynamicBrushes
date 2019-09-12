@@ -50,6 +50,12 @@ define(["jquery", "handlebars", "app/Emitter"],
           case 'param-oy':
             buddy = 'param-ox';
           break;
+          case 'param-dx':
+            buddy = 'param-dy';
+          break;
+          case 'param-dy':
+            buddy = 'param-dx';
+          break;
           case 'param-styx':
             buddy = 'param-styy';
           break;
