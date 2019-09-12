@@ -134,8 +134,10 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 						this.outputModel.highlight("param-x", true);
 						this.outputModel.highlight("param-y", true);			            
 						break;
-					default:
-					break;
+					default: //gets the generators 
+						this.inputModel.highlight(type, true);
+						console.log("~~~ highlighting a generator");
+						break;
 				}
 			}
 

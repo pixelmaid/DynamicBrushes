@@ -25,7 +25,7 @@ public class BrushGraphicsScene {
     var scaleYOn = false
     var brushOn = false
     var outputOn = false
-    var generatorOn = true
+    var generatorOn = false
     var generatorOnName = ""
     
     let eraseEventKey = NSUUID().uuidString
@@ -131,6 +131,7 @@ public class BrushGraphicsScene {
             self.highlightViz(name: "param-x", on: true)
             break;
         default:
+            self.highlightViz(name: hit, on: true) //captures the generator cases
             break;
         }
         if hit == "" {
@@ -556,7 +557,7 @@ class BrushGraphic {
     
     func checkCollision(x:Float, y:Float) -> String {
         let boxThres:Float = 5
-        print("!!~ output is at ", self.cx, self.cy )
+        
         if pointInCircle(x:x, y:y, cx:self.cx, cy:self.cy, radius:15) {
             if !Debugger.outputGfx { return "off"}
             return "output"
@@ -581,7 +582,25 @@ class BrushGraphic {
             if !Debugger.brushGfx { return "off"}
             return "scale-x"
         }
-        
+        //check generators
+        for i in 0...self.generator.contents.count {
+            let top_left_x:Float = 25.0
+            let top_left_y:Float = 75.0 + Float(i)*130.0 + 30.0
+            let bottom_right_x:Float = 225.0
+            let bottom_right_y:Float = 175.0 + Float(i)*130.0 + 30.0
+            if pointInBox(x:x, y:y, ix:top_left_x, iy:top_left_y,
+                          ax: bottom_right_x, ay: bottom_right_y) {
+                if !Debugger.inputGfx { return "off"}
+                print("~~~ hit in generator ", i)
+                //get text
+                let node = generator.contents[i] as! Group
+                let text = node.contents[2] as! Text
+                let t = text.text
+                let t_arr = t.split(separator: ",")
+                print("~~~ gen name is " , t_arr[0])
+                return "gen-"+t_arr[0]
+            }
+        }
         return ""
     }
     
