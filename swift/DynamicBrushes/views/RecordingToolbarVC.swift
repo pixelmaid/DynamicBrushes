@@ -78,8 +78,8 @@ class RecordingToolbarVC: UIViewController, Requester {
         } else {
             loopRecording.setImage(UIImage(named: "loop_button_off2x"), for: .normal)
             isLooping = false
-            
         }
+        
         self.loopInitialized();
     }
     

@@ -453,13 +453,17 @@ final class Debugger {
         var debugData:JSON = ["kind":kind, "isOn":on]
         
         //populate highlight data here
-        
         debugData["type"] = "highlight";
-//        debugData["kind"] = kind as JSON;
-        
         let socketRequest = Request(target: "socket", action: "send_inspector_data", data: debugData, requester: RequestHandler.sharedInstance)
         RequestHandler.addRequest(requestData: socketRequest)
         
+    }
+    
+    static func setupResetInspectionRequest(){
+        var debugData:JSON = [:]
+        debugData["type"] = "resetInspection";
+        let socketRequest = Request(target: "socket", action: "send_inspector_data", data: debugData, requester: RequestHandler.sharedInstance)
+        RequestHandler.addRequest(requestData: socketRequest)
     }
     
     

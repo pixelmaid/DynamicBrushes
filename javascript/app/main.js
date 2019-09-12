@@ -73,8 +73,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
                 } else if (data.data.type == "highlight") {
                     debuggerModelCollection.processInspectorData(data.data);
                 }
-                else if (data.data.type == "resetQueue") {
-                    debuggerModelCollection.resetQueue();
+                else if (data.data.type == "resetInspection") {
+                    debuggerModelCollection.resetInspection();
                 }
                 else{
                     debuggerModelCollection.processInspectorDataQueue(data.data);
@@ -253,7 +253,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
             socketController.sendMessage(step_data);
         };
 
-        var stepForward = function(){
+        var stepDrawingViewForward = function(){
             if(debuggerModelCollection.manualSteppingOn){
                 var step_data = {
                     type: "debug_request",
@@ -350,7 +350,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
 
         chartViewManager.addListener("ON_AUTHORING_EVENT", onAuthoringEvent);
 
-        keypressHandler.addListener("STEP_FORWARD", stepForward);
+        debuggerModelCollection.addListener("STEP_FORWARD", stepDrawingViewForward);
         debuggerModelCollection.addListener("INITIALIZE_STEPPING", initializeStepping);
         debuggerModelCollection.addListener("DEINITIALIZE_STEPPING", deinitializeStepping);
 

@@ -1318,6 +1318,8 @@ class DrawingViewController: UIViewController, Requester{
             break;
         case "synchronize_request", "authoring_client_connected":
             self.synchronizeWithAuthoringClient();
+            Debugger.setupResetInspectionRequest();
+
             break;
         case "data_request":
             let requestData = data.1! as JSON;
@@ -1333,7 +1335,9 @@ class DrawingViewController: UIViewController, Requester{
             do{
                 let authoring_data = data.1! as JSON
                 let attempt = try BehaviorManager.handleAuthoringRequest(authoring_data: authoring_data);
+                Debugger.setupResetInspectionRequest();
                 stylusManager.restartLoop();
+                Debugger.resetDebugStatus();
 
                 let data = authoring_data["data"]
                 if(data["type"].stringValue == "behavior_added"){
@@ -1358,7 +1362,6 @@ class DrawingViewController: UIViewController, Requester{
                 let socketRequest = Request(target: "socket", action: "authoring_response", data: attempt, requester: self)
                 
                 RequestHandler.addRequest(requestData:socketRequest);
-                Debugger.resetDebugStatus();
                 
             }
             catch{
@@ -1449,8 +1452,10 @@ class DrawingViewController: UIViewController, Requester{
         let syncJSON:JSON = BehaviorManager.getAllBehaviorAndCollectionJSON();
         let request = Request(target: "socket", action: "synchronize", data: syncJSON, requester: self)
         RequestHandler.addRequest(requestData: request)
+        Debugger.setupResetInspectionRequest();
         Debugger.cacheDebugData();
         Debugger.fireDebugUpdate();
+        
     }
     
     

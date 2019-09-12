@@ -243,6 +243,7 @@ final class StylusManager:LiveManager{
     }
     
     public func prepareDataToLoop(idStart:String,idEnd:String, startTimer:Bool){
+        Debugger.setupResetInspectionRequest();
         self.isLive = false;
         self.idStart = idStart;
         self.idEnd = idEnd;
@@ -326,6 +327,7 @@ final class StylusManager:LiveManager{
         currentLoopingPackage = nil;
         self.visualizationEvent.raise(data:"ERASE_REQUEST")
         Debugger.resetDebugStatus();
+        Debugger.setupResetInspectionRequest();
         
     }
     
