@@ -56,11 +56,11 @@ define(["jquery", "handlebars", "app/Emitter"],
           case 'param-styy':
             buddy = 'param-styx';
           break;
-          case 'param-posx':
-            buddy = 'param-posy';
+          case 'param-dx':
+            buddy = 'param-dy';
           break;
-          case 'param-posy':
-            buddy = 'param-posx';
+          case 'param-dy':
+            buddy = 'param-dx';
           break;
           case 'param-x':
             buddy = 'param-y';
@@ -239,8 +239,8 @@ define(["jquery", "handlebars", "app/Emitter"],
 
       modifyInspectorBrush() {
         if ($('#param-dx').length) {
-          $('#param-dx')[0].previousElementSibling.id = 'param-posy';
-          $('#param-posy')[0].previousElementSibling.id = 'param-posx';
+          $('#param-dx')[0].previousElementSibling.id = 'param-rotation';
+          $('#param-dy')[0].previousElementSibling.id = 'param-dx';
         }
           this.setUpHighlightClicks('brush');
       }

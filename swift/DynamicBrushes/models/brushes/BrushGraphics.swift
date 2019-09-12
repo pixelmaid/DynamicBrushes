@@ -26,9 +26,7 @@ extension Brush {
             //x, y are brush dot
             //cx, cy are output dot
             // are input dot
-            context.scene!.updateBrush(id:self.id, r: brushInfo.rotation, x: brushInfo.x, y:brushInfo.y,
-                                       cx: brushInfo.cx, cy:brushInfo.cy, ox: brushInfo.ox, oy: brushInfo.oy,
-                                       sx: brushInfo.sx, sy: brushInfo.sy, ix:ix, iy:iy, force:force, state:state)
+            context.scene!.updateBrush(id:self.id, r: brushInfo.rotation, dx: brushInfo.dx, dy:brushInfo.dy, x: brushInfo.x, y:brushInfo.y, cx: brushInfo.cx, cy:brushInfo.cy, ox: brushInfo.ox, oy: brushInfo.oy, sx: brushInfo.sx, sy: brushInfo.sy, ix:ix, iy:iy, force:force, state:state)
         } else {
             //create new, add to active ids
             context.scene!.addBrushGraphic(id:self.id, ox:self.params.ox, oy:self.params.oy, r: self.params.rotation,

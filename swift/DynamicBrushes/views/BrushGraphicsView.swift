@@ -68,13 +68,13 @@ public class BrushGraphicsScene {
         self.activeBrushIds[id] = brushGraphic //add to dict
     }
     
-    public func updateBrush(id:String, r: Float, x: Float, y: Float, cx: Float, cy: Float, ox: Float, oy: Float, sx:Float, sy:Float, ix:Double, iy:Double, force:Double, state:Int) {
+    public func updateBrush(id:String, r: Float, dx: Float, dy: Float, x:Float,y:Float,cx: Float, cy: Float, ox: Float, oy: Float, sx:Float, sy:Float, ix:Double, iy:Double, force:Double, state:Int) {
         for (_, brush) in self.activeBrushIds {
             if brush.id == id {
 //                print("## updating brush with id ", id)
                 brush.updateBrushIcon(r:r, ox: ox, oy: oy, sx:sx, sy:sy)
                 brush.moveComputedLocation(cx: cx, cy: cy)
-                brush.moveBrushLocation(x: x, y: y)
+                brush.moveBrushLocation(x: x, y: y, dx:dx,dy:dy)
                 brush.moveStylusLocation(x: ix, y: iy, force:force)
                 self.lastPoint = (x, y)
                 if state == 0 { //penDown
@@ -279,7 +279,7 @@ public class BrushGraphicsScene {
                     self.rotationOn = false
                 }
                 break;
-            case "param-posx", "param-posy":
+            case "param-dx", "param-dy":
                 if !Debugger.brushGfx { return }
                 if on {
                     brush.highlightBrushIcon()
@@ -517,7 +517,7 @@ class BrushGraphic {
         inputIcon = Shape(form: Circle(r: 10), fill: brushColor, stroke: Macaw.Stroke(fill: Macaw.Color.white, width:2))
         inputIcon.place = Transform.move(dx:Double(self.x), dy:Double(self.y))
         node.contents.append(inputIcon)
-        inputText = BrushGraphic.newText("pos x: 0, pos y: 0", Transform.move(dx:0,dy:10))
+        inputText = BrushGraphic.newText("dx: 0, dy: 0", Transform.move(dx:0,dy:10))
 
         //init computedicon
         computedIcon = Shape(form: Circle(r: 10), fill: outputColor, stroke: Macaw.Stroke(fill: Macaw.Color.white, width:2))
@@ -1159,7 +1159,7 @@ class BrushGraphic {
 //                node.contents.append(stylusIcon)
     }
     
-    func moveBrushLocation(x: Float, y: Float) {
+    func moveBrushLocation(x: Float, y: Float, dx:Float, dy:Float) {
         if !Debugger.brushLabel {
             inputText.fill = hiddenColor
         }
@@ -1167,7 +1167,7 @@ class BrushGraphic {
         inputIcon.place = Transform.move(dx: Double(x), dy: Double(y)) //need this offset for some reason?
         self.x = x
         self.y = y
-        inputText.text = "pos x: "+String(Int(x))+", pos y: "+String(Int(y))
+        inputText.text = "dx: "+String(Int(dx))+", dy: "+String(Int(dy))
         inputText.place = Transform.move(dx: Double(x), dy: Double(y) - Double(20))
         if self.scene.brushOn { self.highlightBrushIcon() }
 
