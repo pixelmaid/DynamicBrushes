@@ -62,6 +62,12 @@ define(["jquery", "handlebars", "app/DebuggerView"],
                             }
                         });
                     });
+				//remove state highlight 
+				$(".state").each(function (i) {
+					if ($(this).hasClass("active")){
+                        $(this).removeClass("active");
+                    }
+				})
 			}
 
 			removeStateHighlight(pastConstraint) {
@@ -99,7 +105,7 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 								$(".setup").children().eq(1).removeClass("start-highlight");
 							} else if ($("#" + pastConstraint.transitionId).hasClass("transition_statement")) {
 								$("#" + pastConstraint.transitionId).children().first().removeClass("method-inspect");
-								$("#" + constraint.transitionId).parent().removeClass("transition-front");
+								$("#" + pastConstraint.transitionId).parent().removeClass("transition-front");
 							} else { //it's a state
 							}
 							//remove arrow highlight                     
@@ -131,7 +137,10 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 						$("#" + constraint.constraintId).addClass("debug");
 						$("#param-" + constraint.relativePropertyName).addClass("debug-inspect");
 						// console.log("data is ", this.model.data);
-						$("#" + data.currentState).children(".state").addClass("active");
+						// $("#" + data.currentState).children(".state").addClass("active");
+						// console.log("~~ parent is ", $("#" + constraint.constraintId).parentElement);
+						$("#" + constraint.constraintId).parent().parent().parent().addClass("active");
+						// console.log("~~ curr state is ", $("#data.currentState").children(".state"), data.currentState );
 
 						let id = constraint.relativePropertyName;
 

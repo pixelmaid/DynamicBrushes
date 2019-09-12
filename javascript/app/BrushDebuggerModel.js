@@ -15,6 +15,7 @@ define(["app/DebuggerModel"],
 
 				this.brushVizQueue = [];
 				this.stepThroughOn = true;
+				this.toClearViz = false;
 			}
 
 			update(data){
@@ -63,6 +64,7 @@ define(["app/DebuggerModel"],
 					//data.constraints[i].value = brushState[data.constraints[i].constraintId];
 					this.brushVizQueue.push(data.constraints[i]);
 				}
+				this.toClearViz = true;
 			}
 
 			displayTransition(data) {

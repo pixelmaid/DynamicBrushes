@@ -104,9 +104,11 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 				if (this.brushModel.brushVizQueue.length == 0) {
 					if (this.manualSteppingOn) {
 						this.stepDrawingViewForward();
-					} else {
+					} else if (this.brushModel.toClearViz){
 						//clear highlights -- assuming last one is alpha
-						this.trigger("CLEAR_STEP_HIGHLIGHT"); //only problem is this gets called a lot while passive?						
+						this.trigger("CLEAR_STEP_HIGHLIGHT"); //only problem is this gets called a lot while passive?	
+						console.log("~~ dehighlighted viz");
+						this.brushModel.toClearViz = false;					
 					}
 				}
 				if (this.brushModel.brushVizQueue.length > 0) {

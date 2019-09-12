@@ -249,7 +249,7 @@ define(["jquery", "handlebars", "app/Emitter"],
           $('#param-dy')[0].previousElementSibling.id = 'param-dx';
         }
           this.setUpHighlightClicks('brush');
-          
+
         let selectables = ["#param-ox", "#param-oy", "#param-sx", "#param-sy",
           "#param-rotation", "#param-dx", "#param-dy"];
         for (var i = 0; i < selectables.length; i++) {
@@ -264,7 +264,7 @@ define(["jquery", "handlebars", "app/Emitter"],
         }
           this.setUpHighlightClicks('input');  
 
-        let selectables = ["#param-styx", "#param-styy"];
+        let selectables = ["#param-styx", "#param-styy", "#param-force"];
         for (var i = 0; i < selectables.length; i++) {
           $(selectables[i]).css("font-weight","Bold");
         }

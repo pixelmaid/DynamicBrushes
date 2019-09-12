@@ -19,6 +19,7 @@ public class BrushGraphicsScene {
     
     //highlight vars for persistence
     var stylusOn = false
+    var forceOn = false
     var originOn = false
     var rotationOn = false
     var scaleXOn = false
@@ -154,6 +155,7 @@ public class BrushGraphicsScene {
     
     func clearHighlights(){
         self.stylusOn = false
+        self.forceOn = false
         self.originOn = false
         self.rotationOn = false
         self.scaleXOn = false
@@ -165,6 +167,7 @@ public class BrushGraphicsScene {
             if Debugger.inputGfx {
                 brush.unhighlightStylus()
                 brush.unhighlightGenerator()
+                brush.unhighlightForce()
             }
             if Debugger.brushGfx {
                 brush.unhighlightOrigin()
@@ -192,6 +195,16 @@ public class BrushGraphicsScene {
                 } else {
                     brush.unhighlightStylus()
                     self.stylusOn = false
+                }
+                break;
+            case "param-force":
+                if !Debugger.inputGfx { return }
+                if on {
+                    brush.highlightForce()
+                    self.forceOn = true
+                } else {
+                    brush.unhighlightForce()
+                    self.forceOn = false
                 }
                 break;
             case "gen-sawtooth":
@@ -660,6 +673,7 @@ class BrushGraphic {
                 }
                 
                 if self.scene.stylusOn { self.highlightStylus() }
+                if self.scene.forceOn { self.highlightForce() }
                 if self.scene.generatorOn { self.highlightGenerator(name:self.scene.generatorOnName) }
                 
             } else {
@@ -859,6 +873,13 @@ class BrushGraphic {
     }
     func unhighlightStylus() {
         stylusIcon.fill = inputColor
+    }
+    
+    func highlightForce() {
+        changeColorInGroup(group: self.lastStylusInputs, color: highlightColor)
+    }
+    func unhighlightForce() {
+        updateExistingStylusStrokes()
     }
     
     func highlightOrigin() {
@@ -1188,6 +1209,7 @@ class BrushGraphic {
             updateExistingStylusStrokes()
         }
         if self.scene.stylusOn { self.highlightStylus() }
+        if self.scene.forceOn { self.highlightForce() }
         if self.scene.generatorOn { self.highlightGenerator(name:self.scene.generatorOnName) }
 
 //        print("~~~ node len is ", lastStylusInputs.contents.count)

@@ -442,7 +442,7 @@ final class Debugger {
         //respond to highlight request from programming interface
         let param = data["data"]["name"].string ?? ""
         let isOn = data["data"]["isOn"].bool ?? false
-        //print("!!~~~ highlight request received! " , param, isOn, data)
+//        print("!!~~~ highlight request received! " , param, isOn, data)
         if isOn {
             Debugger.debuggerEvent.raise(data: ("HIGHLIGHT", param));
         } else {
