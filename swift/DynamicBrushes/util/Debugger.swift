@@ -38,6 +38,7 @@ final class Debugger {
     static public var toDrawPenDown = false
     
     static var propSort = ["ox","oy","sx","sy","rotation","dx","dy","weight","hue","lightness","saturation","alpha"]
+    static var brushGraphicsView:BrushGraphicsView!
     
     static public func activate(){
         Debugger.debuggingActive = true;
@@ -98,7 +99,9 @@ final class Debugger {
     
     
     static func jumpToState(stroke:Stroke,segment:Segment){
+        self.resetDebugStatus();
         self.endDebugTimer();
+        
         let brushId = stroke.brushId;
         let behaviorId = stroke.behaviorId;
         
@@ -106,10 +109,14 @@ final class Debugger {
         let brushState = BrushStorageManager.accessState(behaviorId: behaviorId, brushId: brushId, time: localTime);
         let globalTime = brushState!.globalTime;
         
-        let debugData = JSON([Debugger.generateDebugData(behaviorId: behaviorId, brushId: brushId, brushState: brushState, globalTime: globalTime, localTime: localTime)]);
-        
-        let socketRequest = Request(target: "socket", action: "send_inspector_data", data: debugData, requester: RequestHandler.sharedInstance)
+        let debugData = JSON(Debugger.generateDebugData(behaviorId: behaviorId, brushId: brushId, brushState: brushState, globalTime: globalTime, localTime: localTime));
+        //print("debug data",debugData)
+        Debugger.drawingDebugDataQueue.append(debugData);
+
+        let socketRequest = Request(target: "socket", action: "send_inspector_data", data: [debugData], requester: RequestHandler.sharedInstance)
         RequestHandler.addRequest(requestData: socketRequest)
+        
+        self.drawCurrentBrushState(view: Debugger.brushGraphicsView!, targetBehaviorId: behaviorId,jump:true,time:localTime)
         
     }
     
@@ -225,6 +232,8 @@ final class Debugger {
         let debugData = Debugger.generateDebugData(behaviorId: nil, brushId: nil, brushState: nil ,globalTime: nil,localTime: nil);
         
         Debugger.programDebugDataQueue.append(debugData);
+      //  print("debug data",debugData)
+
         Debugger.drawingDebugDataQueue.append(debugData);
         
     }
@@ -334,7 +343,7 @@ final class Debugger {
     }
     
     
-    static public func drawCurrentBrushState(view:BrushGraphicsView,targetBehaviorId:String){
+    static public func drawCurrentBrushState(view:BrushGraphicsView,targetBehaviorId:String,jump:Bool, time:Int?){
         //let behaviors = BehaviorManager.getAllBrushInstances();
         //check to see which brushes are "unrendered"
         // pass them the UI view and draw into it
@@ -345,17 +354,27 @@ final class Debugger {
             let targetIndex = BehaviorManager.activeInstance;
             let targetBehavior =  BehaviorManager.behaviors[targetBehaviorId]!;
             let targetBrush = targetBehavior.brushInstances[targetIndex];
-            if(targetBrush.unrendered){
+            if(targetBrush.unrendered || jump == true){
+            
             for currentData in Debugger.drawingDebugDataQueue {
-                
                 //double check view values since they arent persistent
                 refreshVisualizations(view: view)
+                let debugInputGlobal = currentData["input"]["inputGlobal"]
+                let debugBrush:BrushStateStorage;
+                if(time != nil){
+                    debugBrush = BrushStorageManager.accessState(behaviorId: targetBehaviorId, brushId: targetBrush.id, time: time!)!
+                }
+                else{
+                    debugBrush = targetBrush.params;
+                }
                 
+                let debugGenerator = currentData["input"]["generator"]
+
                 let valArray = Debugger.getGeneratorValue(brushId: targetBrush.id,debugData: currentData["input"]["generator"]);
                 let inputInfo = Debugger.getStylusInputValue(debugData: currentData["input"]["inputGlobal"]);
               //  print("~~~ about to draw into context in debugger with stylus x y ", inputInfo.0, inputInfo.1)
                 
-                targetBrush.drawIntoContext(context:view, info:inputInfo)
+                targetBrush.drawIntoContext(context:view,brushInfo:debugBrush, stylusInfo:inputInfo)
                 view.scene!.drawGenerator(valArray: valArray)
                 
                 brushIds.insert(targetBrush.id)
