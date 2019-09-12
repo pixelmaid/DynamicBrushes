@@ -80,6 +80,11 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 
 			}
 
+			stepDrawingViewForward(){
+				this.trigger("STEP_FORWARD");
+
+			}
+
 			resetInspection(){
 				this.clearInspectorDataQueue();
 			}

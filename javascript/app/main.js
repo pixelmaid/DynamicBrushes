@@ -352,6 +352,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
 
         debuggerModelCollection.addListener("INITIALIZE_STEPPING", initializeStepping);
         debuggerModelCollection.addListener("DEINITIALIZE_STEPPING", deinitializeStepping);
+        debuggerModelCollection.addListener("STEP_FORWARD", stepDrawingViewForward);
 
         chartViewManager.addListener("ON_DATA_REQUEST_EVENT", onDataRequestEvent);
 
