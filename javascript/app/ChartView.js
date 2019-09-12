@@ -971,7 +971,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                     events: {
                         click: function(customOverlay, originalEvent) {
                             console.log("connection", connection);
-                            var all_connections = self.instance.getAllConnections();
+                            /*var all_connections = self.instance.getAllConnections();
                             for (var i = 0; i < all_connections.length; i++) {
                                 if (connection != all_connections[i]) {
                                     var overlays = all_connections[i].getOverlays();
@@ -988,7 +988,7 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                                     }
 
                                 }
-                            }
+                            }*/
                             connection.getOverlay("transition_" + id).show();
                             console.log("transition overlay", id, $('#' + id).parent());
                             $('#' + id).parent().css('z-index', 50);
