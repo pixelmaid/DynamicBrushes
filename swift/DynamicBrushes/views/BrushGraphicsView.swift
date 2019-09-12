@@ -25,7 +25,7 @@ public class BrushGraphicsScene {
     var scaleYOn = false
     var brushOn = false
     var outputOn = false
-    var generatorOn = true
+    var generatorOn = false
     var generatorOnName = ""
     
     let eraseEventKey = NSUUID().uuidString
@@ -106,6 +106,9 @@ public class BrushGraphicsScene {
         }
         print("~~~ FINAL HIT WAS ", hit)
         switch (hit) {
+        case "off":
+            return;
+            break;
         case "input":
             self.highlightViz(name: "param-styx", on: true)
             break;
@@ -128,6 +131,7 @@ public class BrushGraphicsScene {
             self.highlightViz(name: "param-x", on: true)
             break;
         default:
+            self.highlightViz(name: hit, on: true) //captures the generator cases
             break;
         }
         if hit == "" {
@@ -553,25 +557,50 @@ class BrushGraphic {
     
     func checkCollision(x:Float, y:Float) -> String {
         let boxThres:Float = 5
-        print("!!~ output is at ", self.cx, self.cy )
+        
         if pointInCircle(x:x, y:y, cx:self.cx, cy:self.cy, radius:15) {
+            if !Debugger.outputGfx { return "off"}
             return "output"
         } else if pointInCircle(x:x, y:y, cx:self.x, cy:self.y, radius:15) {
+            if !Debugger.brushGfx { return "off"}
             return "brush"
         } else if pointInCircle(x:x, y:y, cx:Float(self.ix), cy:Float(self.iy), radius:15) {
+            if !Debugger.inputGfx { return "off"}
             return "input"
         } else if pointInCircle(x:x, y:y, cx:self.ox, cy:self.oy, radius: Float(self.axisScale*0.33) + 5.0) {
+            if !Debugger.brushGfx { return "off"}
             return "origin"
         } else if pointInCircle(x:x, y:y, cx:self.ox, cy:self.oy, radius:Float(self.axisScale) + 5.0) {
+            if !Debugger.brushGfx { return "off"}
             return "rotation"
         } else if pointInBox(x:x, y:y, ix:self.ox - boxThres, iy:self.oy+Float(self.axisScale),
                              ax: self.ox + boxThres, ay: self.oy + Float(self.axisScale + self.axisLen)) {
+            if !Debugger.brushGfx { return "off"}
             return "scale-y"
         } else if pointInBox(x:x, y:y, ix:self.ox+Float(self.axisScale), iy:self.oy-boxThres,
                              ax: self.ox + Float(self.axisScale + self.axisLen), ay: self.oy + boxThres) {
+            if !Debugger.brushGfx { return "off"}
             return "scale-x"
         }
-        
+        //check generators
+        for i in 0...self.generator.contents.count {
+            let top_left_x:Float = 25.0
+            let top_left_y:Float = 75.0 + Float(i)*130.0 + 30.0
+            let bottom_right_x:Float = 225.0
+            let bottom_right_y:Float = 175.0 + Float(i)*130.0 + 30.0
+            if pointInBox(x:x, y:y, ix:top_left_x, iy:top_left_y,
+                          ax: bottom_right_x, ay: bottom_right_y) {
+                if !Debugger.inputGfx { return "off"}
+                print("~~~ hit in generator ", i)
+                //get text
+                let node = generator.contents[i] as! Group
+                let text = node.contents[2] as! Text
+                let t = text.text
+                let t_arr = t.split(separator: ",")
+                print("~~~ gen name is " , t_arr[0])
+                return "gen-"+t_arr[0]
+            }
+        }
         return ""
     }
     
@@ -616,7 +645,7 @@ class BrushGraphic {
                 stylusUpIcon.fill = inputColor
                 stylusDownIcon.fill = inputColor
                 changeColorInGroup(group: stylusStream, color: inputColor)
-                Debugger.inputLabel = true
+                
                 
             } else {
                 stylusIcon.fill = hiddenColor
@@ -636,7 +665,7 @@ class BrushGraphic {
                 inputIcon.fill = brushColor
                 inputIcon.stroke = Macaw.Stroke(fill: Macaw.Color.white, width:2)
                 changeColorInGroup(group: brushStream, color: brushColor)
-                Debugger.brushLabel = true
+
             } else {
                 makeBrushIconInvisible()
                 inputIcon.fill = hiddenColor
@@ -651,7 +680,7 @@ class BrushGraphic {
                 computedIcon.fill = outputColor
                 computedIcon.stroke = Macaw.Stroke(fill: Macaw.Color.white, width:2)
                 changeColorInGroup(group: outputStream, color: outputColor)
-                Debugger.outputLabel = true
+
             } else {
                 computedIcon.fill = hiddenColor
                 computedIcon.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
@@ -679,7 +708,6 @@ class BrushGraphic {
             if Debugger.brushLabel {
                 originText.fill = Macaw.Color.black
                 inputText.fill = Macaw.Color.black
-
             } else {
                 originText.fill = hiddenColor
                 inputText.fill = hiddenColor
@@ -1015,6 +1043,11 @@ class BrushGraphic {
     }
     
     func updateBrushIcon(r: Float, ox:Float, oy:Float, sx:Float, sy:Float) {
+        if !Debugger.brushLabel {
+            originText.fill = hiddenColor
+        }
+        
+        print("~~ movinf brush" , Debugger.brushLabel)
 
         brushIcon.place = Transform.move(dx: Double(ox) - oxOffset, dy: Double(oy) - oyOffset)
         originText.place = Transform.move(dx: Double(ox), dy: Double(oy) - Double(20))
@@ -1085,6 +1118,9 @@ class BrushGraphic {
     func moveStylusLocation(x: Double, y: Double, force: Double) {
         self.ix = x
         self.iy = y
+        if !Debugger.inputLabel {
+            stylusText.fill = hiddenColor
+        }
         
         stylusIcon.place = Transform.move(dx: x, dy: y)
         let currStylusIcon:Shape
@@ -1124,6 +1160,10 @@ class BrushGraphic {
     }
     
     func moveBrushLocation(x: Float, y: Float) {
+        if !Debugger.brushLabel {
+            inputText.fill = hiddenColor
+        }
+        
         inputIcon.place = Transform.move(dx: Double(x), dy: Double(y)) //need this offset for some reason?
         self.x = x
         self.y = y
@@ -1146,7 +1186,10 @@ class BrushGraphic {
     }
     
     func moveComputedLocation(cx: Float, cy: Float) {
-
+        if !Debugger.outputLabel {
+            computedText.fill = hiddenColor
+        }
+        
         computedIcon.place = Transform.move(dx: Double(cx), dy: Double(cy))
         self.cx = cx
         self.cy = cy

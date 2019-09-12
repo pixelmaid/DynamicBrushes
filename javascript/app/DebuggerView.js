@@ -27,7 +27,7 @@ define(["jquery", "handlebars", "app/Emitter"],
 
         this.model.addListener("DATA_HIGHLIGHTED", function(data) {
           console.log("~~~~ data highlighted  in view ", data);
-          this.highlightParamRow(data);
+          this.highlightParamRow(data);            
           self.model.collection.pushCurrHighlighted(data);
         }.bind(this));
 
