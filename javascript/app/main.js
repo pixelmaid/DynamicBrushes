@@ -418,10 +418,10 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
         $('#step-mode-change').click(function() {
             if (!debuggerModelCollection.manualSteppingOn) { //turn on 
                 debuggerModelCollection.initializeStepping();
-                $(this).text = 'step off'
+                $(this).text('step off');
             } else { //turn off
                 debuggerModelCollection.deinitializeStepping();
-                $(this).text = 'step on'
+                $(this).text('step on');
             }
         });
 

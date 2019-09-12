@@ -17,9 +17,10 @@ define(["app/Emitter"],
 				document.onkeyup = function(e) {
 
 					if (e.keyCode == 39) {
-			          console.log("~~~~  next pressed, brush queue is ", this.model.brushVizQueue);
-	            	  self.model.collection.terminateInspectorInterval();
-	            	  self.model.collection.inspectorDataInterval();
+						if (self.model.collection.manualSteppingOn) {
+				          console.log("~~~~  next pressed, brush queue is ", this.model.brushVizQueue);
+		            	  self.model.collection.inspectorDataInterval();							
+						}
 					}
 				}.bind(this);
 			}

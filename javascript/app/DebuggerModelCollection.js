@@ -71,12 +71,14 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 				this.resetInspection();
 				this.manualSteppingOn = true;
 				this.trigger("INITIALIZE_STEPPING");
+	        	this.terminateInspectorInterval();
 			}
 
 			deinitializeStepping(){
 				this.resetInspection();
 				this.manualSteppingOn = false;
 				this.trigger("DEINITIALIZE_STEPPING");
+				this.startInspectorInterval();
 
 			}
 
@@ -100,9 +102,12 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 
 			inspectorDataInterval(){
 				if (this.brushModel.brushVizQueue.length == 0) {
-					//clear highlights -- assuming last one is alpha
-					this.trigger("CLEAR_STEP_HIGHLIGHT"); //only problem is this gets called a lot while passive?
-					this.startInspectorInterval();
+					if (this.manualSteppingOn) {
+						this.stepDrawingViewForward();
+					} else {
+						//clear highlights -- assuming last one is alpha
+						this.trigger("CLEAR_STEP_HIGHLIGHT"); //only problem is this gets called a lot while passive?						
+					}
 				}
 				if (this.brushModel.brushVizQueue.length > 0) {
 					this.trigger("VIZ_BRUSH_STEP_THROUGH");
