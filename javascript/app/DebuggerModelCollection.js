@@ -390,6 +390,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 					behaviors: []
 				};
 				var self = this;
+				var seenGenTypes = [];
 				for (var generatorId in data) {
 					if (data.hasOwnProperty(generatorId)) {
 
@@ -403,8 +404,9 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 							let brushIndex = generatorInstance["brushIndex"];
 							let val = generatorInstance["v"];
 							let generatorType = generatorInstance["generatorType"];
+							if (seenGenTypes.includes(generatorType)) continue;
 							let time = generatorInstance["time"];
-
+							seenGenTypes.push(generatorType);
 							var behavior = formattedData.behaviors.find(function(b) {
 								return b.id === behaviorId;
 							});
