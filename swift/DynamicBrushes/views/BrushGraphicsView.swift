@@ -50,6 +50,14 @@ public class BrushGraphicsScene {
         }
     }
     
+    public func clearStreams() {
+        for (_, brush) in self.activeBrushIds {
+            brush.stylusStream.contents = []
+            brush.brushStream.contents = []
+            brush.outputStream.contents = []
+        }
+    }
+    
     public func toggleViz(type: String) {
         for (_, brush) in self.activeBrushIds {
             brush.toggleViz(type: type)
@@ -135,6 +143,7 @@ public class BrushGraphicsScene {
             break;
         }
         if hit == "" {
+            print("~~clearing highlights")
             clearHighlights()
             Debugger.setupHighlightRequest(kind: "clear")
         } else {
@@ -162,6 +171,7 @@ public class BrushGraphicsScene {
                 brush.unhighlightScaleX()
                 brush.unhighlightScaleY()
                 brush.unhighlightRotation()
+                brush.unhighlightBrushIcon()
             }
             if Debugger.outputGfx {
                 brush.unhighlightOutput()
@@ -279,7 +289,7 @@ public class BrushGraphicsScene {
                     self.rotationOn = false
                 }
                 break;
-            case "param-posx", "param-posy":
+            case "param-posx", "param-posy", "param-dx", "param-dy":
                 if !Debugger.brushGfx { return }
                 if on {
                     brush.highlightBrushIcon()
@@ -414,8 +424,8 @@ class BrushGraphic {
     var stylusStream = Group()
     var brushStream = Group()
     var outputStream = Group()
-    let streamLimit = 80
-    let inputLimit = 25
+    let streamLimit = 100
+    let inputLimit = 100
     let computedIcon: Shape
     let stylusIcon: Shape
     let originText: Text
