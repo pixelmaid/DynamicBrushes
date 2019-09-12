@@ -80,6 +80,11 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 
 			}
 
+			stepDrawingViewForward(){
+				this.trigger("STEP_FORWARD");
+
+			}
+
 			resetInspection(){
 				this.clearInspectorDataQueue();
 			}
@@ -559,12 +564,12 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 									id: "hue",
 									val: 0
 								}, {
-									name: "saturation",
-									id: "saturation",
-									val: 0
-								}, {
 									name: "lightness",
 									id: "lightness",
+									val: 0
+								},{
+									name: "saturation",
+									id: "saturation",
 									val: 0
 								}, {
 									name: "alpha",
