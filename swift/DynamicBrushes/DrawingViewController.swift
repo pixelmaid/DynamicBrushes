@@ -1383,6 +1383,17 @@ class DrawingViewController: UIViewController, Requester{
             #endif
             let debugType = debugData["type"].stringValue;
             switch(debugType){
+                case "initializeStepping":
+                    stylusManager.initializeStepping();
+                    recordingToolbarVC!.disable();
+                break;
+                
+                case "deinitializeStepping":
+                    stylusManager.deinitializeStepping();
+                    recordingToolbarVC!.enable();
+
+                break;
+                
                 case "stepForward":
                     stylusManager.stepSample();
                 break;
