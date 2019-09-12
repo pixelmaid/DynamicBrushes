@@ -16,9 +16,11 @@ define(["app/DebuggerModel"],
 				this.brushVizQueue = [];
 				this.stepThroughOn = true;
 				this.toClearViz = false;
+				this.prevData = [];
 			}
 
 			update(data){
+			   this.prevData = this.data;
 			   this.data = data;
 			   if(this.collection.chartViewManager.currentView){
 			  	 let currentBehaviorId = this.collection.chartViewManager.currentView.id;
@@ -26,7 +28,7 @@ define(["app/DebuggerModel"],
 
 			  	 let targetBehaviorData = data.behaviors[currentBehaviorId];
 			  	 let targetBrushData = targetBehaviorData.brushes[selectedIndex];
-			  	 console.log("~~ is stepping on? ", this.stepThroughOn);
+
 			  	 if (this.stepThroughOn)
 				  	 this.processStepData(targetBrushData);
 			  	}
