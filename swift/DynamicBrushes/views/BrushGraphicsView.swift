@@ -133,7 +133,7 @@ public class BrushGraphicsScene {
             self.highlightViz(name: "param-rotation", on: true)
             break;
         case "brush":
-            self.highlightViz(name: "param-posx", on: true)
+            self.highlightViz(name: "param-dx", on: true)
             break;
         case "output":
             self.highlightViz(name: "param-x", on: true)
@@ -655,7 +655,12 @@ class BrushGraphic {
                 stylusUpIcon.fill = inputColor
                 stylusDownIcon.fill = inputColor
                 changeColorInGroup(group: stylusStream, color: inputColor)
+                if Debugger.inputLabelTurnedOff {
+                    Debugger.inputLabel = true
+                }
                 
+                if self.scene.stylusOn { self.highlightStylus() }
+                if self.scene.generatorOn { self.highlightGenerator(name:self.scene.generatorOnName) }
                 
             } else {
                 stylusIcon.fill = hiddenColor
@@ -665,6 +670,9 @@ class BrushGraphic {
                 stylusUpIcon.fill = hiddenColor
                 stylusDownIcon.fill = hiddenColor
                 changeColorInGroup(group: stylusStream, color: hiddenColor)
+                if Debugger.inputLabel {
+                    Debugger.inputLabelTurnedOff = true
+                }
                 Debugger.inputLabel = false
             }
             break
@@ -675,12 +683,24 @@ class BrushGraphic {
                 inputIcon.fill = brushColor
                 inputIcon.stroke = Macaw.Stroke(fill: Macaw.Color.white, width:2)
                 changeColorInGroup(group: brushStream, color: brushColor)
+                if Debugger.brushLabelTurnedOff {
+                    Debugger.brushLabel = true
+                }
+                
+                if self.scene.originOn { self.highlightOrigin() }
+                if self.scene.scaleXOn { self.highlightScaleX() }
+                if self.scene.scaleYOn { self.highlightScaleY() }
+                if self.scene.rotationOn { self.highlightRotation() }
+                if self.scene.brushOn { self.highlightBrushIcon() }
 
             } else {
                 makeBrushIconInvisible()
                 inputIcon.fill = hiddenColor
                 inputIcon.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
                 changeColorInGroup(group: brushStream, color: hiddenColor)
+                if Debugger.brushLabel {
+                    Debugger.brushLabelTurnedOff = true
+                }
                 Debugger.brushLabel = false
 
             }
@@ -690,11 +710,17 @@ class BrushGraphic {
                 computedIcon.fill = outputColor
                 computedIcon.stroke = Macaw.Stroke(fill: Macaw.Color.white, width:2)
                 changeColorInGroup(group: outputStream, color: outputColor)
-
+                if Debugger.outputLabelTurnedOff {
+                    Debugger.outputLabel = true
+                }
+                if self.scene.outputOn { self.highlightOutput() }
             } else {
                 computedIcon.fill = hiddenColor
                 computedIcon.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
                 changeColorInGroup(group: outputStream, color: hiddenColor)
+                if Debugger.outputLabel {
+                    Debugger.outputLabelTurnedOff = true
+                }
                 Debugger.outputLabel = false
             }
             break
@@ -907,7 +933,7 @@ class BrushGraphic {
     }
     
     func unhighlightOutput() {
-        computedIcon.fill = brushColor
+        computedIcon.fill = outputColor
     }
     
     

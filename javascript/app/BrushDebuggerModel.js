@@ -25,10 +25,9 @@ define(["app/DebuggerModel"],
 
 			  	 let targetBehaviorData = data.behaviors[currentBehaviorId];
 			  	 let targetBrushData = targetBehaviorData.brushes[selectedIndex];
+			  	 console.log("~~ is stepping on? ", this.stepThroughOn);
 			  	 if (this.stepThroughOn)
 				  	 this.processStepData(targetBrushData);
-
-
 			  	}
 
 			  	this.trigger("DATA_UPDATED");

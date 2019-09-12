@@ -80,12 +80,6 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 
 			}
 
-			stepDrawingViewForward(){
-				this.trigger("STEP_FORWARD");
-
-			}
-
-
 			resetInspection(){
 				this.clearInspectorDataQueue();
 			}
@@ -100,6 +94,11 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 			}
 
 			inspectorDataInterval(){
+				if (this.brushModel.brushVizQueue.length == 0) {
+					//clear highlights -- assuming last one is alpha
+					this.trigger("CLEAR_STEP_HIGHLIGHT"); //only problem is this gets called a lot while passive?
+					this.startInspectorInterval();
+				}
 				if (this.brushModel.brushVizQueue.length > 0) {
 					this.trigger("VIZ_BRUSH_STEP_THROUGH");
 				}

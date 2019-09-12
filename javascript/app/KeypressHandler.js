@@ -12,16 +12,14 @@ define(["app/Emitter"],
 			constructor(model) {
 				super();
        			this.model = model;
+      			var self = this;
 
 				document.onkeyup = function(e) {
 
 					if (e.keyCode == 39) {
-			            console.log("~~~~  next pressed, brush queue is ", this.model.brushVizQueue);
-			            if (this.model.brushVizQueue.length === 0) {
-			              this.trigger("STEP_FORWARD");
-			            } else {
-			              this.trigger("VIZ_BRUSH_STEP_THROUGH");
-			            }
+			          console.log("~~~~  next pressed, brush queue is ", this.model.brushVizQueue);
+	            	  self.model.collection.terminateInspectorInterval();
+	            	  self.model.collection.inspectorDataInterval();
 					}
 				}.bind(this);
 			}
