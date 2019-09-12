@@ -25,8 +25,10 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
                 helpers_btn = this.el.find('#accessors');
                 drawings_btn = this.el.find('#drawings');
                 
-
-                this.btn_list = [live_btn, recordings_btn, datasets_btn, generator_btn, brushes_btn, drawings_btn, helpers_btn];
+                //new button list -- for study!!
+                this.btn_list = [live_btn, generator_btn];
+                // old button list
+                // this.btn_list = [live_btn, recordings_btn, datasets_btn, generator_btn, brushes_btn, drawings_btn, helpers_btn];
 
                 this.el.droppable({
                     drop: function(event, ui) {
