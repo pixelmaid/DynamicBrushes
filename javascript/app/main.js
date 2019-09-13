@@ -91,7 +91,14 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
                 saveManager.setCurrentFilename(currentBehaviorName, currentBehaviorFile);
                 debuggerModelCollection.clearInspectorDataQueue();
                 updateSelectedBehaviorAndBrush();
-
+                //init stepping here
+                var status = data.data["executionStatus"];
+                console.log("~~~~ exec status is ", status);
+                if (status == 'stepping') {
+                    debuggerModelCollection.initializeStepping();
+                    $('#step-mode-change').text('turn step off');
+                    debuggerModelCollection.inspectorDataInterval();                            
+                }
 
             } else if (data.type == "collection_data") {
                 signalModel.datasetLoader.loadCollection(data.data.collections);
@@ -418,10 +425,10 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
         $('#step-mode-change').click(function() {
             if (!debuggerModelCollection.manualSteppingOn) { //turn on 
                 debuggerModelCollection.initializeStepping();
-                $(this).text('step off');
+                $(this).text('turn step off');
             } else { //turn off
                 debuggerModelCollection.deinitializeStepping();
-                $(this).text('step on');
+                $(this).text('turn step on');
             }
         });
 

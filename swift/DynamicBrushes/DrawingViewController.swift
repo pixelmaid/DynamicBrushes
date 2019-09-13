@@ -1028,7 +1028,7 @@ class DrawingViewController: UIViewController, Requester{
             
         }
         if(BehaviorManager.behaviors.count>0){
-            /*Debugger.drawCurrentBrushState(view: self.layerContainerView.brushGraphicsView!,targetBehaviorId: BehaviorManager.behaviors.first!.key, jump:false,time:nil);*/
+            Debugger.drawCurrentBrushState(view: self.layerContainerView.brushGraphicsView!,targetBehaviorId: BehaviorManager.behaviors.first!.key, jump:false,time:nil);
 
         }
     }
@@ -1448,7 +1448,15 @@ class DrawingViewController: UIViewController, Requester{
     
     func synchronizeWithAuthoringClient(){
        
-        let syncJSON:JSON = BehaviorManager.getAllBehaviorAndCollectionJSON();
+        var syncJSON:JSON = BehaviorManager.getAllBehaviorAndCollectionJSON();
+        //add execution status - live, stepping, looping <- isStepping is true. if isLive and isStepping false = looping
+        if stylusManager.isStepping {
+            syncJSON["executionStatus"] = "stepping"
+        } else if !stylusManager.isLive && !stylusManager.isStepping {
+            syncJSON["executionStatus"] = "looping"
+        } else {
+            syncJSON["executionStatus"] = "live"
+        }
         let request = Request(target: "socket", action: "synchronize", data: syncJSON, requester: self)
         RequestHandler.addRequest(requestData: request)
         
