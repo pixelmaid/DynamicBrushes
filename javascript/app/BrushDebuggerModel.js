@@ -37,13 +37,13 @@ define(["app/DebuggerModel"],
 				  	  this.data = oldData;			  	  	
 			  	  }
 			  	 } 
-			  	 
-			  	 
-			  	 
 			  	}
+			  	 
+			  	 
 			  	//combine data all at once using dataVizQueue?
 
 			  	this.trigger("DATA_UPDATED");
+
 
 			}
 
@@ -78,7 +78,6 @@ define(["app/DebuggerModel"],
 					//data.constraints[i].value = brushState[data.constraints[i].constraintId];
 					this.brushVizQueue.push(data.constraints[i]);
 				}
-				this.toClearViz = true;
 			}
 
 			displayTransition(data) {
