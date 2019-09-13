@@ -140,10 +140,10 @@ class Expression:Observable<Float>{
     static func parseForSignalAccessors(expressionString:String,observables:[String:Observable<Float>])->(newString:String,newObservables:[String:Observable<Float>]){
         var newObservables = [String:Observable<Float>]();
         var newString = "";
-        var stringArr = expressionString.split{$0 == "%"}.map(String.init);
+        var stringArr = expressionString.split(separator: "%")
         var stringAnalysis = [String]();
         while stringArr.count > 0{
-            let s = stringArr.removeFirst();
+            let s = String(stringArr.removeFirst());
             if observables[s] != nil {
                 stringAnalysis.append(s);
                 if(stringAnalysis.count == 3){
@@ -200,7 +200,7 @@ class Expression:Observable<Float>{
             }
         }
         
-        return (newString:newString,newObservables:newObservables);
+        return (newString:expressionString,newObservables:newObservables);
     }
 
 }

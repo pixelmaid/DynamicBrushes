@@ -48,6 +48,11 @@ class Signal:Observable<Float>{
     
     public func paramsToJSON()->JSON{
 //        print("params to json",self.index);
+        guard signalBuffer.count>self.index else{
+            print("============ERROR SIGNAL BUFFER INDEX OUT OF RANGE ===============");
+            return 0;
+            
+        }
         return JSON(signalBuffer[self.index]);
     }
     

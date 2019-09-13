@@ -14,8 +14,7 @@ define(["app/DebuggerModel"],
 				super(collection);
 
 				this.brushVizQueue = [];
-				this.stepThroughOn = true;
-				this.toClearViz = false;
+
 			}
 
 			update(data){
@@ -26,12 +25,12 @@ define(["app/DebuggerModel"],
 
 			  	 let targetBehaviorData = data.behaviors[currentBehaviorId];
 			  	 let targetBrushData = targetBehaviorData.brushes[selectedIndex];
-			  	 console.log("~~ is stepping on? ", this.stepThroughOn);
-			  	 if (this.stepThroughOn)
-				  	 this.processStepData(targetBrushData);
+			  	 this.processStepData(targetBrushData);
+
 			  	}
 
 			  	this.trigger("DATA_UPDATED");
+
 
 			}
 
@@ -64,7 +63,6 @@ define(["app/DebuggerModel"],
 					//data.constraints[i].value = brushState[data.constraints[i].constraintId];
 					this.brushVizQueue.push(data.constraints[i]);
 				}
-				this.toClearViz = true;
 			}
 
 			displayTransition(data) {
