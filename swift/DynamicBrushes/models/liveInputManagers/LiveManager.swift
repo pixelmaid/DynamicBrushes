@@ -356,7 +356,7 @@ final class StylusManager:LiveManager{
         self.stopLoopTimer();
         
       
-        playbackTimer = Timer.scheduledTimer(timeInterval: TimeInterval(0.016/playbackRate), target: self, selector: #selector(advanceRecording), userInfo: nil, repeats: false)
+        playbackTimer = Timer.scheduledTimer(timeInterval: TimeInterval(0.005/playbackRate), target: self, selector: #selector(advanceRecording), userInfo: nil, repeats: false)
 
         
     }

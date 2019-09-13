@@ -27,7 +27,9 @@ define(["app/DebuggerModel"],
 			  	 let currentBehaviorId = this.collection.chartViewManager.currentView.id;
 			  	 let selectedIndex = this.collection.selectedIndex;
 
-			  	 let targetBehaviorData = data.behaviors[currentBehaviorId];
+			  	 let targetBehaviorData = data.behaviors.find(function(element){
+			  	 	return element.id == currentBehaviorId;
+			  	 });
 			  	 let targetBrushData = targetBehaviorData.brushes[selectedIndex];
 
 

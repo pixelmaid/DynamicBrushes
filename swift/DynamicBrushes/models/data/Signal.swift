@@ -22,7 +22,7 @@ class Signal:Observable<Float>{
     internal let style:String!
     internal var prevV:Float = 0;
 
-    internal let maxVals = 1000
+    internal let maxVals = 1000 //TODO: this is arbitrary. will cause bugs
     var behaviorId:String! = nil
 
     static let stylusUp:Float = 0.0;

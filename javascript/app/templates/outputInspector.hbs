@@ -7,6 +7,9 @@
 #{{groupName}}tab_{{this.id}}:checked ~ #{{groupName}}content_{{this.id}},
 {{/if}}
 {{/each}}
+{{#if @last}}
+{{else}},
+{{/if}}
 {{/each}}
 {display: block;}
 </style>

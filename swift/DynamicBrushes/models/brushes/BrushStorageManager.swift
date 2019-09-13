@@ -47,6 +47,10 @@ class BrushStorageManager{
         
     }
     
+    static func clearAllStoredData(){
+       self.paramStorage = [String:[String:[Int:String]]]()
+    }
+    
     static func storeState(brush:Brush,event:String){
         guard var brushList = BrushStorageManager.paramStorage[brush.behaviorId] else {
             return;

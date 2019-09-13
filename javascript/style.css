@@ -188,7 +188,7 @@ h1{
 
 .state{
   width: auto;
-  min-width:300px;
+  min-width:800px;
   min-height: 100px;
   padding:10px;
   float:left;

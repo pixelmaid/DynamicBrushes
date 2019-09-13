@@ -606,7 +606,7 @@ class DrawingViewController: UIViewController, Requester{
         
         
         var templateJSON:JSON = [:]
-        templateJSON["filename"] = "templates/default_stylus_events.json"
+        templateJSON["filename"] = "templates/dual_behaviors_working.json"
         templateJSON["type"] = JSON("load")
         let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: self)
         RequestHandler.addRequest(requestData:behaviorDownloadRequest);
@@ -1213,9 +1213,8 @@ class DrawingViewController: UIViewController, Requester{
         case "download_complete":
             currentBehaviorName = (data.1?["short_filename"].stringValue)!
             currentBehaviorFile = (data.1?["filename"].stringValue)!
-            
-           BehaviorManager.loadData(json: data.1!["data"])
-            
+            BrushStorageManager.clearAllStoredData();
+            BehaviorManager.loadData(json: data.1!["data"])
             self.behaviorPanelController?.loadBehaviors(json: data.1!["data"])
             self.synchronizeWithAuthoringClient();
             self.startBackupTimer(interval:self.backupInterval);
