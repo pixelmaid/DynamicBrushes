@@ -46,6 +46,7 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 			// }
 
 			clearStepHighlight() {
+				console.log("~~ clearing step highlights");
 				//assuming last one is alpha
 				$("#param-alpha").removeClass("debug-inspect");
 				//go through state mappings
@@ -62,6 +63,7 @@ define(["jquery", "handlebars", "app/DebuggerView"],
                         $(this).removeClass("active");
                     }
 				})
+				console.log("~~ finished step highlights");
 			}
 
 			removeStateHighlight(pastConstraint) {
@@ -177,8 +179,11 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 
 				//change data based on dataVizQueue -- reinit handlebars here ? 
 				if (self.model.collection.manualSteppingOn) {
-					console.log("~~~ reinit inspector data ", self.model.dataVizQueue());
-					// this.initInspector(data);
+					// console.log("~~~ dataqueue lengthis ", this.model.dataVizQueue.length);
+					// let currentData = this.model.dataVizQueue.shift();
+					// print("~~~ curr data is ", currentData, this.model.dataVizQueue.length);
+
+					// this.initInspector(currentData);
 
 				}
 

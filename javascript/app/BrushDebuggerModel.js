@@ -36,7 +36,7 @@ define(["app/DebuggerModel"],
 				  	  this.dataVizQueue.push(data);
 				  	  this.data = oldData;			  	  	
 			  	  }
-			  	 } 
+			  	 }
 			  	}
 			  	 
 			  	 
