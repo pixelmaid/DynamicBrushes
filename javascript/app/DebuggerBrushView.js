@@ -13,12 +13,6 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 				this.keyHandler = keyHandler;
 				this.pastConstraint = null;
 				this.stateHighlighted = false;
-				this.keyHandler.addListener("VIZ_BRUSH_STEP_THROUGH", function() {
-					let currentConstraint = this.model.brushVizQueue.shift();
-					this.visualizeStepThrough(currentConstraint, this.pastConstraint, model.data);
-					this.pastConstraint = currentConstraint;
-
-				}.bind(this));
 
 				this.model.collection.addListener("VIZ_BRUSH_STEP_THROUGH", function() {
 					// console.log("~~~~ !!! called brush step through in main");
@@ -179,6 +173,13 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 						arrowObject.children().eq(2).attr("stroke", "#00ff00");
 						arrowObject.children().eq(2).attr("fill", "#00ff00");
 						break;
+				}
+
+				//change data based on dataVizQueue -- reinit handlebars here ? 
+				if (self.model.collection.manualSteppingOn) {
+					console.log("~~~ reinit inspector data ", self.model.dataVizQueue());
+					// this.initInspector(data);
+
 				}
 
 			}

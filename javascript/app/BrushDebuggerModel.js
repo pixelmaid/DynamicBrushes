@@ -14,14 +14,15 @@ define(["app/DebuggerModel"],
 				super(collection);
 
 				this.brushVizQueue = [];
+				this.dataVizQueue = [];
 				this.stepThroughOn = true;
 				this.toClearViz = false;
-				this.prevData = [];
 			}
 
 			update(data){
-			   this.prevData = this.data;
+			   let oldData = this.data;
 			   this.data = data;
+
 			   if(this.collection.chartViewManager.currentView){
 			  	 let currentBehaviorId = this.collection.chartViewManager.currentView.id;
 			  	 let selectedIndex = this.collection.selectedIndex;
@@ -29,13 +30,24 @@ define(["app/DebuggerModel"],
 			  	 let targetBehaviorData = data.behaviors[currentBehaviorId];
 			  	 let targetBrushData = targetBehaviorData.brushes[selectedIndex];
 
-			  	 if (this.stepThroughOn)
-				  	 this.processStepData(targetBrushData);
+			  	 if (this.stepThroughOn) {
+			  	  this.processStepData(targetBrushData);
+			  	  if (this.collection.manualSteppingOn) {
+				  	  this.dataVizQueue.push(data);
+				  	  this.data = oldData;			  	  	
+			  	  }
+			  	 } 
+			  	 
+			  	 
+			  	 
 			  	}
+			  	//combine data all at once using dataVizQueue?
 
 			  	this.trigger("DATA_UPDATED");
 
 			}
+
+
 
 			processStepData (data) {
 

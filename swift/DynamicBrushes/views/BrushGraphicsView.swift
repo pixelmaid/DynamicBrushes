@@ -476,6 +476,9 @@ class BrushGraphic {
     let hiddenColor = Macaw.Color.rgba(r:255,g:255,b:255,a:0)
     let highlightColor = Macaw.Color.rgba(r:0,g:255,b:0,a:63)
     
+    let empty = Shape(form: Circle(r:1), fill: Macaw.Color.rgba(r:0,g:0,b:0,a:0))
+
+    
     init(view:BrushGraphicsView, scene:BrushGraphicsScene, id:String, ox:Float, oy:Float, r: Float, x: Float, y:Float,
          cx: Float, cy:Float, ix:Double, iy:Double ) {
         self.id = id
@@ -550,7 +553,6 @@ class BrushGraphic {
         node.contents.append(outputStream)
 
         //init generator static location
-        let empty = Shape(form: Circle(r:1), fill: Macaw.Color.rgba(r:0,g:0,b:0,a:0))
         generator = Group(contents: [empty])
         generator.place = Transform.move(dx:25, dy:75)
         node.contents.append(generator)
@@ -655,19 +657,21 @@ class BrushGraphic {
             }
         }
     }
-
+    
     func toggleViz(type:String) {
         switch(type) {
         case "input":
             //input stream, input dot, generator viz
             if Debugger.inputGfx {
-                stylusIcon.fill = inputColor
-                stylusIcon.stroke = Macaw.Stroke(fill: Macaw.Color.white, width:2)
-                updateExistingStylusStrokes()
-                makeGeneratorVisible()
-                stylusUpIcon.fill = inputColor
-                stylusDownIcon.fill = inputColor
-                changeColorInGroup(group: stylusStream, color: inputColor)
+                self.node.contents[0] = lastStylusInputs
+                self.node.contents[1] = stylusIcon
+//                stylusIcon.fill = inputColor
+//                stylusIcon.stroke = Macaw.Stroke(fill: Macaw.Color.white, width:2)
+//                updateExistingStylusStrokes()
+//                makeGeneratorVisible()
+//                stylusUpIcon.fill = inputColor
+//                stylusDownIcon.fill = inputColor
+//                changeColorInGroup(group: stylusStream, color: inputColor)
                 if Debugger.inputLabelTurnedOff {
                     Debugger.inputLabel = true
                 }
@@ -677,13 +681,18 @@ class BrushGraphic {
                 if self.scene.generatorOn { self.highlightGenerator(name:self.scene.generatorOnName) }
                 
             } else {
-                stylusIcon.fill = hiddenColor
-                stylusIcon.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
-                changeColorInGroup(group: self.lastStylusInputs, color: hiddenColor)
-                makeGeneratorInvisible()
-                stylusUpIcon.fill = hiddenColor
-                stylusDownIcon.fill = hiddenColor
-                changeColorInGroup(group: stylusStream, color: hiddenColor)
+                
+                self.node.contents[0] = empty
+                self.node.contents[1] = empty
+//                stylusIcon.fill = inputColor
+//
+//                stylusIcon.fill = hiddenColor
+//                stylusIcon.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
+//                changeColorInGroup(group: self.lastStylusInputs, color: hiddenColor)
+//                makeGeneratorInvisible()
+//                stylusUpIcon.fill = hiddenColor
+//                stylusDownIcon.fill = hiddenColor
+//                changeColorInGroup(group: stylusStream, color: hiddenColor)
                 if Debugger.inputLabel {
                     Debugger.inputLabelTurnedOff = true
                 }
@@ -706,7 +715,7 @@ class BrushGraphic {
                 if self.scene.scaleYOn { self.highlightScaleY() }
                 if self.scene.rotationOn { self.highlightRotation() }
                 if self.scene.brushOn { self.highlightBrushIcon() }
-
+                
             } else {
                 makeBrushIconInvisible()
                 inputIcon.fill = hiddenColor
@@ -716,7 +725,7 @@ class BrushGraphic {
                     Debugger.brushLabelTurnedOff = true
                 }
                 Debugger.brushLabel = false
-
+                
             }
             break
         case "output":
@@ -744,6 +753,95 @@ class BrushGraphic {
         toggleLabel(type:type)
     }
     
+
+//    func toggleVizOld(type:String) {
+//        switch(type) {
+//        case "input":
+//            //input stream, input dot, generator viz
+//            if Debugger.inputGfx {
+//                stylusIcon.fill = inputColor
+//                stylusIcon.stroke = Macaw.Stroke(fill: Macaw.Color.white, width:2)
+//                updateExistingStylusStrokes()
+//                makeGeneratorVisible()
+//                stylusUpIcon.fill = inputColor
+//                stylusDownIcon.fill = inputColor
+//                changeColorInGroup(group: stylusStream, color: inputColor)
+//                if Debugger.inputLabelTurnedOff {
+//                    Debugger.inputLabel = true
+//                }
+//
+//                if self.scene.stylusOn { self.highlightStylus() }
+//                if self.scene.forceOn { self.highlightForce() }
+//                if self.scene.generatorOn { self.highlightGenerator(name:self.scene.generatorOnName) }
+//
+//            } else {
+//                stylusIcon.fill = hiddenColor
+//                stylusIcon.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
+//                changeColorInGroup(group: self.lastStylusInputs, color: hiddenColor)
+//                makeGeneratorInvisible()
+//                stylusUpIcon.fill = hiddenColor
+//                stylusDownIcon.fill = hiddenColor
+//                changeColorInGroup(group: stylusStream, color: hiddenColor)
+//                if Debugger.inputLabel {
+//                    Debugger.inputLabelTurnedOff = true
+//                }
+//                Debugger.inputLabel = false
+//            }
+//            break
+//        case "brush":
+//            //origin icon, brush dot
+//            if Debugger.brushGfx {
+//                makeBrushIconVisible()
+//                inputIcon.fill = brushColor
+//                inputIcon.stroke = Macaw.Stroke(fill: Macaw.Color.white, width:2)
+//                changeColorInGroup(group: brushStream, color: brushColor)
+//                if Debugger.brushLabelTurnedOff {
+//                    Debugger.brushLabel = true
+//                }
+//
+//                if self.scene.originOn { self.highlightOrigin() }
+//                if self.scene.scaleXOn { self.highlightScaleX() }
+//                if self.scene.scaleYOn { self.highlightScaleY() }
+//                if self.scene.rotationOn { self.highlightRotation() }
+//                if self.scene.brushOn { self.highlightBrushIcon() }
+//
+//            } else {
+//                makeBrushIconInvisible()
+//                inputIcon.fill = hiddenColor
+//                inputIcon.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
+//                changeColorInGroup(group: brushStream, color: hiddenColor)
+//                if Debugger.brushLabel {
+//                    Debugger.brushLabelTurnedOff = true
+//                }
+//                Debugger.brushLabel = false
+//
+//            }
+//            break
+//        case "output":
+//            if Debugger.outputGfx {
+//                computedIcon.fill = outputColor
+//                computedIcon.stroke = Macaw.Stroke(fill: Macaw.Color.white, width:2)
+//                changeColorInGroup(group: outputStream, color: outputColor)
+//                if Debugger.outputLabelTurnedOff {
+//                    Debugger.outputLabel = true
+//                }
+//                if self.scene.outputOn { self.highlightOutput() }
+//            } else {
+//                computedIcon.fill = hiddenColor
+//                computedIcon.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
+//                changeColorInGroup(group: outputStream, color: hiddenColor)
+//                if Debugger.outputLabel {
+//                    Debugger.outputLabelTurnedOff = true
+//                }
+//                Debugger.outputLabel = false
+//            }
+//            break
+//        default:
+//            break
+//        }
+//        toggleLabel(type:type)
+//    }
+//
     func toggleLabel(type:String) {
 
         switch(type) {

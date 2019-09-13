@@ -219,7 +219,6 @@ class DrawingViewController: UIViewController, Requester{
             break;
             
         case "TOGGLE_INSPECTION_PANEL":
-            print("~~~ TOGGLE INSPECTION PANEL~~~~")
             if(inspectorPanelContainerView?.isHidden == true){
                 inspectorPanelContainerView?.isHidden = false
             }
