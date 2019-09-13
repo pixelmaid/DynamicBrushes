@@ -658,6 +658,11 @@ class BrushGraphic {
         }
     }
     
+    //for reference, node order is
+//    ["lastStylusInputs", "stylusIcon", "stylusUpIcon", "stylusDownIcon", "stylusStream",
+//    5 "brushIcon", "brushStream", "inputIcon", "computedIcon", "outputStream",
+//    10 "generator", "stylusText", "originText", "inputText", "computedText"]
+    
     func toggleViz(type:String) {
         switch(type) {
         case "input":
@@ -665,13 +670,11 @@ class BrushGraphic {
             if Debugger.inputGfx {
                 self.node.contents[0] = lastStylusInputs
                 self.node.contents[1] = stylusIcon
-//                stylusIcon.fill = inputColor
-//                stylusIcon.stroke = Macaw.Stroke(fill: Macaw.Color.white, width:2)
-//                updateExistingStylusStrokes()
-//                makeGeneratorVisible()
-//                stylusUpIcon.fill = inputColor
-//                stylusDownIcon.fill = inputColor
-//                changeColorInGroup(group: stylusStream, color: inputColor)
+                self.node.contents[2] = stylusUpIcon
+                self.node.contents[3] = stylusDownIcon
+                self.node.contents[4] = stylusStream
+                self.node.contents[10] = generator
+                
                 if Debugger.inputLabelTurnedOff {
                     Debugger.inputLabel = true
                 }
@@ -684,15 +687,11 @@ class BrushGraphic {
                 
                 self.node.contents[0] = empty
                 self.node.contents[1] = empty
-//                stylusIcon.fill = inputColor
-//
-//                stylusIcon.fill = hiddenColor
-//                stylusIcon.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
-//                changeColorInGroup(group: self.lastStylusInputs, color: hiddenColor)
-//                makeGeneratorInvisible()
-//                stylusUpIcon.fill = hiddenColor
-//                stylusDownIcon.fill = hiddenColor
-//                changeColorInGroup(group: stylusStream, color: hiddenColor)
+                self.node.contents[2] = empty
+                self.node.contents[3] = empty
+                self.node.contents[4] = empty
+                self.node.contents[10] = empty
+
                 if Debugger.inputLabel {
                     Debugger.inputLabelTurnedOff = true
                 }
@@ -702,10 +701,10 @@ class BrushGraphic {
         case "brush":
             //origin icon, brush dot
             if Debugger.brushGfx {
-                makeBrushIconVisible()
-                inputIcon.fill = brushColor
-                inputIcon.stroke = Macaw.Stroke(fill: Macaw.Color.white, width:2)
-                changeColorInGroup(group: brushStream, color: brushColor)
+                self.node.contents[5] = brushIcon
+                self.node.contents[6] = brushStream
+                self.node.contents[7] = inputIcon
+
                 if Debugger.brushLabelTurnedOff {
                     Debugger.brushLabel = true
                 }
@@ -717,10 +716,10 @@ class BrushGraphic {
                 if self.scene.brushOn { self.highlightBrushIcon() }
                 
             } else {
-                makeBrushIconInvisible()
-                inputIcon.fill = hiddenColor
-                inputIcon.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
-                changeColorInGroup(group: brushStream, color: hiddenColor)
+                self.node.contents[5] = empty
+                self.node.contents[6] = empty
+                self.node.contents[7] = empty
+                
                 if Debugger.brushLabel {
                     Debugger.brushLabelTurnedOff = true
                 }
@@ -730,17 +729,19 @@ class BrushGraphic {
             break
         case "output":
             if Debugger.outputGfx {
-                computedIcon.fill = outputColor
-                computedIcon.stroke = Macaw.Stroke(fill: Macaw.Color.white, width:2)
-                changeColorInGroup(group: outputStream, color: outputColor)
+                
+                self.node.contents[8] = computedIcon
+                self.node.contents[9] = outputStream
+                
                 if Debugger.outputLabelTurnedOff {
                     Debugger.outputLabel = true
                 }
                 if self.scene.outputOn { self.highlightOutput() }
             } else {
-                computedIcon.fill = hiddenColor
-                computedIcon.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
-                changeColorInGroup(group: outputStream, color: hiddenColor)
+
+                self.node.contents[8] = empty
+                self.node.contents[9] = empty
+                
                 if Debugger.outputLabel {
                     Debugger.outputLabelTurnedOff = true
                 }
