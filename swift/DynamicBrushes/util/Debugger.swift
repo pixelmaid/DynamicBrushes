@@ -249,12 +249,12 @@ final class Debugger {
         
     }
     
-    static public func getGeneratorValue(brushId:String,debugData:JSON) -> [(Double,Int,String)] {
+    static public func getGeneratorValue(brushId:String,debugData:JSON) -> [(Double,Int,String,Float)] {
         var val = -1.0
         var time = -1
         var type = "none"
         var freq:Float = -1.0
-        var returnVals:[(val:Double,time:Int,type:String)] = []
+        var returnVals:[(val:Double,time:Int,type:String,freq:Float)] = []
         
         let params:JSON = debugData["params"]
         for (_, subJsonArr):(String, JSON) in params {
@@ -268,7 +268,7 @@ final class Debugger {
                     //                            print("FREQUENCY OF SINE IS ~~~~~~ ", freq)
                     //
                     //                        }
-                    returnVals.append((val:val, time:time, type:type))
+                    returnVals.append((val:val, time:time, type:type, freq:freq))
                     
                     
                 }

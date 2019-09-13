@@ -182,7 +182,7 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 					let correctData = this.model.dataVizDict[constraint.relativePropertyName];
 
 	
-					print("~~~ updating viz with ", constraint.relativePropertyName, correctData);
+					console.log("~~~ !! updating viz with ", constraint.relativePropertyName, correctData);
 
 					this.initInspector(correctData);
 

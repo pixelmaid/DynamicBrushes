@@ -364,16 +364,16 @@ public class BrushGraphicsScene {
         }
     }
     
-    public func drawGenerator(valArray: [(Double, Int, String)]) {
+    public func drawGenerator(valArray: [(Double, Int, String, Float )]) {
        //val array is value, time, type
 //        print("~~~~ drawing generator, active brushIds are ", self.activeBrushIds.count)
         for (_, brush) in self.activeBrushIds {
-            var newVals = [(Double, Int, String)]()
+            var newVals = [(Double, Int, String, Float)]()
             var seenTypes = [String]()
-            for (v, t, type) in valArray {
+            for (v, t, type, freq) in valArray {
                 if !seenTypes.contains(type) {
                     seenTypes.append(type)
-                    newVals.append((v, t, type))
+                    newVals.append((v, t, type, freq))
                 }
             }
         
@@ -401,19 +401,19 @@ public class BrushGraphicsScene {
             var i:Int = 0;
 //            print("~~~ total after change" , numGenerators, self.currentGenerator.count);
 
-            for (value, time, type) in sortedValArray {
+            for (value, time, type, freq) in sortedValArray {
                 if i >= self.currentGenerator.count {
                     return
                 }
                 if type != self.currentGenerator[i] {
 //                    print("~~ before type is ", self.currentGenerator[i])
-                    brush.updateGeneratorKind(type: type, i:i)
+                    brush.updateGeneratorKind(type: type, i:i, freq:freq)
                     self.currentGenerator[i] = type
 //                    print("~~~ updated generator to ", type, i)
                 }
                 if type != "none" {
 //                    print("~~~~~~ about to update dot for id ", brush.id, value, time, type, i)
-                    brush.updateGeneratorDot(v: value, t: time, type:type, i:i)
+                    brush.updateGeneratorDot(v: value, t: time, type:type, i:i, freq:freq)
                 }
                 i += 1
             }
@@ -1083,29 +1083,35 @@ class BrushGraphic {
     }
     
     
-    func updateGeneratorDot(v: Double, t: Int, type:String, i: Int) {
+    func updateGeneratorDot(v: Double, t: Int, type:String, i: Int, freq:Float) {
 //        print("dot contents are ~~~~ ", self.generator.contents.count, " i is ", i)
-        let biggestMultiplier = 400 //sine
-        var multiplier = 40
-        if type == "sawtooth" {
-            multiplier = 4
+        let sineMultiplier = 1/(freq*Float.pi)
+        var biggestMultiplier = 100
+        if sineMultiplier > 100 {
+            biggestMultiplier = Int(sineMultiplier)
         }
-        else if type == "sine" { //period now 400
-            multiplier = 1
+        var multiplier = 10.0
+        if type == "sawtooth" {
+            multiplier = 1.0
+        }
+        else if type == "sine" { //period is 1/freq
+            multiplier = Double(Float(biggestMultiplier)/sineMultiplier)
+            print("~~~ sine mult is " , multiplier, sineMultiplier)
         }
         if i >= self.generator.contents.count {
             reinitGen(i: i)
         }
         if let genGroup = self.generator.contents[i] as? Group {
             let dot = genGroup.contents[1] as! Shape
-            dot.place = Transform.move(dx:Double((t*multiplier%biggestMultiplier)/2)  , dy: 100-v*100)
+            let dx = (Int(Double(t)*multiplier)%biggestMultiplier)*2
+            dot.place = Transform.move(dx:Double(dx), dy: 100-v*100)
             let gText = genGroup.contents[2] as! Text
             gText.text = type+", time: "+String(t)+", value: "+String((v*100).rounded()/100)
         } else {
             //reinit
             print("~~~ reinit in update dot")
             reinitGen(i: i)
-            updateGeneratorKind(type: type, i: i)
+            updateGeneratorKind(type: type, i: i, freq:freq)
         }
     }
     
@@ -1135,7 +1141,7 @@ class BrushGraphic {
 //        print("~~~ reinit generator. now contents are ", self.generator.contents.count , " with i ", i )
     }
     
-    func updateGeneratorKind(type:String, i: Int){
+    func updateGeneratorKind(type:String, i: Int, freq:Float){
         if self.scene.currentGenerator[i] == "none" || self.generator.contents.count < i+1 { //need to reinit
 //            print("~~~ reinit generator in update kind")
             reinitGen(i:i)

@@ -209,6 +209,7 @@ define(["jquery", "handlebars", "app/Emitter"],
 
       initInspector(data) {
         console.log("~~~ data is ", data);
+        if (!data) return;
         var groupName;
         let self = this;
         var html = this.template(data);

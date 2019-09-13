@@ -21,16 +21,18 @@ function(DebuggerModel) {
 
 
         getParam(group, key) { //group is ['inspector'], key is eg sx. returns val 
+        	console.log("~~group is ", group);
             for (var i = 0; i < group["blocks"].length; i++) {
                 var v;
                 //iterate through blocks 
                 var params = group["blocks"][i]["params"];
-                params.find(function(e) {
-                    if (e["id"] == key) {
-                        v = e["val"];
-                        return v;
+
+                for (var j = 0; j < params.length; j++) {
+                    if (params[j]["id"] == key) {
+                        return params[j]["val"];
                     }
-                });
+                }
+
             }
         }
 
@@ -51,8 +53,9 @@ function(DebuggerModel) {
         }
 
         combineData(oldData, newData, param, behaviorIdx, brushIdx) {
-            newVal = this.getParam(newData['behaviors'][behaviorIdx]['brushes'][brushIdx]['inspector'], param);
-            combinedData = replaceParam(oldData, param, newVal, behaviorIdx, brushIdx);
+            let newVal = this.getParam(newData['behaviors'][behaviorIdx]['brushes'][brushIdx]['inspector'], param);
+            console.log("~~ new val is ", newVal, param);
+            let combinedData = this.replaceParam(oldData, param, newVal, behaviorIdx, brushIdx);
             return combinedData
         }
 
@@ -76,22 +79,21 @@ function(DebuggerModel) {
                 let targetBrushData = targetBehaviorData.brushes[selectedIndex];
 
                 if (this.stepThroughOn) {
-                    this.processStepData(targetBrushData);
                     if (this.collection.manualSteppingOn) {
-                        params = ["sx", "sy", "rotation", "dx", "dy", "weight", "hue", "lightness", "saturation", "alpha"];
+                        let params = ["sx", "sy", "rotation", "dx", "dy", "weight", "hue", "lightness", "saturation", "alpha"];
                         for (var i = 0; i < params.length; i++) {
                         	//TODO - change to real index
-                            combinedData = combineData(oldData, data, params[i], 0, 0);
+                            let combinedData = this.combineData(oldData, data, params[i], 0, 0);
                             this.dataVizDict[params[i]] = combinedData;
                         }
-                      this.data = oldData;  
+                        console.log("~~datavizDict is now ", this.dataVizDict);
+                        this.processStepData(targetBrushData);
+                        this.data = oldData;  
                     }
                 }
             }
-        }
 
-
-        //combine data all at once using dataVizQueue?
+            console.log("~ updated data to ", this.data);
 
         this.trigger("DATA_UPDATED");
 
