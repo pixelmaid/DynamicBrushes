@@ -178,12 +178,13 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 				}
 
 				//change data based on dataVizQueue -- reinit handlebars here ? 
-				if (self.model.collection.manualSteppingOn) {
-					// console.log("~~~ dataqueue lengthis ", this.model.dataVizQueue.length);
-					// let currentData = this.model.dataVizQueue.shift();
-					// print("~~~ curr data is ", currentData, this.model.dataVizQueue.length);
+				if (self.model.collection.manualSteppingOn && constraint.type == "binding") {
+					let correctData = this.model.dataVizDict[constraint.relativePropertyName];
 
-					// this.initInspector(currentData);
+	
+					print("~~~ updating viz with ", constraint.relativePropertyName, correctData);
+
+					this.initInspector(correctData);
 
 				}
 

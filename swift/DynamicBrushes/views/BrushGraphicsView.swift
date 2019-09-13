@@ -366,7 +366,7 @@ public class BrushGraphicsScene {
     
     public func drawGenerator(valArray: [(Double, Int, String)]) {
        //val array is value, time, type
-//        print("~~~~ active brushIds are ", self.activeBrushIds.count)
+//        print("~~~~ drawing generator, active brushIds are ", self.activeBrushIds.count)
         for (_, brush) in self.activeBrushIds {
             var newVals = [(Double, Int, String)]()
             var seenTypes = [String]()
@@ -379,7 +379,7 @@ public class BrushGraphicsScene {
         
             let numGenerators = newVals.count
 
-//            print("~~~ total num UNIQUE active generators" , numGenerators, self.currentGenerator.count);
+            print("~~~ total num UNIQUE active generators" , numGenerators, self.currentGenerator.count);
             let currCount = self.currentGenerator.count
             if numGenerators > currCount { //increase slots
                 let diff = numGenerators - currCount
