@@ -395,6 +395,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
                 //this.value = input, brush, or output, or step 
                 if (this.value == 'step') {
                     debuggerModelCollection.brushModel.stepThroughOn = true;
+                    console.log("~~ turned stepping on ");
                 } else {
                     $("#inspector-"+this.value).css("visibility", "visible");
                     if (this.value == "brush"){                     
@@ -404,6 +405,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
             } else {
                 if (this.value == 'step') {
                     debuggerModelCollection.brushModel.stepThroughOn = false;
+                    debuggerModelCollection.brushModel.toClearViz = true;
+                    debuggerBrushView.clearStepHighlight();
                     console.log("~~ turned stepping off ");
                 } else {
                     $("#inspector-"+this.value).css("visibility", "hidden");

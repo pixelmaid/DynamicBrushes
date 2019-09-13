@@ -13,12 +13,6 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 				this.keyHandler = keyHandler;
 				this.pastConstraint = null;
 				this.stateHighlighted = false;
-				this.keyHandler.addListener("VIZ_BRUSH_STEP_THROUGH", function() {
-					let currentConstraint = this.model.brushVizQueue.shift();
-					this.visualizeStepThrough(currentConstraint, this.pastConstraint, model.data);
-					this.pastConstraint = currentConstraint;
-
-				}.bind(this));
 
 				this.model.collection.addListener("VIZ_BRUSH_STEP_THROUGH", function() {
 					// console.log("~~~~ !!! called brush step through in main");
@@ -52,6 +46,7 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 			// }
 
 			clearStepHighlight() {
+				console.log("~~ clearing step highlights");
 				//assuming last one is alpha
 				$("#param-alpha").removeClass("debug-inspect");
 				//go through state mappings
@@ -68,6 +63,7 @@ define(["jquery", "handlebars", "app/DebuggerView"],
                         $(this).removeClass("active");
                     }
 				})
+				console.log("~~ finished step highlights");
 			}
 
 			removeStateHighlight(pastConstraint) {
@@ -179,6 +175,16 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 						arrowObject.children().eq(2).attr("stroke", "#00ff00");
 						arrowObject.children().eq(2).attr("fill", "#00ff00");
 						break;
+				}
+
+				//change data based on dataVizQueue -- reinit handlebars here ? 
+				if (self.model.collection.manualSteppingOn) {
+					// console.log("~~~ dataqueue lengthis ", this.model.dataVizQueue.length);
+					// let currentData = this.model.dataVizQueue.shift();
+					// print("~~~ curr data is ", currentData, this.model.dataVizQueue.length);
+
+					// this.initInspector(currentData);
+
 				}
 
 			}
