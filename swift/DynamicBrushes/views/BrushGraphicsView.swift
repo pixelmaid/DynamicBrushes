@@ -437,8 +437,8 @@ class BrushGraphic {
     var stylusStream = Group()
     var brushStream = Group()
     var outputStream = Group()
-    let streamLimit = 100
-    let inputLimit = 100
+    let streamLimit = 10
+    let inputLimit = 10
     let computedIcon: Shape
     let stylusIcon: Shape
     let originText: Text
@@ -1085,26 +1085,26 @@ class BrushGraphic {
     
     func updateGeneratorDot(v: Double, t: Int, type:String, i: Int, freq:Float) {
 //        print("dot contents are ~~~~ ", self.generator.contents.count, " i is ", i)
-        let sineMultiplier = 1/(freq*Float.pi)
+        let sineMultiplier = Int(1/freq)
+        print("~~~ sine period is", sineMultiplier)
         var biggestMultiplier = 100
         if sineMultiplier > 100 {
-            biggestMultiplier = Int(sineMultiplier)
+            biggestMultiplier = sineMultiplier
         }
-        var multiplier = 10.0
+        var multiplier = 10
         if type == "sawtooth" {
-            multiplier = 1.0
+            multiplier = 1
         }
         else if type == "sine" { //period is 1/freq
-            multiplier = Double(Float(biggestMultiplier)/sineMultiplier)
-            print("~~~ sine mult is " , multiplier, sineMultiplier)
+            multiplier = Int(biggestMultiplier/sineMultiplier)*2
+            print("~~~ sine mult is " , multiplier)
         }
         if i >= self.generator.contents.count {
             reinitGen(i: i)
         }
         if let genGroup = self.generator.contents[i] as? Group {
             let dot = genGroup.contents[1] as! Shape
-            let dx = (Int(Double(t)*multiplier)%biggestMultiplier)*2
-            dot.place = Transform.move(dx:Double(dx), dy: 100-v*100)
+            dot.place = Transform.move(dx:Double((t*multiplier%biggestMultiplier)*2)  , dy: 100-v*100)
             let gText = genGroup.contents[2] as! Text
             gText.text = type+", time: "+String(t)+", value: "+String((v*100).rounded()/100)
         } else {
