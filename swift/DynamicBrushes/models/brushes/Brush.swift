@@ -572,8 +572,8 @@ class Brush: TimeSeries, Renderable{
      
             
         }
-        
         BrushStorageManager.storeState(brush:self,event:"STATE_TRANSITION");
+        
 
         
     }
@@ -948,7 +948,7 @@ class Brush: TimeSeries, Renderable{
         self.params.update(key:"time",value:time);
         self.params.update(key:"globalTime",value:globalTime);
         BrushStorageManager.storeState(brush:self,event:"DESTROY");
-
+    
 
         if(transitionDelayTimer != nil){
             transitionDelayTimer.invalidate();

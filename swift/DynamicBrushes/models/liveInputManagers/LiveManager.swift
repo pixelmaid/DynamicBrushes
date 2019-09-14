@@ -103,7 +103,7 @@ final class StylusManager:LiveManager{
     static let stylusDown = Float(2.0);
     static var globalTime = Int(0);
     
-    public var isLive = true;
+    static public var isLive = true;
     public var isStepping = false;
     private var currentRecordingPackage:RecordingCollection!
     private var currentLoopingPackage:RecordingCollection!
@@ -208,7 +208,7 @@ final class StylusManager:LiveManager{
     
     
     public func liveStatus()->Bool{
-        return self.isLive
+        return StylusManager.isLive
     }
     
    
@@ -253,7 +253,7 @@ final class StylusManager:LiveManager{
         self.stopLoopTimer();
         self.clearCachedData()
         	
-        self.isLive = false;
+        StylusManager.isLive = false;
         self.idStart = idStart;
         self.idEnd = idEnd;
         revertToLiveOnLoopEnd = false;
@@ -314,7 +314,7 @@ final class StylusManager:LiveManager{
     }
     
     public func restartLoop(){
-        if(!self.isLive){
+        if(!StylusManager.isLive){
             Debugger.resetDebugStatus();
             self.stopLoopTimer();
             self.clearCachedData()
@@ -329,7 +329,7 @@ final class StylusManager:LiveManager{
     
     
     private func resumeLiveMode(){
-        self.isLive = true;
+        StylusManager.isLive = true;
         self.idStart = nil;
         self.idEnd = nil;
         samples.removeAll();
@@ -441,7 +441,7 @@ final class StylusManager:LiveManager{
                 
             }
                 
-             if(self.isLive == false && self.isStepping == false){
+             if(StylusManager.isLive == false && self.isStepping == false){
                 self.startLoopTimer();
             }
         }
@@ -459,7 +459,7 @@ final class StylusManager:LiveManager{
         guard self.collections["stylus"] != nil else{
             return
         }
-        if(isLive){
+        if(StylusManager.isLive){
             if(self.moveCounter >= self.moveThreshold){
             //let currentTime = Date();
             //let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
@@ -483,7 +483,7 @@ final class StylusManager:LiveManager{
         guard self.collections["stylus"] != nil else{
             return
         }
-        if(isLive){
+        if(StylusManager.isLive){
             //let currentTime = Date();
             //let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
             
@@ -504,7 +504,7 @@ final class StylusManager:LiveManager{
         guard self.collections["stylus"] != nil else{
             return
         }
-        if(isLive){
+        if(StylusManager.isLive){
             currentStartDate = Date();
           
             _ = beginRecording(start:currentStartDate);
@@ -523,7 +523,7 @@ final class StylusManager:LiveManager{
         }
     }
     public func addResultantStroke(layerId:String, strokeId:String){
-        if(isLive){
+        if(StylusManager.isLive){
             if(currentRecordingPackage != nil){
                 currentRecordingPackage.addResultantStroke(layerId: layerId, strokeId: strokeId);
             }

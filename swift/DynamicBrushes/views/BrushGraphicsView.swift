@@ -379,7 +379,7 @@ public class BrushGraphicsScene {
         
             let numGenerators = newVals.count
 
-            print("~~~ total num UNIQUE active generators" , numGenerators, self.currentGenerator.count);
+//            print("~~~ total num UNIQUE active generators" , numGenerators, self.currentGenerator.count);
             let currCount = self.currentGenerator.count
             if numGenerators > currCount { //increase slots
                 let diff = numGenerators - currCount
@@ -476,7 +476,8 @@ class BrushGraphic {
     let outputColor = Macaw.Color.rgba(r: 134, g: 73, b: 180, a: 63)
     let hiddenColor = Macaw.Color.rgba(r:255,g:255,b:255,a:0)
     let highlightColor = Macaw.Color.rgba(r:0,g:255,b:0,a:63)
-    
+    let labelColor = Macaw.Color.rgba(r:255,g:255,b:255,a:128)
+
     let empty = Shape(form: Circle(r:1), fill: Macaw.Color.rgba(r:0,g:0,b:0,a:0))
 
     
@@ -509,7 +510,7 @@ class BrushGraphic {
         node.contents.append(stylusIcon)
 
         let stylusTextContent = BrushGraphic.newText("stylus x: 0, stylus y: 0", Transform.move(dx:0,dy:10))
-        let stylusTextBg = Shape(form: Rect(x:-90, y:-9, w:180, h:20), fill:Macaw.Color.red)
+        let stylusTextBg = Shape(form: Rect(x:-90, y:-9, w:180, h:20), fill:labelColor)
         stylusText = Group(contents:[stylusTextBg, stylusTextContent])
         
         let inputScale = 10.0
@@ -537,7 +538,7 @@ class BrushGraphic {
         let biggerOriginCircle = Circle(r:(axisScale)).stroke(fill:brushColor, width:2)
         
         let originTextContent = BrushGraphic.newText("ox:0, oy:0, r:0\nsx:100, sy:100", Transform.move(dx:0,dy:0))
-        let originTextBg = Shape(form: Rect(x:-75, y:-20, w:150, h:18), fill:Macaw.Color.red)
+        let originTextBg = Shape(form: Rect(x:-75, y:-20, w:150, h:18), fill:labelColor)
         originText = Group(contents:[originTextBg, originTextContent])
 
         
@@ -555,7 +556,7 @@ class BrushGraphic {
         node.contents.append(inputIcon)
         
         let inputTextContent = BrushGraphic.newText("dx: 0, dy: 0", Transform.move(dx:0,dy:10))
-        let inputTextBg = Shape(form: Rect(x:-45, y:-9, w:90, h:18), fill:Macaw.Color.blue)
+        let inputTextBg = Shape(form: Rect(x:-45, y:-6, w:90, h:18), fill:labelColor)
         inputText = Group(contents:[inputTextBg, inputTextContent])
 
         //init computedicon
@@ -563,7 +564,7 @@ class BrushGraphic {
         computedIcon.place = Transform.move(dx:Double(self.cx), dy:Double(self.cy))
         node.contents.append(computedIcon)
         let computedTextContent = BrushGraphic.newText("abs x: 0, abs y: 0", Transform.move(dx:0,dy:20))
-        let computedTextBg = Shape(form: Rect(x:-80, y:3, w:160, h:18), fill:Macaw.Color.green)
+        let computedTextBg = Shape(form: Rect(x:-80, y:3, w:160, h:18), fill:labelColor)
         computedText = Group(contents:[computedTextBg, computedTextContent])
 
         node.contents.append(outputStream)
@@ -584,10 +585,8 @@ class BrushGraphic {
     }
     
     func pointInCircle(x: Float, y:Float, cx:Float, cy:Float, radius:Float) -> Bool {
-        print("!!~~ point in circle", x, y, cx, cy)
         let dist = pow((x-cx),2) + pow((y-cy),2)
         let j = dist <= pow(radius, 2)
-        print("!!~~ ", j )
         return j
     }
     
@@ -770,123 +769,49 @@ class BrushGraphic {
         toggleLabel(type:type)
     }
     
-
-//    func toggleVizOld(type:String) {
-//        switch(type) {
-//        case "input":
-//            //input stream, input dot, generator viz
-//            if Debugger.inputGfx {
-//                stylusIcon.fill = inputColor
-//                stylusIcon.stroke = Macaw.Stroke(fill: Macaw.Color.white, width:2)
-//                updateExistingStylusStrokes()
-//                makeGeneratorVisible()
-//                stylusUpIcon.fill = inputColor
-//                stylusDownIcon.fill = inputColor
-//                changeColorInGroup(group: stylusStream, color: inputColor)
-//                if Debugger.inputLabelTurnedOff {
-//                    Debugger.inputLabel = true
-//                }
-//
-//                if self.scene.stylusOn { self.highlightStylus() }
-//                if self.scene.forceOn { self.highlightForce() }
-//                if self.scene.generatorOn { self.highlightGenerator(name:self.scene.generatorOnName) }
-//
-//            } else {
-//                stylusIcon.fill = hiddenColor
-//                stylusIcon.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
-//                changeColorInGroup(group: self.lastStylusInputs, color: hiddenColor)
-//                makeGeneratorInvisible()
-//                stylusUpIcon.fill = hiddenColor
-//                stylusDownIcon.fill = hiddenColor
-//                changeColorInGroup(group: stylusStream, color: hiddenColor)
-//                if Debugger.inputLabel {
-//                    Debugger.inputLabelTurnedOff = true
-//                }
-//                Debugger.inputLabel = false
-//            }
-//            break
-//        case "brush":
-//            //origin icon, brush dot
-//            if Debugger.brushGfx {
-//                makeBrushIconVisible()
-//                inputIcon.fill = brushColor
-//                inputIcon.stroke = Macaw.Stroke(fill: Macaw.Color.white, width:2)
-//                changeColorInGroup(group: brushStream, color: brushColor)
-//                if Debugger.brushLabelTurnedOff {
-//                    Debugger.brushLabel = true
-//                }
-//
-//                if self.scene.originOn { self.highlightOrigin() }
-//                if self.scene.scaleXOn { self.highlightScaleX() }
-//                if self.scene.scaleYOn { self.highlightScaleY() }
-//                if self.scene.rotationOn { self.highlightRotation() }
-//                if self.scene.brushOn { self.highlightBrushIcon() }
-//
-//            } else {
-//                makeBrushIconInvisible()
-//                inputIcon.fill = hiddenColor
-//                inputIcon.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
-//                changeColorInGroup(group: brushStream, color: hiddenColor)
-//                if Debugger.brushLabel {
-//                    Debugger.brushLabelTurnedOff = true
-//                }
-//                Debugger.brushLabel = false
-//
-//            }
-//            break
-//        case "output":
-//            if Debugger.outputGfx {
-//                computedIcon.fill = outputColor
-//                computedIcon.stroke = Macaw.Stroke(fill: Macaw.Color.white, width:2)
-//                changeColorInGroup(group: outputStream, color: outputColor)
-//                if Debugger.outputLabelTurnedOff {
-//                    Debugger.outputLabel = true
-//                }
-//                if self.scene.outputOn { self.highlightOutput() }
-//            } else {
-//                computedIcon.fill = hiddenColor
-//                computedIcon.stroke = Macaw.Stroke(fill: hiddenColor, width:2)
-//                changeColorInGroup(group: outputStream, color: hiddenColor)
-//                if Debugger.outputLabel {
-//                    Debugger.outputLabelTurnedOff = true
-//                }
-//                Debugger.outputLabel = false
-//            }
-//            break
-//        default:
-//            break
-//        }
-//        toggleLabel(type:type)
-//    }
-//
     func toggleLabel(type:String) {
 
         switch(type) {
         case "input":
             let text = stylusText.contents[1] as! Text
+            let bg = stylusText.contents[0] as! Shape
             if Debugger.inputLabel {
                 text.fill = Macaw.Color.black
+                bg.fill = labelColor
             } else {
                 text.fill = hiddenColor
+                bg.fill = hiddenColor
             }
             break
         case "brush":
             let text = originText.contents[1] as! Text
             let text2 = inputText.contents[1] as! Text
+            let bg = originText.contents[0] as! Shape
+            let bg2 = inputText.contents[0] as! Shape
+            
             if Debugger.brushLabel {
                 text.fill = Macaw.Color.black
                 text2.fill = Macaw.Color.black
+                bg.fill = labelColor
+                bg2.fill = labelColor
+
             } else {
                 text.fill = hiddenColor
                 text2.fill = hiddenColor
+                bg.fill = hiddenColor
+                bg2.fill = hiddenColor
+
             }
             break
         case "output":
             let text = computedText.contents[1] as! Text
+            let bg = computedText.contents[0] as! Shape
             if Debugger.outputLabel {
                 text.fill = Macaw.Color.black
+                bg.fill = labelColor
             } else {
                 text.fill = hiddenColor
+                bg.fill = hiddenColor
             }
             break
         default:
@@ -1226,11 +1151,13 @@ class BrushGraphic {
     
     func updateBrushIcon(r: Float, ox:Float, oy:Float, sx:Float, sy:Float) {
         let text = originText.contents[1] as! Text
+        let bg = originText.contents[0] as! Shape
         if !Debugger.brushLabel {
             text.fill = hiddenColor
+            bg.fill = hiddenColor
         }
         
-        print("~~ movinf brush" , Debugger.brushLabel)
+//        print("~~ movinf brush" , Debugger.brushLabel)
 
         brushIcon.place = Transform.move(dx: Double(ox) - oxOffset, dy: Double(oy) - oyOffset)
         originText.place = Transform.move(dx: Double(ox), dy: Double(oy) - Double(20))
@@ -1301,9 +1228,11 @@ class BrushGraphic {
     func moveStylusLocation(x: Double, y: Double, force: Double) {
         self.ix = x
         self.iy = y
+        let bg = stylusText.contents[0] as! Shape
         let text = stylusText.contents[1] as! Text
         if !Debugger.inputLabel {
             text.fill = hiddenColor
+            bg.fill = hiddenColor
         }
         
         stylusIcon.place = Transform.move(dx: x, dy: y)
@@ -1346,8 +1275,10 @@ class BrushGraphic {
     
     func moveBrushLocation(x: Float, y: Float, dx:Float, dy:Float) {
         let text = inputText.contents[1] as! Text
+        let bg = inputText.contents[0] as! Shape
         if !Debugger.brushLabel {
             text.fill = hiddenColor
+            bg.fill = hiddenColor
         }
         
         inputIcon.place = Transform.move(dx: Double(x), dy: Double(y)) //need this offset for some reason?
@@ -1373,8 +1304,10 @@ class BrushGraphic {
     
     func moveComputedLocation(cx: Float, cy: Float) {
         let text = computedText.contents[1] as! Text
+        let bg = computedText.contents[0] as! Shape
         if !Debugger.outputLabel {
             text.fill = hiddenColor
+            bg.fill = hiddenColor
         }
         
         computedIcon.place = Transform.move(dx: Double(cx), dy: Double(cy))
