@@ -382,7 +382,7 @@ final class Debugger {
                 let valArray = Debugger.getGeneratorValue(brushId: targetBrush.id,debugData: currentData["input"]["generator"]);
                 let inputInfo = Debugger.getStylusInputValue(debugData: currentData["input"]["inputGlobal"]);
               //  print("~~~ about to draw into context in debugger with stylus x y ", inputInfo.0, inputInfo.1)
-                print("~~~valArray is" , valArray)
+//                print("~~~valArray is" , valArray)
                 targetBrush.drawIntoContext(context:view,brushInfo:debugBrush, stylusInfo:inputInfo)
                 view.scene!.drawGenerator(valArray: valArray)
                 
