@@ -62,7 +62,7 @@ function(DebuggerModel) {
         update(data) {
             let oldData = JSON.parse(JSON.stringify(this.data));
             this.data = data;
-            console.log("~~ !! updated old data dx, time " , this.getParam(oldData['behaviors'][0]['brushes'][0]['inspector'], "dx"), this.getParam(oldData['behaviors'][0]['brushes'][0]['inspector'], "time"), "new data dx, time ", this.getParam(data['behaviors'][0]['brushes'][0]['inspector'], "dx"), this.getParam(data['behaviors'][0]['brushes'][0]['inspector'], "time"));
+            // console.log("~~ !! updated old data dx, time " , this.getParam(oldData['behaviors'][0]['brushes'][0]['inspector'], "dx"), this.getParam(oldData['behaviors'][0]['brushes'][0]['inspector'], "time"), "new data dx, time ", this.getParam(data['behaviors'][0]['brushes'][0]['inspector'], "dx"), this.getParam(data['behaviors'][0]['brushes'][0]['inspector'], "time"));
 
             if (this.collection.chartViewManager.currentView) {
                 let currentBehaviorId = this.collection.chartViewManager.currentView.id;
@@ -73,28 +73,23 @@ function(DebuggerModel) {
                 });
                 let targetBrushData = targetBehaviorData.brushes[selectedIndex];
 
-                if (this.stepThroughOn) {
-                    if (this.collection.manualSteppingOn) {
-                        let params = ["sy", "rotation", "dx", "dy", "weight", "hue", "lightness", "saturation", "alpha"];
-                    	let oldDataCopy = JSON.parse(JSON.stringify(oldData));
-                    	var combinedData = this.combineData(oldDataCopy, this.data, "sx", 0, 0);
-                        this.dataVizDict["sx"] = combinedData;
-                        for (var i = 0; i < params.length; i++) {
-                        	//TODO - change to real index
-                        	let oldCombinedData = JSON.parse(JSON.stringify(combinedData));
-                            combinedData = this.combineData(oldCombinedData, this.data, params[i], 0, 0);
-                            this.dataVizDict[params[i]] = combinedData;
-                        }
-                        // console.log("~~updated datavizDict is now ", this.dataVizDict);
-                        this.data = oldData;	
-                        console.log("~~ this.data is now ", this.getParam(this.data['behaviors'][0]['brushes'][0]['inspector'], "dx"), this.getParam(oldData['behaviors'][0]['brushes'][0]['inspector'], "dx"));
-                        this.processStepData(targetBrushData);
-                        console.log("~~~updated data to oldData. new data sx:  ", this.getParam(data['behaviors'][0]['brushes'][0]['inspector'], "dx"), " old data sx: ", this.getParam(this.data['behaviors'][0]['brushes'][0]['inspector'], "dx"));
+                if (this.stepThroughOn && this.collection.manualSteppingOn) {
+                    let params = ["sy", "rotation", "dx", "dy", "weight", "hue", "lightness", "saturation", "alpha"];
+                	let oldDataCopy = JSON.parse(JSON.stringify(oldData));
+                	var combinedData = this.combineData(oldDataCopy, this.data, "sx", 0, 0);
+                    this.dataVizDict["sx"] = combinedData;
+                    for (var i = 0; i < params.length; i++) {
+                    	//TODO - change to real index
+                    	let oldCombinedData = JSON.parse(JSON.stringify(combinedData));
+                        combinedData = this.combineData(oldCombinedData, this.data, params[i], 0, 0);
+                        this.dataVizDict[params[i]] = combinedData;
                     }
+                    this.data = oldData;	
+                    this.processStepData(targetBrushData);
+                    console.log("~~~ updated data to oldData. new data sx:  ", this.getParam(data['behaviors'][0]['brushes'][0]['inspector'], "dx"), " old data sx: ", this.getParam(this.data['behaviors'][0]['brushes'][0]['inspector'], "dx"));
+             
                 }
             }
-
-            console.log("~~~~~ updated data to ", this.data, " with dx val ", this.getParam(this.data['behaviors'][0]['brushes'][0]['inspector'], "dx"));
 
         this.trigger("DATA_UPDATED");
 

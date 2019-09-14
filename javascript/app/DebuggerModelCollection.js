@@ -116,6 +116,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 				}
 				else if (this.inspectorQueue.length>0){
 					let targetData = this.inspectorQueue.shift();
+					console.log("~~~ processing inspector queue ", targetData);
 					this.processInspectorData(targetData);
 
 				}

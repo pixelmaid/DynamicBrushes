@@ -585,10 +585,8 @@ class BrushGraphic {
     }
     
     func pointInCircle(x: Float, y:Float, cx:Float, cy:Float, radius:Float) -> Bool {
-        print("!!~~ point in circle", x, y, cx, cy)
         let dist = pow((x-cx),2) + pow((y-cy),2)
         let j = dist <= pow(radius, 2)
-        print("!!~~ ", j )
         return j
     }
     
@@ -1159,7 +1157,7 @@ class BrushGraphic {
             bg.fill = hiddenColor
         }
         
-        print("~~ movinf brush" , Debugger.brushLabel)
+//        print("~~ movinf brush" , Debugger.brushLabel)
 
         brushIcon.place = Transform.move(dx: Double(ox) - oxOffset, dy: Double(oy) - oyOffset)
         originText.place = Transform.move(dx: Double(ox), dy: Double(oy) - Double(20))

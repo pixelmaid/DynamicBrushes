@@ -1449,7 +1449,7 @@ class DrawingViewController: UIViewController, Requester{
         //add execution status - live, stepping, looping <- isStepping is true. if isLive and isStepping false = looping
         if stylusManager.isStepping {
             syncJSON["executionStatus"] = "stepping"
-        } else if !stylusManager.isLive && !stylusManager.isStepping {
+        } else if !StylusManager.isLive && !stylusManager.isStepping {
             syncJSON["executionStatus"] = "looping"
         } else {
             syncJSON["executionStatus"] = "live"
