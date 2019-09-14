@@ -509,7 +509,7 @@ class BrushGraphic {
         node.contents.append(stylusIcon)
 
         let stylusTextContent = BrushGraphic.newText("stylus x: 0, stylus y: 0", Transform.move(dx:0,dy:10))
-        let stylusTextBg = Shape(form: Rect(x:-90, y:-9, w:180, h:20), fill:Macaw.Color.red)
+        let stylusTextBg = Shape(form: Rect(x:-90, y:-9, w:180, h:20), fill:Macaw.Color.white)
         stylusText = Group(contents:[stylusTextBg, stylusTextContent])
         
         let inputScale = 10.0
@@ -537,7 +537,7 @@ class BrushGraphic {
         let biggerOriginCircle = Circle(r:(axisScale)).stroke(fill:brushColor, width:2)
         
         let originTextContent = BrushGraphic.newText("ox:0, oy:0, r:0\nsx:100, sy:100", Transform.move(dx:0,dy:0))
-        let originTextBg = Shape(form: Rect(x:-75, y:-20, w:150, h:18), fill:Macaw.Color.red)
+        let originTextBg = Shape(form: Rect(x:-75, y:-20, w:150, h:18), fill:Macaw.Color.white)
         originText = Group(contents:[originTextBg, originTextContent])
 
         
@@ -555,7 +555,7 @@ class BrushGraphic {
         node.contents.append(inputIcon)
         
         let inputTextContent = BrushGraphic.newText("dx: 0, dy: 0", Transform.move(dx:0,dy:10))
-        let inputTextBg = Shape(form: Rect(x:-45, y:-6, w:90, h:18), fill:Macaw.Color.blue)
+        let inputTextBg = Shape(form: Rect(x:-45, y:-6, w:90, h:18), fill:Macaw.Color.white)
         inputText = Group(contents:[inputTextBg, inputTextContent])
 
         //init computedicon
@@ -563,7 +563,7 @@ class BrushGraphic {
         computedIcon.place = Transform.move(dx:Double(self.cx), dy:Double(self.cy))
         node.contents.append(computedIcon)
         let computedTextContent = BrushGraphic.newText("abs x: 0, abs y: 0", Transform.move(dx:0,dy:20))
-        let computedTextBg = Shape(form: Rect(x:-80, y:3, w:160, h:18), fill:Macaw.Color.green)
+        let computedTextBg = Shape(form: Rect(x:-80, y:3, w:160, h:18), fill:Macaw.Color.white)
         computedText = Group(contents:[computedTextBg, computedTextContent])
 
         node.contents.append(outputStream)
