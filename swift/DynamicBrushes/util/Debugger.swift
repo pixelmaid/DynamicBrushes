@@ -157,6 +157,7 @@ final class Debugger {
         
         for(key,value) in liveCollections{
             let liveCollection = value as! LiveCollection;
+            print("~~~ collection ", liveCollection)
             var liveData:JSON = [:]
             if(globalTime != nil){
                 let params = liveCollection.accessSampleDataByGlobalTime(time:globalTime!);
