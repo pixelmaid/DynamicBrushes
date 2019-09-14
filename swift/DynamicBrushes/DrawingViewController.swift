@@ -605,7 +605,7 @@ class DrawingViewController: UIViewController, Requester{
         
         
         var templateJSON:JSON = [:]
-        templateJSON["filename"] = "templates/dual_behaviors_working.json"
+        templateJSON["filename"] = "templates/warm_up.json"
         templateJSON["type"] = JSON("load")
         let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: self)
         RequestHandler.addRequest(requestData:behaviorDownloadRequest);
