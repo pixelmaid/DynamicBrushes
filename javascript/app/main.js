@@ -408,6 +408,10 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
                     debuggerModelCollection.brushModel.toClearViz = true;
                     debuggerBrushView.clearStepHighlight();
                     console.log("~~ turned stepping off ");
+                    if (debuggerModelCollection.manualSteppingOn) {
+                        //clear brush vizqueue 
+                        debuggerModelCollection.brushModel.brushVizQueue = [];
+                    }
                 } else {
                     $("#inspector-"+this.value).css("visibility", "hidden");
                     if (this.value == "brush") {

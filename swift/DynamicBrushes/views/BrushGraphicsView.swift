@@ -431,7 +431,6 @@ class BrushGraphic {
     
     var node: Group
     let brushIcon: Group
-    let stylusText: Text
     let inputIcon: Shape
     var lastStylusInputs = Group()
     var stylusStream = Group()
@@ -441,13 +440,15 @@ class BrushGraphic {
     let inputLimit = 10
     let computedIcon: Shape
     let stylusIcon: Shape
-    let originText: Text
-    let inputText: Text
-    let computedText: Text
     let xAxis: Group
     let yAxis: Group
     let stylusDownIcon: Shape
     let stylusUpIcon: Shape
+    
+    let stylusText: Group
+    let originText: Group
+    let inputText: Group
+    let computedText: Group //0 text 1 bg
     
     let generator: Group
     
@@ -505,8 +506,12 @@ class BrushGraphic {
         node.contents.append(lastStylusInputs)
         stylusIcon = Shape(form: Circle(r: 10), fill: inputColor, stroke: Macaw.Stroke(fill: Macaw.Color.white, width:2))
         stylusIcon.place = Transform.move(dx:ix, dy:iy)
-        stylusText = BrushGraphic.newText("stylus x: 0, stylus y: 0", Transform.move(dx:0,dy:10))
         node.contents.append(stylusIcon)
+
+        let stylusTextContent = BrushGraphic.newText("stylus x: 0, stylus y: 0", Transform.move(dx:0,dy:10))
+        let stylusTextBg = Shape(form: Rect(x:-90, y:-9, w:180, h:20), fill:Macaw.Color.red)
+        stylusText = Group(contents:[stylusTextBg, stylusTextContent])
+        
         let inputScale = 10.0
         stylusUpIcon = Polygon(points:[0, -inputScale, inputScale, 0, 0, inputScale]).fill(with: inputColor)
         stylusDownIcon = Polygon(points:[-inputScale*0.5, -inputScale, 0, -inputScale, inputScale, 0, 0, inputScale, -inputScale*0.5, inputScale, 0, 0]).fill(with: inputColor)
@@ -530,7 +535,12 @@ class BrushGraphic {
         
         let originCircle = Circle(r:(axisScale*0.33)).stroke(fill:brushColor, width:2)
         let biggerOriginCircle = Circle(r:(axisScale)).stroke(fill:brushColor, width:2)
-        originText = BrushGraphic.newText("ox:0, oy:0, r:0\nsx:100, sy:100", Transform.move(dx:0,dy:0))
+        
+        let originTextContent = BrushGraphic.newText("ox:0, oy:0, r:0\nsx:100, sy:100", Transform.move(dx:0,dy:0))
+        let originTextBg = Shape(form: Rect(x:-75, y:-20, w:150, h:18), fill:Macaw.Color.red)
+        originText = Group(contents:[originTextBg, originTextContent])
+
+        
         let rotArc = Macaw.Arc(ellipse: Ellipse(cx:0,cy:0, rx:axisScale, ry:axisScale),shift: 0, extent: 0).stroke(fill: brushColor, width:10)
         
         brushIcon = Group(contents: [xAxis, yAxis, originCircle, biggerOriginCircle, rotArc])
@@ -543,13 +553,19 @@ class BrushGraphic {
         inputIcon = Shape(form: Circle(r: 10), fill: brushColor, stroke: Macaw.Stroke(fill: Macaw.Color.white, width:2))
         inputIcon.place = Transform.move(dx:Double(self.x), dy:Double(self.y))
         node.contents.append(inputIcon)
-        inputText = BrushGraphic.newText("dx: 0, dy: 0", Transform.move(dx:0,dy:10))
+        
+        let inputTextContent = BrushGraphic.newText("dx: 0, dy: 0", Transform.move(dx:0,dy:10))
+        let inputTextBg = Shape(form: Rect(x:-45, y:-9, w:90, h:18), fill:Macaw.Color.blue)
+        inputText = Group(contents:[inputTextBg, inputTextContent])
 
         //init computedicon
         computedIcon = Shape(form: Circle(r: 10), fill: outputColor, stroke: Macaw.Stroke(fill: Macaw.Color.white, width:2))
         computedIcon.place = Transform.move(dx:Double(self.cx), dy:Double(self.cy))
         node.contents.append(computedIcon)
-        computedText = BrushGraphic.newText("abs x: 0, abs y: 0", Transform.move(dx:0,dy:20))
+        let computedTextContent = BrushGraphic.newText("abs x: 0, abs y: 0", Transform.move(dx:0,dy:20))
+        let computedTextBg = Shape(form: Rect(x:-80, y:3, w:160, h:18), fill:Macaw.Color.green)
+        computedText = Group(contents:[computedTextBg, computedTextContent])
+
         node.contents.append(outputStream)
 
         //init generator static location
@@ -847,26 +863,30 @@ class BrushGraphic {
 
         switch(type) {
         case "input":
+            let text = stylusText.contents[1] as! Text
             if Debugger.inputLabel {
-                stylusText.fill = Macaw.Color.black
+                text.fill = Macaw.Color.black
             } else {
-                stylusText.fill = hiddenColor
+                text.fill = hiddenColor
             }
             break
         case "brush":
+            let text = originText.contents[1] as! Text
+            let text2 = inputText.contents[1] as! Text
             if Debugger.brushLabel {
-                originText.fill = Macaw.Color.black
-                inputText.fill = Macaw.Color.black
+                text.fill = Macaw.Color.black
+                text2.fill = Macaw.Color.black
             } else {
-                originText.fill = hiddenColor
-                inputText.fill = hiddenColor
+                text.fill = hiddenColor
+                text2.fill = hiddenColor
             }
             break
         case "output":
+            let text = computedText.contents[1] as! Text
             if Debugger.outputLabel {
-                computedText.fill = Macaw.Color.black
+                text.fill = Macaw.Color.black
             } else {
-                computedText.fill = hiddenColor
+                text.fill = hiddenColor
             }
             break
         default:
@@ -1085,26 +1105,26 @@ class BrushGraphic {
     
     func updateGeneratorDot(v: Double, t: Int, type:String, i: Int, freq:Float) {
 //        print("dot contents are ~~~~ ", self.generator.contents.count, " i is ", i)
-        let sineMultiplier = 1/(freq*Float.pi)
+        let sineMultiplier = Int(1/freq)*2
+        print("~~~ sine period is", sineMultiplier)
         var biggestMultiplier = 100
         if sineMultiplier > 100 {
-            biggestMultiplier = Int(sineMultiplier)
+            biggestMultiplier = sineMultiplier
         }
-        var multiplier = 10.0
+        var multiplier = 10
         if type == "sawtooth" {
-            multiplier = 1.0
+            multiplier = 1
         }
         else if type == "sine" { //period is 1/freq
-            multiplier = Double(Float(biggestMultiplier)/sineMultiplier)
-            print("~~~ sine mult is " , multiplier, sineMultiplier)
+            multiplier = Int(biggestMultiplier/sineMultiplier)
+            print("~~~ sine mult is " , multiplier)
         }
         if i >= self.generator.contents.count {
             reinitGen(i: i)
         }
         if let genGroup = self.generator.contents[i] as? Group {
             let dot = genGroup.contents[1] as! Shape
-            let dx = (Int(Double(t)*multiplier)%biggestMultiplier)*2
-            dot.place = Transform.move(dx:Double(dx), dy: 100-v*100)
+            dot.place = Transform.move(dx:Double((t*multiplier%biggestMultiplier)*2)  , dy: 100-v*100)
             let gText = genGroup.contents[2] as! Text
             gText.text = type+", time: "+String(t)+", value: "+String((v*100).rounded()/100)
         } else {
@@ -1205,8 +1225,9 @@ class BrushGraphic {
     }
     
     func updateBrushIcon(r: Float, ox:Float, oy:Float, sx:Float, sy:Float) {
+        let text = originText.contents[1] as! Text
         if !Debugger.brushLabel {
-            originText.fill = hiddenColor
+            text.fill = hiddenColor
         }
         
         print("~~ movinf brush" , Debugger.brushLabel)
@@ -1217,7 +1238,7 @@ class BrushGraphic {
         self.oy = oy
         self.r = r
 
-        originText.text = "ox:"+String(Int(ox))+", oy:"+String(Int(oy))+", r:"+String(Int(r))
+        text.text = "ox:"+String(Int(ox))+", oy:"+String(Int(oy))+", r:"+String(Int(r))
        // print("## rotated brush ", self.id, " by ", r, " Moved to ox ,oy,", ox, oy )
         
         let rotArc:Shape
@@ -1230,7 +1251,7 @@ class BrushGraphic {
         brushIcon.contents[4] = rotArc
         
         if (sx != 1 || sy != 1 || scaleChanged) {
-            originText.text = originText.text + "\nsx:"+String(Int(sx))+"%, sy:"+String(Int(sy))+"%"
+            text.text = text.text + "\nsx:"+String(Int(sx))+"%, sy:"+String(Int(sy))+"%"
             scaleChanged = true
             if (sx != 100) {
                 let newLine = Macaw.Line(x1: axisScale, y1: 0, x2: axisScale + (axisLen * Double(sx)), y2: 0)
@@ -1280,8 +1301,9 @@ class BrushGraphic {
     func moveStylusLocation(x: Double, y: Double, force: Double) {
         self.ix = x
         self.iy = y
+        let text = stylusText.contents[1] as! Text
         if !Debugger.inputLabel {
-            stylusText.fill = hiddenColor
+            text.fill = hiddenColor
         }
         
         stylusIcon.place = Transform.move(dx: x, dy: y)
@@ -1298,7 +1320,7 @@ class BrushGraphic {
 
 
 //        print("~~~ in move stylus location with ", x, y, force)
-        stylusText.text = "x: "+String(Int(x))+", y: "+String(Int(y))+", force: "+String((force*10).rounded()/10)
+        text.text = "x: "+String(Int(x))+", y: "+String(Int(y))+", force: "+String((force*10).rounded()/10)
         stylusText.place = Transform.move(dx: x, dy: y + 20)
         currStylusIcon.place = Transform.move(dx:x, dy:y).scale(sx:forceScale, sy:forceScale)
         currStylusStream.place = Transform.move(dx:x, dy:y)
@@ -1323,14 +1345,15 @@ class BrushGraphic {
     }
     
     func moveBrushLocation(x: Float, y: Float, dx:Float, dy:Float) {
+        let text = inputText.contents[1] as! Text
         if !Debugger.brushLabel {
-            inputText.fill = hiddenColor
+            text.fill = hiddenColor
         }
         
         inputIcon.place = Transform.move(dx: Double(x), dy: Double(y)) //need this offset for some reason?
         self.x = x
         self.y = y
-        inputText.text = "dx: "+String(Int(dx))+", dy: "+String(Int(dy))
+        text.text = "dx: "+String(Int(dx))+", dy: "+String(Int(dy))
         inputText.place = Transform.move(dx: Double(x), dy: Double(y) - Double(20))
         if self.scene.brushOn { self.highlightBrushIcon() }
 
@@ -1349,14 +1372,15 @@ class BrushGraphic {
     }
     
     func moveComputedLocation(cx: Float, cy: Float) {
+        let text = computedText.contents[1] as! Text
         if !Debugger.outputLabel {
-            computedText.fill = hiddenColor
+            text.fill = hiddenColor
         }
         
         computedIcon.place = Transform.move(dx: Double(cx), dy: Double(cy))
         self.cx = cx
         self.cy = cy
-        computedText.text = "abs x: "+String(Int(cx))+", abs y: "+String(Int(cy))
+        text.text = "abs x: "+String(Int(cx))+", abs y: "+String(Int(cy))
         computedText.place = Transform.move(dx: Double(cx), dy: Double(cy) + Double(30))
         if self.scene.outputOn { self.highlightOutput() }
         

@@ -155,25 +155,30 @@ final class Debugger {
         liveCollectionsJSON["groupName"] = JSON("inputGlobal");
         var globalItems = [JSON]();
         
+
         for(key,value) in liveCollections{
-            let liveCollection = value as! LiveCollection;
-            var liveData:JSON = [:]
-            if(globalTime != nil){
-                let params = liveCollection.accessSampleDataByGlobalTime(time:globalTime!);
-                if (params != nil){
-                    liveData["params"] = params!
+//            print("key val~~~", key, value)
+            if key == "stylus"{
+                let liveCollection = value as! LiveCollection;
+                print("~~~ collection ", liveCollection)
+                var liveData:JSON = [:]
+                if(globalTime != nil){
+                    let params = liveCollection.accessSampleDataByGlobalTime(time:globalTime!);
+                    if (params != nil){
+                        liveData["params"] = params!
+                    }
+                        //TODO: placeholder for setting up time params for other live input
+                    else{
+                        liveData["params"] = JSON([:])
+                    }
                 }
-                    //TODO: placeholder for setting up time params for other live input
                 else{
-                    liveData["params"] = JSON([:])
+                    liveData["params"] = liveCollection.paramsToJSON();
                 }
+                liveData["name"] = JSON(key);
+                liveData["id"] = JSON(key);
+                globalItems.append(liveData);
             }
-            else{
-                liveData["params"] = liveCollection.paramsToJSON();
-            }
-            liveData["name"] = JSON(key);
-            liveData["id"] = JSON(key);
-            globalItems.append(liveData);
         }
         
         liveCollectionsJSON["items"] = JSON(globalItems);
