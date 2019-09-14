@@ -71,6 +71,7 @@ class RecordingToolbarVC: UIViewController, Requester {
     
     
     @objc func loop() {
+        if(stylusManager.recordingAvailable()){
         if (!isLooping) {
             loopRecording.setImage(UIImage(named: "loop_button_on2x"), for: .normal)
 //            recordImg.image = UIImage(named: "record_off2x")
@@ -81,6 +82,7 @@ class RecordingToolbarVC: UIViewController, Requester {
         }
         
         self.loopInitialized();
+        }
     }
     
    

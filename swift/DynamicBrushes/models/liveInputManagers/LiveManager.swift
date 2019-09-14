@@ -194,7 +194,12 @@ final class StylusManager:LiveManager{
         return nil
     }
     
-    
+    public func recordingAvailable()->Bool{
+        if self.recordingPackages.count>0{
+            return true;
+        }
+        return false;
+    }
     
     
     public func setRecordingPresetData(data:JSON){
