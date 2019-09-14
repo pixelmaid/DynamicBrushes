@@ -21,7 +21,6 @@ function(DebuggerModel) {
 
 
         getParam(group, key) { //group is ['inspector'], key is eg sx. returns val 
-        	console.log("~~group is ", group);
             for (var i = 0; i < group["blocks"].length; i++) {
                 var v;
                 //iterate through blocks 
@@ -37,15 +36,13 @@ function(DebuggerModel) {
         }
 
         replaceParam(data, key, val, behaviorIdx, brushIdx) {
-            let group = data['behaviors'][behaviorIdx]['brushes'][brushIdx]['inspector']
+            let group = data['behaviors'][behaviorIdx]['brushes'][brushIdx]['inspector'];
             for (var i = 0; i < group["blocks"].length; i++) {
-                var v;
                 //iterate through blocks 
                 var params = group["blocks"][i]["params"];
                 for (var j = 0; j < params.length; j++) {
                     if (params[j]["id"] == key) {
                         params[j]["val"] = val;
-                        console.log("~~~ replaced, data now ", params[j]);
                     }
                 }
             }
@@ -54,20 +51,18 @@ function(DebuggerModel) {
 
         combineData(oldData, newData, param, behaviorIdx, brushIdx) {
             let newVal = this.getParam(newData['behaviors'][behaviorIdx]['brushes'][brushIdx]['inspector'], param);
-            console.log("~~ new val is ", newVal, param);
+            let oldVal = this.getParam(oldData['behaviors'][behaviorIdx]['brushes'][brushIdx]['inspector'], param);
+            if (param == "dx")
+		        console.log("~~ new val is ", newVal, param, oldVal);
+
             let combinedData = this.replaceParam(oldData, param, newVal, behaviorIdx, brushIdx);
-            return combinedData
+            return combinedData;
         }
 
         update(data) {
-            /*
-            geom block [1]
-            sx, sy, rot, dx, dy - 2-6
-            style block [2]
-            w, h, l, s, a - 0-4 (all)
-            */
-            let oldData = this.data;
+            let oldData = JSON.parse(JSON.stringify(this.data));
             this.data = data;
+            console.log("~~ !! updated old data dx, time " , this.getParam(oldData['behaviors'][0]['brushes'][0]['inspector'], "dx"), this.getParam(oldData['behaviors'][0]['brushes'][0]['inspector'], "time"), "new data dx, time ", this.getParam(data['behaviors'][0]['brushes'][0]['inspector'], "dx"), this.getParam(data['behaviors'][0]['brushes'][0]['inspector'], "time"));
 
             if (this.collection.chartViewManager.currentView) {
                 let currentBehaviorId = this.collection.chartViewManager.currentView.id;
@@ -80,20 +75,26 @@ function(DebuggerModel) {
 
                 if (this.stepThroughOn) {
                     if (this.collection.manualSteppingOn) {
-                        let params = ["sx", "sy", "rotation", "dx", "dy", "weight", "hue", "lightness", "saturation", "alpha"];
+                        let params = ["sy", "rotation", "dx", "dy", "weight", "hue", "lightness", "saturation", "alpha"];
+                    	let oldDataCopy = JSON.parse(JSON.stringify(oldData));
+                    	var combinedData = this.combineData(oldDataCopy, this.data, "sx", 0, 0);
+                        this.dataVizDict["sx"] = combinedData;
                         for (var i = 0; i < params.length; i++) {
                         	//TODO - change to real index
-                            let combinedData = this.combineData(oldData, data, params[i], 0, 0);
+                        	let oldCombinedData = JSON.parse(JSON.stringify(combinedData));
+                            combinedData = this.combineData(oldCombinedData, this.data, params[i], 0, 0);
                             this.dataVizDict[params[i]] = combinedData;
                         }
-                        console.log("~~datavizDict is now ", this.dataVizDict);
+                        // console.log("~~updated datavizDict is now ", this.dataVizDict);
+                        this.data = oldData;	
+                        console.log("~~ this.data is now ", this.getParam(this.data['behaviors'][0]['brushes'][0]['inspector'], "dx"), this.getParam(oldData['behaviors'][0]['brushes'][0]['inspector'], "dx"));
                         this.processStepData(targetBrushData);
-                        this.data = oldData;  
+                        console.log("~~~updated data to oldData. new data sx:  ", this.getParam(data['behaviors'][0]['brushes'][0]['inspector'], "dx"), " old data sx: ", this.getParam(this.data['behaviors'][0]['brushes'][0]['inspector'], "dx"));
                     }
                 }
             }
 
-            console.log("~ updated data to ", this.data);
+            console.log("~~~~~ updated data to ", this.data, " with dx val ", this.getParam(this.data['behaviors'][0]['brushes'][0]['inspector'], "dx"));
 
         this.trigger("DATA_UPDATED");
 

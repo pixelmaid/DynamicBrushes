@@ -555,7 +555,7 @@ class BrushGraphic {
         node.contents.append(inputIcon)
         
         let inputTextContent = BrushGraphic.newText("dx: 0, dy: 0", Transform.move(dx:0,dy:10))
-        let inputTextBg = Shape(form: Rect(x:-45, y:-9, w:90, h:18), fill:Macaw.Color.blue)
+        let inputTextBg = Shape(form: Rect(x:-45, y:-6, w:90, h:18), fill:Macaw.Color.blue)
         inputText = Group(contents:[inputTextBg, inputTextContent])
 
         //init computedicon

@@ -84,8 +84,21 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 				var self = this;
 				if (!$("#brush-toggle").is(":checked")) { return; }
 
+				if (self.model.collection.manualSteppingOn && constraint.type == "binding") {
+					let correctData = this.model.dataVizDict[constraint.relativePropertyName];
 
-				console.log("! visualizing constraints ", data, " past constraint ", pastConstraint);
+	
+					console.log("~~~ !! updating viz with ", constraint.relativePropertyName, correctData);
+
+					this.initInspector(correctData);
+					if (constraint.relativePropertyName == "alpha") {
+						//update data
+						self.model.data = correctData;
+					}
+
+				}
+
+				console.log("~~ about to visualize constraints ", data, " past constraint ", pastConstraint);
 				var arrowObject;
 				if (pastConstraint) {
 					switch (pastConstraint.type) {
@@ -128,7 +141,7 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 						}
 						break;
 					case "binding":
-						// console.log("binding name ", constraint.relativePropertyName, constraint);
+						console.log("~~ viz binding name ", constraint.relativePropertyName);
 						var name = constraint.relativePropertyName;
 						$("#" + constraint.constraintId).addClass("debug");
 						$("#param-" + constraint.relativePropertyName).addClass("debug-inspect");
@@ -177,16 +190,6 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 						break;
 				}
 
-				//change data based on dataVizQueue -- reinit handlebars here ? 
-				if (self.model.collection.manualSteppingOn && constraint.type == "binding") {
-					let correctData = this.model.dataVizDict[constraint.relativePropertyName];
-
-	
-					console.log("~~~ !! updating viz with ", constraint.relativePropertyName, correctData);
-
-					this.initInspector(correctData);
-
-				}
 
 			}
 
