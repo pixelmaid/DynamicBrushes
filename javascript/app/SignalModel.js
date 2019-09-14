@@ -38,6 +38,10 @@ define(['emitter', 'app/id', 'app/Emitter', 'app/DatasetLoader'],
                   case "yDistance":
                   case "speed":
                   case "deltaAngle":
+                  case "ox":
+                  case "oy":
+                  case "angle":
+
 
                     return false;
                   
