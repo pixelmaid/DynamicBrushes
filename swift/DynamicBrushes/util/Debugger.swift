@@ -241,8 +241,6 @@ final class Debugger {
         let debugData = Debugger.generateDebugData(behaviorId: nil, brushId: nil, brushState: nil ,globalTime: nil,localTime: nil);
         
         Debugger.programDebugDataQueue.append(debugData);
-      //  print("debug data",debugData)
-
         Debugger.drawingDebugDataQueue.append(debugData);
         
     }

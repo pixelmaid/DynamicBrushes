@@ -10,7 +10,7 @@ import SwiftyJSON
 
 
 
-class Brush: TimeSeries, Hashable, Renderable{
+class Brush: TimeSeries, Renderable{
     public var unrendered: Bool = false;
     
     //hierarcical data
@@ -292,14 +292,7 @@ class Brush: TimeSeries, Hashable, Renderable{
             #endif
         }
     }
-    
-    //MARK: - Hashable
-    var hashValue : Int {
-        get {
-            return "\(self.id)".hashValue
-        }
-    }
-    
+   
     func createState(id:String,name:String){
         states[id] = State(id:id,name:name);
     }

@@ -138,7 +138,7 @@ struct Segment:Geometry, Equatable {
             var mapped_weight = pow(1.03,w)*0.54
 
             if(mapped_weight < 1){
-                mapped_weight = 1
+                mapped_weight = 1   
             }
             if(mapped_weight >= 360){
                 mapped_weight = 359
