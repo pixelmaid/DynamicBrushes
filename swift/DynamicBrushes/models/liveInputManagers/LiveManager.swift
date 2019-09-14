@@ -306,6 +306,7 @@ final class StylusManager:LiveManager{
     
     public func restartLoop(){
         if(!self.isLive){
+            Debugger.resetDebugStatus();
             self.stopLoopTimer();
             self.clearCachedData()
             samples.removeAll();

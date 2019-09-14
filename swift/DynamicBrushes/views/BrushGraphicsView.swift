@@ -437,8 +437,8 @@ class BrushGraphic {
     var stylusStream = Group()
     var brushStream = Group()
     var outputStream = Group()
-    let streamLimit = 100
-    let inputLimit = 100
+    let streamLimit = 10
+    let inputLimit = 10
     let computedIcon: Shape
     let stylusIcon: Shape
     let originText: Text
