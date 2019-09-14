@@ -633,7 +633,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 									id: "angle",
 									val: 0
 								}]
-							}, {
+							}/*, {
 								blockName: "mic",
 								params: [{
 									name: "amplitude",
@@ -644,7 +644,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 									id: "freq",
 									val: 0
 								}]
-							}],
+							}*/],
 						},
 
 						{

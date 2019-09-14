@@ -244,6 +244,10 @@ final class StylusManager:LiveManager{
     
     public func prepareDataToLoop(idStart:String,idEnd:String, startTimer:Bool){
         Debugger.setupResetInspectionRequest();
+        Debugger.resetDebugStatus();
+        self.stopLoopTimer();
+        self.clearCachedData()
+        	
         self.isLive = false;
         self.idStart = idStart;
         self.idEnd = idEnd;

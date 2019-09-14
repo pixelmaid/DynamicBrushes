@@ -379,7 +379,7 @@
 
       ]
     }
-  }, {
+  }/*, {
     "name": "mic",
     "classType": "live",
     "data": [
@@ -429,7 +429,7 @@
 
       ]
     }
-  }, {
+  }, */{
     "name": "stylus",
     "classType": "live",
     "data": [
