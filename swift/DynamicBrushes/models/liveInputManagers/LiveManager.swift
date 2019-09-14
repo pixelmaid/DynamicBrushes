@@ -194,7 +194,12 @@ final class StylusManager:LiveManager{
         return nil
     }
     
-    
+    public func recordingAvailable()->Bool{
+        if self.recordingPackages.count>0{
+            return true;
+        }
+        return false;
+    }
     
     
     public func setRecordingPresetData(data:JSON){
@@ -244,6 +249,10 @@ final class StylusManager:LiveManager{
     
     public func prepareDataToLoop(idStart:String,idEnd:String, startTimer:Bool){
         Debugger.setupResetInspectionRequest();
+        Debugger.resetDebugStatus();
+        self.stopLoopTimer();
+        self.clearCachedData()
+        	
         self.isLive = false;
         self.idStart = idStart;
         self.idEnd = idEnd;
@@ -306,6 +315,7 @@ final class StylusManager:LiveManager{
     
     public func restartLoop(){
         if(!self.isLive){
+            Debugger.resetDebugStatus();
             self.stopLoopTimer();
             self.clearCachedData()
             samples.removeAll();

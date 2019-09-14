@@ -1334,7 +1334,6 @@ class DrawingViewController: UIViewController, Requester{
                 let attempt = try BehaviorManager.handleAuthoringRequest(authoring_data: authoring_data);
                 Debugger.setupResetInspectionRequest();
                 stylusManager.restartLoop();
-                Debugger.resetDebugStatus();
 
                 let data = authoring_data["data"]
                 if(data["type"].stringValue == "behavior_added"){
