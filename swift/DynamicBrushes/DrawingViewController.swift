@@ -19,7 +19,7 @@ let brushManager = BrushSignalManager();
 
 //CONSTANTS:
 
-let kBrightness =       1.0
+let kBrightness = 1.0
 let kSaturation =       0.45
 
 let kPaletteHeight =    30

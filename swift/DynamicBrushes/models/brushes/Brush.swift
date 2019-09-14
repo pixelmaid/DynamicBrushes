@@ -122,7 +122,7 @@ class Brush: TimeSeries, Hashable, Renderable{
         self.dx.printname = "brush_delta_x"
         self.dy.printname = "brush_delta_y"
 
-        self.origin = Point(x:0,y:0)
+        self.origin = Point(x:1366/2,y:1024/2)
         self.ox = origin.x;
         self.oy = origin.y;
         
@@ -267,12 +267,13 @@ class Brush: TimeSeries, Hashable, Renderable{
         }
         self.delta.name = "delta_"+self.id;
         BrushStorageManager.registerNewBrush(behaviorId: self.behaviorId, brushId: self.id);
+        self.setOrigin(x: self.ox.getSilent(), y:  self.oy.getSilent())
     }
     
     
     func storeInitialValues(){
         let globalTime = StylusManager.globalTime;
-        let paramData = ["dx": 0, "dy": 0, "pr": 0, "pt": 0, "ox": 0, "oy": 0, "rotation": 0, "sx": 0, "sy": 0, "weight": 1, "hue": 100, "saturation": 100, "lightness": 100, "alpha": 100, "dist": 0, "xDist": 0, "yDist": 0, "x": 0, "y": 0, "cx":0, "cy":0, "time": 0, "globalTime":globalTime, "i": self.index.getSilent(), "sc": self.siblingcount.getSilent(), "lv": self.level.getSilent(), "parent": "none", "active":true] as [String : Any]
+        let paramData = ["dx": 0, "dy": 0, "pr": 0, "pt": 0, "ox": self.ox.getSilent(), "oy": self.ox.getSilent(), "rotation": 0, "sx": 0, "sy": 0, "weight": 1, "hue": 100, "saturation": 100, "lightness": 100, "alpha": 100, "dist": 0, "xDist": 0, "yDist": 0, "x": 0, "y": 0, "cx":0, "cy":0, "time": 0, "globalTime":globalTime, "i": self.index.getSilent(), "sc": self.siblingcount.getSilent(), "lv": self.level.getSilent(), "parent": "none", "active":true] as [String : Any]
         self.params.updateAll(data: paramData)
         self.signalEvent.raise(data: (self.behaviorId,self.id,self.params));
     }
