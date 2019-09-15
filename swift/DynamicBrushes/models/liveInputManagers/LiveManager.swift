@@ -104,6 +104,7 @@ final class StylusManager:LiveManager{
     static let stylusMove = Float(1.0);
     static let stylusDown = Float(2.0);
     static var globalTime = Int(0);
+    static var unrendered = false;
     
     static public var isLive = true;
     static public var appStartDate: Date!
@@ -470,6 +471,7 @@ final class StylusManager:LiveManager{
             return
         }
         if(StylusManager.isLive){
+            StylusManager.unrendered = true;
             if(self.moveCounter >= self.moveThreshold){
             //let currentTime = Date();
             //let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
@@ -494,6 +496,8 @@ final class StylusManager:LiveManager{
             return
         }
         if(StylusManager.isLive){
+            StylusManager.unrendered = true;
+
             //let currentTime = Date();
             //let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
             
@@ -515,6 +519,8 @@ final class StylusManager:LiveManager{
             return
         }
         if(StylusManager.isLive){
+            StylusManager.unrendered = true;
+
             currentStartDate = Date();
           
             _ = beginRecording(start:currentStartDate);
@@ -615,10 +621,12 @@ class StylusDataConsumer{
     
     func consume(liveManager:LiveManager, sample:JSON){
         StylusManager.globalTime = sample["time"].intValue;
+        StylusManager.unrendered = true;
        // print("consume sample",sample["stylusEvent"].floatValue, sample["x"].floatValue,sample["y"].floatValue,sample["force"].floatValue,sample["targetLayer"].stringValue)
         let stylusManager = liveManager as! StylusManager;
         switch(sample["stylusEvent"].floatValue){
         case StylusManager.stylusUp:
+            
             for (_,stylusCollection) in stylusManager.collections{
                 (stylusCollection as! StylusCollection).onStylusUp(x: sample["x"].floatValue, y: sample["y"].floatValue,time: sample["time"].intValue);
             }
