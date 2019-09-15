@@ -77,7 +77,7 @@ class BrushStorageManager{
         
     }
     
-    static func accessSingleBrushStateAtTime(globalTime:Int,behaviorId:String,behaviorName:String, brushId:String)->JSON{
+    static func accessSingleBrushStateAtTime(globalTime:Int,behaviorId:String,behaviorName:String, brushId:String)->JSON?{
         var debugData:JSON = [:]
         var behaviorListJSON = [JSON]();
         var brushesListJSON = [JSON]();
@@ -86,8 +86,11 @@ class BrushStorageManager{
         let behaviorStorage = BrushStorageManager.paramStorage;
         let targetBehaviorData = behaviorStorage[behaviorId]!;
         let brushStateData = targetBehaviorData[brushId]!
-        let targetBrushData = brushStateData[globalTime]!;
-        brushesListJSON.append(JSON.init(parseJSON:targetBrushData));
+        let targetBrushData = brushStateData[globalTime];
+        guard targetBrushData != nil else{
+            return nil
+        }
+        brushesListJSON.append(JSON.init(parseJSON:targetBrushData!));
         var behaviorJSON:JSON = [:];
         behaviorJSON["id"] = JSON(behaviorId);
         behaviorJSON["name"] = JSON(behaviorName);
@@ -105,7 +108,7 @@ class BrushStorageManager{
         let behaviors = BrushStorageManager.paramStorage;
         var behaviorListJSON = [JSON]();
 
-        /*for (behaviorId,brushes) in behaviors {
+        for (behaviorId,brushes) in behaviors {
             let behaviorName = behaviorNames[behaviorId]!;
             var brushesListJSON = [JSON]();
             for (brushId,paramList) in brushes {
@@ -142,7 +145,7 @@ class BrushStorageManager{
             behaviorJSON["brushes"] = JSON(brushesListJSON);
             behaviorListJSON.append(behaviorJSON);
             
-        }*/
+        }
         debugData["behaviors"] = JSON(behaviorListJSON);
         return debugData;
     }*/

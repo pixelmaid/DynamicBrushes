@@ -77,6 +77,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
                     debuggerModelCollection.resetInspection();
                 }
                 else{
+                    console.log("~~~~!! received inspector data ", data.data)
                     debuggerModelCollection.processInspectorDataQueue(data.data);
                 }
 
