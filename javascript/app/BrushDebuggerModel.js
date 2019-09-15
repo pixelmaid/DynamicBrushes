@@ -107,11 +107,18 @@ function(DebuggerModel) {
 
                 //this.trigger("ON_VIZ_DRAW_SEGMENT",[data]);
                 this.visualizeDrawSegment(data);
+                if (this.collection.lastWasTransition) {
+	                this.collection.lastWasTransition = false;               	
+                }
                 break;
 
             case "STATE_TRANSITION":
                 //this.trigger("ON_STATE_TRANSITION",[data]);
-                this.displayTransition(data);
+                // added to prevent triple stepping
+                if (!this.collection.lastWasTransition) {
+	                this.displayTransition(data);
+	                this.collection.lastWasTransition = true;               	
+                }
                 break;
 
         }

@@ -22,6 +22,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 				this.manualSteppingOn = false;
 				this.currHighlighted = [];
 				var self = this;
+				this.lastWasTransition = false;
 			
 
 			}
@@ -96,13 +97,13 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 			}
 
 			processInspectorDataQueue(dataQueue){
-				// console.log("~~!! data queue is ", dataQueue);
+				console.log("~~!! data queue is ", dataQueue);
 				this.inspectorQueue.push.apply(this.inspectorQueue,dataQueue);
 
 			}
 
 			inspectorDataInterval(){
-				console.log("~~~~ !!!  called data interval");
+				// console.log("~~~~ !!!  called data interval");
 
 				if (this.brushModel.brushVizQueue.length > 0) {
 					console.log("~~~~ !!!  inspect: visualizing brush");
