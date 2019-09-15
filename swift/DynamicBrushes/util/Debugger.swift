@@ -243,11 +243,15 @@ final class Debugger {
         let behaviorId = BehaviorManager.currentlySelectedBehaviorId!;
         let activeInstance = BehaviorManager.activeInstance;
         let behavior:BehaviorDefinition = BehaviorManager.behaviors[behaviorId]!;
-        let brushId = behavior.brushInstances[activeInstance].id;
-        let debugData = Debugger.generateDebugData(behaviorId: behaviorId, brushId: brushId, brushState: nil ,globalTime: globalTime,localTime: nil);
-        if(debugData != nil){
-            Debugger.programDebugDataQueue.append(debugData!);
-            Debugger.drawingDebugDataQueue.append(debugData!);
+        let brush = behavior.brushInstances[activeInstance];
+        if(brush.isUpdated){
+            let brushId = behavior.brushInstances[activeInstance].id;
+            let debugData = Debugger.generateDebugData(behaviorId: behaviorId, brushId: brushId, brushState: nil ,globalTime: globalTime,localTime: nil);
+            if(debugData != nil){
+                Debugger.programDebugDataQueue.append(debugData!);
+                Debugger.drawingDebugDataQueue.append(debugData!);
+            }
+            brush.isUpdated = false;
         }
         
     }
