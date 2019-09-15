@@ -613,7 +613,7 @@ class DrawingViewController: UIViewController, Requester{
         
         requestProjectList()
         
-        drawInterval  = Timer.scheduledTimer(timeInterval:0.016 , target: self, selector: #selector(DrawingViewController.drawIntervalCallback), userInfo: nil, repeats: true)
+        drawInterval  = Timer.scheduledTimer(timeInterval:0.006 , target: self, selector: #selector(DrawingViewController.drawIntervalCallback), userInfo: nil, repeats: true)
         
         self.startBackupTimer(interval:self.backupInterval);
         Debugger.startDebugTimer(interval:Debugger.debugInterval);
@@ -1030,10 +1030,10 @@ class DrawingViewController: UIViewController, Requester{
         
             
         }
-        /*if(BehaviorManager.behaviors.count>0){
-            Debugger.drawCurrentBrushState(view: self.layerContainerView.brushGraphicsView!,targetBehaviorId: BehaviorManager.behaviors.first!.key, jump:false,globalTime:nil);
+        if(BehaviorManager.behaviors.count>0){
+            Debugger.drawCurrentBrushState(view: self.layerContainerView.brushGraphicsView!,targetBehaviorId: BehaviorManager.currentlySelectedBehaviorId, jump:false,globalTime:StylusManager.globalTime);
 
-        }*/
+        }
     }
     
 /* @objc func drawIntervalCallback(){

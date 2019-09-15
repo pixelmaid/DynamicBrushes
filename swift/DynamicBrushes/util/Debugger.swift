@@ -362,11 +362,11 @@ final class Debugger {
     }
     
     
-    static public func drawCurrentBrushState(view:BrushGraphicsView,targetBehaviorId:String,jump:Bool, globalTime:Int?){
+    static public func drawCurrentBrushState(view:BrushGraphicsView,targetBehaviorId:String,jump:Bool, globalTime:Int){
         //let behaviors = BehaviorManager.getAllBrushInstances();
         //check to see which brushes are "unrendered"
         // pass them the UI view and draw into it
-        var i = 0
+       /* var i = 0
         if(Debugger.drawingDebugDataQueue.count>0){
 
             var brushIds = Set<String>()
@@ -412,7 +412,7 @@ final class Debugger {
             }
             Debugger.drawingDebugDataQueue.removeAll();
         }
-        }
+        }*/
         
     }
         
