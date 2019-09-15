@@ -15,14 +15,14 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 				this.stateHighlighted = false;
 
 				this.model.collection.addListener("VIZ_BRUSH_STEP_THROUGH", function() {
-					// console.log("~~~~ !!! called brush step through in main");
+					console.log("~~~~ !!! called brush step through. vizs queue is ", this.model.brushVizQueue);
 					let currentConstraint = this.model.brushVizQueue.shift();
 					this.visualizeStepThrough(currentConstraint, this.pastConstraint, model.data);
 					this.pastConstraint = currentConstraint;
+					console.log("~~~~ !!! stepping finished. vizs queue is ", this.model.brushVizQueue);
 				}.bind(this));
 
 				this.model.collection.addListener("CLEAR_STEP_HIGHLIGHT", function() {
-					// console.log("~~~~ !!! called brush step through in main");
 					this.clearStepHighlight();
 				}.bind(this));
 			}
@@ -88,7 +88,7 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 					let correctData = this.model.dataVizDict[constraint.relativePropertyName];
 
 	
-					console.log("~~~ !! updating viz with ", constraint.relativePropertyName, correctData);
+					// console.log("~~~ !! updating viz with ", constraint.relativePropertyName, correctData);
 
 					this.initInspector(correctData);
 					if (constraint.relativePropertyName == "alpha") {
@@ -98,7 +98,7 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 
 				}
 
-				console.log("~~ about to visualize constraints ", data, " past constraint ", pastConstraint);
+				// console.log("~~ about to visualize constraints ", data, " past constraint ", pastConstraint);
 				var arrowObject;
 				if (pastConstraint) {
 					switch (pastConstraint.type) {
@@ -128,7 +128,7 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 
 				switch (constraint.type) {
 					case "method":
-						console.log("!!VIZ METHOD ", constraint);
+						// console.log("!!VIZ METHOD ", constraint);
 						$("#" + constraint.methodId).addClass("method-inspect");
 
 						if (pastConstraint) {
@@ -141,7 +141,7 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 						}
 						break;
 					case "binding":
-						console.log("~~ viz binding name ", constraint.relativePropertyName);
+						// console.log("~~ viz binding name ", constraint.relativePropertyName);
 						var name = constraint.relativePropertyName;
 						$("#" + constraint.constraintId).addClass("debug");
 						$("#param-" + constraint.relativePropertyName).addClass("debug-inspect");
@@ -156,7 +156,7 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 
 						break;
 					case "transition":
-						console.log("!!VIZ TRANSITION ", constraint, pastConstraint);
+						// console.log("!!VIZ TRANSITION ", constraint, pastConstraint);
 
 						if (pastConstraint) {
 							if (pastConstraint.type == "binding" && self.stateHighlighted == true) {
@@ -172,13 +172,13 @@ define(["jquery", "handlebars", "app/DebuggerView"],
 						}
 						if ($("#" + constraint.transitionId).hasClass("transition_statement")) {
 							//outline header
-							console.log("~highlight header")
+							console.log("~~~~ !!! highlight header")
 							$("#" + constraint.transitionId).children().first().addClass("method-inspect");
 							//bring to front also 
 							$("#" + constraint.transitionId).parent().addClass("transition-front");
 							self.stateHighlighted = true;
 						} else { //it's a state
-							console.log("~highlight state")
+							console.log("~~~~ !!! highlight state")
 							$("#" + constraint.transitionId).children().eq(1).addClass("active");
 							self.stateHighlighted = true;
 						}
