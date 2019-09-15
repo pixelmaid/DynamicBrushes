@@ -244,8 +244,9 @@ final class Debugger {
         let activeInstance = BehaviorManager.activeInstance;
         let behavior:BehaviorDefinition = BehaviorManager.behaviors[behaviorId]!;
         let brushId = behavior.brushInstances[activeInstance].id;
-        let debugData = Debugger.generateDebugData(behaviorId: behaviorId, brushId: brushId, brushState: nil ,globalTime: globalTime,localTime: nil);
+        var debugData = Debugger.generateDebugData(behaviorId: behaviorId, brushId: brushId, brushState: nil ,globalTime: globalTime,localTime: nil);
         if(debugData != nil){
+            debugData!["uid"] = JSON(NSUUID().uuidString);
             Debugger.programDebugDataQueue.append(debugData!);
             Debugger.drawingDebugDataQueue.append(debugData!);
         }
