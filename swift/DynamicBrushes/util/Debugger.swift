@@ -113,7 +113,7 @@ final class Debugger {
         
         let brushState = BrushStorageManager.accessState(behaviorId: behaviorId, brushId: brushId, globalTime: globalTime);
         
-        let debugData = JSON(Debugger.generateDebugData(behaviorId: behaviorId, brushId: brushId, brushState: brushState, globalTime: globalTime, localTime: localTime));
+        let debugData = JSON(Debugger.generateDebugData(behaviorId: behaviorId, brushId: brushId, brushState: brushState, globalTime: globalTime));
         //print("debug data",debugData)
         Debugger.drawingDebugDataQueue.append(debugData);
 
@@ -138,10 +138,10 @@ final class Debugger {
     }
     
     
-    static func generateInputDebugData(behaviorId:String?, brushId:String?, globalTime:Int?, localTime:Int?)->JSON{
+    static func generateInputDebugData(behaviorId:String, brushId:String, globalTime:Int, localTime:Int)->JSON{
         
         var debugData:JSON = [:]
-        let generatorCollectionsJSON = Debugger.generateGeneratorDebugData(behaviorId: behaviorId,brushId: brushId,localTime: localTime);
+        let generatorCollectionsJSON = Debugger.generateGeneratorDebugData(brushId: brushId,localTime: localTime);
         let inputGlobalJSON = Debugger.generateGlobalInputDebugData(globalTime:globalTime);
         debugData["generator"] = generatorCollectionsJSON;
         debugData["inputGlobal"] = inputGlobalJSON;
@@ -184,12 +184,12 @@ final class Debugger {
         return liveCollectionsJSON
     }
     
-    static func generateGeneratorDebugData(behaviorId:String?,brushId:String?,localTime:Int?)->JSON{
+    static func generateGeneratorDebugData(brushId:String,localTime:Int)->JSON{
         guard let generatorCollection = BehaviorManager.signalCollections[2]["default"] else{
             return JSON([:]);
         }
         
-        return generatorCollection.accessState(behaviorId: behaviorId, brushId: brushId , time: localTime);
+        return generatorCollection.accessState(brushId: brushId , time: localTime);
     }
     
     static func generateSingleBrushDebugData(brush:Brush)->JSON{
@@ -212,14 +212,15 @@ final class Debugger {
     }
     
     
-    static public func generateDebugData(behaviorId:String,brushId:String, brushState:BrushStateStorage?,globalTime:Int,localTime:Int?)->JSON?{
+    static public func generateDebugData(behaviorId:String,brushId:String, brushState:BrushStateStorage?,globalTime:Int)->JSON?{
         let brushData = Debugger.generateBrushDebugData(behaviorId: behaviorId, brushId: brushId, globalTime: globalTime)
         
         if(brushData == nil){
             return nil
         }
         else{
-            let inputData = Debugger.generateInputDebugData(behaviorId: behaviorId, brushId: brushId, globalTime: globalTime,localTime: localTime);
+            let localTime = brushData!["behaviors"][0]["brushes"][0]["params"]["time"].intValue;
+            let inputData = Debugger.generateInputDebugData(behaviorId: behaviorId, brushId: brushId, globalTime: globalTime, localTime:localTime);
             let outputData = Debugger.generateOutputDebugData(globalTime:globalTime,brushState:brushState);
             var debugData:JSON = [:];
             debugData["brush"] = brushData!;
@@ -246,7 +247,7 @@ final class Debugger {
         let brush = behavior.brushInstances[activeInstance];
         //if(brush.isUpdated){
             let brushId = behavior.brushInstances[activeInstance].id;
-            var debugData = Debugger.generateDebugData(behaviorId: behaviorId, brushId: brushId, brushState: nil ,globalTime: globalTime,localTime: nil);
+            var debugData = Debugger.generateDebugData(behaviorId: behaviorId, brushId: brushId, brushState: nil ,globalTime: globalTime);
             if(debugData != nil){
                 debugData!["uid"] = JSON(NSUUID().uuidString);
                    Debugger.programDebugDataQueue.append(debugData!);
@@ -279,16 +280,9 @@ final class Debugger {
                     time = subJson["time"].int ?? -1
                     type = subJson["generatorType"].string ?? "none"
                     freq = subJson["settings"]["freq"].float ?? -1.0
-                    //                        if subJson["settings"].exists() {
-                    //                            print("FREQUENCY OF SINE IS ~~~~~~ ", freq)
-                    //
-                    //                        }
                     returnVals.append((val:val, time:time, type:type, freq:freq))
-                    
-                    
                 }
             }
-            
         }
         return returnVals
     }
@@ -366,7 +360,7 @@ final class Debugger {
         //let behaviors = BehaviorManager.getAllBrushInstances();
         //check to see which brushes are "unrendered"
         // pass them the UI view and draw into it
-       /* var i = 0
+       
         if(Debugger.drawingDebugDataQueue.count>0){
 
             var brushIds = Set<String>()
@@ -378,23 +372,14 @@ final class Debugger {
             for currentData in Debugger.drawingDebugDataQueue {
                 //double check view values since they arent persistent
                 refreshVisualizations(view: view)
-                let debugInputGlobal = currentData["input"]["inputGlobal"]
-                let debugBrush:BrushStateStorage;
-                if(globalTime != nil){
-                    debugBrush = BrushStorageManager.accessState(behaviorId: targetBehaviorId, brushId: targetBrush.id, globalTime: globalTime!)!
-                }
-                else{
-                    debugBrush = targetBrush.params;
-                }
+                let debugBrushJSON = currentData["brush"]["behaviors"][0]["brushes"][0]["params"];
+                let debugBrushStateStorage = BrushStateStorage(json: debugBrushJSON);
                 
-                let debugGenerator = currentData["input"]["generator"]
-//                print("~~ debug gen is", debugGenerator)
-                let valArray = Debugger.getGeneratorValue(brushId: targetBrush.id,debugData: currentData["input"]["generator"]);
+                let generatorValArray = Debugger.getGeneratorValue(brushId: targetBrush.id,debugData: currentData["input"]["generator"]);
                 let inputInfo = Debugger.getStylusInputValue(debugData: currentData["input"]["inputGlobal"]);
-              //  print("~~~ about to draw into context in debugger with stylus x y ", inputInfo.0, inputInfo.1)
-//                print("~~~valArray is" , valArray)
-                targetBrush.drawIntoContext(context:view,brushInfo:debugBrush, stylusInfo:inputInfo)
-                view.scene!.drawGenerator(valArray: valArray)
+            
+                targetBrush.drawIntoContext(context:view,brushInfo:debugBrushStateStorage, stylusInfo:inputInfo)
+                //view.scene!.drawGenerator(valArray: generatorValArray)
                 
                 brushIds.insert(targetBrush.id)
                 
@@ -412,7 +397,7 @@ final class Debugger {
             }
             Debugger.drawingDebugDataQueue.removeAll();
         }
-        }*/
+        }
         
     }
         

@@ -53,7 +53,7 @@ class BrushStorageManager{
     
     static func storeState(brush:Brush,event:String){
         if (!StylusManager.isLive) {
-            Debugger.cacheDebugData(globalTime:StylusManager.globalTime);
+           
             return;
         }
         guard var brushList = BrushStorageManager.paramStorage[brush.behaviorId] else {
@@ -75,7 +75,6 @@ class BrushStorageManager{
         stateData["methods"] = brush.transitions[brush.prevTransition]!.getMethodNames();
         
         BrushStorageManager.paramStorage[brush.behaviorId]![brush.id]![brush.params.globalTime] = stateData.rawString();
-        Debugger.cacheDebugData(globalTime:StylusManager.globalTime);
         
     }
     

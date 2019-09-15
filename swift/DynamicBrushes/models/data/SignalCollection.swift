@@ -55,7 +55,7 @@ class SignalCollection {
     }
     
     //placeholder;
-    public func accessState(behaviorId:String?,brushId:String?,time:Int?)->JSON{
+    public func accessState(brushId:String?,time:Int)->JSON{
         return self.paramsToJSON();
     }
     
@@ -387,12 +387,12 @@ class GeneratorCollection:SignalCollection{
     }
 
     
-    override func accessState(behaviorId: String?, brushId: String?, time: Int?) -> JSON {
+    override func accessState(brushId: String?, time: Int) -> JSON {
         if(brushId != nil){
             for (_,signalDict) in self.initializedSignals{
             for(_,signal) in signalDict{
                 if signal.brushIsRegistered(brushId:brushId!){
-                    _ = signal.getAtTime(time: time!, id: brushId!, shouldUpdate: true);
+                    _ = signal.getAtTime(time: time, id: brushId!, shouldUpdate: true);
                 }
             }
             

@@ -1028,7 +1028,7 @@ class DrawingViewController: UIViewController, Requester{
                 DispatchQueue.main.async {
                     self.layerContainerView.drawIntoCurrentLayer(drawing:self.currentDrawing!);
                 }
-                //Debugger.cacheDebugData(globalTime:StylusManager.globalTime);
+                Debugger.cacheDebugData(globalTime:StylusManager.globalTime);
                 if(StylusManager.unrendered == true){
                     StylusManager.unrendered = false;
                 }
