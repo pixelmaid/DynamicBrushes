@@ -90,7 +90,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
                 chartViewManager.synchronize(data.data.behaviors);
                 signalModel.datasetLoader.loadCollection(data.data.collections);
                 saveManager.setCurrentFilename(currentBehaviorName, currentBehaviorFile);
-                debuggerModelCollection.clearInspectorDataQueue();
+                debuggerModelCollection.resetInspection();
                 updateSelectedBehaviorAndBrush();
                 //init stepping here
                 var status = data.data["executionStatus"];
@@ -434,11 +434,9 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
             if (!debuggerModelCollection.manualSteppingOn) { //turn on 
                 debuggerModelCollection.initializeStepping();
                 $(this).text('turn step off');
-                debuggerModelCollection.clearInspectorDataQueue();
             } else { //turn off
                 debuggerModelCollection.deinitializeStepping();
                 $(this).text('turn step on');
-                debuggerModelCollection.clearInspectorDataQueue();
             }
         });
 

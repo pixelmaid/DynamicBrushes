@@ -108,9 +108,9 @@ class BehaviorManager{
             }
             let behavior = BehaviorDefinition(id:id,name:value["name"].stringValue);
             behavior.parseJSON(json: value)
-            behavior.createBehavior(drawing:drawing);
-            BehaviorManager.behaviors[id] = behavior;
             BehaviorManager.currentlySelectedBehaviorId = id;
+            BehaviorManager.behaviors[id] = behavior;
+            behavior.createBehavior(drawing:drawing);
             
         }
     }
