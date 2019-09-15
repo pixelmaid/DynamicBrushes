@@ -148,6 +148,8 @@ final class StylusManager:LiveManager{
     private var moveCounter = 0;
     private var moveThreshold = 4;
     
+    public var currRecStartTime = -1;
+    public var currRecEndTime = -1;
     
     var collections: [String : SignalCollection] =  [String : StylusCollection]();
     
@@ -283,7 +285,6 @@ final class StylusManager:LiveManager{
         prevHash = 0;
         do{
             let signalLength = try currentLoopingPackage.getSignalLength();
-            
             queue.sync {
                 var hashAdd:Float = 0;
                 while (true){
@@ -294,6 +295,10 @@ final class StylusManager:LiveManager{
                         if sample != nil{
                             sample!["sequenceHash"] = JSON(sample!["hash"].floatValue+hashAdd);
                             samples.append(sample!);
+                            if i==0 {
+                                currRecStartTime = samples[i]["time"].intValue
+                                print("~~ start time is", currRecStartTime)
+                            }
                            
                             
                         }
@@ -305,6 +310,8 @@ final class StylusManager:LiveManager{
                         
                         samples[samples.count-1]["isLastinRecording"] = JSON(true);
                         currIndex = 0
+                        currRecEndTime = samples[samples.count-1]["time"].intValue
+                        print("~~ end time is", currRecEndTime)
                         break;
                         
                     }
@@ -361,13 +368,24 @@ final class StylusManager:LiveManager{
     public func terminateLoopAndResumeLive(){
       
         revertToLiveOnLoopEnd = true;
+        removeBrushCachedData();
         
-        
+    }
+    
+    private func removeBrushCachedData(){
+        if currRecStartTime > 0 && currRecEndTime > 0 {
+            let behaviorId = BehaviorManager.currentlySelectedBehaviorId!;
+            let activeInstance = BehaviorManager.activeInstance;
+            let behavior:BehaviorDefinition = BehaviorManager.behaviors[behaviorId]!;
+            let brushId:String = behavior.brushInstances[activeInstance].id;
+            BrushStorageManager.removeCachedData(behaviorId: behaviorId, brushId: brushId, startGlobalTime: currRecStartTime, endGlobalTime: currRecEndTime)
+        }
     }
     
     private func clearCachedData(){
         usedSamples.removeAll();
         prevHash = 0;
+        removeBrushCachedData(); //maybe?
     }
     
     private func stopLoopTimer(){
@@ -450,6 +468,7 @@ final class StylusManager:LiveManager{
                 else{
                     samples.append(contentsOf:usedSamples);
                     usedSamples.removeAll();
+                    removeBrushCachedData()
                     prevHash = 0;
                     prepStepData();
                 }
