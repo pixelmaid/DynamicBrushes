@@ -1284,7 +1284,7 @@ class BrushGraphic {
         inputIcon.place = Transform.move(dx: Double(x), dy: Double(y)) //need this offset for some reason?
         self.x = x
         self.y = y
-        text.text = "dx: "+String(Int(dx))+", dy: "+String(Int(dy))
+        text.text = "dx: "+String(format: "%.2f", dx)+", dy: "+String(format: "%.2f", dy)
         inputText.place = Transform.move(dx: Double(x), dy: Double(y) - Double(20))
         if self.scene.brushOn { self.highlightBrushIcon() }
 
