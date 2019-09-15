@@ -1023,7 +1023,7 @@ class DrawingViewController: UIViewController, Requester{
     }
     
     func performDrawOperation(){
-        DispatchQueue.global(qos: .userInteractive).async {
+       // DispatchQueue.global(qos: .userInteractive).async {
             if(self.currentDrawing!.unrendered /*|| StylusManager.unrendered*/){
                 DispatchQueue.main.async {
                     self.layerContainerView.drawIntoCurrentLayer(drawing:self.currentDrawing!);
@@ -1043,7 +1043,7 @@ class DrawingViewController: UIViewController, Requester{
         if(BehaviorManager.behaviors.count>0){
             Debugger.drawCurrentBrushState(view: self.layerContainerView.brushGraphicsView!,targetBehaviorId: BehaviorManager.currentlySelectedBehaviorId, jump:false,globalTime:StylusManager.globalTime);
             
-        }
+        //}
     }
     
 /* @objc func drawIntervalCallback(){

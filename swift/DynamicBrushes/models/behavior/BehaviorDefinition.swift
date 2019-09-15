@@ -603,6 +603,7 @@ class BehaviorDefinition {
                 
             }
             else{
+                //TOOD: Fix bug regarded to adding generators
                 operand = (emitter as! Emitter).kvcDictionary[propId!]!
             }
             
