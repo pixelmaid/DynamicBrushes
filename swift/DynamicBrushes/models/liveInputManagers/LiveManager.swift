@@ -259,6 +259,7 @@ final class StylusManager:LiveManager{
     }
     
     public func prepareDataToLoop(idStart:String,idEnd:String, startTimer:Bool){
+        //print("globalTime:",StylusManager.globalTime)
         Debugger.setupResetInspectionRequest();
         Debugger.resetDebugStatus();
         self.stopLoopTimer();
@@ -311,7 +312,6 @@ final class StylusManager:LiveManager{
                         
                     }
                 }
-                print("samples",samples);
             }
         }
         catch{
@@ -377,7 +377,7 @@ final class StylusManager:LiveManager{
         self.stopLoopTimer();
         
       
-        playbackTimer = Timer.scheduledTimer(timeInterval: TimeInterval(0.005/playbackRate), target: self, selector: #selector(advanceRecording), userInfo: nil, repeats: false)
+        playbackTimer = Timer.scheduledTimer(timeInterval: TimeInterval(0.05/playbackRate), target: self, selector: #selector(advanceRecording), userInfo: nil, repeats: false)
 
         
     }
@@ -621,6 +621,8 @@ class StylusDataProducer{
 class StylusDataConsumer{
     
     func consume(liveManager:LiveManager, sample:JSON){
+        //print("globalTime:",sample["time"].intValue)
+
         StylusManager.globalTime = sample["time"].intValue;
         StylusManager.unrendered = true;
        // print("consume sample",sample["stylusEvent"].floatValue, sample["x"].floatValue,sample["y"].floatValue,sample["force"].floatValue,sample["targetLayer"].stringValue)
