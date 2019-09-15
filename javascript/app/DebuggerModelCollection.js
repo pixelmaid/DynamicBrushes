@@ -625,6 +625,14 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 									name: "stylus y",
 									id: "y",
 									val: 0
+								},{
+									name: "stylus delta x",
+									id: "dx",
+									val: 0
+								}, {
+									name: "stylus delta y",
+									id: "dy",
+									val: 0
 								}, {
 									name: "stylus force",
 									id: "force",

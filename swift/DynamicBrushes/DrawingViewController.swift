@@ -120,6 +120,7 @@ class DrawingViewController: UIViewController, Requester{
     required init?(coder: NSCoder) {
         layerContainerView = LayerContainerView(width:pX,height:pY);
         Debugger.brushGraphicsView = layerContainerView!.brushGraphicsView;
+        StylusManager.appStartDate = Date();
         //replace with custom view
 //        brushGraphicsView = BrushGraphicsView(frame:CGRect(x:0, y:47, width:1366, height:1010))
         
@@ -1017,7 +1018,7 @@ class DrawingViewController: UIViewController, Requester{
                 DispatchQueue.main.async {
                     self.layerContainerView.drawIntoCurrentLayer(drawing:self.currentDrawing!);
                 }
-                Debugger.cacheDebugData();
+                Debugger.cacheDebugData(globalTime:StylusManager.globalTime);
                 self.backupNeeded = true;
                
             }
@@ -1457,7 +1458,7 @@ class DrawingViewController: UIViewController, Requester{
         let request = Request(target: "socket", action: "synchronize", data: syncJSON, requester: self)
         RequestHandler.addRequest(requestData: request)
         
-        Debugger.cacheDebugData();
+        Debugger.cacheDebugData(globalTime:StylusManager.globalTime);
         Debugger.fireDebugUpdate();
         
     }

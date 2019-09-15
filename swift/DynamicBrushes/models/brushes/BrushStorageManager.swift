@@ -53,7 +53,7 @@ class BrushStorageManager{
     
     static func storeState(brush:Brush,event:String){
         if (!StylusManager.isLive) {
-//            return;
+            return;
         }
         guard var brushList = BrushStorageManager.paramStorage[brush.behaviorId] else {
             return;

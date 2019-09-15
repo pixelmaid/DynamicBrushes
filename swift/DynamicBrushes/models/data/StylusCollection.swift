@@ -93,7 +93,7 @@ class StylusCollection:LiveCollection {
         super.addProtoSample(data: protodata);
     }
     
-    func onStylusUp(x:Float,y:Float){
+    func onStylusUp(x:Float,y:Float,time:Int){
         self.angle = 0;
         self.force = 0;
         self.dx = 0;
@@ -102,13 +102,13 @@ class StylusCollection:LiveCollection {
         self.y = y;
         self.speed = 0;
         self.stylusEvent = Signal.stylusUp;
-        self.time = self.getTimeElapsed();
+        self.time = time;
 
         let data = self.exportData();
         self.addProtoSample(data: data)
     }
     
-    func onStylusDown(x:Float,y:Float,force:Float,angle:Float){
+    func onStylusDown(x:Float,y:Float,force:Float,angle:Float,time:Int){
         self.oX = x;
         self.oY = y;
         self.x = x;
@@ -120,14 +120,14 @@ class StylusCollection:LiveCollection {
         self.stylusEvent = Signal.stylusDown;
         self.speed = 0;
         self.deltaAngle = 0;
-        self.time = self.getTimeElapsed();
+        self.time = time;
 
         let data = self.exportData();
         self.addProtoSample(data: data)
 
     }
     
-    func onStylusMove(x:Float,y:Float,force:Float,angle:Float)->JSON{
+    func onStylusMove(x:Float,y:Float,force:Float,angle:Float,time:Int)->JSON{
       
         //TODO: REFACTOR FOR STYLUS MOVE BY
         self.pX = self.x;
@@ -145,9 +145,9 @@ class StylusCollection:LiveCollection {
         self.yDistance = 0//self.yDistance + abs(dy);
        // let euclidDelta = sqrt(pow(dx,2)+pow(dy,2));
         self.euclidDistance = 0//self.euclidDistance + sqrt(pow(dx,2)+pow(dy,2));
-        self.time = self.getTimeElapsed();
+        self.time = time;
        
-       /* let currentTime = self.getTimeElapsed();
+        /*let currentTime = self.getTimeElapsed();
         var rawSpeed = euclidDelta/Float(currentTime-prevTime)
         if(rawSpeed > 5000){
             rawSpeed = 5000;

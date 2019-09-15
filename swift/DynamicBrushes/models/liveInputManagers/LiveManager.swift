@@ -92,6 +92,8 @@ final class UIManager:LiveManager{
         
     }
     
+    
+    
 }
 
 
@@ -104,6 +106,7 @@ final class StylusManager:LiveManager{
     static var globalTime = Int(0);
     
     static public var isLive = true;
+    static public var appStartDate: Date!
     public var isStepping = false;
     private var currentRecordingPackage:RecordingCollection!
     private var currentLoopingPackage:RecordingCollection!
@@ -160,6 +163,13 @@ final class StylusManager:LiveManager{
         }
         
     }
+    
+    static func getTimeElapsed()->Int{
+        let currentTime = NSDate();
+        let t = Int(currentTime.timeIntervalSince(appStartDate! as Date)*1000);
+        return t;
+    }
+
     
     private func beginRecording(start:Date)->RecordingCollection{
         //TODO: find a way to clone recordingpresetdata instead of reassigning ID
@@ -468,7 +478,7 @@ final class StylusManager:LiveManager{
             
                 
         
-                let sample = (self.collections["stylus"]! as! StylusCollection).onStylusMove(x: x, y: y, force: force*20, angle: angle);
+                let sample = (self.collections["stylus"]! as! StylusCollection).onStylusMove(x: x, y: y, force: force*20, angle: angle, time:StylusManager.getTimeElapsed());
             currentRecordingPackage.addProtoSample(data:sample);
                 self.moveCounter = 0;
                 
@@ -488,7 +498,7 @@ final class StylusManager:LiveManager{
             //let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
             
             for (_,stylusCollection) in self.collections{
-                (stylusCollection as! StylusCollection).onStylusUp(x: x, y:y);
+                (stylusCollection as! StylusCollection).onStylusUp(x: x, y:y, time:StylusManager.getTimeElapsed());
             }
             let sample = (self.collections["stylus"]! as! StylusCollection).exportData();
             currentRecordingPackage.addProtoSample(data:sample);
@@ -511,7 +521,7 @@ final class StylusManager:LiveManager{
             
             
             for (_,stylusCollection) in self.collections{
-                (stylusCollection as! StylusCollection).onStylusDown(x: x, y: y, force: force*20, angle: angle);
+                (stylusCollection as! StylusCollection).onStylusDown(x: x, y: y, force: force*20, angle: angle, time:StylusManager.getTimeElapsed());
             }
           
                 
@@ -604,28 +614,28 @@ class StylusDataProducer{
 class StylusDataConsumer{
     
     func consume(liveManager:LiveManager, sample:JSON){
+        StylusManager.globalTime = sample["time"].intValue;
        // print("consume sample",sample["stylusEvent"].floatValue, sample["x"].floatValue,sample["y"].floatValue,sample["force"].floatValue,sample["targetLayer"].stringValue)
         let stylusManager = liveManager as! StylusManager;
         switch(sample["stylusEvent"].floatValue){
         case StylusManager.stylusUp:
             for (_,stylusCollection) in stylusManager.collections{
-                (stylusCollection as! StylusCollection).onStylusUp(x: sample["x"].floatValue, y: sample["y"].floatValue);
+                (stylusCollection as! StylusCollection).onStylusUp(x: sample["x"].floatValue, y: sample["y"].floatValue,time: sample["time"].intValue);
             }
-            stylusManager.stylusDataEvent.raise(data:("STYLUS_UP", [sample["x"].floatValue, sample["y"].floatValue]))
+            stylusManager.stylusDataEvent.raise(data:("STYLUS_UP", [sample["x"].floatValue, sample["y"].floatValue,sample["time"].floatValue]))
             break;
         case StylusManager.stylusDown:
-            stylusManager.stylusDataEvent.raise(data:("STYLUS_DOWN", [sample["x"].floatValue, sample["y"].floatValue]))
+            stylusManager.stylusDataEvent.raise(data:("STYLUS_DOWN", [sample["x"].floatValue, sample["y"].floatValue,sample["time"].floatValue]))
             stylusManager.layerEvent.raise(data:("REQUEST_CORRECT_LAYER",sample["targetLayer"].stringValue));
-            
             for (_,stylusCollection) in stylusManager.collections{
-                (stylusCollection as! StylusCollection).onStylusDown(x: sample["x"].floatValue, y: sample["y"].floatValue, force: sample["force"].floatValue, angle: sample["angle"].floatValue);
+                (stylusCollection as! StylusCollection).onStylusDown(x: sample["x"].floatValue, y: sample["y"].floatValue, force: sample["force"].floatValue, angle: sample["angle"].floatValue, time: sample["time"].intValue);
             }
             
             break;
         case StylusManager.stylusMove:
-            stylusManager.stylusDataEvent.raise(data:("STYLUS_MOVE", [sample["x"].floatValue, sample["y"].floatValue]))
+            stylusManager.stylusDataEvent.raise(data:("STYLUS_MOVE", [sample["x"].floatValue, sample["y"].floatValue, sample["time"].floatValue]))
             for (_,stylusCollection) in stylusManager.collections{
-                (stylusCollection as! StylusCollection).onStylusMove(x: sample["x"].floatValue, y: sample["y"].floatValue, force: sample["force"].floatValue, angle: sample["angle"].floatValue);
+                (stylusCollection as! StylusCollection).onStylusMove(x: sample["x"].floatValue, y: sample["y"].floatValue, force: sample["force"].floatValue, angle: sample["angle"].floatValue, time:sample["time"].intValue);
             }
             break;
         default:

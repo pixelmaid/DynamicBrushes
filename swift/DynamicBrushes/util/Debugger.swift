@@ -128,7 +128,7 @@ final class Debugger {
     static func generateOutputDebugData(globalTime:Int?,brushState:BrushStateStorage?)->JSON{
         var debugData:JSON = [:]
         debugData["groupName"] = JSON("output");
-        if(globalTime == nil){
+        if(brushState == nil){
             debugData["behaviors"] = BehaviorManager.drawing.activeStrokesToJSON();
         }
         else{
@@ -205,19 +205,19 @@ final class Debugger {
         return debugData;
     }
     
-    static func generateBrushDebugData(brushState:BrushStateStorage?)->JSON{
+    static func generateBrushDebugData(brushState:BrushStateStorage?,globalTime:Int)->JSON{
         let behaviorNames = BehaviorManager.getBehaviorNames();
         
         guard brushState != nil else{
-            return BrushStorageManager.accessStateAtTime(globalTime: nil, behaviorNames: behaviorNames)
+            return BrushStorageManager.accessStateAtTime(globalTime: globalTime, behaviorNames: behaviorNames)
         }
         return BrushStorageManager.accessStateAtTime(globalTime: brushState?.globalTime, behaviorNames: behaviorNames)
     }
     
     
-    static public func generateDebugData(behaviorId:String?,brushId:String?, brushState:BrushStateStorage?,globalTime:Int?,localTime:Int?)->JSON{
+    static public func generateDebugData(behaviorId:String?,brushId:String?, brushState:BrushStateStorage?,globalTime:Int,localTime:Int?)->JSON{
         let inputData = Debugger.generateInputDebugData(behaviorId: behaviorId, brushId: brushId, globalTime: globalTime,localTime: localTime);
-        let brushData = Debugger.generateBrushDebugData(brushState:brushState);
+        let brushData = Debugger.generateBrushDebugData(brushState:brushState,globalTime:globalTime);
         let outputData = Debugger.generateOutputDebugData(globalTime:globalTime,brushState:brushState);
         var debugData:JSON = [:];
         debugData["brush"] = brushData;
@@ -236,8 +236,8 @@ final class Debugger {
         }
     }
     
-    @objc static func cacheDebugData(){
-        let debugData = Debugger.generateDebugData(behaviorId: nil, brushId: nil, brushState: nil ,globalTime: nil,localTime: nil);
+    @objc static func cacheDebugData(globalTime:Int){
+        let debugData = Debugger.generateDebugData(behaviorId: nil, brushId: nil, brushState: nil ,globalTime: globalTime,localTime: nil);
         
         Debugger.programDebugDataQueue.append(debugData);
         Debugger.drawingDebugDataQueue.append(debugData);
