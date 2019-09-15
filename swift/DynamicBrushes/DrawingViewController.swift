@@ -1014,7 +1014,7 @@ class DrawingViewController: UIViewController, Requester{
     
     @objc func drawIntervalCallback(){
         DispatchQueue.global(qos: .userInteractive).async {
-            if(self.currentDrawing!.unrendered || StylusManager.unrendered){
+            if(self.currentDrawing!.unrendered /*|| StylusManager.unrendered*/){
                 DispatchQueue.main.async {
                     self.layerContainerView.drawIntoCurrentLayer(drawing:self.currentDrawing!);
                 }
