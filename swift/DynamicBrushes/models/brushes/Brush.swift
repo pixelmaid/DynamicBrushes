@@ -529,57 +529,60 @@ class Brush: TimeSeries, Renderable{
     }
     
     func transitionToState(transition:StateTransition){
-        
-        if(states[transition.toStateId]?.name == "die"){
-            BrushStorageManager.storeState(brush:self,event:"STATE_DIE");
-            self.die();
-           
-        }
-      
-         //#if DEBUG
-        //print("transitioning from state:\(currentState) to state: \(transition.toStateId)");
-       // #endif
-        else{
-        if(states[currentState] != nil){
-            let constraint_mappings =  states[currentState]!.constraint_mappings
-            for (_, value) in constraint_mappings{
-                
-         
-                value.relativeProperty.constrained = false;
-                
-            }
-        }
-        self.prevState = self.currentState;
-        self.currentState = transition.toStateId;
-        if(states[currentState] != nil){
-            
-        //TODO: add methods to debug data
-        self.executeTransitionMethods(methods: transition.methods)
-        }
-            self.prevTransition = transition.id;
+        //TODO: THIS IS A HACK. NEED A BETTER WAY OF DEALING WITH MULTIPLE STYLUS EVENT TRANSITIONS FIRING
+        if(transitionDelayTimer == nil){
+            print("state transition occurred from state:",transition.toStateId,"to state:",transition.toStateId)
 
-      
-        //execute methods
-        //check constraints
-     
-            
-            
-        //trigger state complete after functions are executed
-            if(transitionDelayTimer != nil){
-                transitionDelayTimer.invalidate();
+            if(states[transition.toStateId]?.name == "die"){
+                BrushStorageManager.storeState(brush:self,event:"STATE_DIE");
+                self.die();
+               
             }
-       transitionDelayTimer  = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(Brush.completeCallback), userInfo: nil, repeats: false)
-     
-            
+          
+             //#if DEBUG
+            //print("transitioning from state:\(currentState) to state: \(transition.toStateId)");
+           // #endif
+            else{
+            if(states[currentState] != nil){
+                let constraint_mappings =  states[currentState]!.constraint_mappings
+                for (_, value) in constraint_mappings{
+                    
+             
+                    value.relativeProperty.constrained = false;
+                    
+                }
+            }
+            self.prevState = self.currentState;
+            self.currentState = transition.toStateId;
+            if(states[currentState] != nil){
+                
+            //TODO: add methods to debug data
+            self.executeTransitionMethods(methods: transition.methods)
+            }
+                self.prevTransition = transition.id;
+
+          
+            //execute methods
+            //check constraints
+         
+                
+                
+            //trigger state complete after functions are executed
+                if(transitionDelayTimer != nil){
+                    transitionDelayTimer.invalidate();
+                }
+           transitionDelayTimer  = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(Brush.completeCallback), userInfo: nil, repeats: false)
+                BrushStorageManager.storeState(brush:self,event:"STATE_TRANSITION");
+
+            }
         }
-        BrushStorageManager.storeState(brush:self,event:"STATE_TRANSITION");
-        
 
         
     }
     
 
     @objc func completeCallback(){
+        transitionDelayTimer = nil;
         let constraint_mappings =  states[currentState]!.constraint_mappings
         for (_, value) in constraint_mappings{
             value.relativeProperty.constrained = true;

@@ -77,13 +77,13 @@ class BrushStorageManager{
         
     }
     
-    static func accessStateAtTime(globalTime:Int?,behaviorNames:[String:String])->JSON{
+   static func accessStateAtTime(globalTime:Int?,behaviorNames:[String:String])->JSON{
         var debugData:JSON = [:]
         debugData["groupName"] = JSON("brush");
         let behaviors = BrushStorageManager.paramStorage;
         var behaviorListJSON = [JSON]();
 
-        for (behaviorId,brushes) in behaviors {
+        /*for (behaviorId,brushes) in behaviors {
             let behaviorName = behaviorNames[behaviorId]!;
             var brushesListJSON = [JSON]();
             for (brushId,paramList) in brushes {
@@ -98,9 +98,7 @@ class BrushStorageManager{
                     if(filteredParam != nil){
                         var brushJSON = JSON.init(parseJSON:filteredParam!.value);
                         brushesListJSON.append(brushJSON);
-                    } else {
-                        print("~~~ time" ,globalTime, paramList)
-                    }
+                    } 
                     
                 }
                 else{
@@ -122,7 +120,7 @@ class BrushStorageManager{
             behaviorJSON["brushes"] = JSON(brushesListJSON);
             behaviorListJSON.append(behaviorJSON);
             
-        }
+        }*/
         debugData["behaviors"] = JSON(behaviorListJSON);
         return debugData;
     }

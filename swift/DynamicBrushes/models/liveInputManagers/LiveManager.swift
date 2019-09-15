@@ -529,6 +529,7 @@ final class StylusManager:LiveManager{
             
             for (_,stylusCollection) in self.collections{
                 (stylusCollection as! StylusCollection).onStylusDown(x: x, y: y, force: force*20, angle: angle, time:StylusManager.globalTime);
+           
             }
           
                 

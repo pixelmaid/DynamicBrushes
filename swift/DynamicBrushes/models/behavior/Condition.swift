@@ -53,6 +53,8 @@ class Condition:Observable<Bool> {
     func evaluate()->Bool{
         let a = referenceA.get(id: nil)
         var b = referenceB.get(id: nil)
+        referenceA.invalidated = false;
+        referenceB.invalidated = false;
         switch (relational){
         case "<":
             

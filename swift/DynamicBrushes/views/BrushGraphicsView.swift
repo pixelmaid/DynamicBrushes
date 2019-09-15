@@ -41,7 +41,7 @@ public class BrushGraphicsScene {
     
     func eraseEventHandler(data:String, key:String){
         if data == "ERASE_REQUEST" {
-            print("~~~~!! erase request")
+            //print("~~~~!! erase request")
             for (_, brush) in self.activeBrushIds {
                 brush.stylusStream.contents = []
                 brush.brushStream.contents = []
@@ -113,7 +113,7 @@ public class BrushGraphicsScene {
         for (_, brush) in self.activeBrushIds {
             hit = brush.checkCollision(x:x, y:y)
         }
-        print("~~~ FINAL HIT WAS ", hit)
+        //print("~~~ FINAL HIT WAS ", hit)
         switch (hit) {
         case "off":
             return;
@@ -334,7 +334,7 @@ public class BrushGraphicsScene {
             var angle:Double
             let newX = x - lastX
             var newY = y - lastY
-            print("diff for down is ~~~ ", newX, newY, " original ", x, y, " new ", lastX, lastY)
+            //print("diff for down is ~~~ ", newX, newY, " original ", x, y, " new ", lastX, lastY)
             if newY < 0 {
                 print("~~ down neg")
 //                newY = -newY
@@ -352,7 +352,7 @@ public class BrushGraphicsScene {
             var angle:Double
             let newX = x - lastX
             var newY = y - lastY
-            print("diff for up is ~~~ ", newX, newY, " original ", x, y, " new ", lastX, lastY)
+            //print("diff for up is ~~~ ", newX, newY, " original ", x, y, " new ", lastX, lastY)
             if newY < 0 {
                 print("~~ up neg")
 //                newY = -newY
