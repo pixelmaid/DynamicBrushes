@@ -1018,7 +1018,7 @@ class DrawingViewController: UIViewController, Requester{
                 DispatchQueue.main.async {
                     self.layerContainerView.drawIntoCurrentLayer(drawing:self.currentDrawing!);
                 }
-                Debugger.cacheDebugData(globalTime:StylusManager.globalTime);
+                //Debugger.cacheDebugData(globalTime:StylusManager.globalTime);
                 if(StylusManager.unrendered == true){
                     StylusManager.unrendered = false;
                 }
@@ -1461,8 +1461,8 @@ class DrawingViewController: UIViewController, Requester{
         let request = Request(target: "socket", action: "synchronize", data: syncJSON, requester: self)
         RequestHandler.addRequest(requestData: request)
         
-        Debugger.cacheDebugData(globalTime:StylusManager.globalTime);
-        Debugger.fireDebugUpdate();
+       // Debugger.cacheDebugData(globalTime:StylusManager.globalTime);
+       // Debugger.fireDebugUpdate();
         
     }
     

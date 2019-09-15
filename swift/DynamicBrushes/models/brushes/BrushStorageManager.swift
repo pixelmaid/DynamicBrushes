@@ -53,6 +53,7 @@ class BrushStorageManager{
     
     static func storeState(brush:Brush,event:String){
         if (!StylusManager.isLive) {
+            Debugger.cacheDebugData(globalTime:StylusManager.globalTime);
             return;
         }
         guard var brushList = BrushStorageManager.paramStorage[brush.behaviorId] else {
@@ -74,6 +75,7 @@ class BrushStorageManager{
         stateData["methods"] = brush.transitions[brush.prevTransition]!.getMethodNames();
         
         BrushStorageManager.paramStorage[brush.behaviorId]![brush.id]![brush.params.globalTime] = stateData.rawString();
+        Debugger.cacheDebugData(globalTime:StylusManager.globalTime);
         
     }
     
@@ -81,16 +83,19 @@ class BrushStorageManager{
         var debugData:JSON = [:]
         var behaviorListJSON = [JSON]();
         var brushesListJSON = [JSON]();
-
+        //TODO: look at brush calling store state when recording view is in effect"
         debugData["groupName"] = JSON("brush");
         let behaviorStorage = BrushStorageManager.paramStorage;
         let targetBehaviorData = behaviorStorage[behaviorId]!;
         let brushStateData = targetBehaviorData[brushId]!
         let targetBrushData = brushStateData[globalTime];
+        
         guard targetBrushData != nil else{
             return nil
         }
+        
         brushesListJSON.append(JSON.init(parseJSON:targetBrushData!));
+        print(JSON.init(parseJSON:targetBrushData!)["event"]);
         var behaviorJSON:JSON = [:];
         behaviorJSON["id"] = JSON(behaviorId);
         behaviorJSON["name"] = JSON(behaviorName);

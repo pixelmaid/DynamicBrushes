@@ -95,6 +95,7 @@ class Brush: TimeSeries, Renderable{
     var undergoing_transition = false;
     var transitionEvents = [Disposable]();
     var transitionDelayTimer: Timer!;
+    var isUpdated = false;
     
     init(name:String, behaviorDef:BehaviorDefinition?, parent:Brush?, drawing:Drawing){
         
@@ -404,7 +405,7 @@ class Brush: TimeSeries, Renderable{
        
         self.params.updateAll(data: data);
         BrushStorageManager.storeState(brush:self,event:"DRAW_SEGMENT");
-
+        self.isUpdated = true;
 
         self.currentDrawing!.addSegmentToStroke(behaviorId:self.behaviorId, brushId:self.id, point:Point(x:cx,y:cy),weight:weight , color: color,alpha:a, time: self.params.time)
         self.unrendered = true;
@@ -535,6 +536,7 @@ class Brush: TimeSeries, Renderable{
 
             if(states[transition.toStateId]?.name == "die"){
                 BrushStorageManager.storeState(brush:self,event:"STATE_DIE");
+                self.isUpdated = true;
                 self.die();
                
             }
@@ -573,6 +575,7 @@ class Brush: TimeSeries, Renderable{
                 }
            transitionDelayTimer  = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(Brush.completeCallback), userInfo: nil, repeats: false)
                 BrushStorageManager.storeState(brush:self,event:"STATE_TRANSITION");
+                self.isUpdated = true;
 
             }
         }
@@ -951,7 +954,7 @@ class Brush: TimeSeries, Renderable{
         self.params.update(key:"time",value:time);
         self.params.update(key:"globalTime",value:globalTime);
         BrushStorageManager.storeState(brush:self,event:"DESTROY");
-    
+        self.isUpdated = true;
 
         if(transitionDelayTimer != nil){
             transitionDelayTimer.invalidate();
