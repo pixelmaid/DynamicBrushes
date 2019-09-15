@@ -476,13 +476,12 @@ final class StylusManager:LiveManager{
             
             
             
-                
+            StylusManager.globalTime = StylusManager.getTimeElapsed();
         
-                let sample = (self.collections["stylus"]! as! StylusCollection).onStylusMove(x: x, y: y, force: force*20, angle: angle, time:StylusManager.getTimeElapsed());
+                let sample = (self.collections["stylus"]! as! StylusCollection).onStylusMove(x: x, y: y, force: force*20, angle: angle, time:StylusManager.globalTime);
             currentRecordingPackage.addProtoSample(data:sample);
                 self.moveCounter = 0;
                 
-                StylusManager.globalTime = sample["time"].intValue;
 
             }
             self.moveCounter+=1;
@@ -496,13 +495,14 @@ final class StylusManager:LiveManager{
         if(StylusManager.isLive){
             //let currentTime = Date();
             //let elapsedTime = Float(Int(currentTime.timeIntervalSince(currentStartDate!)*1000));
-            
+            StylusManager.globalTime = StylusManager.getTimeElapsed();
             for (_,stylusCollection) in self.collections{
-                (stylusCollection as! StylusCollection).onStylusUp(x: x, y:y, time:StylusManager.getTimeElapsed());
+                (stylusCollection as! StylusCollection).onStylusUp(x: x, y:y, time:StylusManager.globalTime);
             }
+            
             let sample = (self.collections["stylus"]! as! StylusCollection).exportData();
             currentRecordingPackage.addProtoSample(data:sample);
-            StylusManager.globalTime = sample["time"].intValue;
+
             _ = self.endRecording();
 
 
@@ -519,15 +519,15 @@ final class StylusManager:LiveManager{
           
             _ = beginRecording(start:currentStartDate);
             
+            StylusManager.globalTime = StylusManager.getTimeElapsed();
             
             for (_,stylusCollection) in self.collections{
-                (stylusCollection as! StylusCollection).onStylusDown(x: x, y: y, force: force*20, angle: angle, time:StylusManager.getTimeElapsed());
+                (stylusCollection as! StylusCollection).onStylusDown(x: x, y: y, force: force*20, angle: angle, time:StylusManager.globalTime);
             }
           
                 
             let sample = (self.collections["stylus"]! as! StylusCollection).exportData();
             currentRecordingPackage.addProtoSample(data:sample);
-            StylusManager.globalTime = sample["time"].intValue;
 
             
         }
