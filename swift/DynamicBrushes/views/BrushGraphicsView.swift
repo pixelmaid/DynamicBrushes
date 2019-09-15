@@ -552,7 +552,7 @@ class BrushGraphic {
         
         //init brush icon
         inputIcon = Shape(form: Circle(r: 10), fill: brushColor, stroke: Macaw.Stroke(fill: Macaw.Color.white, width:2))
-        inputIcon.place = Transform.move(dx:Double(self.x), dy:Double(self.y))
+        inputIcon.place = Transform.move(dx:Double(0), dy:Double(0))
         node.contents.append(inputIcon)
         
         let inputTextContent = BrushGraphic.newText("dx: 0, dy: 0", Transform.move(dx:0,dy:10))
@@ -561,7 +561,7 @@ class BrushGraphic {
 
         //init computedicon
         computedIcon = Shape(form: Circle(r: 10), fill: outputColor, stroke: Macaw.Stroke(fill: Macaw.Color.white, width:2))
-        computedIcon.place = Transform.move(dx:Double(self.cx), dy:Double(self.cy))
+        computedIcon.place = Transform.move(dx:Double(0), dy:Double(0))
         node.contents.append(computedIcon)
         let computedTextContent = BrushGraphic.newText("abs x: 0, abs y: 0", Transform.move(dx:0,dy:20))
         let computedTextBg = Shape(form: Rect(x:-80, y:3, w:160, h:18), fill:labelColor)
