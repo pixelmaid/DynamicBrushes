@@ -229,6 +229,8 @@ final class StylusManager:LiveManager{
     
     public func setPlaybackRate(v:Float){
         playbackRate = v;
+        Debugger.setupResetInspectionRequest();
+        print("~~ reseting queue in debugger")
         
     }
     
