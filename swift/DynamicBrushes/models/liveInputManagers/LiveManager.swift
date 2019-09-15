@@ -130,6 +130,8 @@ final class StylusManager:LiveManager{
     public let eraseEvent = Event<(String,[String:[String]])>();
     
     public let recordEvent = Event<(String,RecordingCollection)>();
+    public let stepEvent = Event<(String)>();
+    
     public let keyframeEvent = Event<(Int)>();
     public let layerEvent = Event<(String,String)>();
     public let stylusDataEvent = Event<(String, [Float])>();
@@ -376,8 +378,8 @@ final class StylusManager:LiveManager{
     private func startLoopTimer(){
         self.stopLoopTimer();
         
-      
-        playbackTimer = Timer.scheduledTimer(timeInterval: TimeInterval(0.05/playbackRate), target: self, selector: #selector(advanceRecording), userInfo: nil, repeats: false)
+        
+        playbackTimer = Timer.scheduledTimer(timeInterval: TimeInterval(0.016/playbackRate), target: self, selector: #selector(advanceRecording), userInfo: nil, repeats: false)
 
         
     }
@@ -434,7 +436,7 @@ final class StylusManager:LiveManager{
                 currentLoopingPackage = recordingPackages.first(){$0.id == currentSample["recordingId"].stringValue};
             }
             self.consumer.consume(liveManager:self, sample:currentSample);
-            
+            self.stepEvent.raise(data: "STEP");
             usedSamples.append(currentSample);
             if(currentSample["isLastinRecording"].boolValue){
                 if(self.revertToLiveOnLoopEnd){
@@ -652,6 +654,8 @@ class StylusDataConsumer{
         default:
             break
         }
+        
+        
         
     }
 }

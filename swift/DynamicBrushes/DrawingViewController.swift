@@ -1013,6 +1013,16 @@ class DrawingViewController: UIViewController, Requester{
     
     
     @objc func drawIntervalCallback(){
+        if(StylusManager.isLive){
+            performDrawOperation();
+        }
+    }
+    
+    func stepHandler(data: (String), key: String){
+        performDrawOperation();
+    }
+    
+    func performDrawOperation(){
         DispatchQueue.global(qos: .userInteractive).async {
             if(self.currentDrawing!.unrendered /*|| StylusManager.unrendered*/){
                 DispatchQueue.main.async {
@@ -1023,16 +1033,16 @@ class DrawingViewController: UIViewController, Requester{
                     StylusManager.unrendered = false;
                 }
                 self.backupNeeded = true;
-               
+                
             }
             
-       
-        
+            
+            
             
         }
         if(BehaviorManager.behaviors.count>0){
             Debugger.drawCurrentBrushState(view: self.layerContainerView.brushGraphicsView!,targetBehaviorId: BehaviorManager.currentlySelectedBehaviorId, jump:false,globalTime:StylusManager.globalTime);
-
+            
         }
     }
     
@@ -1538,7 +1548,7 @@ class DrawingViewController: UIViewController, Requester{
         _ = stylusManager.eraseEvent.addHandler(target: self, handler: DrawingViewController.stylusManagerEventHandler, key: stylusManagerKey)
         
         _ = stylusManager.layerEvent.addHandler(target: self, handler: DrawingViewController.stylusManagerEventHandler, key: stylusManagerKey)
-        
+        _ = stylusManager.stepEvent.addHandler(target: self, handler: DrawingViewController.stepHandler, key: stylusManagerKey);
         _ = Debugger.debuggerEvent.addHandler(target:self, handler: DrawingViewController.debuggerEventHandler, key: debuggerKey)
         _ = Debugger.collisionEvent.addHandler(target:self, handler: DrawingViewController.collisionEventHandler, key: debuggerKey)
 
