@@ -1030,10 +1030,10 @@ class DrawingViewController: UIViewController, Requester{
         
             
         }
-        /*if(BehaviorManager.behaviors.count>0){
-            Debugger.drawCurrentBrushState(view: self.layerContainerView.brushGraphicsView!,targetBehaviorId: BehaviorManager.behaviors.first!.key, jump:false,time:nil);
+        if(BehaviorManager.behaviors.count>0){
+            Debugger.drawCurrentBrushState(view: self.layerContainerView.brushGraphicsView!,targetBehaviorId: BehaviorManager.behaviors.first!.key, jump:false,globalTime:nil);
 
-        }*/
+        }
     }
     
 /* @objc func drawIntervalCallback(){

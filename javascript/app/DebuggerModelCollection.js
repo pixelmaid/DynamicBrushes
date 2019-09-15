@@ -103,7 +103,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 
 			inspectorDataInterval(){
 				console.log("~~~~ !!!  called data interval");
-				if (this.brushModel.brushVizQueue.length > 0) {
+				/*if (this.brushModel.brushVizQueue.length > 0) {
 					console.log("~~~~ !!!  inspect: stepping forward");
 					this.trigger("VIZ_BRUSH_STEP_THROUGH");
 				}
@@ -117,8 +117,8 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 						this.trigger("CLEAR_STEP_HIGHLIGHT");	
 						this.brushModel.toClearViz = false;					
 					}
-				}
-				else if (this.inspectorQueue.length>0){
+				}*/
+				 if (this.inspectorQueue.length>0){
 					console.log("~~~~ !!!  inspect: updating queue");
 					console.log("~~~~ inspector queue in data interval ", this.inspectorQueue);
 					let targetData = this.inspectorQueue.shift();
