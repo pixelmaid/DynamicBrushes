@@ -1227,6 +1227,8 @@ class DrawingViewController: UIViewController, Requester{
             currentBehaviorName = (data.1?["short_filename"].stringValue)!
             currentBehaviorFile = (data.1?["filename"].stringValue)!
             BrushStorageManager.clearAllStoredData();
+            //clear inspector queue
+            Debugger.setupResetInspectionRequest();
             BehaviorManager.loadData(json: data.1!["data"])
             self.behaviorPanelController?.loadBehaviors(json: data.1!["data"])
             self.synchronizeWithAuthoringClient();

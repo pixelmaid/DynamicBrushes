@@ -112,7 +112,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 				}
 				else if (this.brushModel.brushVizQueue.length == 0) {
 					if (this.manualSteppingOn) {
-						console.log("~~~~ !!! inspect: stepping forward ", this.brushModel.brushVizQueue);
+						console.log("~~~~ !!! inspect: st qqepping forward ", this.brushModel.brushVizQueue);
 						this.stepDrawingViewForward();
 					} else if (this.brushModel.toClearViz){
 						console.log("~~~~ !!!  inspect: clearing highlights");
