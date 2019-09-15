@@ -62,7 +62,7 @@ function(DebuggerModel) {
         update(data) {
             let oldData = JSON.parse(JSON.stringify(this.data));
             this.data = data;
-            console.log("~~ !! updated old data dx " , this.getParam(oldData['behaviors'][0]['brushes'][0]['inspector'], "dx"), "new data dx ", this.getParam(data['behaviors'][0]['brushes'][0]['inspector'], "dx"));
+            // console.log("~~ !! updated old data dx " , this.getParam(oldData['behaviors'][0]['brushes'][0]['inspector'], "dx"), "new data dx ", this.getParam(data['behaviors'][0]['brushes'][0]['inspector'], "dx"));
 
             if (this.collection.chartViewManager.currentView) {
                 let currentBehaviorId = this.collection.chartViewManager.currentView.id;
@@ -73,6 +73,7 @@ function(DebuggerModel) {
                 });
                 let targetBrushData = targetBehaviorData.brushes[selectedIndex];
 				console.log("~~~~ !!!  inspect: targetBrushData", targetBrushData);
+
                 if (this.stepThroughOn && this.collection.manualSteppingOn) {
                     let params = ["sy", "rotation", "dx", "dy", "weight", "hue", "lightness", "saturation", "alpha"];
                 	let oldDataCopy = JSON.parse(JSON.stringify(oldData));
@@ -84,10 +85,11 @@ function(DebuggerModel) {
                         combinedData = this.combineData(oldCombinedData, this.data, params[i], 0, 0);
                         this.dataVizDict[params[i]] = combinedData;
                     }
-                    this.data = oldData;	
-                    this.processStepData(targetBrushData);
-                    console.log("~~ !! updated data to oldData. new data sx:  ", this.getParam(data['behaviors'][0]['brushes'][0]['inspector'], "dx"), " old data sx: ", this.getParam(this.data['behaviors'][0]['brushes'][0]['inspector'], "dx"));
-             
+                    if (this.collection.manualSteppingOn) {
+	                    this.data = oldData;	
+	                    console.log("~~ !! updated data to oldData. new data sx:  ", this.getParam(data['behaviors'][0]['brushes'][0]['inspector'], "dx"), " old data sx: ", this.getParam(this.data['behaviors'][0]['brushes'][0]['inspector'], "dx"));
+                    }           
+	                this.processStepData(targetBrushData);  
                 }
             }
 
@@ -135,10 +137,10 @@ function(DebuggerModel) {
         //     transitionId: data.prevState,
         //     type: "transition"
         // });
-        // this.brushVizQueue.push({
-        //     transitionId: data.transitionId,
-        //     type: "transition"
-        // });
+        this.brushVizQueue.push({
+            transitionId: data.transitionId,
+            type: "transition"
+        });
         for (var i = 0; i < data.methods.length; i++) {
             data.methods[i].type = "method";
             this.brushVizQueue.push(data.methods[i]);

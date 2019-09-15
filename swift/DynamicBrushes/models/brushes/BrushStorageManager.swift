@@ -83,7 +83,7 @@ class BrushStorageManager{
         let behaviors = BrushStorageManager.paramStorage;
         var behaviorListJSON = [JSON]();
 
-        /*for (behaviorId,brushes) in behaviors {
+        for (behaviorId,brushes) in behaviors {
             let behaviorName = behaviorNames[behaviorId]!;
             var brushesListJSON = [JSON]();
             for (brushId,paramList) in brushes {
@@ -120,7 +120,7 @@ class BrushStorageManager{
             behaviorJSON["brushes"] = JSON(brushesListJSON);
             behaviorListJSON.append(behaviorJSON);
             
-        }*/
+        }
         debugData["behaviors"] = JSON(behaviorListJSON);
         return debugData;
     }
