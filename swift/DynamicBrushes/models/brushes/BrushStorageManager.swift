@@ -98,6 +98,8 @@ class BrushStorageManager{
                     if(filteredParam != nil){
                         var brushJSON = JSON.init(parseJSON:filteredParam!.value);
                         brushesListJSON.append(brushJSON);
+                    } else {
+                        print("~~~ time" ,globalTime, paramList)
                     }
                     
                 }
