@@ -359,7 +359,7 @@ final class Debugger {
             let targetIndex = BehaviorManager.activeInstance;
             let targetBehavior =  BehaviorManager.behaviors[targetBehaviorId]!;
             let targetBrush = targetBehavior.brushInstances[targetIndex];
-            if(targetBrush.unrendered || jump == true){
+            if(targetBrush.unrendered || jump == true || StylusManager.unrendered){
             
             for currentData in Debugger.drawingDebugDataQueue {
                 //double check view values since they arent persistent
