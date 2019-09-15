@@ -241,20 +241,26 @@ final class Debugger {
     }
     
     @objc static func cacheDebugData(globalTime:Int){
-        let behaviorId = BehaviorManager.currentlySelectedBehaviorId!;
-        let activeInstance = BehaviorManager.activeInstance;
-        let behavior:BehaviorDefinition = BehaviorManager.behaviors[behaviorId]!;
-        let brush = behavior.brushInstances[activeInstance];
-        //if(brush.isUpdated){
-            let brushId = behavior.brushInstances[activeInstance].id;
-            var debugData = Debugger.generateDebugData(behaviorId: behaviorId, brushId: brushId, brushState: nil ,globalTime: globalTime);
-            if(debugData != nil){
-                debugData!["uid"] = JSON(NSUUID().uuidString);
-                   Debugger.programDebugDataQueue.append(debugData!);
-                Debugger.drawingDebugDataQueue.append(debugData!);
-            }
-            brush.isUpdated = false;
+            let behaviorId = BehaviorManager.currentlySelectedBehaviorId!;
+        if(behaviorId != nil && !behaviorId.isEmpty){
+
+            let activeInstance = BehaviorManager.activeInstance;
+            let behavior:BehaviorDefinition = BehaviorManager.behaviors[behaviorId]!;
+            let brush = behavior.brushInstances[activeInstance];
+            //if(brush.isUpdated){
+                let brushId = behavior.brushInstances[activeInstance].id;
+                var debugData = Debugger.generateDebugData(behaviorId: behaviorId, brushId: brushId, brushState: nil ,globalTime: globalTime);
+                if(debugData != nil){
+                    debugData!["uid"] = JSON(NSUUID().uuidString);
+                       Debugger.programDebugDataQueue.append(debugData!);
+                    Debugger.drawingDebugDataQueue.append(debugData!);
+                }
+                brush.isUpdated = false;
         //}
+        }
+        else{
+            print("==========WARNING, currently selected behavior is:",behaviorId,"=================");
+        }
         
     }
     
@@ -379,7 +385,7 @@ final class Debugger {
                 let inputInfo = Debugger.getStylusInputValue(debugData: currentData["input"]["inputGlobal"]);
             
                 targetBrush.drawIntoContext(context:view,brushInfo:debugBrushStateStorage, stylusInfo:inputInfo)
-                //view.scene!.drawGenerator(valArray: generatorValArray)
+                view.scene!.drawGenerator(valArray: generatorValArray)
                 
                 brushIds.insert(targetBrush.id)
                 
