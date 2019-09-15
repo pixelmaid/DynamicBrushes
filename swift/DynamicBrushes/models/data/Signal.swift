@@ -92,7 +92,17 @@ class Signal:Observable<Float>{
     }
     
     func getAtIndex(index:Int)->Float{
-        return self.signalBuffer[index];
+        if(self.signalBuffer.count>index){
+            return self.signalBuffer[index];
+        }
+        else if (self.signalBuffer.count>0){
+            print("==============ERROR TRIED TO ACCESS SIGNAL INDEX GREATER THAN SIGNAL BUFFER COUNT==============");
+            return self.signalBuffer.last!;
+        }
+        else{
+            print("==============ERROR TRIED TO ACCESS SIGNAL INDEX BUT SIGNAL COUNT IS 0==============");
+            return 0;
+        }
     }
     
     

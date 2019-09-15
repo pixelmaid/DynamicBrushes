@@ -18,7 +18,7 @@ define(["app/Emitter"],
 
 					if (e.keyCode == 39) {
 						if (self.model.collection.manualSteppingOn) {
-				          console.log("~~~~  next pressed, brush queue is ", this.model.brushVizQueue);
+				          // console.log("~~~~  next pressed, brush queue is ", this.model.brushVizQueue);
 		            	  self.model.collection.inspectorDataInterval();							
 						}
 					}

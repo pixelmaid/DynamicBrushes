@@ -96,26 +96,34 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 			}
 
 			processInspectorDataQueue(dataQueue){
+				// console.log("~~!! data queue is ", dataQueue);
 				this.inspectorQueue.push.apply(this.inspectorQueue,dataQueue);
 
 			}
 
 			inspectorDataInterval(){
-				if (this.brushModel.brushVizQueue.length == 0) {
+				console.log("~~~~ !!!  called data interval");
+				if (this.brushModel.brushVizQueue.length > 0) {
+					console.log("~~~~ !!!  inspect: stepping forward");
+					this.trigger("VIZ_BRUSH_STEP_THROUGH");
+				}
+				else if (this.brushModel.brushVizQueue.length == 0) {
 					if (this.manualSteppingOn) {
+						console.log("~~~~ !!! inspect: stepping forward");
 						this.stepDrawingViewForward();
 					} else if (this.brushModel.toClearViz){
+						console.log("~~~~ !!!  inspect: clearing highlights");
 						//clear highlights -- assuming last one is alpha
-						this.trigger("CLEAR_STEP_HIGHLIGHT"); //only problem is this gets called a lot while passive?	
-						console.log("~~ dehighlighted viz");
+						this.trigger("CLEAR_STEP_HIGHLIGHT");	
 						this.brushModel.toClearViz = false;					
 					}
 				}
-				if (this.brushModel.brushVizQueue.length > 0) {
-					this.trigger("VIZ_BRUSH_STEP_THROUGH");
-				}
 				else if (this.inspectorQueue.length>0){
+					console.log("~~~~ !!!  inspect: updating queue");
+					console.log("~~~~ inspector queue in data interval ", this.inspectorQueue);
 					let targetData = this.inspectorQueue.shift();
+					// console.log("~~~~ global time in first queue element is ", targetData["brush"][
+						// "behaviors"][0]["brushes"][0]["params"]["globalTime"]);
 					// console.log("~~~ processing inspector queue ", targetData);
 					this.processInspectorData(targetData);
 
@@ -126,7 +134,6 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 			processInspectorData(newData) {
 				if(newData.type == "state"){
 					this.processStateData(newData);
-					// if brush queue. then an event that trigger the HANDLE_VIZ 
 				}
 				else if (newData.type == "highlight"){
 					this.highlight(newData);

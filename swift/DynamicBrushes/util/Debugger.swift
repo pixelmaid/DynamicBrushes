@@ -238,7 +238,6 @@ final class Debugger {
     
     @objc static func cacheDebugData(globalTime:Int){
         let debugData = Debugger.generateDebugData(behaviorId: nil, brushId: nil, brushState: nil ,globalTime: globalTime,localTime: nil);
-        
         Debugger.programDebugDataQueue.append(debugData);
         Debugger.drawingDebugDataQueue.append(debugData);
         

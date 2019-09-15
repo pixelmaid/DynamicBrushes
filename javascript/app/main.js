@@ -97,7 +97,7 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
                 if (status == 'stepping') {
                     debuggerModelCollection.initializeStepping();
                     $('#step-mode-change').text('turn step off');
-                    debuggerModelCollection.inspectorDataInterval();                            
+                    // debuggerModelCollection.inspectorDataInterval();                            
                 }
 
             } else if (data.type == "collection_data") {
@@ -433,9 +433,11 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
             if (!debuggerModelCollection.manualSteppingOn) { //turn on 
                 debuggerModelCollection.initializeStepping();
                 $(this).text('turn step off');
+                debuggerModelCollection.clearInspectorDataQueue();
             } else { //turn off
                 debuggerModelCollection.deinitializeStepping();
                 $(this).text('turn step on');
+                debuggerModelCollection.clearInspectorDataQueue();
             }
         });
 
