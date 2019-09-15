@@ -103,6 +103,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 
 			inspectorDataInterval(){
 				console.log("~~~~ !!!  called data interval");
+
 				if (this.brushModel.brushVizQueue.length > 0) {
 					console.log("~~~~ !!!  inspect: visualizing brush");
 					this.trigger("VIZ_BRUSH_STEP_THROUGH");
@@ -119,6 +120,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 						this.trigger("CLEAR_STEP_HIGHLIGHT");	
 						this.brushModel.toClearViz = false;					
 					}
+
 					if (this.inspectorQueue.length>0){
 						console.log("~~~~ !!!  inspect: updating queue");
 						console.log("~~~~ inspector queue in data interval ", this.inspectorQueue);

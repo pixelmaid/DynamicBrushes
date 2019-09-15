@@ -73,11 +73,36 @@ class BrushStorageManager{
         stateData["constraints"] = brush.states[brush.currentState]!.getConstrainedPropertyNames(targetBrush:brush);
         stateData["methods"] = brush.transitions[brush.prevTransition]!.getMethodNames();
         
-        BrushStorageManager.paramStorage[brush.behaviorId]![brush.id]![brush.params.time] = stateData.rawString();
+        BrushStorageManager.paramStorage[brush.behaviorId]![brush.id]![brush.params.globalTime] = stateData.rawString();
         
     }
     
-   static func accessStateAtTime(globalTime:Int?,behaviorNames:[String:String])->JSON{
+    static func accessSingleBrushStateAtTime(globalTime:Int,behaviorId:String,behaviorName:String, brushId:String)->JSON?{
+        var debugData:JSON = [:]
+        var behaviorListJSON = [JSON]();
+        var brushesListJSON = [JSON]();
+
+        debugData["groupName"] = JSON("brush");
+        let behaviorStorage = BrushStorageManager.paramStorage;
+        let targetBehaviorData = behaviorStorage[behaviorId]!;
+        let brushStateData = targetBehaviorData[brushId]!
+        let targetBrushData = brushStateData[globalTime];
+        guard targetBrushData != nil else{
+            return nil
+        }
+        brushesListJSON.append(JSON.init(parseJSON:targetBrushData!));
+        var behaviorJSON:JSON = [:];
+        behaviorJSON["id"] = JSON(behaviorId);
+        behaviorJSON["name"] = JSON(behaviorName);
+        behaviorJSON["brushes"] = JSON(brushesListJSON);
+        behaviorListJSON.append(behaviorJSON);
+        debugData["behaviors"] = JSON(behaviorListJSON);
+        return debugData;
+
+
+    }
+    
+   /*static func accessStateAtTime(globalTime:Int?,behaviorNames:[String:String])->JSON{
         var debugData:JSON = [:]
         debugData["groupName"] = JSON("brush");
         let behaviors = BrushStorageManager.paramStorage;
@@ -123,18 +148,18 @@ class BrushStorageManager{
         }
         debugData["behaviors"] = JSON(behaviorListJSON);
         return debugData;
-    }
+    }*/
     
     
     
-    static func accessState(behaviorId:String,brushId:String,time:Int)->BrushStateStorage?{
+    static func accessState(behaviorId:String,brushId:String,globalTime:Int)->BrushStateStorage?{
         guard let brushList = BrushStorageManager.paramStorage[behaviorId] else {
             return nil;
         }
         guard let brush = brushList[brushId] else{
             return nil;
         }
-        guard let stateString = brush[time] else{
+        guard let stateString = brush[globalTime] else{
             return nil;
         }
         

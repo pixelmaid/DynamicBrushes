@@ -108,10 +108,10 @@ final class Debugger {
         
         let brushId = stroke.brushId;
         let behaviorId = stroke.behaviorId;
-        
+        let globalTime = segment.globalTime;
         let localTime = segment.time;
-        let brushState = BrushStorageManager.accessState(behaviorId: behaviorId, brushId: brushId, time: localTime);
-        let globalTime = brushState!.globalTime;
+        
+        let brushState = BrushStorageManager.accessState(behaviorId: behaviorId, brushId: brushId, globalTime: globalTime);
         
         let debugData = JSON(Debugger.generateDebugData(behaviorId: behaviorId, brushId: brushId, brushState: brushState, globalTime: globalTime, localTime: localTime));
         //print("debug data",debugData)
@@ -120,7 +120,7 @@ final class Debugger {
         let socketRequest = Request(target: "socket", action: "send_inspector_data", data: [debugData], requester: RequestHandler.sharedInstance)
         RequestHandler.addRequest(requestData: socketRequest)
         
-        self.drawCurrentBrushState(view: Debugger.brushGraphicsView!, targetBehaviorId: behaviorId,jump:true,time:localTime)
+        //self.drawCurrentBrushState(view: Debugger.brushGraphicsView!, targetBehaviorId: behaviorId,jump:true,globalTime:localTime)
         
     }
     
@@ -205,26 +205,29 @@ final class Debugger {
         return debugData;
     }
     
-    static func generateBrushDebugData(brushState:BrushStateStorage?,globalTime:Int)->JSON{
-        let behaviorNames = BehaviorManager.getBehaviorNames();
-        
-        guard brushState != nil else{
-            return BrushStorageManager.accessStateAtTime(globalTime: globalTime, behaviorNames: behaviorNames)
-        }
-        return BrushStorageManager.accessStateAtTime(globalTime: brushState?.globalTime, behaviorNames: behaviorNames)
+    static func generateBrushDebugData(behaviorId:String, brushId:String, globalTime:Int)->JSON?{
+        let behaviorName = BehaviorManager.behaviors[behaviorId]!.name;
+        let brushData = BrushStorageManager.accessSingleBrushStateAtTime(globalTime: globalTime, behaviorId: behaviorId,behaviorName: behaviorName, brushId: brushId);
+        return brushData
     }
     
     
-    static public func generateDebugData(behaviorId:String?,brushId:String?, brushState:BrushStateStorage?,globalTime:Int,localTime:Int?)->JSON{
-        let inputData = Debugger.generateInputDebugData(behaviorId: behaviorId, brushId: brushId, globalTime: globalTime,localTime: localTime);
-        let brushData = Debugger.generateBrushDebugData(brushState:brushState,globalTime:globalTime);
-        let outputData = Debugger.generateOutputDebugData(globalTime:globalTime,brushState:brushState);
-        var debugData:JSON = [:];
-        debugData["brush"] = brushData;
-        debugData["input"] = inputData;
-        debugData["output"] = outputData;
-        debugData["type"] = "state";
-        return debugData;
+    static public func generateDebugData(behaviorId:String,brushId:String, brushState:BrushStateStorage?,globalTime:Int,localTime:Int?)->JSON?{
+        let brushData = Debugger.generateBrushDebugData(behaviorId: behaviorId, brushId: brushId, globalTime: globalTime)
+        
+        if(brushData == nil){
+            return nil
+        }
+        else{
+            let inputData = Debugger.generateInputDebugData(behaviorId: behaviorId, brushId: brushId, globalTime: globalTime,localTime: localTime);
+            let outputData = Debugger.generateOutputDebugData(globalTime:globalTime,brushState:brushState);
+            var debugData:JSON = [:];
+            debugData["brush"] = brushData!;
+            debugData["input"] = inputData;
+            debugData["output"] = outputData;
+            debugData["type"] = "state";
+            return debugData;
+        }
     }
     
     @objc static func fireDebugUpdate(){
@@ -237,9 +240,15 @@ final class Debugger {
     }
     
     @objc static func cacheDebugData(globalTime:Int){
-        let debugData = Debugger.generateDebugData(behaviorId: nil, brushId: nil, brushState: nil ,globalTime: globalTime,localTime: nil);
-        Debugger.programDebugDataQueue.append(debugData);
-        Debugger.drawingDebugDataQueue.append(debugData);
+        let behaviorId = BehaviorManager.currentlySelectedBehaviorId!;
+        let activeInstance = BehaviorManager.activeInstance;
+        let behavior:BehaviorDefinition = BehaviorManager.behaviors[behaviorId]!;
+        let brushId = behavior.brushInstances[activeInstance].id;
+        let debugData = Debugger.generateDebugData(behaviorId: behaviorId, brushId: brushId, brushState: nil ,globalTime: globalTime,localTime: nil);
+        if(debugData != nil){
+            Debugger.programDebugDataQueue.append(debugData!);
+            Debugger.drawingDebugDataQueue.append(debugData!);
+        }
         
     }
     
@@ -348,7 +357,7 @@ final class Debugger {
     }
     
     
-    static public func drawCurrentBrushState(view:BrushGraphicsView,targetBehaviorId:String,jump:Bool, time:Int?){
+    static public func drawCurrentBrushState(view:BrushGraphicsView,targetBehaviorId:String,jump:Bool, globalTime:Int?){
         //let behaviors = BehaviorManager.getAllBrushInstances();
         //check to see which brushes are "unrendered"
         // pass them the UI view and draw into it
@@ -366,8 +375,8 @@ final class Debugger {
                 refreshVisualizations(view: view)
                 let debugInputGlobal = currentData["input"]["inputGlobal"]
                 let debugBrush:BrushStateStorage;
-                if(time != nil){
-                    debugBrush = BrushStorageManager.accessState(behaviorId: targetBehaviorId, brushId: targetBrush.id, time: time!)!
+                if(globalTime != nil){
+                    debugBrush = BrushStorageManager.accessState(behaviorId: targetBehaviorId, brushId: targetBrush.id, globalTime: globalTime!)!
                 }
                 else{
                     debugBrush = targetBrush.params;

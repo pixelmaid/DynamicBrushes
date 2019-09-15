@@ -110,6 +110,7 @@ class BehaviorManager{
             behavior.parseJSON(json: value)
             behavior.createBehavior(drawing:drawing);
             BehaviorManager.behaviors[id] = behavior;
+            BehaviorManager.currentlySelectedBehaviorId = id;
             
         }
     }
