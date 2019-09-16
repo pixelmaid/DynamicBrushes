@@ -1112,10 +1112,6 @@ span.refresh{
   left: 20px;
 }
 
-#inspector-output {
-  position:absolute;
-  right:0px;
-}
 
 .inspector_box:after {
   bottom: 100%;
@@ -1261,7 +1257,7 @@ position: absolute;
   bottom: 20px;
   left: 20px; 
   max-height: 400px;
-  width: 680px;
+  width: 690px;
 }
 .inspector-container {
   float: left;
