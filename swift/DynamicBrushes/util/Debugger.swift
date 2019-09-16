@@ -120,7 +120,7 @@ final class Debugger {
         let socketRequest = Request(target: "socket", action: "send_inspector_data", data: [debugData], requester: RequestHandler.sharedInstance)
         RequestHandler.addRequest(requestData: socketRequest)
         
-        //self.drawCurrentBrushState(view: Debugger.brushGraphicsView!, targetBehaviorId: behaviorId,jump:true,globalTime:localTime)
+        self.drawCurrentBrushState(view: Debugger.brushGraphicsView!, targetBehaviorId: behaviorId,jump:true,globalTime:localTime)
         
     }
     
