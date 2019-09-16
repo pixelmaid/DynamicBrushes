@@ -81,14 +81,17 @@ public class BrushGraphicsScene {
         for (_, brush) in self.activeBrushIds {
             if brush.id == id {
 //                print("## updating brush with id ", id)
-                brush.updateBrushIcon(r:r, ox: ox, oy: oy, sx:sx, sy:sy)
-                brush.moveComputedLocation(cx: cx, cy: cy)
-                brush.moveBrushLocation(x: x, y: y, dx:dx,dy:dy)
-                brush.moveStylusLocation(x: ix, y: iy, dx:idx, dy:idy, force:force)
-                self.lastPoint = (x, y)
-                if state == 0 { //penDown
-                    
+                if Debugger.brushGfx {
+                    brush.updateBrushIcon(r:r, ox: ox, oy: oy, sx:sx, sy:sy)
+                    brush.moveBrushLocation(x: x, y: y, dx:dx,dy:dy)
                 }
+                if Debugger.inputGfx {
+                    brush.moveStylusLocation(x: ix, y: iy, dx:idx, dy:idy, force:force)
+                }
+                if Debugger.outputGfx {
+                    brush.moveComputedLocation(cx: cx, cy: cy)
+                }
+                self.lastPoint = (x, y)
             }
         }
     }
@@ -367,6 +370,7 @@ public class BrushGraphicsScene {
     }
     
     public func drawGenerator(valArray: [(Double, Int, String, Float )]) {
+        if !Debugger.inputGfx {return}
        //val array is value, time, type
 //        print("~~~~ drawing generator, active brushIds are ", self.activeBrushIds.count)
         for (_, brush) in self.activeBrushIds {
