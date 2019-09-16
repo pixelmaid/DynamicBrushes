@@ -19,7 +19,7 @@
 	<div id="groupName"> 
 		<h4 class="group-title-inspector output">{{this.name}} Output</h4>
 		{{#each this.brushes}} 
-			<input id={{groupName}}tab_{{this.id}} type="radio" index ="{{@index}}" name="{{groupName}}tabs" {{#if this.selectedIndex}}checked{{/if}}>
+			<input id="{{groupName}}tab_{{this.id}}" type="radio" index ="{{@index}}" name="{{groupName}}tabs" {{#if this.selectedIndex}}checked{{/if}}>
 			<label class = "brushlabels" for="{{groupName}}tab_{{this.id}}"> {{this.index}}</label>
 		{{/each}}
 

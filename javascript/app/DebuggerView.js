@@ -208,12 +208,13 @@ define(["jquery", "handlebars", "app/Emitter"],
        }*/
 
       initInspector(data) {
-        // console.log("~~~ init inspector, data is ", data);
+        console.log("~~~ init inspector, data is ", data);
         if (!data) return;
         var groupName;
         let self = this;
         var html = this.template(data);
         this.el.html(html);
+
 
         if (data["groupName"]) {
           groupName = data["groupName"];
@@ -231,6 +232,8 @@ define(["jquery", "handlebars", "app/Emitter"],
           self.modifyInspectorBrush();          
         }
         else if (groupName == 'output') {
+          console.log("~~ output!!");
+          console.log("~~ html is ", html);
           self.modifyInspectorOutput();          
         }
 

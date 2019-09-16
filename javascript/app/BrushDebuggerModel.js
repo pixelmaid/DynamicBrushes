@@ -72,7 +72,7 @@ function(DebuggerModel) {
                     return element.id == currentBehaviorId;
                 });
                 let targetBrushData = targetBehaviorData.brushes[selectedIndex];
-				console.log("~~~~ !!!  inspect: targetBrushData", targetBrushData);
+				// console.log("~~~~ !!!  inspect: targetBrushData", targetBrushData);
 
                 if (this.stepThroughOn && this.collection.manualSteppingOn) {
                     let params = ["sy", "rotation", "dx", "dy", "weight", "hue", "lightness", "saturation", "alpha"];

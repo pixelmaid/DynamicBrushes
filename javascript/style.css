@@ -1112,6 +1112,10 @@ span.refresh{
   left: 20px;
 }
 
+#inspector-output {
+  position:absolute;
+  right:0px;
+}
 
 .inspector_box:after {
   bottom: 100%;
