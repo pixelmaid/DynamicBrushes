@@ -389,7 +389,7 @@ final class Debugger {
                 let inputInfo = Debugger.getStylusInputValue(debugData: currentData["input"]["inputGlobal"]);
             
                 targetBrush.drawIntoContext(context:view,brushInfo:debugBrushStateStorage, stylusInfo:inputInfo)
-                //view.scene!.drawGenerator(valArray: generatorValArray)
+                view.scene!.drawGenerator(valArray: generatorValArray)
                 
                 brushIds.insert(targetBrush.id)
                 
