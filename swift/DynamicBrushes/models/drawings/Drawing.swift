@@ -302,7 +302,7 @@ class Drawing: TimeSeries, Hashable, Renderable{
     }
     
     func newStroke(behaviorId:String, brushId:String)->Stroke{
-       
+        print("~~ newstroke called in drawing")
         let stroke = Stroke(brushId:brushId,behaviorId:behaviorId);
         if (self.activeStrokes[behaviorId] == nil){
             self.activeStrokes[behaviorId] = [String:[Stroke]]();

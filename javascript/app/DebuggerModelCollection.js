@@ -97,7 +97,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 			}
 
 			processInspectorDataQueue(dataQueue){
-				console.log("~~!! data queue is ", dataQueue);
+				// console.log("~~!! data queue is ", dataQueue);
 				this.inspectorQueue.push.apply(this.inspectorQueue,dataQueue);
 
 			}
@@ -106,25 +106,25 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 				// console.log("~~~~ !!!  called data interval");
 
 				if (this.brushModel.brushVizQueue.length > 0) {
-					console.log("~~~~ !!!  inspect: visualizing brush");
+					// console.log("~~~~ !!!  inspect: visualizing brush");
 					this.trigger("VIZ_BRUSH_STEP_THROUGH");
-					console.log("~~~~ !!! brushVizLen at end ", this.brushModel.brushVizQueue.length);
+					// console.log("~~~~ !!! brushVizLen at end ", this.brushModel.brushVizQueue.length);
 					return;
 				}
 				else if (this.brushModel.brushVizQueue.length == 0) {
 					if (this.manualSteppingOn) {
-						console.log("~~~~ !!! inspect: st qqepping forward ", this.brushModel.brushVizQueue);
+						// console.log("~~~~ !!! inspect: st qqepping forward ", this.brushModel.brushVizQueue);
 						this.stepDrawingViewForward();
 					} else if (this.brushModel.toClearViz){
-						console.log("~~~~ !!!  inspect: clearing highlights");
+						// console.log("~~~~ !!!  inspect: clearing highlights");
 						//clear highlights -- assuming last one is alpha
 						this.trigger("CLEAR_STEP_HIGHLIGHT");	
 						this.brushModel.toClearViz = false;					
 					}
 
 					if (this.inspectorQueue.length>0){
-						console.log("~~~~ !!!  inspect: updating queue");
-						console.log("~~~~ inspector queue in data interval ", this.inspectorQueue);
+						// console.log("~~~~ !!!  inspect: updating queue");
+						// console.log("~~~~ inspector queue in data interval ", this.inspectorQueue);
 						let targetData = this.inspectorQueue.shift();
 						// console.log("~~~~ global time in first queue element is ", targetData["brush"][
 							// "behaviors"][0]["brushes"][0]["params"]["globalTime"]);

@@ -274,6 +274,7 @@ h1{
 
 .relative_expression{
   border: none;
+  position: relative;
 }
 
 div.text_entry, div.property{
@@ -1107,6 +1108,8 @@ span.refresh{
   padding:7px;
   z-index: 1000;
   color: #000;
+  top: 30px;
+  left: 20px;
 }
 
 

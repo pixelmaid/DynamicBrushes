@@ -265,6 +265,7 @@ class LayerContainerView: UIView, TouchTarget {
     
     func addStroke(id:String){
         if(self.activeLayer != nil){
+//            print("~~~~ addStroke called with active layer")
             self.activeLayer?.beginStroke(id: id)
         }
     }

@@ -133,7 +133,7 @@ function(DebuggerModel) {
         for (var i = 0; i < data.constraints.length; i++) {
             data.constraints[i].type = "binding";
             this.brushVizQueue.push(data.constraints[i]);
-			console.log("~~~~ !!! pushed stuff on viz queue, now ", this.brushVizQueue);
+			// console.log("~~~~ !!! pushed stuff on viz queue, now ", this.brushVizQueue);
         }
     }
 

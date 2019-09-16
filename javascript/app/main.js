@@ -442,5 +442,18 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
 
 
 
+        $('.block.property.palette').hover(function() {
+            if ($(this).hasClass('sensor')) return;
+            console.log("~~~ hover over ", $(this).attr('mappingId'));
+
+        },
+        function() { //out 
+            if ($(this).hasClass('sensor')) return;
+            console.log("~~~ hover goodbye ", $(this).attr('mappingId'));
+
+        });
+        
+
+
     }
     );

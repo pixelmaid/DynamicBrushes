@@ -81,12 +81,13 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
     
     func beginStroke(id:String){
         if(!self.isHidden){
-           
+           print("~~~ begin strokes called")
             autoreleasepool {
                 if(jotView.state == nil){
                     #if DEBUG
                         print("state is nil")
                     #endif
+                    print("~~~ state is nil")
                     return;
                 }
                 let texture: JotBrushTexture
@@ -105,6 +106,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
                 newStroke!.delegate = jotView as JotStrokeDelegate;
                 
                     activeStrokes[id] = newStroke!;
+                    print("~~~ added ", id, " to active Strokes")
                     allStrokes.append(newStroke!)
                 
             }
@@ -138,6 +140,7 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
     
     func renderStrokeById(currentStrokeId: String, toPoint:CGPoint,toWidth:CGFloat,toColor:UIColor!){
         guard let currentStroke:JotStroke = activeStrokes[currentStrokeId] else {
+            print(activeStrokes, activeStrokes.count)
             print("no stroke by id",currentStrokeId);
             return;
             

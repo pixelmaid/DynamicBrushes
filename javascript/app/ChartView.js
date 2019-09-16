@@ -614,7 +614,6 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                 var html = mappingTemplate(mapping_data);
                 console.log("target_state = ", target_state, mapping_data);
                 $("#" + target_state + " .state .mappings").append(html);
-
                 var target = $("#" + mapping_data.mappingId + " .relative_expression .block");
 
                 console.log("expressionId =", mapping_data.expressionId);
@@ -624,6 +623,8 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
 
                 console.log("target droppable", $('#' + mapping_data.mappingId).find(".reference_expression"));
                 var el = $($('#' + mapping_data.mappingId).find(".reference_expression")[0]);
+                var toolTipHoverBlock = $($('#' + mapping_data.mappingId).find(".block.property.palette")[0]);
+                this.addRangeHover(toolTipHoverBlock);
                 this.setDropFunctionsForExpression(el, expression.id, mapping_data.mappingId);
                 this.instance.repaintEverything();
 
@@ -745,6 +746,45 @@ define(["jquery", "jquery.panzoom", "contextmenu", "jquery-ui", "jsplumb", "edit
                         el.css({
                             left: position.left,
                             top: position.top + 30,
+                            visibility: "visible"
+                        });
+                    },
+                    function() {
+
+                        el.css({
+                            visibility: "hidden"
+                        });
+
+                    });
+            }
+
+            addRangeHover(target) {
+                
+                var el = target.prev();
+                let name = target.attr('name');
+                var text = "[0.0,1.0]";
+                switch (name) {
+                    case "rotation":
+                        text = "[0,360]";
+                        break;
+                    case "dx":
+                    case "dy":
+                        text = "[-∞,∞]";
+                        break;
+                    case "weight":
+                        text = "[0,150]";
+                        break;
+                    default:
+                        break;
+                }
+                el.text(text);
+                target.hover(
+                    function() {
+                        // var position = $(this).offset();
+                        // console.log("~~ pos is ", position);
+                        el.css({
+                            // left: position.left,
+                            // top: position.top + 30,
                             visibility: "visible"
                         });
                     },
