@@ -80,8 +80,8 @@ class BrushStorageManager{
     
     static func removeCachedData(behaviorId:String, brushId:String, startGlobalTime:Int, endGlobalTime:Int) {
         //find target storage and remove the ones bt time
-        print("~~~ length of storage before" , BrushStorageManager.paramStorage[behaviorId]![brushId]!.count)
-
+//        print("~~~ length of storage before" , BrushStorageManager.paramStorage[behaviorId]![brushId]!.count)
+//
         let timeDict = BrushStorageManager.paramStorage[behaviorId]![brushId]!
         for (time, val) in timeDict {
             if time >= startGlobalTime && time <= endGlobalTime {
@@ -89,7 +89,7 @@ class BrushStorageManager{
 //                print("~~ removed cached data at ", time)
             }
         }
-        print("~~~ length of storage is now" , BrushStorageManager.paramStorage[behaviorId]![brushId]!.count)
+//        print("~~~ length of storage is now" , BrushStorageManager.paramStorage[behaviorId]![brushId]!.count)
     }
     
     static func accessSingleBrushStateAtTime(globalTime:Int,behaviorId:String,behaviorName:String, brushId:String)->JSON?{
@@ -108,7 +108,7 @@ class BrushStorageManager{
         }
         
         brushesListJSON.append(JSON.init(parseJSON:targetBrushData!));
-        print(JSON.init(parseJSON:targetBrushData!)["event"]);
+//        print(JSON.init(parseJSON:targetBrushData!)["event"]);
         var behaviorJSON:JSON = [:];
         behaviorJSON["id"] = JSON(behaviorId);
         behaviorJSON["name"] = JSON(behaviorName);

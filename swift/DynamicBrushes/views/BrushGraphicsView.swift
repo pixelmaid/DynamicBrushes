@@ -1031,7 +1031,7 @@ class BrushGraphic {
     func updateGeneratorDot(v: Double, t: Int, type:String, i: Int, freq:Float) {
 //        print("dot contents are ~~~~ ", self.generator.contents.count, " i is ", i)
         let sineMultiplier = Int(1/freq)*2
-        print("~~~ sine period is", sineMultiplier)
+//        print("~~~ sine period is", sineMultiplier)
         var biggestMultiplier = 100
         if sineMultiplier > 100 {
             biggestMultiplier = sineMultiplier
@@ -1042,7 +1042,7 @@ class BrushGraphic {
         }
         else if type == "sine" { //period is 1/freq
             multiplier = Int(biggestMultiplier/sineMultiplier)
-            print("~~~ sine mult is " , multiplier)
+//            print("~~~ sine mult is " , multiplier)
         }
         if i >= self.generator.contents.count {
             reinitGen(i: i)
@@ -1054,7 +1054,7 @@ class BrushGraphic {
             gText.text = type+", time: "+String(t)+", value: "+String((v*100).rounded()/100)
         } else {
             //reinit
-            print("~~~ reinit in update dot")
+//            print("~~~ reinit in update dot")
             reinitGen(i: i)
             updateGeneratorKind(type: type, i: i, freq:freq)
         }
@@ -1132,7 +1132,6 @@ class BrushGraphic {
             let group = self.generator.contents[i] as! Group
             group.contents[3] = graph
                 
-            print("~~ sine wave added")
         case "none":
             //delete
             let empty = Shape(form: Circle(r:1), fill: Macaw.Color.rgba(r:0,g:0,b:0,a:0))
@@ -1165,7 +1164,7 @@ class BrushGraphic {
         self.oy = oy
         self.r = r
 
-        text.text = "ox:"+String(Int(ox))+", oy:"+String(Int(oy))+", r:"+String(Int(r))
+        text.text = "ox:"+String(format: "%.2f", ox)+", oy:"+String(format: "%.2f", oy)+", r:"+String(format: "%.2f", r)
        // print("## rotated brush ", self.id, " by ", r, " Moved to ox ,oy,", ox, oy )
         
         let rotArc:Shape
@@ -1178,7 +1177,7 @@ class BrushGraphic {
         brushIcon.contents[4] = rotArc
         
         if (sx != 1 || sy != 1 || scaleChanged) {
-            text.text = text.text + "\nsx:"+String(Int(sx))+"%, sy:"+String(Int(sy))+"%"
+            text.text = text.text + "\nsx:"+String(format: "%.2f", sx)+"%, sy:"+String(format: "%.2f", sy)+"%"
             scaleChanged = true
             if (sx != 100) {
                 let newLine = Macaw.Line(x1: axisScale, y1: 0, x2: axisScale + (axisLen * Double(sx)), y2: 0)
@@ -1249,7 +1248,7 @@ class BrushGraphic {
 
 
 //        print("~~~ in move stylus location with ", x, y, force)
-        text.text = "x: "+String(Int(x))+", y: "+String(Int(y))+", force: "+String((force*10).rounded()/10)
+        text.text = "x: "+String(format: "%.2f", x)+", y: "+String(format: "%.2f", y)+", force: "+String(format: "%.2f", force)
         stylusText.place = Transform.move(dx: x, dy: y + 20)
         currStylusIcon.place = Transform.move(dx:x, dy:y).scale(sx:forceScale, sy:forceScale)
         currStylusStream.place = Transform.move(dx:x, dy:y)
@@ -1313,7 +1312,7 @@ class BrushGraphic {
         computedIcon.place = Transform.move(dx: Double(cx), dy: Double(cy))
         self.cx = cx
         self.cy = cy
-        text.text = "abs x: "+String(Int(cx))+", abs y: "+String(Int(cy))
+        text.text = "abs x: "+String(format: "%.2f", cx)+", abs y: "+String(format: "%.2f", cy)
         computedText.place = Transform.move(dx: Double(cx), dy: Double(cy) + Double(30))
         if self.scene.outputOn { self.highlightOutput() }
         
