@@ -67,6 +67,7 @@ class BrushStorageManager{
         stateData["params"] = brush.params.toJSON();
         stateData["id"] = JSON(brush.id);
         stateData["event"] = JSON(event);
+        //note this might crash if you step in the middle of a recording, exit step, and continue looping
         stateData["constraints"] = brush.states[brush.currentState]!.getConstrainedPropertyNames(targetBrush:brush);
         stateData["methods"] = brush.transitions[brush.prevTransition]!.getMethodNames();
         

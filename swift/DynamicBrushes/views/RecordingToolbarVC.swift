@@ -118,16 +118,16 @@ class RecordingToolbarVC: UIViewController, Requester {
         if (self.recording_start >= 0 && self.recording_end >= self.recording_start) {
             let start_id:String;
             let end_id:String;
-            if(self.gestures.count>1){
-                start_id = self.getGestureId(index: self.gestures.count-2);
-
-                 end_id = self.getGestureId(index: self.gestures.count-1);
-            }
-            else{
+//            if(self.gestures.count>1){
+//                start_id = self.getGestureId(index: self.gestures.count-2);
+//
+//                 end_id = self.getGestureId(index: self.gestures.count-1);
+//            }
+//            else{
                 start_id = self.getGestureId(index: self.gestures.count-1);
                 
                 end_id = self.getGestureId(index: self.gestures.count-1);
-            }
+            //}
             if (stylusManager.liveStatus()) {
                 isRecordingLoop = true
                 stylusManager.prepareDataToLoop(idStart: start_id, idEnd: end_id, startTimer: true);

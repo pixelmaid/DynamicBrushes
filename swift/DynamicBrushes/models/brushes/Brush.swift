@@ -861,6 +861,11 @@ class Brush: TimeSeries, Renderable{
         if(!self.currentDrawing!.hasActiveStroke(behaviorId: self.behaviorId, brushId: self.id)){
             print("~~newStroke called in penDown")
             _ = self.currentDrawing!.newStroke(behaviorId: self.behaviorId, brushId:self.id);
+            return;
+        } else {
+           //bad stuff it's not gonna draw
+            print("behave" ,  self.behaviorId, "brush" , self.id)
+//            BehaviorManager.refreshAllBehaviors()
         }
     }
     

@@ -438,6 +438,7 @@ class DrawingViewController: UIViewController, Requester{
     }
     
     func strokeGeneratedHandler(data:(String),key:String){
+        print("~~ stroke Gen Handler called")
         stylusManager.addResultantStroke(layerId: layerContainerView.activeLayer!.id, strokeId: data)
         self.layerContainerView.addStroke(id:data);
     }

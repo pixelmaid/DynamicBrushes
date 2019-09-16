@@ -140,7 +140,6 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
     
     func renderStrokeById(currentStrokeId: String, toPoint:CGPoint,toWidth:CGFloat,toColor:UIColor!){
         guard let currentStroke:JotStroke = activeStrokes[currentStrokeId] else {
-            print(activeStrokes, activeStrokes.count)
             print("no stroke by id",currentStrokeId);
             return;
             

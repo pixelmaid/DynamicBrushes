@@ -352,6 +352,10 @@ final class Debugger {
         view.scene?.toggleLabel(type:item)
     }
     
+    static public func refreshInput(view:BrushGraphicsView) {
+        view.scene?.toggleViz(type:"input")
+    }
+    
     static public func refreshVisualizations(view:BrushGraphicsView) {
         view.scene?.toggleViz(type:"input")
         view.scene?.toggleViz(type:"output")

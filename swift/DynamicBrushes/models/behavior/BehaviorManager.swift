@@ -79,6 +79,7 @@ class BehaviorManager{
     
     
     static func refreshAllBehaviors(){
+        print("~~~refreshing all behaviors")
         for (_,behavior) in BehaviorManager.behaviors{
             behavior.createBehavior(drawing:drawing)
         }

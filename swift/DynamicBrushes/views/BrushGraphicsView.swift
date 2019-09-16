@@ -118,6 +118,8 @@ public class BrushGraphicsScene {
         case "off":
             return;
             break;
+        case "":
+            break;
         case "input":
             self.highlightViz(name: "param-styx", on: true)
             break;
@@ -184,7 +186,7 @@ public class BrushGraphicsScene {
     
     public func highlightViz(name: String, on:Bool) {
         self.clearHighlights()
-        print("!!~~ now finally in brush highlighting ", name, on)
+        print("!!~~ highlighting ", name, on)
         for (_, brush) in self.activeBrushIds {
             switch (name) {
             case "param-styx", "param-styy":

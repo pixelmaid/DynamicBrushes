@@ -358,6 +358,7 @@ final class StylusManager:LiveManager{
         usedSamples.removeAll();
         currentLoopingPackage = nil;
         self.visualizationEvent.raise(data:"ERASE_REQUEST")
+        BehaviorManager.refreshAllBehaviors()
         Debugger.resetDebugStatus();
         Debugger.setupResetInspectionRequest();
         
