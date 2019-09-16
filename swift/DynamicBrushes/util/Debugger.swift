@@ -293,9 +293,11 @@ final class Debugger {
         return returnVals
     }
     
-    static public func getStylusInputValue(debugData:JSON) -> (Double, Double, Double, Int) {
+    static public func getStylusInputValue(debugData:JSON) -> (Double, Double, Double, Double, Double, Int) {
         var x = 0.0
         var y = 0.0
+        var dx = 0.0
+        var dy = 0.0
         var force = 0.0
         var state = -1
         
@@ -305,13 +307,15 @@ final class Debugger {
                 let params:JSON = subJsonArr["params"]
                 x = params["x"].double ?? 0.0
                 y = params["y"].double ?? 0.0
+                dx = params["dx"].double ?? 0.0
+                dy = params["dy"].double ?? 0.0
                 force = params["force"].double ?? 0.0
                 state = params["stylusEvent"].int ?? -1 //0 is down, 2 is up
                 
             }
         }
         
-        return (x, y, force, state)
+        return (x, y, dx, dy, force, state)
     }
     
     static public func toggleVisualizations(view:BrushGraphicsView, item:String, isOn:Bool) {

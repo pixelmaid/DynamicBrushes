@@ -77,14 +77,14 @@ public class BrushGraphicsScene {
         self.activeBrushIds[id] = brushGraphic //add to dict
     }
     
-    public func updateBrush(id:String, r: Float, dx: Float, dy: Float, x:Float,y:Float,cx: Float, cy: Float, ox: Float, oy: Float, sx:Float, sy:Float, ix:Double, iy:Double, force:Double, state:Int) {
+    public func updateBrush(id:String, r: Float, dx: Float, dy: Float, x:Float,y:Float,cx: Float, cy: Float, ox: Float, oy: Float, sx:Float, sy:Float, ix:Double, iy:Double, idx:Double, idy:Double, force:Double, state:Int) {
         for (_, brush) in self.activeBrushIds {
             if brush.id == id {
 //                print("## updating brush with id ", id)
                 brush.updateBrushIcon(r:r, ox: ox, oy: oy, sx:sx, sy:sy)
                 brush.moveComputedLocation(cx: cx, cy: cy)
                 brush.moveBrushLocation(x: x, y: y, dx:dx,dy:dy)
-                brush.moveStylusLocation(x: ix, y: iy, force:force)
+                brush.moveStylusLocation(x: ix, y: iy, dx:idx, dy:idy, force:force)
                 self.lastPoint = (x, y)
                 if state == 0 { //penDown
                     
@@ -336,9 +336,9 @@ public class BrushGraphicsScene {
             var newY = y - lastY
             //print("diff for down is ~~~ ", newX, newY, " original ", x, y, " new ", lastX, lastY)
             if newY < 0 {
-                print("~~ down neg")
-//                newY = -newY
-                angle = acos(newX / sqrt(pow(newX,2) + pow(newY,2)))*180/Double(pi)// + 180
+//                print("~~ down neg")
+                newY = -newY
+                angle = acos(newX / sqrt(pow(newX,2) + pow(newY,2)))*180/Double(pi) + 180
             } else {
                 angle = acos(newX / sqrt(pow(newX,2) + pow(newY,2)))*180/Double(pi)
             }
@@ -354,9 +354,9 @@ public class BrushGraphicsScene {
             var newY = y - lastY
             //print("diff for up is ~~~ ", newX, newY, " original ", x, y, " new ", lastX, lastY)
             if newY < 0 {
-                print("~~ up neg")
-//                newY = -newY
-                angle = acos(newX / sqrt(pow(newX,2) + pow(newY,2)))*180/Double(pi) //+ 180
+//                print("~~ up neg")
+                newY = -newY
+                angle = acos(newX / sqrt(pow(newX,2) + pow(newY,2)))*180/Double(pi) + 180
             } else {
                 angle = acos(newX / sqrt(pow(newX,2) + pow(newY,2)))*180/Double(pi)
             }
@@ -509,7 +509,7 @@ class BrushGraphic {
         stylusIcon.place = Transform.move(dx:ix, dy:iy)
         node.contents.append(stylusIcon)
 
-        let stylusTextContent = BrushGraphic.newText("stylus x: 0, stylus y: 0", Transform.move(dx:0,dy:10))
+        let stylusTextContent = BrushGraphic.newText("x: 0, y:0, force:0\ndx:0, dy:0", Transform.move(dx:0,dy:10))
         let stylusTextBg = Shape(form: Rect(x:-90, y:-9, w:180, h:20), fill:labelColor)
         stylusText = Group(contents:[stylusTextBg, stylusTextContent])
         
@@ -537,7 +537,7 @@ class BrushGraphic {
         let originCircle = Circle(r:(axisScale*0.33)).stroke(fill:brushColor, width:2)
         let biggerOriginCircle = Circle(r:(axisScale)).stroke(fill:brushColor, width:2)
         
-        let originTextContent = BrushGraphic.newText("ox:0, oy:0, r:0\nsx:100, sy:100", Transform.move(dx:0,dy:0))
+        let originTextContent = BrushGraphic.newText("ox:0, oy:0, r:0\ndx:100, dy:100", Transform.move(dx:0,dy:0))
         let originTextBg = Shape(form: Rect(x:-75, y:-20, w:150, h:18), fill:labelColor)
         originText = Group(contents:[originTextBg, originTextContent])
 
@@ -1224,7 +1224,7 @@ class BrushGraphic {
     }
     
     
-    func moveStylusLocation(x: Double, y: Double, force: Double) {
+    func moveStylusLocation(x: Double, y: Double, dx:Double,dy:Double,force: Double) {
         self.ix = x
         self.iy = y
         let bg = stylusText.contents[0] as! Shape
@@ -1248,7 +1248,7 @@ class BrushGraphic {
 
 
 //        print("~~~ in move stylus location with ", x, y, force)
-        text.text = "x: "+String(format: "%.2f", x)+", y: "+String(format: "%.2f", y)+", force: "+String(format: "%.2f", force)
+        text.text = "x: "+String(format: "%.2f", x)+", y: "+String(format: "%.2f", y)+", force: "+String(format: "%.2f", force)+"\ndx:"+String(format: "%.2f", dx)+", dy: "+String(format: "%.2f", dy)
         stylusText.place = Transform.move(dx: x, dy: y + 20)
         currStylusIcon.place = Transform.move(dx:x, dy:y).scale(sx:forceScale, sy:forceScale)
         currStylusStream.place = Transform.move(dx:x, dy:y)
@@ -1333,14 +1333,14 @@ class BrushGraphic {
     
     func movePenUp(x:Double, y:Double, angle:Double){
         var correctedAngle = angle
-        print("~~~~ penup angle is ", angle)
+//        print("~~~~ penup angle is ", angle)
         if angle.isNaN { correctedAngle = 0}
         //todo figure out orientation of rotation
         stylusUpIcon.place = Transform.move(dx: x, dy: y).rotate(angle:correctedAngle)
     }
     
     func movePenDown(x:Double, y:Double, angle:Double){
-        print("~~~~ pendown angle is ", angle)
+//        print("~~~~ pendown angle is ", angle)
         var correctedAngle = angle
         if angle.isNaN { correctedAngle = 0}
         stylusDownIcon.place = Transform.move(dx: x, dy: y).rotate(angle:correctedAngle)

@@ -1039,11 +1039,11 @@ class DrawingViewController: UIViewController, Requester{
             
             
             
-        }
+//        }
         if(BehaviorManager.behaviors.count>0){
             Debugger.drawCurrentBrushState(view: self.layerContainerView.brushGraphicsView!,targetBehaviorId: BehaviorManager.currentlySelectedBehaviorId, jump:false,globalTime:StylusManager.globalTime);
             
-        //}
+        }
     }
     
 /* @objc func drawIntervalCallback(){

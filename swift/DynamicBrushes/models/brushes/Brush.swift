@@ -857,7 +857,9 @@ class Brush: TimeSeries, Renderable{
     
     
     func penDown(){
+        print("~~penDown called")
         if(!self.currentDrawing!.hasActiveStroke(behaviorId: self.behaviorId, brushId: self.id)){
+            print("~~newStroke called in penDown")
             _ = self.currentDrawing!.newStroke(behaviorId: self.behaviorId, brushId:self.id);
         }
     }
