@@ -98,6 +98,7 @@ class BrushStorageManager{
         debugData["groupName"] = JSON("brush");
         let behaviorStorage = BrushStorageManager.paramStorage;
         let targetBehaviorData = behaviorStorage[behaviorId]!;
+        //TODO: error called in trying to find correct brush id
         let brushStateData = targetBehaviorData[brushId]!
         let targetBrushData = brushStateData[globalTime];
         
