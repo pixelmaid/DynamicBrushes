@@ -232,8 +232,6 @@ define(["jquery", "handlebars", "app/Emitter"],
           self.modifyInspectorBrush();          
         }
         else if (groupName == 'output') {
-          console.log("~~ output!!");
-          console.log("~~ html is ", html);
           self.modifyInspectorOutput();          
         }
 
@@ -263,8 +261,11 @@ define(["jquery", "handlebars", "app/Emitter"],
       
       modifyInspectorInput() {
         if ($('#param-force').length) {
-          $('#param-force')[0].previousElementSibling.id = 'param-styy';
+          $('#param-force')[0].previousElementSibling.id = 'param-stydy';
+          $('#param-stydy')[0].previousElementSibling.id = 'param-stydx';           
+          $('#param-stydx')[0].previousElementSibling.id = 'param-styy';           
           $('#param-styy')[0].previousElementSibling.id = 'param-styx';           
+
         }
           this.setUpHighlightClicks('input');  
 
