@@ -75,10 +75,13 @@ function(DebuggerModel) {
 				// console.log("~~~~ !!!  inspect: targetBrushData", targetBrushData);
 
                 if (this.stepThroughOn && this.collection.manualSteppingOn) {
-                    let params = ["sy", "rotation", "dx", "dy", "weight", "hue", "lightness", "saturation", "alpha"];
+                    let params = ["sx", "sy", "rotation", "dx", "dy", "weight", "hue", "lightness", "saturation", "alpha"];
+                    //update origin 
                 	let oldDataCopy = JSON.parse(JSON.stringify(oldData));
-                	var combinedData = this.combineData(oldDataCopy, this.data, "sx", 0, 0);
-                    this.dataVizDict["sx"] = combinedData;
+                	var combinedData = this.combineData(oldDataCopy, this.data, "ox", 0, 0);
+                	combinedData = this.combineData(combinedData, this.data, "oy", 0, 0);
+                	let oldDataWithOrigin = JSON.parse(JSON.stringify(combinedData));
+
                     for (var i = 0; i < params.length; i++) {
                     	//TODO - change to real index
                     	let oldCombinedData = JSON.parse(JSON.stringify(combinedData));
@@ -86,7 +89,7 @@ function(DebuggerModel) {
                         this.dataVizDict[params[i]] = combinedData;
                     }
                     if (this.collection.manualSteppingOn) {
-	                    this.data = oldData;	
+	                    this.data = oldDataWithOrigin;	
 	                    console.log("~~ !! updated data to oldData. new data sx:  ", this.getParam(data['behaviors'][0]['brushes'][0]['inspector'], "dx"), " old data sx: ", this.getParam(this.data['behaviors'][0]['brushes'][0]['inspector'], "dx"));
                     }           
 	                this.processStepData(targetBrushData);  
