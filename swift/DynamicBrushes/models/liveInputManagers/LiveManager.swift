@@ -285,7 +285,7 @@ final class StylusManager:LiveManager{
         prevHash = 0;
         do{
             let signalLength = try currentLoopingPackage.getSignalLength();
-            queue.sync {
+            //queue.sync {
                 var hashAdd:Float = 0;
                 while (true){
                     // print("====advance recording start====",currentLoopingPackage.id,currentLoopingPackage.signals["dx"]!.signalBuffer.count);
@@ -323,7 +323,7 @@ final class StylusManager:LiveManager{
                         
                     }
                 }
-            }
+           // }
         }
         catch{
             return;
@@ -406,12 +406,9 @@ final class StylusManager:LiveManager{
     
     
     @objc private func advanceRecording(){
-        
-        
-        queue.sync {
-        
+      //  queue.sync {
             stepSample();
-        }
+       // }
     }
 
   

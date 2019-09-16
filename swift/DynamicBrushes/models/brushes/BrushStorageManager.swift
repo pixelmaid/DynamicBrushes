@@ -11,7 +11,6 @@ import SwiftyJSON
 
 class BrushStorageManager{
     static var paramStorage = [String:[String:[Int:String]]]();
-    
     static func registerNewBrush(behaviorId:String,brushId:String){
         guard BrushStorageManager.paramStorage[behaviorId] != nil else {
             var brushList = [String:[Int:String]]();
@@ -52,10 +51,7 @@ class BrushStorageManager{
     }
     
     static func storeState(brush:Brush,event:String){
-        /*if (!StylusManager.isLive) {
-           
-            return;
-        }*/
+       
         guard var brushList = BrushStorageManager.paramStorage[brush.behaviorId] else {
             return;
         }
@@ -76,6 +72,7 @@ class BrushStorageManager{
         
         BrushStorageManager.paramStorage[brush.behaviorId]![brush.id]![brush.params.globalTime] = stateData.rawString();
         
+   
     }
     
     static func removeCachedData(behaviorId:String, brushId:String, startGlobalTime:Int, endGlobalTime:Int) {
