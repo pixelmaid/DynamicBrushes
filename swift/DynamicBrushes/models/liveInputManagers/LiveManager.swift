@@ -351,6 +351,7 @@ final class StylusManager:LiveManager{
     
     
     private func resumeLiveMode(){
+        removeBrushCachedData();
         StylusManager.isLive = true;
         self.idStart = nil;
         self.idEnd = nil;
@@ -367,9 +368,10 @@ final class StylusManager:LiveManager{
     
     
     public func terminateLoopAndResumeLive(){
-      
+        self.stopLoopTimer();
         revertToLiveOnLoopEnd = true;
-        removeBrushCachedData();
+        resumeLiveMode();
+        
         
     }
     
@@ -457,19 +459,19 @@ final class StylusManager:LiveManager{
             self.stepEvent.raise(data: "STEP");
             usedSamples.append(currentSample);
             if(currentSample["isLastinRecording"].boolValue){
-                if(self.revertToLiveOnLoopEnd){
+                /*if(self.revertToLiveOnLoopEnd){
                     
                     self.clearCachedData()
                     self.stopLoopTimer();
                     self.resumeLiveMode();
                 }
-                else{
+                else{*/
                     samples.append(contentsOf:usedSamples);
                     usedSamples.removeAll();
                     removeBrushCachedData()
                     prevHash = 0;
                     prepStepData();
-                }
+                //}
                 
             }
                 

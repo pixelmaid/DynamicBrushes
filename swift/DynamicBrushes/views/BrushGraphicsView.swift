@@ -638,7 +638,10 @@ class BrushGraphic {
                           ax: bottom_right_x, ay: bottom_right_y) {
                 if !Debugger.inputGfx { return "off"}
                 print("~~~ hit in generator ", i)
-                //get text
+                //TODO: this is a temporary fix related to performance errors for updating the generator
+                guard generator.contents.count>i else{
+                    return "off";
+                }
                 let node = generator.contents[i] as! Group
                 let text = node.contents[2] as! Text
                 let t = text.text
