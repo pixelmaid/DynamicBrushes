@@ -77,12 +77,12 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                     }
                 };
 
-                $( "#canvas" ).dblclick(function(e) {
+               /* $( "#canvas" ).dblclick(function(e) {
                     console.log("dblclick",self.currentView);
                     if(self.currentView !== null){
                         self.currentView.activateStateMenu(e.pageX, e.pageY);
                     }
-                 });
+                 });*/
                 
                 $("#behavior_template_menu span").click(function(event) {
 
