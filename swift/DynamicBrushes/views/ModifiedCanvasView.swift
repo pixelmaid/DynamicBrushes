@@ -182,8 +182,8 @@ class ModifiedCanvasView: UIView, JotViewDelegate,JotViewStateProxyDelegate {
                 if(finalWidth < 1){
                     finalWidth = 1;
                 }
-                if(finalWidth > 300){
-                    finalWidth = 300;
+                if(finalWidth > 150){
+                    finalWidth = 150;
                 }
                    _ = jotView.addLine(toAndRenderStroke: currentStroke, to: toPoint, toWidth: finalWidth, to: toColor, andSmoothness: self.getSmoothness(), withStepWidth: self.stepWidthForStroke())
                     
