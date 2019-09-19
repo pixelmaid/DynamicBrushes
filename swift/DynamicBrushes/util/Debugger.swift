@@ -148,10 +148,10 @@ final class Debugger {
     }
     
     
-    static func generateInputDebugData(behaviorId:String, brushId:String, globalTime:Int, localTime:Int)->JSON{
+    static func generateInputDebugData(behaviorId:String, brushId:String, globalTime:Int, localTime:Int, priorLocalTime:Int)->JSON{
         
         var debugData:JSON = [:]
-        let generatorCollectionsJSON = Debugger.generateGeneratorDebugData(brushId: brushId,localTime: localTime);
+        let generatorCollectionsJSON = Debugger.generateGeneratorDebugData(brushId: brushId,localTime: priorLocalTime);
         let inputGlobalJSON = Debugger.generateGlobalInputDebugData(globalTime:globalTime);
         debugData["generator"] = generatorCollectionsJSON;
         debugData["inputGlobal"] = inputGlobalJSON;
@@ -215,7 +215,7 @@ final class Debugger {
         return debugData;
     }
     
-    static func generateBrushDebugData(behaviorId:String, brushId:String, globalTime:Int)->JSON?{
+    static func generateBrushDebugData(behaviorId:String, brushId:String, globalTime:Int)->(JSON,Int)?{
         let behaviorName = BehaviorManager.behaviors[behaviorId]!.name;
         let brushData = BrushStorageManager.accessSingleBrushStateAtTime(globalTime: globalTime, behaviorId: behaviorId,behaviorName: behaviorName, brushId: brushId);
         return brushData
@@ -223,17 +223,19 @@ final class Debugger {
     
     
     static public func generateDebugData(behaviorId:String,brushId:String, brushState:BrushStateStorage?,globalTime:Int)->JSON?{
-        let brushData = Debugger.generateBrushDebugData(behaviorId: behaviorId, brushId: brushId, globalTime: globalTime)
-        
-        if(brushData == nil){
+        let brushDataAndPriorLocalTime = Debugger.generateBrushDebugData(behaviorId: behaviorId, brushId: brushId, globalTime: globalTime)
+    
+        if(brushDataAndPriorLocalTime == nil){
             return nil
         }
         else{
-            let localTime = brushData!["behaviors"][0]["brushes"][0]["params"]["time"].intValue;
-            let inputData = Debugger.generateInputDebugData(behaviorId: behaviorId, brushId: brushId, globalTime: globalTime, localTime:localTime);
+            let brushData = brushDataAndPriorLocalTime!.0;
+            let priorLocalTime = brushDataAndPriorLocalTime!.1;
+            let localTime = brushData["behaviors"][0]["brushes"][0]["params"]["time"].intValue;
+            let inputData = Debugger.generateInputDebugData(behaviorId: behaviorId, brushId: brushId, globalTime: globalTime, localTime:localTime, priorLocalTime:priorLocalTime);
             let outputData = Debugger.generateOutputDebugData(behaviorId: behaviorId, brushId: brushId, globalTime:globalTime,brushState:brushState);
             var debugData:JSON = [:];
-            debugData["brush"] = brushData!;
+            debugData["brush"] = brushData;
             debugData["input"] = inputData;
             debugData["output"] = outputData;
             debugData["type"] = "state";

@@ -90,7 +90,7 @@ class BrushStorageManager{
 //        print("~~~ length of storage is now" , BrushStorageManager.paramStorage[behaviorId]![brushId]!.count)
     }
     
-    static func accessSingleBrushStateAtTime(globalTime:Int,behaviorId:String,behaviorName:String, brushId:String)->JSON?{
+    static func accessSingleBrushStateAtTime(globalTime:Int,behaviorId:String,behaviorName:String, brushId:String)->(JSON,Int)?{
         var debugData:JSON = [:]
         var behaviorListJSON = [JSON]();
         var brushesListJSON = [JSON]();
@@ -104,10 +104,23 @@ class BrushStorageManager{
             return nil
         }
         let targetBrushData = brushStateData![globalTime];
-        
+
         guard targetBrushData != nil else{
             return nil
         }
+        
+        let sortedBrushData = brushStateData!.sorted{$0.key < $1.key};
+        let targetIndex = sortedBrushData.firstIndex{$0.key == globalTime}!;
+      
+        let priorBrushData:String;
+        if(targetIndex > 0){
+             priorBrushData = sortedBrushData[targetIndex-1].value;
+        }else{
+            priorBrushData = targetBrushData!;
+        }
+        
+        let priorParsed = JSON.init(parseJSON: priorBrushData);
+        let priorlocalTime = priorParsed["params"]["time"].intValue;
         
         brushesListJSON.append(JSON.init(parseJSON:targetBrushData!));
 //        print(JSON.init(parseJSON:targetBrushData!)["event"]);
@@ -117,7 +130,7 @@ class BrushStorageManager{
         behaviorJSON["brushes"] = JSON(brushesListJSON);
         behaviorListJSON.append(behaviorJSON);
         debugData["behaviors"] = JSON(behaviorListJSON);
-        return debugData;
+        return (debugData,priorlocalTime);
 
 
     }
