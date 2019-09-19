@@ -79,8 +79,10 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
                 else{
                     console.log("~~~~!! received inspector data ", data.data)
                     debuggerModelCollection.processInspectorDataQueue(data.data.debugData);
-                    chartViewManager.setActiveBehavior(data.data.activeBehaviorId);
-                    debuggerModelCollection.selectedIndex = data.data.activeInstance;
+                    if(data.data.changeView){
+                        chartViewManager.setActiveBehavior(data.data.activeBehaviorId);
+                        debuggerModelCollection.selectedIndex = data.data.activeInstance;
+                    }
 
                 }
 

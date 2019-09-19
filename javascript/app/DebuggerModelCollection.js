@@ -21,6 +21,12 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 				this.startInspectorInterval();
 				this.manualSteppingOn = false;
 				this.currHighlighted = [];
+				this.currHighlightedData = [];
+				this.currHighlightedMappings = [];
+				this.currHighlightedMethods = [];
+
+
+
 				var self = this;
 			
 
@@ -37,6 +43,48 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 			resetCurrHighlighted() {
 				this.currHighlighted = [];
 			}
+
+			getCurrHighlightedMappings() {
+				return this.currHighlightedMappings;
+			}
+
+			pushCurrHighlightedMappings(obj){
+				this.currHighlightedMappings.push(obj);
+			}
+
+			resetCurrHighlightedMappings() {
+				this.currHighlightedMappings = [];
+			}
+
+
+			getCurrHighlightedData() {
+				return this.currHighlightedData;
+			}
+
+			pushCurrHighlightedData(obj){
+				this.currHighlightedData.push(obj);
+			}
+
+			resetCurrHighlightedData() {
+				this.currHighlightedMethods = [];
+			}
+
+			getCurrHighlightedMethods() {
+				return this.currHighlightedMethods;
+			}
+
+			pushCurrHighlightedMethods(obj){
+				this.currHighlightedMethods.push(obj);
+			}
+
+			resetCurrHighlightedMethods() {
+				this.currHighlightedMethods = [];
+			}
+
+			
+
+
+
 
 			updateSelectedIndex(index) {
 				this.selectedIndex = index;

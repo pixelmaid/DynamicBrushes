@@ -41,8 +41,105 @@ define(["jquery", "handlebars", "app/Emitter"],
         }.bind(this));
       }
 
+      findMethodBuddy(rowId) {
+         var buddy = "";
+        switch (rowId) {
+          case 'param-ox':
+            buddy = 'setOrigin';
+          break;
+          case 'param-oy':
+            buddy = 'setOrigin';
+          break;
+          case 'param-pen':
+            buddy = 'penDown';
+          break;
+        }
+        return buddy;
+      }
+
+      findDataBuddy(rowId) {
+        var buddy = "";
+        switch (rowId) {
+          case 'gen-sawtooth':
+            buddy = 'sawtooth wave';
+          break;
+          case 'gen-sine':
+            buddy = 'sine wave';
+          break;
+          case 'gen-triangle':
+            buddy = 'triangle wave';
+          break;
+          case 'gen-random':
+            buddy = 'random';
+          break;
+          case 'gen-square':
+            buddy = 'square wave';
+          break;
+          case 'param-stydy':
+            buddy = 'stylus y';
+          break;
+          case 'param-stydx':
+            buddy = 'stylus delta x';
+          break;
+          case 'param-styy':
+            buddy = 'stylus delta y';
+          break;
+          case 'param-styx':
+            buddy = 'stylus x';
+          break;
+           case 'param-force':
+            buddy = 'stylus force';
+          break;
+          case 'param-stylusEvent':
+            buddy = 'stylus event';
+          break;
+
+
+        }
+        return buddy;
+      }
+
+      findMappingBuddies(rowId) {
+        var buddy = "";
+        switch (rowId) {
+          case 'param-dx':
+            buddy = 'dx';
+          break;
+          case 'param-dy':
+            buddy = 'dy';
+          break;
+          case 'param-sx':
+            buddy = 'sx';
+          break;
+           case 'param-sy':
+            buddy = 'sy';
+          break;
+          case 'param-sy':
+            buddy = 'param-sy';
+          break; 
+          case 'param-rotation':
+            buddy = 'rotation';
+          break;
+          case 'param-dx':
+            buddy = 'param-dy';
+          break;
+          case 'param-dy':
+            buddy = 'param-dx';
+          break;
+          case 'param-x':
+            buddy = 'param-y';
+          break;
+          case 'param-y':
+            buddy = 'param-x';
+          break;
+
+        }
+        return buddy;
+      }
+
+
       findBuddies(rowId) {
-        var buddy = '';
+        var buddy = "";
         switch (rowId) {
           case 'param-ox':
             buddy = 'param-oy';
@@ -121,17 +218,33 @@ define(["jquery", "handlebars", "app/Emitter"],
             if (activeInspector == inspectorKind) { //if match 
               console.log("~ active ", activeInspector, inspectorKind, rowId);
               var buddy = self.findBuddies(rowId);
+              var mappingBuddy = self.findMappingBuddies(rowId);
+              var methodBuddy = self.findMethodBuddy(rowId);
+              var dataBuddy = self.findDataBuddy(rowId);
+
               for (var i = 0; i < self.model.collection.getCurrHighlighted().length; i++) {
                 // console.log("unlighting ~ ");
                 self.unhighlightParamRow(self.model.collection.getCurrHighlighted()[i]);
+                self.unhighlightMappingBuddy(self.model.collection.getCurrHighlightedMappings()[i]);
+                self.unhighlightMethodBuddy(self.model.collection.getCurrHighlightedMethods()[i]);
+                self.unhighlightDataBuddy(self.model.collection.getCurrHighlightedData()[i]);
+
                 self.model.collection.updateHighlight([self.model.collection.getCurrHighlighted()[i], false]);   
                 if (rowId == self.model.collection.getCurrHighlighted()[i]) { //unhighlight self
                   skip = true;
                   self.unhighlightParamRow(buddy);
+                  self.unhighlightMappingBuddy(mappingBuddy);
+                  self.unhighlightMethodBuddy(methodBuddy);
+                  self.unhighlightDataBuddy(dataBuddy);
                   self.model.collection.updateHighlight([buddy, false]);   
                 }
               }
               self.model.collection.resetCurrHighlighted();
+              self.model.collection.resetCurrHighlightedMethods();
+              self.model.collection.resetCurrHighlightedMappings();
+              self.model.collection.resetCurrHighlightedData();
+
+
               if (!skip) {
                 self.highlightParamRow(rowId);
 
@@ -142,6 +255,20 @@ define(["jquery", "handlebars", "app/Emitter"],
                   self.model.collection.pushCurrHighlighted(buddy); 
                   self.model.collection.updateHighlight([buddy, true]);                
                 }
+                if (mappingBuddy !== '') {
+                  self.highlightMappingBuddy(mappingBuddy);
+                   self.model.collection.pushCurrHighlightedMappings(mappingBuddy);          
+                }
+                if (methodBuddy !== '') {
+                  self.highlightMethodBuddy(methodBuddy);  
+                  self.model.collection.pushCurrHighlightedMethods(methodBuddy);          
+        
+                }
+                if (dataBuddy !== '') {
+                  self.highlightDataBuddy(dataBuddy);
+                  self.model.collection.pushCurrHighlightedData(dataBuddy);          
+          
+                }
               } 
               self.currInspectorActive = activeInspector;
             } 
@@ -150,12 +277,36 @@ define(["jquery", "handlebars", "app/Emitter"],
       }
 
       highlightParamRow(rowId) {
-       // $('#'+rowId).css('outline', '1px solid #0f0');
-       $('#'+rowId).css('border', '1px solid #00ff03');
+      
+       $('#'+rowId).css('border', 'px solid #00ff03');
       }
 
-      unhighlightParamRow(unhighlightRowId) {
-        $('#'+unhighlightRowId).css('border', '');
+      unhighlightParamRow(rowId) {
+        $('#'+rowId).css('border', '');
+      }
+
+      highlightMethodBuddy(rowId) { 
+        $('[fieldName='+rowId+']').css('border', '3px solid #00ff03');
+      }
+
+      unhighlightMethodBuddy(rowId) {
+         $('[fieldName='+rowId+']').css('border', '');
+      }
+
+      highlightMappingBuddy(rowId) { 
+        $('[name='+rowId+']').css('border', '3px solid #00ff03');
+      }
+
+      unhighlightMappingBuddy(rowId) {
+         $('[name='+rowId+']').css('border', '');
+      }
+
+      highlightDataBuddy(rowId) { 
+        $('span:contains('+rowId+')').css('border', '3px solid #00ff03');
+      }
+
+      unhighlightDataBuddy(rowId) {
+         $('span:contains('+rowId+')').css('border', '');
       }
 
 
@@ -209,7 +360,7 @@ define(["jquery", "handlebars", "app/Emitter"],
 
       initInspector(data) {
         console.log("~~~ init inspector, data is ", data);
-        if (!data) return;
+        if (!data){ return;}
         var groupName;
         let self = this;
         var html = this.template(data);

@@ -119,14 +119,15 @@ final class Debugger {
         let debugData = JSON(Debugger.generateDebugData(behaviorId: behaviorId, brushId: brushId, brushState: brushState, globalTime: globalTime));
         //print("debug data",debugData)
         Debugger.drawingDebugDataQueue.append(debugData);
-        Debugger.setupDebugSocketRequest(debugData: JSON([debugData]));
+        Debugger.setupDebugSocketRequest(debugData: JSON([debugData]), changeView: true);
         self.drawCurrentBrushState(view: Debugger.brushGraphicsView!, targetBehaviorId: behaviorId,jump:true,globalTime:localTime)
         
     }
     
-    static func setupDebugSocketRequest(debugData:JSON){
+    static func setupDebugSocketRequest(debugData:JSON,changeView:Bool){
         var inspectorData:JSON = [:]
         inspectorData["debugData"] = JSON(debugData);
+        inspectorData["changeView"] = JSON(changeView);
         inspectorData["activeBehaviorId"] = JSON(BehaviorManager.currentlySelectedBehaviorId);
         inspectorData["activeInstance"] = JSON(BehaviorManager.activeInstance);
         let socketRequest = Request(target: "socket", action: "send_inspector_data", data: inspectorData, requester: RequestHandler.sharedInstance)
@@ -243,7 +244,7 @@ final class Debugger {
     @objc static func fireDebugUpdate(){
         if(Debugger.programDebugDataQueue.count>0){
             let debugJSON = JSON(Debugger.programDebugDataQueue);
-            Debugger.setupDebugSocketRequest(debugData:debugJSON);
+            Debugger.setupDebugSocketRequest(debugData:debugJSON,changeView:false);
             Debugger.programDebugDataQueue.removeAll();
         }
     }
