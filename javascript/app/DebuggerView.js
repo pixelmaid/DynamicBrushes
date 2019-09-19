@@ -27,7 +27,10 @@ define(["jquery", "handlebars", "app/Emitter"],
 
         this.model.addListener("DATA_HIGHLIGHTED", function(data) {
           console.log("~~~~ data highlighted  in view ", data);
-          this.highlightParamRow(data);            
+       
+          this.highlightParamRow(data);   
+          this.findBuddiesAndHiglight(data);
+
           self.model.collection.pushCurrHighlighted(data);
         }.bind(this));
 
@@ -36,6 +39,8 @@ define(["jquery", "handlebars", "app/Emitter"],
           for (var i = 0; i < this.model.collection.getCurrHighlighted().length; i++) {
             let p = this.model.collection.getCurrHighlighted()[i];
             this.unhighlightParamRow(p);
+            this.findBuddiesAndUnhighlight(p);
+
           }
           this.model.collection.resetCurrHighlighted();
         }.bind(this));
@@ -76,13 +81,13 @@ define(["jquery", "handlebars", "app/Emitter"],
             buddy = 'square wave';
           break;
           case 'param-stydy':
-            buddy = 'stylus y';
+            buddy = 'stylus delta y';
           break;
           case 'param-stydx':
             buddy = 'stylus delta x';
           break;
           case 'param-styy':
-            buddy = 'stylus delta y';
+            buddy = 'stylus y';
           break;
           case 'param-styx':
             buddy = 'stylus x';
@@ -176,6 +181,46 @@ define(["jquery", "handlebars", "app/Emitter"],
         return buddy;
       }
 
+      findBuddiesAndHiglight(rowId){
+          var mappingBuddy = this.findMappingBuddies(rowId);
+          var methodBuddy = this.findMethodBuddy(rowId);
+          var dataBuddy = this.findDataBuddy(rowId); 
+
+          if (mappingBuddy !== '') {
+                  this.highlightMappingBuddy(mappingBuddy);
+                   this.model.collection.pushCurrHighlightedMappings(mappingBuddy);          
+                }
+                if (methodBuddy !== '') {
+                  this.highlightMethodBuddy(methodBuddy);  
+                  this.model.collection.pushCurrHighlightedMethods(methodBuddy);          
+        
+                }
+                if (dataBuddy !== '') {
+                  this.highlightDataBuddy(dataBuddy);
+                  this.model.collection.pushCurrHighlightedData(dataBuddy);          
+          
+                }
+
+                this.model.collection.resetCurrHighlightedMethods();
+              this.model.collection.resetCurrHighlightedMappings();
+              this.model.collection.resetCurrHighlightedData();
+
+      }
+
+      findBuddiesAndUnhighlight(rowId){
+          var mappingBuddy = this.findMappingBuddies(rowId);
+          var methodBuddy = this.findMethodBuddy(rowId);
+          var dataBuddy = this.findDataBuddy(rowId); 
+
+         this.unhighlightMappingBuddy(mappingBuddy);
+         this.unhighlightMethodBuddy(methodBuddy);
+         this.unhighlightDataBuddy(dataBuddy);
+
+
+          this.model.collection.resetCurrHighlightedMethods();
+          this.model.collection.resetCurrHighlightedMappings();
+          this.model.collection.resetCurrHighlightedData();
+  }
 
       setUpGeneratorClicks() {
         let self = this;
@@ -277,8 +322,8 @@ define(["jquery", "handlebars", "app/Emitter"],
       }
 
       highlightParamRow(rowId) {
-      
-       $('#'+rowId).css('border', 'px solid #00ff03');
+        console.log($('#'+rowId));
+       $('#'+rowId).css('border', '2px solid #00ff03');
       }
 
       unhighlightParamRow(rowId) {
@@ -286,27 +331,35 @@ define(["jquery", "handlebars", "app/Emitter"],
       }
 
       highlightMethodBuddy(rowId) { 
-        $('[fieldName='+rowId+']').css('border', '3px solid #00ff03');
+        $('[fieldName="'+rowId+'"]').css('border', '3px solid #00ff03');
       }
 
       unhighlightMethodBuddy(rowId) {
-         $('[fieldName='+rowId+']').css('border', '');
+         if(rowId){
+           $('[fieldName="'+rowId+'"]').css('border', '');
+          }  
       }
 
       highlightMappingBuddy(rowId) { 
-        $('[name='+rowId+']').css('border', '3px solid #00ff03');
+          $('[name="'+rowId+'"]').css('border', '3px solid #00ff03');
+        
       }
 
       unhighlightMappingBuddy(rowId) {
-         $('[name='+rowId+']').css('border', '');
+        if(rowId){
+
+          $('[name="'+rowId+'"]').css('border', '');
+        }
       }
 
       highlightDataBuddy(rowId) { 
-        $('span:contains('+rowId+')').css('border', '3px solid #00ff03');
+        $('[displayname="'+rowId+'"]').css('border', '3px solid #00ff03');
       }
 
       unhighlightDataBuddy(rowId) {
-         $('span:contains('+rowId+')').css('border', '');
+        if(rowId){
+         $('[displayname="'+rowId+'"]').css('border', '');
+       }
       }
 
 

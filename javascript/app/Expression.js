@@ -197,6 +197,7 @@ define(["jquery", "codemirror", "app/Emitter", "app/id"],
                 //HERE
                 el.setAttribute("class", style + " block property ");
                 el.setAttribute("type", referenceType);
+                el.setAttribute("displayName", referenceDisplayName);
                 el.setAttribute("parent_id", this.id);
                 el.setAttribute("id", referenceId);
                 this.marks[referenceId] = el;

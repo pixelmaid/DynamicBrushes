@@ -88,7 +88,7 @@ define(["jquery", "jquery-ui", "handlebars", "hbs!app/templates/palette", "app/i
 
                         clone.html($(event.target).attr('displayName'));
                         clone.attr("type", $(event.target).attr('type'));
-                        clone.attr("name", $(event.target).attr('name'));
+                        clone.attr("displayName", $(event.target).attr('displayName'));
                         clone.attr("class", $(event.target).attr('class'));
                         clone.attr("blockstyle", $(event.target).attr('blockstyle'));
 

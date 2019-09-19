@@ -150,7 +150,7 @@ define(["app/Emitter", "app/DebuggerModel","app/BrushDebuggerModel"],
 			}
 
 			inspectorDataInterval(){
-				console.log("~~~~ !!!  called data interval");
+				//console.log("~~~~ !!!  called data interval");
 
 				if (this.brushModel.brushVizQueue.length > 0) {
 					console.log("~~~~ !!!  inspect: visualizing brush");
