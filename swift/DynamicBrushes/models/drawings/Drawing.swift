@@ -76,12 +76,13 @@ class Drawing: TimeSeries, Hashable, Renderable{
         }
     }*/
     
-    func strokesAtGlobalTimeToJSON(globalTime:Int,brushState:BrushStateStorage)->JSON{
+    func strokesAtGlobalTimeToJSON(behaviorId:String, brushId:String,globalTime:Int,brushState:BrushStateStorage)->JSON{
         
         var allStrokeJSON:JSON;
         var behaviorJSONList = [String:[String:JSON]]();
         
         for stroke in allStrokes{
+            if(stroke.brushId == brushId){
             let seg = stroke.getSegmentAtGlobalTime(globalTime:globalTime)
              if(seg != nil){
             let behaviorId = stroke.behaviorId;
@@ -114,51 +115,52 @@ class Drawing: TimeSeries, Hashable, Renderable{
            behaviorJSONList[behaviorId]!["brushes"]![brushId] = strokeJSON;
             }
         }
+        }
         allStrokeJSON = JSON(behaviorJSONList);
         return allStrokeJSON;
     }
     
-    func activeStrokesToJSON()->JSON{
+    func activeStrokesToJSON(behaviorId:String, brushId:String)->JSON{
         var allStrokeJSON:JSON = [:];
-        for (behaviorId,brushStrokeList) in activeStrokes{
-            var brushStrokeJSON:JSON = [:]
-            let behavior = BehaviorManager.behaviors[behaviorId];
-            
-            for(brushId,strokes) in brushStrokeList{
-                let brush = behavior!.brushInstances.first{$0.id == brushId};
-                var strokeJSON:JSON = [:];
+        let brushStrokeList = activeStrokes[behaviorId];
+        var brushStrokeJSON:JSON = [:]
+        let behavior = BehaviorManager.behaviors[behaviorId];
+        let strokes = brushStrokeList![brushId];
+        
+        let brush = behavior!.brushInstances.first{$0.id == brushId};
+        var strokeJSON:JSON = [:];
                 
-                strokeJSON["i"] = JSON(brush!.params.i);
-                strokeJSON["name"] = JSON(brush!.name);
+        strokeJSON["i"] = JSON(brush!.params.i);
+        strokeJSON["name"] = JSON(brush!.name);
                 
-                if(strokes.count < 1){
-                    var emptyParams:JSON = [:]
-                    emptyParams["pen"] = JSON("up")
-                    emptyParams["x"] = 0;
-                    emptyParams["y"] = 0;
-                    emptyParams["h"] = 0;
-                    emptyParams["s"] = 0;
-                    emptyParams["l"] = 0;
-                    emptyParams["a"] = 0;
-                    strokeJSON["params"] = emptyParams;
-                }
-                
-                else{
-                    for stroke in strokes{
-                        var singleStrokeJSON = stroke.toJSON();
-                        singleStrokeJSON["pen"] = JSON("down");
-                        strokeJSON["params"] = singleStrokeJSON;
-
-                    }
-                }
-                brushStrokeJSON[brushId] = strokeJSON;
-            }
-            var behaviorJSON:JSON = [:]
-            behaviorJSON["brushes"] = brushStrokeJSON;
-            behaviorJSON["id"] = JSON(behaviorId)
-            behaviorJSON["name"] = JSON(behavior!.name);
-            allStrokeJSON[behaviorId] = behaviorJSON;
+        if(strokes!.count < 1){
+            var emptyParams:JSON = [:]
+            emptyParams["pen"] = JSON("up")
+            emptyParams["x"] = 0;
+            emptyParams["y"] = 0;
+            emptyParams["h"] = 0;
+            emptyParams["s"] = 0;
+            emptyParams["l"] = 0;
+            emptyParams["a"] = 0;
+            strokeJSON["params"] = emptyParams;
         }
+                
+        else{
+            for stroke in strokes!{
+                var singleStrokeJSON = stroke.toJSON();
+                singleStrokeJSON["pen"] = JSON("down");
+                strokeJSON["params"] = singleStrokeJSON;
+
+            }
+        }
+        brushStrokeJSON[brushId] = strokeJSON;
+        
+        var behaviorJSON:JSON = [:]
+        behaviorJSON["brushes"] = brushStrokeJSON;
+        behaviorJSON["id"] = JSON(behaviorId)
+        behaviorJSON["name"] = JSON(behavior!.name);
+        allStrokeJSON[behaviorId] = behaviorJSON;
+
         return allStrokeJSON;
     }
     

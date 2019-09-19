@@ -28,7 +28,6 @@ define(['emitter', 'app/id', 'app/Emitter', 'app/DatasetLoader'],
             this.data["recordings"].items.push(items[0]); 
             break;
           case "live":
-            if(items[0].collectionId != "ui" &&  items[0].collectionId != "mic"){
               let signals = items[0].signals;
               let filteredSignals = signals.filter(function(signal){
                 switch (signal.fieldName){
@@ -40,7 +39,6 @@ define(['emitter', 'app/id', 'app/Emitter', 'app/DatasetLoader'],
                   case "deltaAngle":
                   case "ox":
                   case "oy":
-                  case "angle":
 
 
                     return false;
@@ -51,8 +49,7 @@ define(['emitter', 'app/id', 'app/Emitter', 'app/DatasetLoader'],
               });
               items[0].signals = filteredSignals;
               this.data["live_input"].items.push(items[0]); 
-            }
-            break;
+                        break;
           case "generator":
             this.data["generators"].items.push(items[0]); 
             break;

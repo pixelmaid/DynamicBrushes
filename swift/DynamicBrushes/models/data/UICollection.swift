@@ -32,14 +32,14 @@ class UICollection: LiveCollection {
     
     func setColor(color:UIColor){
         var _hue = CGFloat(0)
-        var _saturation = CGFloat(100)
-        var _brightness = CGFloat(100)
+        var _saturation = CGFloat(1)
+        var _brightness = CGFloat(1)
         var _alpha = CGFloat(0)
         let success = color.getHue(&_hue, saturation: &_saturation, brightness: &_brightness, alpha: &_alpha)
         if(success){
-            self.hue = MathUtil.map(value:Float(_hue), low1:0, high1:1, low2:0, high2: 100);
-            self.lightness = MathUtil.map(value:Float(_brightness), low1:0, high1:1, low2:0, high2: 100);
-            self.saturation = MathUtil.map(value:Float(_saturation), low1:0, high1:1, low2:0, high2: 100);
+            self.hue = MathUtil.map(value:Float(_hue), low1:0, high1:1, low2:0, high2: 1);
+            self.lightness = MathUtil.map(value:Float(_brightness), low1:0, high1:1, low2:0, high2: 1);
+            self.saturation = MathUtil.map(value:Float(_saturation), low1:0, high1:1, low2:0, high2: 1);
             let data = self.exportData();
             self.addProtoSample(data: data)
 

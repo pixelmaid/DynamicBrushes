@@ -99,8 +99,11 @@ class BrushStorageManager{
         let behaviorStorage = BrushStorageManager.paramStorage;
         let targetBehaviorData = behaviorStorage[behaviorId]!;
         //TODO: error called in trying to find correct brush id
-        let brushStateData = targetBehaviorData[brushId]!
-        let targetBrushData = brushStateData[globalTime];
+        let brushStateData = targetBehaviorData[brushId]
+        guard brushStateData != nil else{
+            return nil
+        }
+        let targetBrushData = brushStateData![globalTime];
         
         guard targetBrushData != nil else{
             return nil

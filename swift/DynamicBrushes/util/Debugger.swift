@@ -110,29 +110,38 @@ final class Debugger {
         let behaviorId = stroke.behaviorId;
         let globalTime = segment.globalTime;
         let localTime = segment.time;
+        BehaviorManager.currentlySelectedBehaviorId = behaviorId;
+        let behavior = BehaviorManager.behaviors[behaviorId];
+        BehaviorManager.activeInstance = behavior!.brushInstances.firstIndex{$0.id == brushId} ?? 0;
         
         let brushState = BrushStorageManager.accessState(behaviorId: behaviorId, brushId: brushId, globalTime: globalTime);
         
         let debugData = JSON(Debugger.generateDebugData(behaviorId: behaviorId, brushId: brushId, brushState: brushState, globalTime: globalTime));
         //print("debug data",debugData)
         Debugger.drawingDebugDataQueue.append(debugData);
-
-        let socketRequest = Request(target: "socket", action: "send_inspector_data", data: [debugData], requester: RequestHandler.sharedInstance)
-        RequestHandler.addRequest(requestData: socketRequest)
-        
+        Debugger.setupDebugSocketRequest(debugData: JSON([debugData]));
         self.drawCurrentBrushState(view: Debugger.brushGraphicsView!, targetBehaviorId: behaviorId,jump:true,globalTime:localTime)
         
     }
     
+    static func setupDebugSocketRequest(debugData:JSON){
+        var inspectorData:JSON = [:]
+        inspectorData["debugData"] = JSON(debugData);
+        inspectorData["activeBehaviorId"] = JSON(BehaviorManager.currentlySelectedBehaviorId);
+        inspectorData["activeInstance"] = JSON(BehaviorManager.activeInstance);
+        let socketRequest = Request(target: "socket", action: "send_inspector_data", data: inspectorData, requester: RequestHandler.sharedInstance)
+        RequestHandler.addRequest(requestData: socketRequest)
+
+    }
     
-    static func generateOutputDebugData(globalTime:Int?,brushState:BrushStateStorage?)->JSON{
+    static func generateOutputDebugData(behaviorId:String, brushId:String,globalTime:Int?,brushState:BrushStateStorage?)->JSON{
         var debugData:JSON = [:]
         debugData["groupName"] = JSON("output");
         if(brushState == nil){
-            debugData["behaviors"] = BehaviorManager.drawing.activeStrokesToJSON();
+            debugData["behaviors"] = BehaviorManager.drawing.activeStrokesToJSON(behaviorId: behaviorId, brushId: brushId);
         }
         else{
-            debugData["behaviors"] = BehaviorManager.drawing.strokesAtGlobalTimeToJSON(globalTime:globalTime!, brushState: brushState!);
+            debugData["behaviors"] = BehaviorManager.drawing.strokesAtGlobalTimeToJSON(behaviorId: behaviorId, brushId: brushId, globalTime:globalTime!, brushState: brushState!);
         }
         return debugData;
     }
@@ -221,7 +230,7 @@ final class Debugger {
         else{
             let localTime = brushData!["behaviors"][0]["brushes"][0]["params"]["time"].intValue;
             let inputData = Debugger.generateInputDebugData(behaviorId: behaviorId, brushId: brushId, globalTime: globalTime, localTime:localTime);
-            let outputData = Debugger.generateOutputDebugData(globalTime:globalTime,brushState:brushState);
+            let outputData = Debugger.generateOutputDebugData(behaviorId: behaviorId, brushId: brushId, globalTime:globalTime,brushState:brushState);
             var debugData:JSON = [:];
             debugData["brush"] = brushData!;
             debugData["input"] = inputData;
@@ -234,8 +243,7 @@ final class Debugger {
     @objc static func fireDebugUpdate(){
         if(Debugger.programDebugDataQueue.count>0){
             let debugJSON = JSON(Debugger.programDebugDataQueue);
-            let socketRequest = Request(target: "socket", action: "send_inspector_data", data: debugJSON, requester: RequestHandler.sharedInstance)
-            RequestHandler.addRequest(requestData: socketRequest)
+            Debugger.setupDebugSocketRequest(debugData:debugJSON);
             Debugger.programDebugDataQueue.removeAll();
         }
     }

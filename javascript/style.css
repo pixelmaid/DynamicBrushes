@@ -813,8 +813,15 @@ ul.list_menu {
   list-style: none;
   background-color: grey;
 }
+
+
 li.behavior_list{
   padding:0;
+}
+
+li.behavior_list.selected{
+  background-color: #00ff004d;
+    border: 1px solid #0f0;
 }
 span.icon_container{
   height:30px;
@@ -1256,13 +1263,13 @@ position: absolute;
   position: absolute;
   bottom: 20px;
   left: 20px; 
-  max-height: 400px;
+  max-height: 500px;
   width: 700px;
 }
 .inspector-container {
   float: left;
   min-width: 200px;
-  max-height: 400px;
+  max-height: 500px;
   border: 1px solid gray;
   background-color:#202020;
   overflow-y: scroll;

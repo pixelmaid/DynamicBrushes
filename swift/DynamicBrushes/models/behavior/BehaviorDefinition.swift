@@ -603,7 +603,7 @@ class BehaviorDefinition {
                 
             }
             else{
-                //TOOD: Fix bug regarded to adding generators
+                //TOOD: Fix bug regarded to adding generatorsJED
                 operand = (emitter as! Emitter).kvcDictionary[propId!]!
             }
             

@@ -77,12 +77,12 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                     }
                 };
 
-               /* $( "#canvas" ).dblclick(function(e) {
+               $( "#canvas" ).dblclick(function(e) {
                     console.log("dblclick",self.currentView);
                     if(self.currentView !== null){
                         self.currentView.activateStateMenu(e.pageX, e.pageY);
                     }
-                 });*/
+                 });
                 
                 $("#behavior_template_menu span").click(function(event) {
 
@@ -249,16 +249,16 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
             addBehaviorListItem(id, active_status, name) {
                 var self = this;
                 if (this.currentView && this.currentView.id == id) {
-                    $("li#" + id).addClass("selected");
+                    $("#behaviorselect li#" + id).addClass("selected");
                 }
-                $("li#" + id + " .name").click(function(event) {
+                $("#behaviorselect li#" + id + " .name").click(function(event) {
                     self.deselectAllBehaviors();
-                    $("li#" + id).addClass("selected");
+                    $(" #behaviorselect li#" + id).addClass("selected");
                     self.changeBehavior(id);
                 });
-                var active_toggle = $("#" + id + " .active_toggle");
-                var trash_toggle = $("#" + id + " .trash");
-                var refresh_button = $("#" + id + " .refresh");
+                var active_toggle = $("#behaviorselect #" + id + " .active_toggle");
+                var trash_toggle = $("#behaviorselect #" + id + " .trash");
+                var refresh_button = $("#behaviorselect #" + id + " .refresh");
 
                 if (active_status) {
                     active_toggle.addClass("active");
@@ -294,26 +294,30 @@ define(["jquery", "app/id", "app/Emitter", "app/ChartView", "app/GeneratorModel"
                 });
             }
 
-            //called when drawing client is sending behavior data to synchronize
-            synchronize(sync_data) {
-                this.destroyAllViews();
-                this.refreshBehaviorList();
-
-                var behaviorData = sync_data;
-                console.log("synch called", behaviorData.length);
-
-                for (var i = 0; i < behaviorData.length; i++) {
-                    this.addBehavior(behaviorData[i]);
-
-                }
-
-
+            setActiveBehavior(activeBehaviorId){
+               
                 this.currentView.resetView();
-                var selectedBehaviorData = behaviorData[behaviorData.length - 1];
-                this.currentView = this.views[selectedBehaviorData.id];
+                this.currentView = this.views[activeBehaviorId];
+                var selectedBehaviorData = this.allBehaviorData.find(function(behavior){return behavior.id == activeBehaviorId;});
 
                 this.currentView.createHTML(selectedBehaviorData);
                 this.currentView.initializeBehavior(selectedBehaviorData);
+                this.refreshBehaviorList();
+ 
+            }
+            //called when drawing client is sending behavior data to synchronize
+            //TODO: this is dumb. creates new chart view and then destroys it for each behavior
+            synchronize(sync_data) {
+                this.destroyAllViews();
+                
+                this.allBehaviorData = sync_data.behaviors;
+                var selectedBehaviorData = this.allBehaviorData.find(function(behavior){return behavior.id == sync_data.activeBehaviorId;});
+
+                for (var i = 0; i < this.allBehaviorData.length; i++) {
+                    this.addBehavior(this.allBehaviorData[i]);
+                }
+
+               this.setActiveBehavior(sync_data.activeBehaviorId,sync_data.activeInstance);
             }
 
              updateProperties(prop_data){

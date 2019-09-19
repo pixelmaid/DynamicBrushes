@@ -78,7 +78,10 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
                 }
                 else{
                     console.log("~~~~!! received inspector data ", data.data)
-                    debuggerModelCollection.processInspectorDataQueue(data.data);
+                    debuggerModelCollection.processInspectorDataQueue(data.data.debugData);
+                    chartViewManager.setActiveBehavior(data.data.activeBehaviorId);
+                    debuggerModelCollection.selectedIndex = data.data.activeInstance;
+
                 }
 
             } else if (data.type == "synchronize") {
@@ -87,7 +90,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
                 var currentBehaviorName = data["currentBehaviorName"];
                 var currentBehaviorFile = data["currentFile"];
                 console.log("currentBehaviorName=", currentBehaviorName, currentBehaviorFile);
-                chartViewManager.synchronize(data.data.behaviors);
+                chartViewManager.synchronize(data.data);
+
                 signalModel.datasetLoader.loadCollection(data.data.collections);
                 saveManager.setCurrentFilename(currentBehaviorName, currentBehaviorFile);
                 debuggerModelCollection.resetInspection();
@@ -439,6 +443,8 @@ define(["jquery", "paper", "handlebars", "app/id", "app/DebuggerModelCollection"
                 $(this).text('turn step on');
             }
         });
+
+
 
     }
     );

@@ -26,6 +26,7 @@ class BehaviorManager{
     static var behaviors = [String:BehaviorDefinition]()
     static var activeInstance = 0;
     static var currentlySelectedBehaviorId:String! = nil;
+    static var behaviorSelectedEvent = Event<String>();
   // static var imported = [String:SignalCollection]();
   //  static var recordings = [String:SignalCollection]();
    // static var generators = [String:GeneratorCollection]();
@@ -166,6 +167,8 @@ class BehaviorManager{
         resultJSON["authoring_type"] = JSON(type);
         switch(type){
         case "set_behavior_active":
+            Debugger.setupResetInspectionRequest();
+            stylusManager.restartLoop();
             let behaviorId = data["behaviorId"].stringValue;
             let behavior = BehaviorManager.behaviors[behaviorId]!;
             let active_status = data["active_status"].boolValue;
@@ -183,6 +186,8 @@ class BehaviorManager{
             
             
         case "refresh_behavior":
+            Debugger.setupResetInspectionRequest();
+            stylusManager.restartLoop();
             let behaviorId = data["behaviorId"].stringValue;
             BehaviorManager.behaviors[behaviorId]!.createBehavior(drawing:drawing)
             resultJSON["result"] = "success";
@@ -191,12 +196,18 @@ class BehaviorManager{
         case "request_behavior_json":
             let behaviorId = data["behaviorId"].stringValue;
             let behavior = BehaviorManager.behaviors[behaviorId]!;
+            BehaviorManager.currentlySelectedBehaviorId = behaviorId
+            BehaviorManager.activeInstance = behavior.brushInstances.count-1;
+            Debugger.cacheDebugData(globalTime:StylusManager.globalTime);
+            behaviorSelectedEvent.raise(data: "DRAW_STATE");
             let behaviorJSON:JSON = behavior.toJSON();
             resultJSON["result"] = "success";
             resultJSON["data"] = behaviorJSON
             return resultJSON;
             
         case "behavior_added":
+            Debugger.setupResetInspectionRequest();
+            stylusManager.restartLoop();
             print("data to load",data);
             BehaviorManager.loadCollectionsFromJSON(data: data["data"]["collections"]);
             self.loadBehaviorsFromJSON(json: data["data"]["behaviors"], rewriteAll: false)
@@ -236,7 +247,8 @@ class BehaviorManager{
             
         //hard delete despite any dependencies
         case "hard_delete_behavior":
-            
+            Debugger.setupResetInspectionRequest();
+            stylusManager.restartLoop();
             let behaviorId = data["behaviorId"].stringValue;
             let behavior = BehaviorManager.behaviors[behaviorId]!;
             BehaviorManager.behaviors.removeValue(forKey: behaviorId)
@@ -245,7 +257,8 @@ class BehaviorManager{
             return resultJSON
             
         case "state_added":
-           
+            Debugger.setupResetInspectionRequest();
+            stylusManager.restartLoop();
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseStateJSON(data:data);
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(drawing:drawing)
             
@@ -263,7 +276,8 @@ class BehaviorManager{
             resultJSON["result"] = "success";
             return resultJSON;
         case "state_removed":
-          
+            Debugger.setupResetInspectionRequest();
+            stylusManager.restartLoop();
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.removeState(stateId: data["stateId"].stringValue);
             
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(drawing:drawing)
@@ -272,6 +286,8 @@ class BehaviorManager{
             return resultJSON;
             
         case "transition_added":
+            Debugger.setupResetInspectionRequest();
+            stylusManager.restartLoop();
             let behaviorID = data["behaviorId"].stringValue;
             let targetBehavior = BehaviorManager.behaviors[behaviorID]!
             targetBehavior.parseExpressionJSON(data: data["referenceA"]);
@@ -289,6 +305,8 @@ class BehaviorManager{
                 BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(drawing:drawing)
                 
                 resultJSON["result"] = "success";
+                Debugger.setupResetInspectionRequest();
+                stylusManager.restartLoop();
                 return resultJSON;
                 
             }
@@ -299,6 +317,8 @@ class BehaviorManager{
             }
            
         case "relational_changed":
+            Debugger.setupResetInspectionRequest();
+            stylusManager.restartLoop();
             let behaviorID = data["behaviorId"].stringValue;
             let targetBehavior = BehaviorManager.behaviors[behaviorID]!
              do {
@@ -314,6 +334,8 @@ class BehaviorManager{
             }
             
         case "method_dropdown_changed":
+            Debugger.setupResetInspectionRequest();
+            stylusManager.restartLoop();
             let behaviorID = data["behaviorId"].stringValue;
             let targetBehavior = BehaviorManager.behaviors[behaviorID]!
             let methodId = data["methodId"].stringValue;
@@ -332,6 +354,8 @@ class BehaviorManager{
 
             
         case "method_added":
+            Debugger.setupResetInspectionRequest();
+            stylusManager.restartLoop();
             let behaviorId = data["behaviorId"].stringValue
             let methodJSON = BehaviorManager.behaviors[behaviorId]!.parseMethodJSON(data: data)
             BehaviorManager.behaviors[behaviorId]!.createBehavior(drawing:drawing);
@@ -345,12 +369,15 @@ class BehaviorManager{
         
         //return
         case "method_removed":
-            BehaviorManager.behaviors[data["behaviorId"].stringValue]!.removeMethod(methodId: data["methodId"].stringValue)
+            Debugger.setupResetInspectionRequest();
+            stylusManager.restartLoop(); BehaviorManager.behaviors[data["behaviorId"].stringValue]!.removeMethod(methodId: data["methodId"].stringValue)
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.createBehavior(drawing:drawing);
             resultJSON["result"] = "success";
             return resultJSON;
             
         case "mapping_added":
+            Debugger.setupResetInspectionRequest();
+            stylusManager.restartLoop();
             let behaviorId = data["behaviorId"].stringValue;
             BehaviorManager.behaviors[behaviorId]!.parseExpressionJSON(data:data)
             BehaviorManager.behaviors[behaviorId]!.parseMappingJSON(data:data)
@@ -361,6 +388,7 @@ class BehaviorManager{
  
        
         case "signal_initialized":
+            
             do {
                 guard let signalData = try BehaviorManager.parseSignalJSON(data:data) else{
                     resultJSON["result"] = "failure";
@@ -392,6 +420,8 @@ class BehaviorManager{
             break;
             
         case "expression_modified":
+            Debugger.setupResetInspectionRequest();
+            stylusManager.restartLoop();
             let behaviorId = data["behaviorId"].stringValue;
             
             BehaviorManager.behaviors[data["behaviorId"].stringValue]!.parseExpressionJSON(data:data)
@@ -403,6 +433,8 @@ class BehaviorManager{
             
             
         case "mapping_removed":
+            Debugger.setupResetInspectionRequest();
+            stylusManager.restartLoop();
             
             do{
                 try BehaviorManager.behaviors[data["behaviorId"].stringValue]!.removeMapping(id: data["mappingId"].stringValue);
@@ -415,7 +447,7 @@ class BehaviorManager{
                 return resultJSON;
             }
             
-        case "dataset_loaded":
+        case "dataset_loaded":  
              #if DEBUG
                // print("dataset loaded",data);
             #endif
@@ -723,6 +755,8 @@ class BehaviorManager{
         var syncJSON:JSON = [:]
         syncJSON["behaviors"] = behavior;
         syncJSON["collections"] = collections;
+        syncJSON["activeBehaviorId"] = JSON(BehaviorManager.currentlySelectedBehaviorId);
+        syncJSON["activeIndex"] = JSON(BehaviorManager.activeInstance);
         return syncJSON;
     }
     

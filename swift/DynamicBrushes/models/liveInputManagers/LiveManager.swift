@@ -504,7 +504,7 @@ final class StylusManager:LiveManager{
             StylusManager.globalTime = StylusManager.getTimeElapsed();
         
                 let sample = (self.collections["stylus"]! as! StylusCollection).onStylusMove(x: x, y: y, force: force*20, angle: angle, time:StylusManager.globalTime);
-            currentRecordingPackage.addProtoSample(data:sample);
+             currentRecordingPackage.addProtoSample(data:sample);
                 self.moveCounter = 0;
                 
 

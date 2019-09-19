@@ -63,6 +63,7 @@ class DrawingViewController: UIViewController, Requester{
     
     let brushEventKey = NSUUID().uuidString
     let dataEventKey = NSUUID().uuidString
+
     let strokeGeneratedKey = NSUUID().uuidString
     let strokeRemovedKey = NSUUID().uuidString
     let exportKey = NSUUID().uuidString
@@ -507,7 +508,7 @@ class DrawingViewController: UIViewController, Requester{
         let configureRequest = Request(target: "storage", action: "configure", data:JSON([]), requester: self)
         
         RequestHandler.addRequest(requestData:configureRequest);
-        
+        BehaviorManager.behaviorSelectedEvent.addHandler(target: self, handler: DrawingViewController.drawCurrentBrushState, key: behaviorEventKey)
         layerContainerView.center = CGPoint(x:self.view.frame.size.width/2,y:self.view.frame.size.height/2);
         self.view.addSubview(layerContainerView);
         self.view.sendSubviewToBack(layerContainerView);
@@ -606,7 +607,7 @@ class DrawingViewController: UIViewController, Requester{
     func addProjectInitRequests(){
         
         var templateJSON:JSON = [:]
-        templateJSON["filename"] = "templates/demo1.json"
+        templateJSON["filename"] = "templates/dual_behaviors_walkthrough.json"
         templateJSON["type"] = JSON("load")
         let behaviorDownloadRequest = Request(target: "storage", action: "download", data:templateJSON, requester: self)
         RequestHandler.addRequest(requestData:behaviorDownloadRequest);
@@ -1028,7 +1029,7 @@ class DrawingViewController: UIViewController, Requester{
                 DispatchQueue.main.async {
                     self.layerContainerView.drawIntoCurrentLayer(drawing:self.currentDrawing!);
                 }
-                Debugger.cacheDebugData(globalTime:StylusManager.globalTime);
+               Debugger.cacheDebugData(globalTime:StylusManager.globalTime);
                 if(StylusManager.unrendered == true){
                     StylusManager.unrendered = false;
                 }
@@ -1037,11 +1038,20 @@ class DrawingViewController: UIViewController, Requester{
             }
             
             
-            
+        self.drawCurrentBrushState(data:("DEFAULT"),key:behaviorEventKey);
             
         //}
+        
+    }
+    
+    func drawCurrentBrushState(data: (String), key: String){
+        var jump = true;
+        if(data != "JUMP"){
+            jump = true
+            print(BehaviorManager.currentlySelectedBehaviorId);
+        }
         if(BehaviorManager.behaviors.count>0){
-            Debugger.drawCurrentBrushState(view: self.layerContainerView.brushGraphicsView!,targetBehaviorId: BehaviorManager.currentlySelectedBehaviorId, jump:false,globalTime:StylusManager.globalTime);
+            Debugger.drawCurrentBrushState(view: self.layerContainerView.brushGraphicsView!,targetBehaviorId: BehaviorManager.currentlySelectedBehaviorId, jump:jump,globalTime:StylusManager.globalTime);
             
         }
     }
@@ -1348,8 +1358,7 @@ class DrawingViewController: UIViewController, Requester{
             do{
                 let authoring_data = data.1! as JSON
                 let attempt = try BehaviorManager.handleAuthoringRequest(authoring_data: authoring_data);
-                Debugger.setupResetInspectionRequest();
-                stylusManager.restartLoop();
+               
 
                 let data = authoring_data["data"]
                 if(data["type"].stringValue == "behavior_added"){

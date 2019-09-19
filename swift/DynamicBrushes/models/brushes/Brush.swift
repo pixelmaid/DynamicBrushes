@@ -516,6 +516,7 @@ class Brush: TimeSeries, Renderable{
         guard let stateTransition = validateTransitionMapping(key:key) else{
             return;
         }
+        //print(self.behaviorDef!.name,stateTransition.toStateId,self.currentState,stateTransition.id);
         self.transitionToState(transition: stateTransition)
 
     }
@@ -560,10 +561,11 @@ class Brush: TimeSeries, Renderable{
                 
             //TODO: add methods to debug data
             self.executeTransitionMethods(methods: transition.methods)
-            }
+                
+                
                 self.prevTransition = transition.id;
 
-          
+        
             //execute methods
             //check constraints
          
@@ -576,6 +578,9 @@ class Brush: TimeSeries, Renderable{
            transitionDelayTimer  = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(Brush.completeCallback), userInfo: nil, repeats: false)
                 BrushStorageManager.storeState(brush:self,event:"STATE_TRANSITION");
                 self.isUpdated = true;
+                
+               
+                }
 
             }
         }
@@ -595,13 +600,14 @@ class Brush: TimeSeries, Renderable{
         //TODO: This creates an endless loop on debug step. Need to address this.
 
        /* for (key,tTransition) in self.transitions{
-            
+            if(key != self.prevTransition){
             let validate = self.validateTransitionMapping(key:key)
-            let evaluate =  tTransition.condition.evaluate()
-            if validate != nil && evaluate == true {
-                self.transitionToState(transition: tTransition)
-                return;
+                let evaluate =  tTransition.condition.evaluate()
+                if validate != nil && evaluate == true {
+                    self.transitionToState(transition: tTransition)
+                    return;
                 
+                }
             }
         }*/
     }
