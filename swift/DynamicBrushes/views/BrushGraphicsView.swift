@@ -1186,29 +1186,25 @@ class BrushGraphic {
         brushIcon.contents[4] = rotArc
         
         if (sx != 1 || sy != 1 || scaleChanged) {
-            text.text = text.text + "\nsx:"+String(format: "%.2f", sx)+"%, sy:"+String(format: "%.2f", sy)+"%"
+            text.text = text.text + "\nsx:"+String(format: "%.2f", sx)+", sy:"+String(format: "%.2f", sy)
             scaleChanged = true
-            if (sx != 100) {
-                let newLine = Macaw.Line(x1: axisScale, y1: 0, x2: axisScale + (axisLen * Double(sx)), y2: 0)
-                let xLine = xAxis.contents[0] as! Shape
-                let animation = xLine.formVar.animation(to: newLine, during: 0.1, delay: 0)
-                animation.play()
-                let xTri = xAxis.contents[1] as! Shape
-                xTri.placeVar.animate(to: Transform.move(dx:(axisScale + axisLen * Double(sx)), dy: 0).rotate(angle:Double(pi)), during: 0.1, delay: Double(0))
-                    //Transform.scale(sx: Double(sx/100.0), sy:1)
-               //print("## changed x scale")
-            }
-            if (sy != 100) {
-                let newLine = Macaw.Line(x1: 0, y1: axisScale, x2: 0, y2: axisScale + (axisLen * Double(sy)))
-                let yLine = yAxis.contents[0] as! Shape
-                let animation = yLine.formVar.animation(to: newLine, during: 0.1, delay: 0)
-                animation.play()
-                let yTri = yAxis.contents[1] as! Shape
-                yTri.placeVar.animate(to: Transform.move(dx:0, dy: (axisScale + axisLen * Double(sy))).rotate(angle:Double(-pi/2)), during: 0.1, delay: Double(0))
-//                yAxis.contents[0].form = Macaw.Line(x1: 0, y1: (-axisScale * sy/100.0), x2: 0, y2:(3*axisScale * sy/100.0))
-                    //Transform.scale(sx: 1, sy: Double(sy/100.0))
-               // print("## changed y scale")
-            }
+        
+            let newXLine = Shape(form: Macaw.Line(x1: axisScale, y1: 0, x2: axisScale + (axisLen * Double(sx)), y2: 0), stroke: Macaw.Stroke(fill:brushColor, width:2))
+            xAxis.contents[0] = newXLine
+            let xTri = xAxis.contents[1] as! Shape
+            var angle = Double(pi)
+            if sx < 0 { angle = 0}
+            xTri.place = Transform.move(dx:(axisScale + axisLen * Double(sx)), dy: 0).rotate(angle:angle)
+        
+            let newYLine = Shape(form: Macaw.Line(x1: 0, y1: axisScale, x2: 0, y2: axisScale + (axisLen * Double(sy))), stroke: Macaw.Stroke(fill:brushColor, width:2))
+            yAxis.contents[0] = newYLine
+            let yTri = yAxis.contents[1] as! Shape
+            angle = Double(-pi/2)
+            if sy < 0 {
+                angle =  Double(pi/2) }
+            yTri.place = Transform.move(dx:0, dy: (axisScale + axisLen * Double(sy))).rotate(angle:angle)
+
+            
             if (sx == 1 && sy == 1) {
                 scaleChanged = false
             }
