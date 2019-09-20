@@ -698,11 +698,6 @@ class BrushGraphic {
                 self.node.contents[3] = stylusDownIcon
                 self.node.contents[4] = stylusStream
                 self.node.contents[10] = generator
-                
-                if Debugger.inputLabelTurnedOff {
-                    Debugger.inputLabel = true
-                }
-                
                 if self.scene.stylusOn { self.highlightStylus() }
                 if self.scene.forceOn { self.highlightForce() }
                 if self.scene.generatorOn { self.highlightGenerator(name:self.scene.generatorOnName) }
@@ -715,11 +710,6 @@ class BrushGraphic {
                 self.node.contents[3] = empty
                 self.node.contents[4] = empty
                 self.node.contents[10] = empty
-
-                if Debugger.inputLabel {
-                    Debugger.inputLabelTurnedOff = true
-                }
-                Debugger.inputLabel = false
             }
             break
         case "brush":
@@ -728,11 +718,6 @@ class BrushGraphic {
                 self.node.contents[5] = brushIcon
                 self.node.contents[6] = brushStream
                 self.node.contents[7] = inputIcon
-
-                if Debugger.brushLabelTurnedOff {
-                    Debugger.brushLabel = true
-                }
-                
                 if self.scene.originOn { self.highlightOrigin() }
                 if self.scene.scaleXOn { self.highlightScaleX() }
                 if self.scene.scaleYOn { self.highlightScaleY() }
@@ -744,11 +729,6 @@ class BrushGraphic {
                 self.node.contents[6] = empty
                 self.node.contents[7] = empty
                 
-                if Debugger.brushLabel {
-                    Debugger.brushLabelTurnedOff = true
-                }
-                Debugger.brushLabel = false
-                
             }
             break
         case "output":
@@ -756,20 +736,12 @@ class BrushGraphic {
                 
                 self.node.contents[8] = computedIcon
                 self.node.contents[9] = outputStream
-                
-                if Debugger.outputLabelTurnedOff {
-                    Debugger.outputLabel = true
-                }
+
                 if self.scene.outputOn { self.highlightOutput() }
             } else {
 
                 self.node.contents[8] = empty
                 self.node.contents[9] = empty
-                
-                if Debugger.outputLabel {
-                    Debugger.outputLabelTurnedOff = true
-                }
-                Debugger.outputLabel = false
             }
             break
         default:

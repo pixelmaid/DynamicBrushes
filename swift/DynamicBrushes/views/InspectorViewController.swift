@@ -44,12 +44,26 @@ class InspectorViewController: UIViewController {
         let target = (sender as! UISwitch);
         if(target == inputGfx){
             self.switchEvent.raise(data: ("gfx","input",target.isOn));
+            if (!target.isOn) {
+                inputLabel.setOn(false, animated: true)
+                self.switchEvent.raise(data: ("label","input",false));
+            }
         }
         else if(target == brushGfx){
             self.switchEvent.raise(data: ("gfx","brush",target.isOn));
+            if (!target.isOn) {
+                brushLabel.setOn(false, animated: true)
+                self.switchEvent.raise(data: ("label","brush",false));
+
+            }
         }
         else if(target == outputGfx){
             self.switchEvent.raise(data: ("gfx","output",target.isOn));
+            if (!target.isOn) {
+                outputLabel.setOn(false, animated: true)
+                self.switchEvent.raise(data: ("label","output",false));
+
+            }
 
         }
     }
